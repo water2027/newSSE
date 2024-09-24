@@ -27,4 +27,50 @@ async function getPosts(limit,offset,partition,searchsort,userTelephone){
     return data
 }
 
-export {getPosts}
+async function getPostsNum(partition,searchsort,userTelephone){
+    const response = await fetch(`${apiUrl}/auth/getPostNum`,{
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json',
+            'Authorization':`Bearer ${localStorage.getItem('token')}`
+        },
+        body:JSON.stringify({
+            "userTelephone": userTelephone,
+            "partition": partition,
+            "searchsort": searchsort
+        })
+    })
+    const data = await response.json()
+
+    return data.Postcount
+}
+
+async function getHeatPosts(){
+    const response =await fetch(`${apiUrl}/auth/calculateHeat`,{
+        method:'GET',
+        headers:{
+            'Content-Type':'application/json',
+            'Authorization':`Bearer ${localStorage.getItem('token')}`
+        }
+    })
+    const data = await response.json()
+    return data
+}
+
+async function getPostByID(PostID,userTelephone){
+    const response = await fetch(`${apiUrl}/auth/showDetails`,{
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json',
+            'Authorization':`Bearer ${localStorage.getItem('token')}`
+        },
+        body:JSON.stringify({
+            "postID":PostID,
+            "userTelephone":userTelephone
+        })
+    })
+    const data = await response.json()
+    return data
+}
+
+export {getPosts,getPostsNum,getHeatPosts,getPostByID}

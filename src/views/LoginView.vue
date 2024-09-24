@@ -53,9 +53,6 @@ import { ref, defineEmits } from 'vue'
 import { userLogin } from '@/utils/LoginAndReg';
 import { useRouter } from 'vue-router'
 const emit = defineEmits(['sendLoginSuccess'])
-const sendLoginSuccess = () => {
-    emit('sendLoginSuccess', true)
-}
 const router = useRouter()
 const email = ref(null)
 const username = ref(null)
@@ -81,7 +78,7 @@ const login = async () => {
     }
     const loginSuccess = await userLogin(email.value.value, password.value.value);
     if (loginSuccess) {
-        sendLoginSuccess()
+        emit('sendLoginSuccess', true)
         router.push('/')
     }
 }

@@ -4,13 +4,18 @@
 </template>
 
 <script setup>
-import { onMounted,ref } from 'vue';
+import { onMounted,ref,provide } from 'vue';
 import HomeViewVue from './views/HomeView.vue';
 import { userLogin } from './utils/LoginAndReg';
 import LoginViewVue from './views/LoginView.vue';
+import { getInfo } from '@/utils/getInfo';
+const userInfo = ref({})
+provide('userInfo', userInfo)
 const isLogin = ref(false);
-const sendLoginSuccess = (success) => {
+const sendLoginSuccess = async (success) => {
     isLogin.value = success;
+    const info = await getInfo()
+    userInfo.value = info
 }
 onMounted(async() => {
     if (localStorage.rememberMe) {
@@ -19,6 +24,8 @@ onMounted(async() => {
         const loginSuccess = userLogin(email, password);
         if (loginSuccess) {
             isLogin.value = true;
+            const info = await getInfo()
+            userInfo.value = info
         }
     }
 });

@@ -12,26 +12,25 @@
                 <span></span>
                 <span></span>
             </button>
-            <router-link to="/post">+</router-link>
         </header>
         <main>
-            <div class="nav-bar main-nav-bar" v-if="isMobileAndNavOpen">
-                <router-link class="nav" to="/">主页</router-link>
-                <router-link class="nav" to="/partitions">分区</router-link>
-                <router-link class="nav" to="/course">课程专区</router-link>
-                <router-link class="nav" to="/postDetail">发帖</router-link>
+            <div class="nav-bar main-nav-bar" v-if="isMobileAndNavOpen" @click="toggleNav">
+                <router-link class="nav" to="/" @click="changeTomain">主页</router-link>
+                <router-link class="nav" to="/partitions" @send-partition="sendPartition">分区</router-link>
+                <a href="javascript:;" class="nav" @click="changeToCourse">课程专区</a>
+                <router-link class="nav" to="/post">发帖</router-link>
                 <router-link class="nav" to="/notice">通知</router-link>
                 <router-link class="nav" to="/feedback">反馈</router-link>
-                <a class="nav" href="javascript:;">我的</a>
                 <nav class="nav-bar second-nav-bar">
                     <router-link class="nav" to="/profile">个人信息</router-link>
                     <router-link class="nav" to="/save">我的收藏</router-link>
                     <router-link class="nav" to="/history">发帖历史</router-link>
                 </nav>
-                <router-link class="nav" to="/postEdit">设置</router-link>
+                <router-link class="nav" to="/options">设置</router-link>
             </div>
             <div class="content">
-                <router-view></router-view>
+                <router-view v-if="route.fullPath!='/partitions'"></router-view>
+                <router-view v-if="route.fullPath=='/partitions'" @send-partition="sendPartition"></router-view>
             </div>
             <div class="nav-bar heat">
                 <h2>热榜</h2>
@@ -138,6 +137,10 @@
         padding: 0;
         border: 1px solid black;
         border-radius: 5px rgba(0, 0, 0, 0.1)
+    }
+
+    body:not(:has(header)) .main-nav-bar{
+        position: fixed;
     }
 
     .second-nav-bar {
@@ -332,11 +335,28 @@
 }
 </style>
 <script setup>
-import { onMounted, ref } from 'vue'
-import { getHeatPosts } from '@/utils/getHeatPosts';
+import { onMounted, provide, ref } from 'vue'
+import { useRoute } from 'vue-router';
+import { getHeatPosts } from '@/utils/getPosts';
+const route = useRoute()
+const partition = ref("主页")
+provide('partition', partition)
+const searchsort = ref("home")
+provide('searchsort', searchsort)
 const heatPosts = ref([])
 const isMobileAndNavOpen = ref(true)
+const changeTomain = () => {
+    partition.value = "主页"
+}
+const changeToCourse = () => {
+    partition.value = "课程专区"
+}
+const sendPartition = (p) => {
+    partition.value = p
+    console.log(partition.value)
+}
 const toggleNav = () => {
+    console.log(route.fullPath)
     isMobileAndNavOpen.value = !isMobileAndNavOpen.value
 }
 onMounted(async () => {

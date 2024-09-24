@@ -1,6 +1,7 @@
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
-async function getHeatPosts(){
-    const response =await fetch(`${apiUrl}/auth/calculateHeat`,{
+
+async function getInfo(){
+    const response = await fetch(`${apiUrl}/auth/info`,{
         method:'GET',
         headers:{
             'Content-Type':'application/json',
@@ -8,7 +9,7 @@ async function getHeatPosts(){
         }
     })
     const data = await response.json()
-    return data
+    return data.data.user
 }
 
-export { getHeatPosts }
+export { getInfo }

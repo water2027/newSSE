@@ -1,7 +1,7 @@
 <template>
     <div class="root">
         <h2>当前分区：{{ partition }}</h2>
-        <div class="post" v-for="post in posts" :key="post.PostID">
+        <router-link class="post" v-for="post in posts" :to="'/postdetail/' + post.PostID" :key="post.PostID">
             <div class="user">
                 <img v-if="post.UserAvatar" :src="post.UserAvatar">
                 <span>{{ post.UserName }}</span>
@@ -12,12 +12,17 @@
                 <!-- 图片路径由|分割 -->
                 <img v-for="img in post.Photos.split('|')" :src="img" :key="img">
             </div>
-        </div>
+            <span>{{ post.PostTime.replace('T', ' ') }}</span>
+            <div class="postInfo">
+                <span>{{ post.Browse }}阅读</span>
+                <span>{{ post.Like }}赞</span>
+                <span>{{ post.Comment }}评论</span>
+            </div>
+        </router-link>
         <div class="buttons">
-            <button>
+            <button @click="lastPage">
                 {{ '<' }} </button>
-
-                    <button>
+                    <button @click="nextPage">
                         >
                     </button>
         </div>
@@ -26,6 +31,7 @@
 <style scoped>
 @media screen and (min-width: 768px) {
     .post {
+        display: block;
         width: 100%;
         min-height: 150px;
         height: auto;
@@ -58,6 +64,8 @@
         font-size: 1.2rem;
         font-weight: bold;
         color: #333;
+        margin-bottom: 10px;
+        margin-top: 10px;
     }
 
     .user img {
@@ -88,7 +96,7 @@
     justify-content: space-around;
 }
 
-.buttons button{
+.buttons button {
     width: 30px;
     height: 30px;
     border: 1px solid #333;
@@ -99,13 +107,25 @@
     cursor: pointer;
 }
 
-.buttons button:hover{
+.buttons button:hover {
     background-color: #333333e1;
 }
 
 p::after {
     content: "...";
 
+}
+
+.postInfo {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+    display: block;
 }
 
 @media screen and (max-width: 768px) {
@@ -164,12 +184,44 @@ p::after {
 </style>
 
 <script setup>
-import { getPosts } from '@/utils/getPosts';
-import { ref, onMounted } from 'vue';
+import { getPosts, getPostsNum } from '@/utils/getPosts';
+import { ref, onMounted, inject, watch, provide } from 'vue';
+const userInfo = inject('userInfo');
+const partition = inject('partition');
+const searchsort = inject('searchsort');
 const posts = ref([]);
-const partition = ref("主页");
+provide('posts', posts);
+const totalNum = ref(0);
+const curPage = ref(0);
+
+const lastPage = async () => {
+    if (curPage.value > 0) {
+        curPage.value -= 5;
+        const arr = await getPosts(5, curPage.value, "主页", "home", userInfo.value.phone);
+        posts.value = arr;
+    }
+}
+
+const nextPage = async () => {
+    if (curPage.value < totalNum.value / 5) {
+        curPage.value += 5;
+        const arr = await getPosts(5, curPage.value, "主页", "home", userInfo.value.phone);
+        posts.value = arr;
+    }
+}
+
 onMounted(async () => {
-    const arr = await getPosts(5, 0, "主页", "home", "13825399203");
+    if (userInfo && userInfo.value && curPage.value >= 0) {
+        const id = await getPostsNum(partition.value, searchsort.value, userInfo.value.phone);
+        const arr = await getPosts(5, curPage.value, partition.value, searchsort.value, userInfo.value.phone);
+        posts.value = arr;
+        totalNum.value = id;
+    }
+})
+watch(partition, async (newVal) => {
+    const id = await getPostsNum(newVal, "home", userInfo.value.phone);
+    const arr = await getPosts(5, curPage.value, newVal, "home", userInfo.value.phone);
     posts.value = arr;
+    totalNum.value = id;
 })
 </script>
