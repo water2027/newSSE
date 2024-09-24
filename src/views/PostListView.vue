@@ -1,0 +1,175 @@
+<template>
+    <div class="root">
+        <h2>当前分区：{{ partition }}</h2>
+        <div class="post" v-for="post in posts" :key="post.PostID">
+            <div class="user">
+                <img v-if="post.UserAvatar" :src="post.UserAvatar">
+                <span>{{ post.UserName }}</span>
+            </div>
+            <h2>{{ post.Title }}</h2>
+            <p>{{ post.Content.slice(0, 100) }}</p>
+            <div class="imgs" v-if="post.Photos">
+                <!-- 图片路径由|分割 -->
+                <img v-for="img in post.Photos.split('|')" :src="img" :key="img">
+            </div>
+        </div>
+        <div class="buttons">
+            <button>
+                {{ '<' }} </button>
+
+                    <button>
+                        >
+                    </button>
+        </div>
+    </div>
+</template>
+<style scoped>
+@media screen and (min-width: 768px) {
+    .post {
+        width: 100%;
+        min-height: 150px;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        margin: 10px 0;
+        padding: 10px;
+    }
+
+    .imgs {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .imgs img {
+        width: 100px;
+        height: 100px;
+        margin: 5px;
+    }
+
+    .user {
+        --userImage: 50px;
+        width: 100%;
+        height: 30px;
+        /* 靠左 */
+        margin-right: auto;
+        display: flex;
+        align-items: center;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .user img {
+        width: var(--userImage);
+        height: var(--userImage);
+        border-radius: 50%;
+    }
+
+    .user .b-avatar {
+        width: calc(var(--userImage) + 10px);
+        height: calc(var(--userImage) + 10px);
+        margin-right: 0.5rem;
+        background-color: #6c757d;
+        color: #fff;
+        border-radius: 50%;
+    }
+
+    p {
+        text-indent: 2rem;
+    }
+
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+    justify-content: space-around;
+}
+
+.buttons button{
+    width: 30px;
+    height: 30px;
+    border: 1px solid #333;
+    border-radius: 50%;
+    background-color: #333;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.buttons button:hover{
+    background-color: #333333e1;
+}
+
+p::after {
+    content: "...";
+
+}
+
+@media screen and (max-width: 768px) {
+    .root {
+        width: 100%;
+        margin: 0;
+    }
+
+    .post {
+        width: 100%;
+        min-height: 150px;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        margin: 10px 0;
+        padding: 10px;
+    }
+
+    .imgs img {
+        width: 100px;
+        height: 100px;
+        margin: 5px;
+    }
+
+    .user {
+        --userImage: 50px;
+        width: 100%;
+        height: 30px;
+        /* 靠左 */
+        margin-right: auto;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .user img {
+        width: var(--userImage);
+        height: var(--userImage);
+        border-radius: 50%;
+    }
+
+    .user .b-avatar {
+        width: calc(var(--userImage) + 10px);
+        height: calc(var(--userImage) + 10px);
+        margin-right: 0.5rem;
+        background-color: #6c757d;
+        color: #fff;
+        border-radius: 50%;
+    }
+
+}
+</style>
+
+<script setup>
+import { getPosts } from '@/utils/getPosts';
+import { ref, onMounted } from 'vue';
+const posts = ref([]);
+const partition = ref("主页");
+onMounted(async () => {
+    const arr = await getPosts(5, 0, "主页", "home", "13825399203");
+    posts.value = arr;
+})
+</script>
