@@ -1,3 +1,4 @@
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 /**
  * 
  * @param {number} limit 返回多少个帖子
@@ -8,7 +9,7 @@
  * @returns 
  */
 async function getPosts(limit,offset,partition,searchsort,userTelephone){
-    const response = await fetch('/auth/browse',{
+    const response = await fetch(`${apiUrl}/auth/browse`,{
         method:'POST',
         headers:{
             'Content-Type':'application/json',

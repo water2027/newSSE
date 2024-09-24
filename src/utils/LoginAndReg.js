@@ -1,4 +1,5 @@
 import CryptoJS from 'crypto-js';
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 const setPassword = (data, key) => {
     const cypherKey = CryptoJS.enc.Utf8.parse(key);
     CryptoJS.pad.ZeroPadding.pad(cypherKey, 4);
@@ -8,7 +9,7 @@ const setPassword = (data, key) => {
 }
 
 async function userLogin(useremail,userpassword){
-    const response = await fetch('/auth/login',{
+    const response = await fetch(`${apiUrl}/auth/login`,{
         method:'POST',
         headers:{
             'Content-Type':'application/json'

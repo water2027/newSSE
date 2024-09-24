@@ -333,6 +333,7 @@
 </style>
 <script setup>
 import { onMounted, ref } from 'vue'
+import { getHeatPosts } from '@/utils/getHeatPosts';
 const heatPosts = ref([])
 const isMobileAndNavOpen = ref(true)
 const toggleNav = () => {
@@ -342,15 +343,7 @@ onMounted(async () => {
     if(window.innerWidth < 768) {
         isMobileAndNavOpen.value = false
     }
-    const posts = await fetch('/auth/calculateHeat', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
-        }
-    }).then(res => {
-        return res.json()
-    })
+    const posts = await getHeatPosts()
     heatPosts.value = posts
 })
 </script>

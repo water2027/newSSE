@@ -12,13 +12,4 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  server: {
-    proxy: {
-      '/auth': {
-        target: 'https://ssemarket.cn/api',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/auth/, '/auth')
-      }
-    }
-  }
 })
