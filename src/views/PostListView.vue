@@ -188,7 +188,7 @@ import { getPosts, getPostsNum } from '@/utils/getPosts';
 import { ref, onMounted, inject, watch, provide } from 'vue';
 const userInfo = inject('userInfo');
 const partition = inject('partition');
-const searchsort = inject('searchsort');
+const searchinfo = inject('searchinfo');
 const posts = ref([]);
 provide('posts', posts);
 const totalNum = ref(0);
@@ -197,30 +197,37 @@ const curPage = ref(0);
 const lastPage = async () => {
     if (curPage.value > 0) {
         curPage.value -= 5;
-        const arr = await getPosts(5, curPage.value, "主页", "home", userInfo.value.phone);
+        const arr = await getPosts(5, curPage.value, partition.value, 'home', searchinfo.value, userInfo.value.phone);
         posts.value = arr;
     }
 }
 
 const nextPage = async () => {
-    if (curPage.value < totalNum.value / 5) {
+    if (curPage.value < totalNum.value-5) {
         curPage.value += 5;
-        const arr = await getPosts(5, curPage.value, "主页", "home", userInfo.value.phone);
+        const arr = await getPosts(5, curPage.value, partition.value, 'home', searchinfo.value, userInfo.value.phone);
         posts.value = arr;
     }
 }
 
 onMounted(async () => {
     if (userInfo && userInfo.value && curPage.value >= 0) {
-        const id = await getPostsNum(partition.value, searchsort.value, userInfo.value.phone);
-        const arr = await getPosts(5, curPage.value, partition.value, searchsort.value, userInfo.value.phone);
+        const id = await getPostsNum(partition.value, 'home', searchinfo.value, userInfo.value.phone);
+        const arr = await getPosts(5, curPage.value, partition.value, 'home', searchinfo.value, userInfo.value.phone);
         posts.value = arr;
         totalNum.value = id;
     }
 })
+
 watch(partition, async (newVal) => {
-    const id = await getPostsNum(newVal, "home", userInfo.value.phone);
-    const arr = await getPosts(5, curPage.value, newVal, "home", userInfo.value.phone);
+    const id = await getPostsNum(newVal, "home",searchinfo.value, userInfo.value.phone);
+    const arr = await getPosts(5, curPage.value, newVal, "home", searchinfo.value, userInfo.value.phone);
+    posts.value = arr;
+    totalNum.value = id;
+})
+watch(searchinfo, async (newVal) => {
+    const id = await getPostsNum(partition.value,"home", newVal, userInfo.value.phone);
+    const arr = await getPosts(5, curPage.value,partition.value, "home", newVal, userInfo.value.phone);
     posts.value = arr;
     totalNum.value = id;
 })

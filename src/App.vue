@@ -28,7 +28,6 @@ onMounted(async () => {
         if (token) {
             isLogin.value = true;
             userInfo.value = JSON.parse(localStorage.userInfo)
-            console.log(userInfo.value.phone)
         }
         else {
             const email = localStorage.email;

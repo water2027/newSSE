@@ -1,20 +1,27 @@
 <template>
     <div id="root">
         <header>
-            <video autoplay="autoplay" loop="loop" muted="muted" playsinline=""><source src="https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/vedio/Background.mp4" type="video/mp4"></video>
-            <span>SSE_MARKET</span>
+            <video autoplay="autoplay" loop="loop" muted="muted" playsinline="">
+                <source
+                    src="https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/vedio/Background.mp4"
+                    type="video/mp4">
+            </video>
+            <div id="title">
+                <button @click="toggleNav" class="hamburgerMenu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <h1>SSE_MARKET</h1>
+            </div>
+
             <div class="search">
-                <input type="search">
+                <input placeholder="在当前分区搜索" type="search" ref="sinfo" @keydown.enter="search">
                 <button @click="search">搜索</button>
             </div>
-            <button @click="toggleNav" class="hamburgerMenu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
         </header>
         <main>
-            <div class="nav-bar main-nav-bar" v-if="isPC||navIsOpen" @click="toggleNav">
+            <div class="nav-bar main-nav-bar" v-if="isPC || navIsOpen" @click="toggleNav">
                 <router-link class="nav" to="/" @click="changeTomain">主页</router-link>
                 <router-link class="nav" to="/partitions" @send-partition="sendPartition">分区</router-link>
                 <a href="javascript:;" class="nav" @click="changeToCourse">课程专区</a>
@@ -29,8 +36,8 @@
                 <router-link class="nav" to="/options">设置</router-link>
             </div>
             <div class="content">
-                <router-view v-if="route.fullPath!='/partitions'"></router-view>
-                <router-view v-if="route.fullPath=='/partitions'" @send-partition="sendPartition"></router-view>
+                <router-view v-if="route.fullPath != '/partitions'"></router-view>
+                <router-view v-if="route.fullPath == '/partitions'" @send-partition="sendPartition"></router-view>
             </div>
             <div class="nav-bar heat">
                 <h2>热榜</h2>
@@ -59,6 +66,7 @@ header input {
     border: 1px solid black;
     background-color: #f0f0f06d;
     text-align: left;
+    padding: 1%;
 }
 
 header button {
@@ -99,6 +107,7 @@ main {
     text-decoration: none;
     color: black;
 }
+
 /* 大屏幕样式 >768px */
 @media screen and (min-width: 768px) {
     .asideButton {
@@ -119,7 +128,8 @@ main {
         position: relative;
     }
 
-    header button, header a {
+    header button,
+    header a {
         display: none;
     }
 
@@ -129,7 +139,7 @@ main {
         object-fit: cover;
     }
 
-    header span {
+    header h1 {
         position: absolute;
         font-size: 3rem;
         color: transparent;
@@ -194,6 +204,10 @@ main {
     footer {
         display: none;
     }
+
+    .nav:hover {
+        background-color: #f0f0f0;
+    }
 }
 
 /* 小屏幕样式 <768px */
@@ -205,11 +219,24 @@ main {
         background-color: rgba(136, 243, 255, 0.683);
     }
 
-    header span {
+    #title{
+        position: absolute;
+        top: 0;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: 10px;
+        /* 让button贴紧左边，h1居中 */
+        justify-content: space-between;
+        background-color: rgba(136, 243, 255, 0.683);
+    }
+
+    #title h1 {
         display: block;
         font-size: 2rem;
-        text-align: center;
-        position: relative;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%); 
     }
 
     .search {
@@ -240,9 +267,8 @@ main {
         cursor: pointer;
         padding: 0;
         z-index: 9998;
-        position: absolute;
-        top: 10px;
-        left: 10px;
+        margin-left: 0;
+
     }
 
     .hamburgerMenu span {
@@ -251,6 +277,7 @@ main {
         background-color: #333;
         border-radius: 2px;
         transition: all 0.3s;
+        position: relative;
     }
 
     header a {
@@ -310,13 +337,19 @@ import { getHeatPosts } from '@/utils/getPosts';
 const route = useRoute()
 const partition = ref("主页")
 provide('partition', partition)
-const searchsort = ref("home")
-provide('searchsort', searchsort)
+const searchinfo = ref('')
+provide('searchinfo', searchinfo)
 const heatPosts = ref([])
 const isPC = ref(true)
+provide('isPC', isPC)
 const navIsOpen = ref(true)
+const sinfo = ref(null)
+const search = () => {
+    searchinfo.value = sinfo.value.value
+}
 const changeTomain = () => {
     partition.value = "主页"
+    searchinfo.value = ''
 }
 const changeToCourse = () => {
     partition.value = "课程专区"
@@ -326,12 +359,12 @@ const sendPartition = (p) => {
     console.log(partition.value)
 }
 const toggleNav = () => {
-    if(!isPC.value) {
+    if (!isPC.value) {
         navIsOpen.value = !navIsOpen.value
     }
 }
 onMounted(async () => {
-    if(window.innerWidth < 768) {
+    if (window.innerWidth < 768) {
         isPC.value = false
         navIsOpen.value = false
     }
