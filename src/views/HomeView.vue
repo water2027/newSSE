@@ -333,6 +333,7 @@ const toggleNav = () => {
 onMounted(async () => {
     if(window.innerWidth < 768) {
         isPC.value = false
+        navIsOpen.value = false
     }
     const posts = await getHeatPosts()
     heatPosts.value = posts
