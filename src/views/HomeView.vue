@@ -14,7 +14,7 @@
             </button>
         </header>
         <main>
-            <div class="nav-bar main-nav-bar" v-if="(!isMobile)&&navIsOpen" @click="toggleNav">
+            <div class="nav-bar main-nav-bar" v-if="isPC||navIsOpen" @click="toggleNav">
                 <router-link class="nav" to="/" @click="changeTomain">主页</router-link>
                 <router-link class="nav" to="/partitions" @send-partition="sendPartition">分区</router-link>
                 <a href="javascript:;" class="nav" @click="changeToCourse">课程专区</a>
@@ -42,6 +42,64 @@
     </div>
 </template>
 <style scoped>
+header {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.search {
+    height: 30px;
+}
+
+header input {
+    height: 100%;
+    border-radius: 15px;
+    border: 1px solid black;
+    background-color: #f0f0f06d;
+    text-align: left;
+}
+
+header button {
+    height: 100%;
+    border-radius: 15px;
+    border: 1px solid black;
+    background-color: #f0f0f06d;
+    text-align: center;
+}
+
+main {
+    width: 100%;
+}
+
+.main-nav-bar {
+    padding: 0;
+    border: 1px solid black;
+    border-radius: 5px rgba(0, 0, 0, 0.1);
+}
+
+.second-nav-bar {
+    width: 100%;
+}
+
+.nav-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: self-start;
+}
+
+.nav {
+    width: 100%;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 15px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    text-align: center;
+    text-decoration: none;
+    color: black;
+}
+/* 大屏幕样式 >768px */
 @media screen and (min-width: 768px) {
     .asideButton {
         display: none;
@@ -56,20 +114,12 @@
     }
 
     header {
-        width: 100%;
         height: 30vh;
         background-color: #f0f0f0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
         position: relative;
     }
 
-    header button {
-        display: none;
-    }
-
-    header a {
+    header button, header a {
         display: none;
     }
 
@@ -82,11 +132,7 @@
     header span {
         position: absolute;
         font-size: 3rem;
-        color: white;
-        font-weight: bold;
-        /* 改成透明的 */
         color: transparent;
-        /* 字有边框 */
         -webkit-text-stroke: 3px rgb(235, 47, 182);
         top: 50%;
         left: 50%;
@@ -96,8 +142,6 @@
     .search {
         position: absolute;
         width: 50%;
-        height: 30px;
-        border-radius: 15px;
         top: 50%;
         left: 50%;
         transform: translate(-50%, 50%);
@@ -105,20 +149,10 @@
 
     header input {
         width: 95%;
-        height: 100%;
-        border-radius: 15px;
-        border: 1px solid black;
-        background-color: #f0f0f06d;
-        text-align: left;
     }
 
     header button {
         width: 5%;
-        height: 100%;
-        border-radius: 15px;
-        border: 1px solid black;
-        background-color: #f0f0f06d;
-        text-align: center;
     }
 
     header button:hover {
@@ -126,7 +160,6 @@
     }
 
     main {
-        width: 100%;
         display: flex;
         flex-direction: row;
     }
@@ -134,38 +167,10 @@
     .main-nav-bar {
         margin-left: 2%;
         width: 20%;
-        padding: 0;
-        border: 1px solid black;
-        border-radius: 5px rgba(0, 0, 0, 0.1)
     }
 
-    body:not(:has(header)) .main-nav-bar{
+    body:not(:has(header)) .main-nav-bar {
         position: fixed;
-    }
-
-    .second-nav-bar {
-        width: 100%;
-    }
-
-    .nav-bar {
-        display: flex;
-        flex-direction: column;
-        align-items: self-start;
-    }
-
-    .nav {
-        width: 100%;
-        margin-top: 0;
-        margin-bottom: 0;
-        padding: 15px;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        text-align: center;
-        text-decoration: none;
-        color: black;
-    }
-
-    .nav:hover {
-        background-color: #f0f0f0;
     }
 
     .content {
@@ -177,7 +182,6 @@
     }
 
     .heat {
-        /* 文字居中 */
         text-align: center !important;
     }
 
@@ -190,18 +194,14 @@
     footer {
         display: none;
     }
-
 }
 
+/* 小屏幕样式 <768px */
 @media screen and (max-width: 768px) {
     header {
-        width: 100%;
         height: 20vh;
         margin: 0;
-        display: flex;
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
         background-color: rgba(136, 243, 255, 0.683);
     }
 
@@ -214,26 +214,15 @@
 
     .search {
         width: 80%;
-        height: 30px;
         margin: 0;
     }
 
     header input {
         width: 80%;
-        height: 100%;
-        border-radius: 15px;
-        border: 1px solid black;
-        background-color: #f0f0f06d;
-        text-align: left;
     }
 
     header button {
         width: 20%;
-        height: 100%;
-        border-radius: 15px;
-        border: 1px solid black;
-        background-color: #f0f0f06d;
-        text-align: center;
     }
 
     header img {
@@ -264,12 +253,12 @@
         transition: all 0.3s;
     }
 
-    header a{
+    header a {
         position: absolute;
         top: 10px;
         right: 10px;
         font-size: 2rem;
-        color: #333;
+        color: white;
         text-decoration: none;
         border: 1px solid #333;
         border-radius: 50%;
@@ -278,13 +267,11 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        color: white;
         background-color: #333333e1;
         text-align: center;
     }
 
     main {
-        width: 100%;
         margin: 0;
         padding: 0;
     }
@@ -298,34 +285,16 @@
     .main-nav-bar {
         margin-left: 0;
         width: 80%;
-        padding: 0;
-        border: 1px solid black;
-        border-radius: 5px rgba(0, 0, 0, 0.1);
         position: absolute;
         top: 5%;
     }
 
-    .second-nav-bar {
-        width: 100%;
-    }
-
     .nav-bar {
-        display: flex;
-        flex-direction: column;
-        align-items: self-start;
         z-index: 9999;
         background-color: #f0f0f0;
     }
 
     .nav {
-        width: 100%;
-        margin-top: 0;
-        margin-bottom: 0;
-        padding: 15px;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        text-align: center;
-        text-decoration: none;
-        color: black;
         z-index: 9998;
     }
 
@@ -344,7 +313,7 @@ provide('partition', partition)
 const searchsort = ref("home")
 provide('searchsort', searchsort)
 const heatPosts = ref([])
-const isMobile = ref(false)
+const isPC = ref(true)
 const navIsOpen = ref(true)
 const changeTomain = () => {
     partition.value = "主页"
@@ -357,13 +326,13 @@ const sendPartition = (p) => {
     console.log(partition.value)
 }
 const toggleNav = () => {
-    if(isMobile.value) {
+    if(!isPC.value) {
         navIsOpen.value = !navIsOpen.value
     }
 }
 onMounted(async () => {
     if(window.innerWidth < 768) {
-        isMobile.value = true
+        isPC.value = false
     }
     const posts = await getHeatPosts()
     heatPosts.value = posts
