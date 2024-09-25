@@ -225,7 +225,7 @@ main {
         width: 20%;
     }
 
-    header img {
+    header video {
         display: none;
     }
 
