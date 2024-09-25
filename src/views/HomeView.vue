@@ -1,7 +1,7 @@
 <template>
     <div id="root">
         <header>
-            <img src="../assets/wow.jpg" alt="">
+            <video autoplay="autoplay" loop="loop" muted="muted" playsinline=""><source src="https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/vedio/Background.mp4" type="video/mp4"></video>
             <span>SSE_MARKET</span>
             <div class="search">
                 <input type="search">
@@ -123,7 +123,7 @@ main {
         display: none;
     }
 
-    header img {
+    header video {
         width: 100%;
         height: 100%;
         object-fit: cover;
