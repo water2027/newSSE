@@ -26,9 +26,9 @@ npm run lint
   
 配置了jsx，可以更好的封装组件
 
-# 基本完成 
+#### 基本完成 
 * LoginView.vue 
 
-# 只写了大概 
+#### 只写了大概 
 * PostListView.vue 
 * HomeView.vue 
