@@ -25,3 +25,10 @@ npm run lint
 暂时将新的前端存在这里，目前部署在cf上，地址为 [https://tempsse.watering.top](https://tempsse.watering.top)，等开发完成后再放到服务器上。  
   
 配置了jsx，可以更好的封装组件
+
+# 基本完成 
+* LoginView.vue 
+
+# 只写了大概 
+* PostListView.vue 
+* HomeView.vue 
