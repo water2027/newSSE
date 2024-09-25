@@ -1,9 +1,9 @@
 import CryptoJS from 'crypto-js'
 const apiUrl = import.meta.env.VITE_API_BASE_URL
-const SEVEN_DAYS_IN_MS = 7 * 24 * 60 * 60 * 1000
+//后端那边是七天过期，以防万一7天减去1小时
+const SEVEN_DAYS_IN_MS = 7 * 24 * 60 * 60 * 1000 - 1000 * 60 * 60
 function setItemWithExpiry(key, value, ttl) {
   const now = new Date()
-
   const item = {
     value: value,
     expiry: now.getTime() + ttl
