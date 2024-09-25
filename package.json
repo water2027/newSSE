@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vitejs/plugin-vue-jsx": "^4.0.1",
     "crypto-js": "^4.1.1",
     "dotenv": "^16.4.5",
     "newsse": "file:",
@@ -20,6 +21,8 @@
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",
     "@vitejs/plugin-vue": "^5.0.5",
+    "@vue/babel-plugin-jsx": "^1.2.5",
+    "@vue/babel-preset-jsx": "^1.4.0",
     "@vue/cli-plugin-pwa": "~5.0.0",
     "@vue/eslint-config-prettier": "^9.0.0",
     "eslint": "^8.57.0",

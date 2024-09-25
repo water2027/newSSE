@@ -1,35 +1,26 @@
-# newSSE
-
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
+## 安装依赖
 
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### 开发环境
 
 ```sh
 npm run dev
 ```
 
-### Compile and Minify for Production
-
+### 生产环境
 ```sh
 npm run build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+### 使用 [ESLint](https://eslint.org/)
 
 ```sh
 npm run lint
 ```
+
+### 正文  
+暂时将新的前端存在这里，目前部署在cf上，地址为 [https://tempsse.watering.top](https://tempsse.watering.top)，等开发完成后再放到服务器上。  
+

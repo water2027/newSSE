@@ -14,7 +14,7 @@
             </button>
         </header>
         <main>
-            <div class="nav-bar main-nav-bar" v-if="isMobileAndNavOpen" @click="toggleNav">
+            <div class="nav-bar main-nav-bar" v-if="(!isMobile)&&navIsOpen" @click="toggleNav">
                 <router-link class="nav" to="/" @click="changeTomain">主页</router-link>
                 <router-link class="nav" to="/partitions" @send-partition="sendPartition">分区</router-link>
                 <a href="javascript:;" class="nav" @click="changeToCourse">课程专区</a>
@@ -344,7 +344,8 @@ provide('partition', partition)
 const searchsort = ref("home")
 provide('searchsort', searchsort)
 const heatPosts = ref([])
-const isMobileAndNavOpen = ref(true)
+const isMobile = ref(false)
+const navIsOpen = ref(true)
 const changeTomain = () => {
     partition.value = "主页"
 }
@@ -356,12 +357,13 @@ const sendPartition = (p) => {
     console.log(partition.value)
 }
 const toggleNav = () => {
-    console.log(route.fullPath)
-    isMobileAndNavOpen.value = !isMobileAndNavOpen.value
+    if(isMobile.value) {
+        navIsOpen.value = !navIsOpen.value
+    }
 }
 onMounted(async () => {
     if(window.innerWidth < 768) {
-        isMobileAndNavOpen.value = false
+        isMobile.value = true
     }
     const posts = await getHeatPosts()
     heatPosts.value = posts

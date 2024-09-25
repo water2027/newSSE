@@ -8,7 +8,7 @@
                 <label for="loginEmail">邮箱</label>
             </div>
             <div class="inputData">
-                <input ref="password" type="password" id="loginpwd" required>
+                <input ref="password1" type="password" id="loginpwd" required>
                 <div class="underline"></div>
                 <label for="loginpwd">密码</label>
             </div>
@@ -16,7 +16,7 @@
             <button class="LoginAndRegButton" @click="login">Login!</button>
             <div class="regButtonDiv" @click="jumpToReg"><span class="regButton">还没有账号？</span></div>
         </div>
-        <div v-else class="loginAndRegPage">
+        <div v-else class="loginAndRegPage reg">
             <div class="inputData">
                 <input ref="username" type="text" id="username" required>
                 <div class="underline"></div>
@@ -33,32 +33,39 @@
                 <label>验证码</label>
             </div>
             <div class="inputData">
-                <input ref="password" type="password" id="regpwd" required>
+                <input ref="password1" type="password" id="password1" required>
                 <div class="underline"></div>
-                <label for="regpwd">密码</label>
+                <label for="password1">密码</label>
             </div>
             <div class="inputData">
-                <input ref="inviteCode" type="text" id="inviteCode" required>
+                <input ref="password2" type="password" id="password2" required>
                 <div class="underline"></div>
-                <label for="inviteCode">邀请码</label>
+                <label for="password2">重复密码</label>
             </div>
-            <button @click="sendCode" class="LoginAndRegButton">发送验证码</button>
-            <button class="LoginAndRegButton">Register!</button>
+            <div class="inputData">
+                <input ref="CDkey" type="text" id="CDkey" required>
+                <div class="underline"></div>
+                <label for="CDkey">邀请码</label>
+            </div>
+            <button @click="getVCode" class="LoginAndRegButton">发送验证码</button>
+            <button @click="reg" class="LoginAndRegButton">Register!</button>
             <div class="regButtonDiv" @click="jumpToReg"><span class="regButton">已有账号？</span></div>
         </div>
     </div>
 </template>
 <script setup>
 import { ref, defineEmits } from 'vue'
-import { userLogin } from '@/utils/LoginAndReg';
+import { userLogin, sendCode, userRegister } from '@/utils/LoginAndReg';
 import { useRouter } from 'vue-router'
+import { showMsg } from '@/utils/msgbox'
 const emit = defineEmits(['sendLoginSuccess'])
 const router = useRouter()
 const email = ref(null)
 const username = ref(null)
-const password = ref(null)
+const password1 = ref(null)
+const password2 = ref(null)
 const code = ref(null)
-const inviteCode = ref(null)
+const CDkey = ref(null)
 const remembered = ref(null)
 const isLogin = ref(true)
 
@@ -70,16 +77,46 @@ const login = async () => {
     if (remembered.value.value) {
         localStorage.rememberMe = true;
         localStorage.email = email.value.value;
-        localStorage.password = password.value.value;
+        localStorage.password = password1.value.value;
     } else {
         localStorage.removeItem('rememberMe');
         localStorage.removeItem('email');
         localStorage.removeItem('password');
     }
-    const loginSuccess = await userLogin(email.value.value, password.value.value);
-    if (loginSuccess) {
-        emit('sendLoginSuccess', true)
-        router.push('/')
+    if(email.value.value&&password1.value.value){
+        const loginSuccess = await userLogin(email.value.value, password1.value.value);
+        if (loginSuccess) {
+            emit('sendLoginSuccess', true)
+            router.push('/')
+        }else{
+            showMsg('登录失败')
+        }
+    }else{
+        showMsg('请输入邮箱和密码')
+    }
+}
+
+const getVCode = async () => {
+    if (email.value.value) {
+        const res = await sendCode(email.value.value)
+        if (res.code !== 200) {
+            showMsg(res.msg)
+        } else {
+            showMsg('验证码已发送')
+        }
+    }else{
+        showMsg("请填写邮箱")
+    }
+}
+
+const reg = () => {
+    if (CDkey.value.value&&email.value.value&&username.value.value&&password1.value.value&&password2.value.value&&code.value.value) {
+        const res = userRegister()
+        if (res.code !== 200) {
+            showMsg(res.msg)
+        } else {
+            showMsg('注册成功')
+        }
     }
 }
 
@@ -94,7 +131,7 @@ const login = async () => {
 .pageWithLoginButton {
     width: 50%;
     margin: auto;
-    margin-top: 5%;
+    margin-top: 3%;
     padding-top: 5%;
     padding-bottom: 5%;
     display: flex;
@@ -106,31 +143,11 @@ const login = async () => {
     border-radius: 10px;
 }
 
-span::before {
-    content: '';
-    display: inline-block;
-    width: 0 !important;
-}
-
-@media screen and (max-width: 768px) {
-    .pageWithLoginButton {
-        width: 100%;
-        margin-top: 32%;
-    }
-
-    .pageWithLoginButton {
-        width: 100%;
-        height: 100%;
-        margin-bottom: 50px;
-    }
-}
-
 .loginAndRegPage {
     width: 60%;
     padding: 40px;
     display: flex;
     flex-direction: column;
-
 }
 
 .loginAndRegPage .inputData {
@@ -148,7 +165,6 @@ span::before {
     border-bottom: 2px solid #c0c0c0;
     background-color: rgba(255, 255, 255, 0.472);
 }
-
 
 .inputData input:valid~label,
 .inputData input:focus~label {
@@ -212,9 +228,32 @@ span::before {
     border-radius: 5px;
 }
 
+.LoginAndRegButton:hover {
+    background-color: #ff7e3b;
+}
+
 .regButtonDiv {
     margin-top: 20px;
     color: #eb6b26;
     cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+    .pageWithLoginButton {
+        width: 100%;
+        margin: 0;
+        margin-top: 13%;
+        
+    }
+
+    .pageWithLoginButton {
+        width: 100%;
+        height: 100%;
+        margin-bottom: 50px;
+    }
+
+    .loginAndRegPage {
+        width: 100%;
+    }
 }
 </style>
