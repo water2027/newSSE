@@ -20,6 +20,7 @@
     "register-service-worker": "^1.7.2",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3",
+    "workbox-expiration": "^7.1.0",
     "workbox-window": "^7.1.0"
   },
   "devDependencies": {
