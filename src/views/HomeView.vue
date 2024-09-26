@@ -288,7 +288,7 @@ main {
         position: absolute;
         font-size: 3rem;
         color: transparent;
-        -webkit-text-stroke: 3px rgb(235, 47, 182);
+        -webkit-text-stroke: 3px rgba(255, 255, 255, 0.95);
         top: 50%;
         left: 50%;
         transform: translate(-50%, -75%);

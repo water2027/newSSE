@@ -45,6 +45,7 @@ const tagList = ref('')
 const mdContainer = ref(null)
 
 const autoResize = (e) => {
+    e.target.style.height = 'auto';
     e.target.style.minHeight = e.target.scrollHeight + 'px';
 }
 
