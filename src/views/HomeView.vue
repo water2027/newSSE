@@ -1,53 +1,192 @@
 <template>
-    <div id="root">
-        <header>
-            <video autoplay="autoplay" loop="loop" muted="muted" playsinline="">
-                <source
-                    src="https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/vedio/Background.mp4"
-                    type="video/mp4">
-            </video>
-            <div id="title">
-                <button @click="toggleNav" class="hamburgerMenu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-                <h1>SSE_MARKET</h1>
-            </div>
+  <div id="root">
+    <header>
+      <video
+        autoplay="autoplay"
+        loop="loop"
+        muted="muted"
+        playsinline=""
+      >
+        <source
+          src="https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/vedio/Background.mp4"
+          type="video/mp4"
+        >
+      </video>
+      <div id="title">
+        <button
+          class="hamburgerMenu"
+          @click="toggleNav"
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+        <h1>SSE_MARKET</h1>
+      </div>
 
-            <div class="search">
-                <input placeholder="在当前分区搜索" type="search" ref="sinfo" @keydown.enter="search">
-                <button @click="search">搜索</button>
-            </div>
-        </header>
-        <main>
-            <div class="nav-bar main-nav-bar" v-if="isPC || navIsOpen" @click="toggleNav">
-                <router-link class="nav" to="/" @click="changeTomain">主页</router-link>
-                <router-link class="nav" to="/partitions" @send-partition="sendPartition">分区</router-link>
-                <a href="javascript:;" class="nav" @click="changeToCourse">课程专区</a>
-                <router-link class="nav" to="/post">发帖</router-link>
-                <router-link class="nav" to="/notice">通知</router-link>
-                <router-link class="nav" to="/feedback">反馈</router-link>
-                <nav class="nav-bar second-nav-bar">
-                    <router-link class="nav" to="/profile">个人信息</router-link>
-                    <router-link class="nav" to="/save">我的收藏</router-link>
-                    <router-link class="nav" to="/history">发帖历史</router-link>
-                </nav>
-                <router-link class="nav" to="/options">设置</router-link>
-            </div>
-            <div class="content" :style="contentStyle">
-                <router-view v-if="route.fullPath != '/partitions'"></router-view>
-                <router-view v-if="route.fullPath == '/partitions'" @send-partition="sendPartition"></router-view>
-            </div>
-            <div class="nav-bar heat" v-if="(!heatPostsIsHiden) && (isPC)">
-                <h2>热榜</h2>
-                <div class="nav" v-for="post in heatPosts" :key="post.PostID">
-                    <span>{{ post.Title }}</span>
-                </div>
-            </div>
-        </main>
-    </div>
+      <div class="search">
+        <input
+          ref="sinfo"
+          placeholder="在当前分区搜索"
+          type="search"
+          @keydown.enter="search"
+        >
+        <button @click="search">
+          搜索
+        </button>
+      </div>
+    </header>
+    <main>
+      <div
+        v-if="isPC || navIsOpen"
+        class="nav-bar main-nav-bar"
+        @click="toggleNav"
+      >
+        <router-link
+          class="nav"
+          to="/"
+          @click="changeTomain"
+        >
+          主页
+        </router-link>
+        <router-link
+          class="nav"
+          to="/partitions"
+          @send-partition="sendPartition"
+        >
+          分区
+        </router-link>
+        <router-link
+          to="/"
+          class="nav"
+          @click="changeToCourse"
+        >
+          课程专区
+        </router-link>
+        <router-link
+          class="nav"
+          to="/post"
+        >
+          发帖
+        </router-link>
+        <router-link
+          class="nav"
+          to="/notice"
+        >
+          通知
+        </router-link>
+        <router-link
+          class="nav"
+          to="/feedback"
+        >
+          反馈
+        </router-link>
+        <router-link
+          class="nav"
+          to="/profile"
+        >
+          个人信息
+        </router-link>
+        <router-link
+          class="nav"
+          to="/save"
+        >
+          我的收藏
+        </router-link>
+        <router-link
+          class="nav"
+          to="/history"
+        >
+          发帖历史
+        </router-link>
+        <router-link
+          class="nav"
+          to="/options"
+        >
+          设置
+        </router-link>
+      </div>
+      <div
+        class="content"
+        :style="contentStyle"
+      >
+        <router-view v-if="route.fullPath != '/partitions'" />
+        <router-view
+          v-if="route.fullPath == '/partitions'"
+          @send-partition="sendPartition"
+        />
+      </div>
+      <div
+        v-if="(!heatPostsIsHiden) && (isPC)"
+        class="nav-bar heat"
+      >
+        <h2>热榜</h2>
+        <div
+          v-for="post in heatPosts"
+          :key="post.PostID"
+          class="nav"
+        >
+          <span>{{ post.Title }}</span>
+        </div>
+      </div>
+    </main>
+  </div>
 </template>
+<script setup>
+import { computed, onMounted, provide, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router';
+import { getHeatPosts } from '@/utils/getPosts';
+const route = useRoute()
+const router = useRouter()
+const partition = ref("主页")
+provide('partition', partition)
+const searchinfo = ref('')
+provide('searchinfo', searchinfo)
+const heatPosts = ref([])
+const isPC = ref(true)
+provide('isPC', isPC)
+const heatPostsIsHiden = computed(() => {
+    return /^\/post/.test(route.fullPath)
+})
+const contentStyle = ref({
+    width: (!heatPostsIsHiden.value) && (isPC.value) ? '100%' : '45%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+})
+const navIsOpen = ref(true)
+const sinfo = ref(null)
+
+const search = () => {
+    searchinfo.value = sinfo.value.value
+}
+const changeTomain = () => {
+    partition.value = "主页"
+    searchinfo.value = ''
+
+}
+const changeToCourse = () => {
+    partition.value = "课程专区"
+}
+const sendPartition = (p) => {
+    partition.value = p
+    console.log(partition.value)
+}
+const toggleNav = () => {
+    if (!isPC.value) {
+        navIsOpen.value = !navIsOpen.value
+    }
+}
+onMounted(async () => {
+    if (window.innerWidth < 768) {
+        isPC.value = false
+        navIsOpen.value = false
+    }
+    const posts = await getHeatPosts()
+    heatPosts.value = posts
+})
+</script>
 <style scoped>
 header {
     width: 100%;
@@ -86,6 +225,7 @@ main {
     padding: 0;
     border: 1px solid black;
     border-radius: 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
 }
 
 .second-nav-bar {
@@ -331,58 +471,3 @@ main {
     }
 }
 </style>
-<script setup>
-import { computed, onMounted, provide, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router';
-import { getHeatPosts } from '@/utils/getPosts';
-const route = useRoute()
-const router = useRouter()
-const partition = ref("主页")
-provide('partition', partition)
-const searchinfo = ref('')
-provide('searchinfo', searchinfo)
-const heatPosts = ref([])
-const isPC = ref(true)
-provide('isPC', isPC)
-const heatPostsIsHiden = computed(() => {
-    return /^\/post/.test(route.fullPath)
-})
-const contentStyle = ref({
-    width: (!heatPostsIsHiden.value) && (isPC.value) ? '100%' : '45%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-})
-const navIsOpen = ref(true)
-const sinfo = ref(null)
-
-const search = () => {
-    searchinfo.value = sinfo.value.value
-}
-const changeTomain = () => {
-    partition.value = "主页"
-    searchinfo.value = ''
-}
-const changeToCourse = () => {
-    partition.value = "课程专区"
-    router.push('/')
-}
-const sendPartition = (p) => {
-    partition.value = p
-    console.log(partition.value)
-}
-const toggleNav = () => {
-    if (!isPC.value) {
-        navIsOpen.value = !navIsOpen.value
-    }
-}
-onMounted(async () => {
-    if (window.innerWidth < 768) {
-        isPC.value = false
-        navIsOpen.value = false
-    }
-    const posts = await getHeatPosts()
-    heatPosts.value = posts
-})
-</script>

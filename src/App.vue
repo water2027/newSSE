@@ -1,6 +1,9 @@
 <template>
-    <HomeViewVue v-if="isLogin" />
-    <LoginViewVue @send-login-success="sendLoginSuccess" v-else />
+  <HomeViewVue v-if="isLogin" />
+  <LoginViewVue
+    v-else
+    @send-login-success="sendLoginSuccess"
+  />
 </template>
 
 <script setup>

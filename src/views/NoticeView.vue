@@ -1,10 +1,8 @@
 <template>
-    <div>
-
-    </div>
+  <div />
 </template>
 
-<style></style>
 <script setup>
 
 </script>
+<style></style>
