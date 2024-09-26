@@ -38,15 +38,14 @@ import { showMsg } from '@/utils/msgbox';
 import { sendPost, uploadPhoto } from '@/utils/postAndComment'
 const userInfo = inject('userInfo')
 const partitions = ref(['主页','日常吐槽', '打听求助', '恋爱交友', '学习交流', '二手闲置', '求职招募', '其他'])
-const postContent = ref('主页')
+const postContent = ref('')
 const title = ref(null)
 const partition = ref(null)
 const tagList = ref('')
 const mdContainer = ref(null)
 
 const autoResize = (e) => {
-    e.target.style.height = 'auto';
-    e.target.style.height = e.target.scrollHeight + 'px';
+    e.target.style.minHeight = e.target.scrollHeight + 'px';
 }
 
 const safeHTML = (str) => {
@@ -143,6 +142,8 @@ const upload = async (event) => {
     width: 100%;
     display: flex;
     flex-direction: column;
+    margin-bottom: auto;
+    margin-top: 0;
 }
 
 .post>* {
@@ -152,7 +153,7 @@ const upload = async (event) => {
 .container {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    /* align-items: center; */
     justify-content: center;
     width: 100%;
     height: auto;
