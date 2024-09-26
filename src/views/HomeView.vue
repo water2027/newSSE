@@ -35,11 +35,11 @@
                 </nav>
                 <router-link class="nav" to="/options">设置</router-link>
             </div>
-            <div class="content">
+            <div class="content" :style="contentStyle">
                 <router-view v-if="route.fullPath != '/partitions'"></router-view>
                 <router-view v-if="route.fullPath == '/partitions'" @send-partition="sendPartition"></router-view>
             </div>
-            <div class="nav-bar heat">
+            <div class="nav-bar heat" v-if="(!heatPostsIsHiden) && (isPC)">
                 <h2>热榜</h2>
                 <div class="nav" v-for="post in heatPosts" :key="post.PostID">
                     <span>{{ post.Title }}</span>
@@ -79,6 +79,7 @@ header button {
 
 main {
     width: 100%;
+    padding: 0;
 }
 
 .main-nav-bar {
@@ -219,7 +220,7 @@ main {
         background-color: rgba(136, 243, 255, 0.683);
     }
 
-    #title{
+    #title {
         position: absolute;
         top: 0;
         display: flex;
@@ -236,7 +237,7 @@ main {
         font-size: 2rem;
         position: absolute;
         left: 50%;
-        transform: translateX(-50%); 
+        transform: translateX(-50%);
     }
 
     .search {
@@ -299,7 +300,7 @@ main {
     }
 
     main {
-        margin: 0;
+        margin: 0 !important;
         padding: 0;
     }
 
@@ -331,10 +332,11 @@ main {
 }
 </style>
 <script setup>
-import { onMounted, provide, ref } from 'vue'
-import { useRoute } from 'vue-router';
+import { computed, onMounted, provide, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router';
 import { getHeatPosts } from '@/utils/getPosts';
 const route = useRoute()
+const router = useRouter()
 const partition = ref("主页")
 provide('partition', partition)
 const searchinfo = ref('')
@@ -342,8 +344,19 @@ provide('searchinfo', searchinfo)
 const heatPosts = ref([])
 const isPC = ref(true)
 provide('isPC', isPC)
+const heatPostsIsHiden = computed(() => {
+    return /^\/post/.test(route.fullPath)
+})
+const contentStyle = ref({
+    width: (!heatPostsIsHiden.value) && (isPC.value) ? '100%' : '45%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+})
 const navIsOpen = ref(true)
 const sinfo = ref(null)
+
 const search = () => {
     searchinfo.value = sinfo.value.value
 }
@@ -353,6 +366,7 @@ const changeTomain = () => {
 }
 const changeToCourse = () => {
     partition.value = "课程专区"
+    router.push('/')
 }
 const sendPartition = (p) => {
     partition.value = p

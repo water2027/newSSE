@@ -83,15 +83,15 @@ const login = async () => {
         localStorage.removeItem('email');
         localStorage.removeItem('password');
     }
-    if(email.value.value&&password1.value.value){
+    if (email.value.value && password1.value.value) {
         const loginSuccess = await userLogin(email.value.value, password1.value.value);
         if (loginSuccess) {
             emit('sendLoginSuccess', true)
             router.push('/')
-        }else{
+        } else {
             showMsg('登录失败')
         }
-    }else{
+    } else {
         showMsg('请输入邮箱和密码')
     }
 }
@@ -104,13 +104,13 @@ const getVCode = async () => {
         } else {
             showMsg('验证码已发送')
         }
-    }else{
+    } else {
         showMsg("请填写邮箱")
     }
 }
 
 const reg = () => {
-    if (CDkey.value.value&&email.value.value&&username.value.value&&password1.value.value&&password2.value.value&&code.value.value) {
+    if (CDkey.value.value && email.value.value && username.value.value && password1.value.value && password2.value.value && code.value.value) {
         const res = userRegister()
         if (res.code !== 200) {
             showMsg(res.msg)
@@ -243,7 +243,7 @@ const reg = () => {
         width: 100%;
         margin: 0;
         margin-top: 13%;
-        
+
     }
 
     .pageWithLoginButton {

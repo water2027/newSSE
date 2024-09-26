@@ -13,9 +13,9 @@ const routes = [
         component: () => import('@/views/PartitionListView.vue')
     },
     {
-        path: '/postedit',
-        name: 'Postedit',
-        component: () => import('@/views/PostEditView.vue')
+        path: '/post',
+        name: 'Post',
+        component: () => import('@/views/PostView.vue')
     },
     {
         path: '/postdetail/:id',

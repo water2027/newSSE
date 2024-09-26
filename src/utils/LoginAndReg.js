@@ -30,12 +30,12 @@ function getItemWithExpiry(key) {
 }
 
 /**
- * 
- * @param {string} data 待加密数据 
+ *
+ * @param {string} data 待加密数据
  * @param {string} key 密钥，默认为'16bit secret key'
- * @returns 
+ * @returns
  */
-const setPassword = (data, key='16bit secret key') => {
+const setPassword = (data, key = '16bit secret key') => {
   const cypherKey = CryptoJS.enc.Utf8.parse(key)
   CryptoJS.pad.ZeroPadding.pad(cypherKey, 4)
   const iv = CryptoJS.SHA256(key).toString()
@@ -70,7 +70,7 @@ async function userLogin(useremail, userpassword) {
   }
 }
 
-async function sendCode(email){
+async function sendCode(email) {
   const response = await fetch(`${apiUrl}/auth/validateEmail`, {
     method: 'POST',
     headers: {
@@ -78,21 +78,21 @@ async function sendCode(email){
     },
     body: JSON.stringify({
       email: email,
-      mode:1
+      mode: 1
     })
   })
   const data = await response.json()
   return data
 }
 
-async function userRegister(CDKey,email,name,password1,password2,valiCode) {
+async function userRegister(CDKey, email, name, password1, password2, valiCode) {
   const response = await fetch(`${apiUrl}/auth/register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      CDKey:CDKey,
+      CDKey: CDKey,
       email: email,
       name: name,
       password: setPassword(password1, '16bit secret key'),
