@@ -188,6 +188,10 @@ onMounted(async () => {
 })
 </script>
 <style scoped>
+p{
+    text-indent: 2rem;
+}
+
 header {
     width: 100%;
     display: flex;

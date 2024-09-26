@@ -1,133 +1,69 @@
 <template>
-  <div class="pageWithLoginButton">
-    <span class="title">{{ isLogin ? 'Login' : 'Register' }}</span>
-    <div
-      v-if="isLogin"
-      class="loginAndRegPage"
-    >
-      <div class="inputData">
-        <input
-          id="loginEmail"
-          ref="email"
-          type="email"
-          required
-        >
-        <div class="underline" />
-        <label for="loginEmail">邮箱</label>
-      </div>
-      <div class="inputData">
-        <input
-          id="loginpwd"
-          ref="password1"
-          type="password"
-          required
-        >
-        <div class="underline" />
-        <label for="loginpwd">密码</label>
-      </div>
-      <div>
-        <input
-          ref="remembered"
-          type="checkbox"
-          class="checkbox"
-        >记住我
-      </div>
-      <button
-        class="LoginAndRegButton"
-        @click="login"
-      >
-        Login!
-      </button>
-      <div
-        class="regButtonDiv"
-        @click="jumpToReg"
-      >
-        <span class="regButton">还没有账号？</span>
-      </div>
+    <div class="pageWithLoginButton">
+        <span class="title">{{ isLogin ? 'Login' : 'Register' }}</span>
+        <div v-if="isLogin" class="loginAndRegPage">
+            <div class="inputData">
+                <input id="loginEmail" ref="email" type="email" required>
+                <div class="underline" ></div>
+                <label for="loginEmail">邮箱</label>
+            </div>
+            <div class="inputData">
+                <input id="loginpwd" ref="password1" type="password" required>
+                <div class="underline"></div>  
+                <label for="loginpwd">密码</label>
+            </div>
+            <div>
+                <input ref="remembered" type="checkbox" class="checkbox">记住我
+            </div>
+            <button class="LoginAndRegButton" @click="login">
+                Login!
+            </button>
+            <div class="regButtonDiv" @click="jumpToReg">
+                <span class="regButton">还没有账号？</span>
+            </div>
+        </div>
+        <div v-else class="loginAndRegPage reg">
+            <div class="inputData">
+                <input id="username" ref="username" type="text" required>
+                <div class="underline" ></div>
+                <label for="username">用户名</label>
+            </div>
+            <div class="inputData">
+                <input id="regEmail" ref="email" type="email" required>
+                <div class="underline" ></div>
+                <label for="regEmail">邮箱</label>
+            </div>
+            <div class="inputData">
+                <input ref="code" type="text" required>
+                <div class="underline" ></div>
+                <label>验证码</label>
+            </div>
+            <div class="inputData">
+                <input id="password1" ref="password1" type="password" required>
+                <div class="underline" ></div>
+                <label for="password1">密码</label>
+            </div>
+            <div class="inputData">
+                <input id="password2" ref="password2" type="password" required>
+                <div class="underline" ></div>
+                <label for="password2">重复密码</label>
+            </div>
+            <div class="inputData">
+                <input id="CDkey" ref="CDkey" type="text" required>
+                <div class="underline" ></div>
+                <label for="CDkey">邀请码</label>
+            </div>
+            <button class="LoginAndRegButton" @click="getVCode">
+                发送验证码
+            </button>
+            <button class="LoginAndRegButton" @click="reg">
+                Register!
+            </button>
+            <div class="regButtonDiv" @click="jumpToReg">
+                <span class="regButton">已有账号？</span>
+            </div>
+        </div>
     </div>
-    <div
-      v-else
-      class="loginAndRegPage reg"
-    >
-      <div class="inputData">
-        <input
-          id="username"
-          ref="username"
-          type="text"
-          required
-        >
-        <div class="underline" />
-        <label for="username">用户名</label>
-      </div>
-      <div class="inputData">
-        <input
-          id="regEmail"
-          ref="email"
-          type="email"
-          required
-        >
-        <div class="underline" />
-        <label for="regEmail">邮箱</label>
-      </div>
-      <div class="inputData">
-        <input
-          ref="code"
-          type="text"
-          required
-        >
-        <div class="underline" />
-        <label>验证码</label>
-      </div>
-      <div class="inputData">
-        <input
-          id="password1"
-          ref="password1"
-          type="password"
-          required
-        >
-        <div class="underline" />
-        <label for="password1">密码</label>
-      </div>
-      <div class="inputData">
-        <input
-          id="password2"
-          ref="password2"
-          type="password"
-          required
-        >
-        <div class="underline" />
-        <label for="password2">重复密码</label>
-      </div>
-      <div class="inputData">
-        <input
-          id="CDkey"
-          ref="CDkey"
-          type="text"
-          required
-        >
-        <div class="underline" />
-        <label for="CDkey">邀请码</label>
-      </div>
-      <button
-        class="LoginAndRegButton"
-        @click="getVCode"
-      >
-        发送验证码
-      </button>
-      <button
-        class="LoginAndRegButton"
-        @click="reg"
-      >
-        Register!
-      </button>
-      <div
-        class="regButtonDiv"
-        @click="jumpToReg"
-      >
-        <span class="regButton">已有账号？</span>
-      </div>
-    </div>
-  </div>
 </template>
 <script setup>
 import { ref, defineEmits } from 'vue'
