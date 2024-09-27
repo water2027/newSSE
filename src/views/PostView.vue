@@ -44,9 +44,9 @@ const partition = ref(null)
 const tagList = ref('')
 const mdContainer = ref(null)
 
-const autoResize = (e) => {
-    e.target.style.height = 'auto';
-    e.target.style.minHeight = e.target.scrollHeight + 'px';
+const autoResize = (event) => {
+    event.target.style.height = '100px';
+    event.target.style.height = event.target.scrollHeight + 'px';
 }
 
 const safeHTML = (str) => {
@@ -170,5 +170,9 @@ const upload = async (event) => {
     padding: 10px;
     resize: none;
     overflow-y: hidden;
+}
+
+.container textarea{
+    height: 100px;
 }
 </style>
