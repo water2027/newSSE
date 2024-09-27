@@ -1,3 +1,5 @@
+<!-- eslint-disable vue/html-indent -->
+<!-- eslint-disable vue/max-attributes-per-line -->
 <template>
     <HomeViewVue v-if="isLogin" />
     <LoginViewVue v-else @send-login-success="sendLoginSuccess" />
