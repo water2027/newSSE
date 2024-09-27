@@ -14,6 +14,25 @@
 					:src="post.UserAvatar"
 				/>
 				<span>{{ post.UserName }}</span>
+				<div class="userButtons">
+					<button
+						@click.stop="
+							handleSave(
+								post.IsSaved,
+								post.PostID,
+								userInfo.phone
+							)
+						"
+					>
+						{{ post.IsSaved ? '取消' : '收藏' }}
+					</button>
+					<button
+					v-if="post.UserTelephone === userInfo.phone"
+						@click.stop="handleDelete(post.PostID)"
+					>
+						删除
+					</button>
+				</div>
 			</div>
 			<h2>{{ post.Title }}</h2>
 			<p>{{ post.Content.slice(0, 100) }}</p>
@@ -45,14 +64,27 @@
 </template>
 <script setup>
 import { getPosts, getPostsNum } from '@/utils/getPosts';
-import { ref, onMounted, inject, watch, provide } from 'vue';
+import { savePost, delPost } from '@/utils/saveAndDel';
+import { showMsg } from '@/utils/msgbox';
+import { ref, onMounted, inject, watch, provide, watchEffect } from 'vue';
 const userInfo = inject('userInfo');
 const partition = inject('partition');
 const searchinfo = inject('searchinfo');
 const posts = ref([]);
-provide('posts', posts);
 const totalNum = ref(0);
 const curPage = ref(0);
+const emit = defineEmits(['sendPosts']);
+
+const handleSave = async (isSaved, postID, userTelephone) => {
+	console.log(isSaved, postID, userTelephone);
+	await savePost(isSaved, postID, userTelephone);
+	showMsg(isSaved ? '取消成功？' : '收藏成功？');
+};
+
+const handleDelete = async (postID) => {
+	await delPost(postID);
+	showMsg('删除成功？');
+};
 
 const lastPage = async () => {
 	if (curPage.value > 0) {
@@ -106,6 +138,7 @@ onMounted(async () => {
 });
 
 watch(partition, async (newVal) => {
+	curPage.value = 0;
 	const id = await getPostsNum(
 		newVal,
 		'home',
@@ -124,6 +157,7 @@ watch(partition, async (newVal) => {
 	totalNum.value = id;
 });
 watch(searchinfo, async (newVal) => {
+	curPage.value = 0;
 	const id = await getPostsNum(
 		partition.value,
 		'home',
@@ -203,29 +237,6 @@ watch(searchinfo, async (newVal) => {
 	}
 }
 
-.buttons {
-	display: flex;
-	justify-content: center;
-	margin: 10px 0;
-	justify-content: space-around;
-}
-
-p::after {
-	content: '...';
-}
-
-.postInfo {
-	display: flex;
-	justify-content: space-around;
-	margin-top: 10px;
-}
-
-a {
-	text-decoration: none;
-	color: black;
-	display: block;
-}
-
 @media screen and (max-width: 768px) {
 	.root {
 		width: 100%;
@@ -277,5 +288,39 @@ a {
 		color: #fff;
 		border-radius: 50%;
 	}
+}
+
+.userButtons {
+	margin-top: 0;
+	margin-left: auto;
+	display: flex;
+	flex-direction: row;
+}
+.userButtons button {
+	margin: 0;
+	margin-left: 10px;
+	pointer-events: auto;
+}
+.buttons {
+	display: flex;
+	justify-content: center;
+	margin: 10px 0;
+	justify-content: space-around;
+}
+
+p::after {
+	content: '...';
+}
+
+.postInfo {
+	display: flex;
+	justify-content: space-around;
+	margin-top: 10px;
+}
+
+a {
+	text-decoration: none;
+	color: black;
+	display: block;
 }
 </style>

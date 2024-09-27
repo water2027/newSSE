@@ -13,7 +13,7 @@
 		</div>
 		<div class="inputData post">
 			<h3>正文</h3>
-			<div class="editorButton">
+			<!-- <div class="editorButton">
 				<button @click="editComment('标题')">
                     标题
                 </button>
@@ -56,7 +56,11 @@
 					ref="mdContainer"
 					v-html="safeHTML(postContent)"
 				></div>
-			</div>
+			</div> -->
+			<MarkdownEditor
+				v-model="postContent"
+				@send="submitPost"
+			/>
 		</div>
 		<div class="inputData">
 			<h3>图片上传</h3>
@@ -88,14 +92,12 @@
 </template>
 
 <script setup>
-import { marked } from 'marked';
-import hljs from 'highlight.js';
-import 'highlight.js/styles/github.css';
-import DOMPurify from 'dompurify';
 import { ref, inject } from 'vue';
 import { showMsg } from '@/utils/msgbox';
+import { sendPost } from '@/utils/postAndComment';
 
-import { sendPost, uploadPhoto } from '@/utils/postAndComment';
+import MarkdownEditor from '@/components/MarkdownEditor.vue';
+
 const userInfo = inject('userInfo');
 const partitions = ref([
 	'主页',
@@ -111,47 +113,6 @@ const postContent = ref('');
 const title = ref(null);
 const partition = ref(null);
 const tagList = ref('');
-const mdContainer = ref(null);
-
-const autoResize = (event) => {
-	event.target.style.height = '100px';
-	event.target.style.height = event.target.scrollHeight + 'px';
-};
-
-const safeHTML = (str) => {
-	if (!str) {
-		return;
-	}
-	marked.setOptions({
-		renderer: new marked.Renderer(),
-		pedantic: false,
-		gfm: true,
-		breaks: true,
-		sanitize: false,
-		smartLists: true,
-		smartypants: false,
-		xhtml: false,
-	});
-	const target = marked(str);
-	const finalHTML = DOMPurify.sanitize(target);
-	setTimeout(() => {
-		highlightcode();
-		const childElements = mdContainer.value.querySelectorAll('*');
-		childElements.forEach((child) => {
-			child.style.whiteSpace = 'pre-wrap';
-			child.style.wordBreak = 'break-all';
-			child.style.overflowWrap = 'break-word';
-		});
-	}, 0);
-	return finalHTML;
-};
-
-const highlightcode = () => {
-	const blocks = mdContainer.value.querySelectorAll('pre code'); // 使用 refs 获取元素
-	blocks.forEach((block) => {
-		hljs.highlightElement(block); // 高亮每个代码块
-	});
-};
 
 const submitPost = async () => {
 	const postTitle = title.value.value;
@@ -173,61 +134,9 @@ const submitPost = async () => {
 	showMsg(res.msg);
 };
 
-const upload = async (event) => {
-	const file = event.target.files[0];
-	if (file) {
-		const data = await uploadPhoto(file);
-		console.log(data);
-		showMsg(data.message);
-		// postContent.value += `![${file.name}](${data.fileURL})`;
-		postContent.value += `<img src="${data.fileURL}" alt="${file.name}" />`;
-	} else {
-		console.error('No file selected');
-	}
-};
-
-const editComment = (type) => {
-	switch (type) {
-		case '标题':
-			postContent.value += '### 标题';
-			break;
-		case '粗体':
-			postContent.value += '**粗体**';
-			break;
-		case '斜体':
-			postContent.value += '*斜体*';
-			break;
-		case '删除线':
-			postContent.value += '~~删除线~~';
-			break;
-		case '引用':
-			postContent.value += '> 引用';
-			break;
-		case '无序列表':
-			postContent.value += '- 无序列表';
-			break;
-		case '有序列表':
-			postContent.value += '1. 有序列表';
-			break;
-		case '表格':
-			postContent.value +=
-				'| 表头1 | 表头2 |\n| --- | --- |\n| 内容1 | 内容2 |';
-			break;
-		case '分割线':
-			postContent.value += '---';
-			break;
-		case '代码块':
-			postContent.value += '```language\n代码块\n```';
-			break;
-		default:
-			break;
-	}
-};
 </script>
 
 <style scoped>
-@import '../assets/hl.css';
-
 .root {
 	display: flex;
 	flex-direction: column;
@@ -239,8 +148,7 @@ const editComment = (type) => {
 }
 
 .title {
-	margin-top: 100px !important;
-	margin-bottom: auto;
+	margin-top: 100px;
 	top: 0;
 }
 
@@ -250,6 +158,7 @@ const editComment = (type) => {
 	align-items: center;
 	justify-content: center;
 	width: 100%;
+	height: auto;
 	padding: 10px;
 	border-radius: 5px;
 }
@@ -289,6 +198,23 @@ const editComment = (type) => {
 
 .container textarea {
 	height: 100px;
+}
+
+option {
+	font-size: 1.2rem;
+}
+select {
+	width: 25%;
+	height: 30px;
+	border-radius: 5px;
+}
+
+.title input{
+	width: 25%;
+	height: 30px;
+	border-radius: 5px;
+	padding: 5px;
+	border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 @media screen and (max-width: 768px) {

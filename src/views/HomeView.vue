@@ -11,7 +11,7 @@
 				<source
 					src="https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/vedio/Background.mp4"
 					type="video/mp4"
-				>
+				/>
 			</video>
 			<div id="title">
 				<button
@@ -31,10 +31,8 @@
 					placeholder="在当前分区搜索"
 					type="search"
 					@keydown.enter="search"
-				>
-				<button @click="search">
-                    搜索
-                </button>
+				/>
+				<button @click="search">搜索</button>
 			</div>
 		</header>
 		<main>
@@ -111,24 +109,25 @@
 				class="content"
 				:style="contentStyle"
 			>
-				<router-view v-if="route.fullPath != '/partitions'" />
 				<router-view
 					v-if="route.fullPath == '/partitions'"
 					@send-partition="sendPartition"
 				/>
+				<router-view v-else />
 			</div>
 			<div
 				v-if="!heatPostsIsHiden && isPC"
 				class="nav-bar heat"
 			>
 				<h2>热榜</h2>
-				<div
+				<router-link
 					v-for="post in heatPosts"
 					:key="post.PostID"
 					class="nav"
+					:to="'/postdetail/' + post.PostID"
 				>
 					<span>{{ post.Title }}</span>
-				</div>
+				</router-link>
 			</div>
 		</main>
 	</div>
@@ -147,6 +146,9 @@ provide('searchinfo', searchinfo);
 const heatPosts = ref([]);
 const isPC = ref(true);
 provide('isPC', isPC);
+const posts = ref([]);
+provide('posts', posts);
+
 const heatPostsIsHiden = computed(() => {
 	return /^\/post/.test(route.fullPath);
 });
