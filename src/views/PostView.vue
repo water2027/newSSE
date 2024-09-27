@@ -1,40 +1,91 @@
+<!-- eslint-disable vue/no-v-html -->
+<!-- eslint-disable vue/html-self-closing -->
+<!-- eslint-disable vue/html-indent -->
 <template>
     <div class="root">
         <div class="inputData title">
             <h3>标题</h3>
-            <input ref="title" type="text" placeholder="请输入标题" />
+            // eslint-disable-next-line vue/html-self-closing
+            <input 
+            ref="title" 
+            type="text" 
+            placeholder="请输入标题" 
+            />
         </div>
         <div class="inputData post">
             <h3>正文</h3>
             <div class="editorButton">
-                <button @click="editComment('标题')">标题</button>
-                <button @click="editComment('粗体')">粗体</button>
-                <button @click="editComment('斜体')">斜体</button>
-                <button @click="editComment('删除线')">删除线</button>
-                <button @click="editComment('引用')">引用</button>
-                <button @click="editComment('无序列表')">无序列表</button>
-                <button @click="editComment('有序列表')">有序列表</button>
-                <button @click="editComment('表格')">表格</button>
-                <button @click="editComment('分割线')">分割线</button>
-                <button @click="editComment('代码块')">代码块</button>
+                <button @click="editComment('标题')">
+                    标题
+                </button>
+                <button @click="editComment('粗体')">
+                    粗体
+                </button>
+                <button @click="editComment('斜体')">
+                    斜体
+                </button>
+                <button @click="editComment('删除线')">
+                    删除线
+                </button>
+                <button @click="editComment('引用')">
+                    引用
+                </button>
+                <button @click="editComment('无序列表')">
+                    无序列表
+                </button>
+                <button @click="editComment('有序列表')">
+                    有序列表
+                </button>
+                <button @click="editComment('表格')">
+                    表格
+                </button>
+                <button @click="editComment('分割线')">
+                    分割线
+                </button>
+                <button @click="editComment('代码块')">
+                    代码块
+                </button>
             </div>
             <div class="container">
-                <textarea @input="autoResize" v-model="postContent" placeholder="请输入正文"></textarea>
-                <div id="content" ref="mdContainer" v-html="safeHTML(postContent)"></div>
+                <textarea 
+                v-model="postContent" 
+                placeholder="请输入正文"
+                @input="autoResize" 
+                ></textarea>
+                <div 
+                id="content" 
+                ref="mdContainer" 
+                v-html="safeHTML(postContent)"
+                ></div>
             </div>
         </div>
         <div class="inputData">
             <h3>图片上传</h3>
-            <input class="fileInput" type="file" @input="upload" accept="image/*" />
+            <input 
+            class="fileInput" 
+            type="file" 
+            accept="image/*" 
+            @input="upload" 
+            />
         </div>
         <div class="inputData">
             <h3>分区</h3>
             <select ref="partition">
-                <option v-for="p, index in partitions" :key="index" :value="p">{{ p }}</option>
+                <option 
+                v-for="p, index in partitions" 
+                :key="index" 
+                :value="p"
+                >
+                {{ p }}
+            </option>
             </select>
         </div>
         <div class="inputData">
-            <button @click="submitPost">发布</button>
+            <button 
+            @click="submitPost"
+            >
+            发布
+        </button>
         </div>
     </div>
 </template>
@@ -49,7 +100,7 @@ import { showMsg } from '@/utils/msgbox';
 
 import { sendPost, uploadPhoto } from '@/utils/postAndComment'
 const userInfo = inject('userInfo')
-const partitions = ref(['主页','日常吐槽', '打听求助', '恋爱交友', '学习交流', '二手闲置', '求职招募', '其他'])
+const partitions = ref(['主页', '日常吐槽', '打听求助', '恋爱交友', '学习交流', '二手闲置', '求职招募', '其他'])
 const postContent = ref('')
 const title = ref(null)
 const partition = ref(null)
@@ -223,7 +274,7 @@ const editComment = (type) => {
     overflow-y: hidden;
 }
 
-.container textarea{
+.container textarea {
     height: 100px;
 }
 </style>
