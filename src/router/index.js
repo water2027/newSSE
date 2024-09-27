@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import PostListView from '@/views/PostListView.vue'
+import { getItemWithExpiry } from '@/utils/LoginAndReg'
 
 const routes = [
     {
@@ -61,10 +62,11 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-    if (to.name !== 'Login' && !localStorage.getItem('token')) {
-        next({ name: 'Login' })
-    } else {
+    const token = getItemWithExpiry('token')
+    if (token) {
         next()
+    } else {
+        next('/')
     }
 })
 

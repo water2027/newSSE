@@ -134,10 +134,9 @@
 </template>
 <script setup>
 import { computed, onMounted, provide, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { getHeatPosts } from '@/utils/getPosts';
 const route = useRoute()
-const router = useRouter()
 const partition = ref("主页")
 provide('partition', partition)
 const searchinfo = ref('')

@@ -11,7 +11,7 @@ if ('serviceWorker' in navigator) {
 }
 
 const app = createApp(App)
-
+console.log(App)
 app.use(router)
 
 app.mount('#app')

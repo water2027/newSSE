@@ -61,7 +61,7 @@ async function userLogin(useremail, userpassword) {
     })
   })
   const data = await response.json()
-  if (data.data.token) {
+  if (data.data?.token) {
     // localStorage.setItem('token',data.data.token)
     setItemWithExpiry('token', data.data.token, SEVEN_DAYS_IN_MS)
     return true

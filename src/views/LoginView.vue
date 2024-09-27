@@ -66,7 +66,7 @@
     </div>
 </template>
 <script setup>
-import { ref, defineEmits } from 'vue'
+import { ref } from 'vue'
 import { userLogin, sendCode, userRegister } from '@/utils/LoginAndReg';
 import { useRouter } from 'vue-router'
 import { showMsg } from '@/utils/msgbox'
@@ -86,7 +86,8 @@ const jumpToReg = () => {
 }
 
 const login = async () => {
-    if (remembered.value.value) {
+    if (remembered.value.checked&&email.value.value&&password1.value.value) {
+        console.log(remembered.value.value, email.value.value, password1.value.value)
         localStorage.rememberMe = true;
         localStorage.email = email.value.value;
         localStorage.password = password1.value.value;
@@ -99,7 +100,6 @@ const login = async () => {
         const loginSuccess = await userLogin(email.value.value, password1.value.value);
         if (loginSuccess) {
             emit('sendLoginSuccess', true)
-            router.push('/')
         } else {
             showMsg('登录失败')
         }

@@ -28,14 +28,15 @@ const sendLoginSuccess = async (success) => {
 onMounted(async () => {
     if (localStorage.rememberMe) {
         const token = getItemWithExpiry('token');
-        if (token) {
+        const tempInfo = localStorage.getItem('userInfo');
+        if (token&&tempInfo) {
             isLogin.value = true;
-            userInfo.value = JSON.parse(localStorage.userInfo)
+            userInfo.value = JSON.parse(tempInfo);
         }
         else {
             const email = localStorage.email;
             const password = localStorage.password;
-            const loginSuccess = userLogin(email, password);
+            const loginSuccess = await userLogin(email, password);
             if (loginSuccess) {
                 const info = await getInfo()
                 userInfo.value = info
