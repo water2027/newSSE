@@ -63,15 +63,6 @@
 			/>
 		</div>
 		<div class="inputData">
-			<h3>图片上传</h3>
-			<input
-				class="fileInput"
-				type="file"
-				accept="image/*"
-				@input="upload"
-			/>
-		</div>
-		<div class="inputData">
 			<h3>分区</h3>
 			<select ref="partition">
 				<option
@@ -82,11 +73,6 @@
 					{{ p }}
 				</option>
 			</select>
-		</div>
-		<div class="inputData">
-			<button @click="submitPost">
-                发布
-            </button>
 		</div>
 	</div>
 </template>
@@ -165,7 +151,7 @@ const submitPost = async () => {
 
 .post {
 	height: auto;
-	min-height: 60%;
+	min-height: 80%;
 	width: 100%;
 	display: flex;
 	flex-direction: column;

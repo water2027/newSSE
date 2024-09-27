@@ -86,18 +86,20 @@
 				>
 					个人信息
 				</router-link>
-				<router-link
+				<a
 					class="nav"
-					to="/save"
+					href="javascript:;"
+					@click="changeToSave"
 				>
 					我的收藏
-				</router-link>
-				<router-link
+				</a>
+				<a
 					class="nav"
-					to="/history"
+					href="javascript:;"
+					@click="changeToHistory"
 				>
 					发帖历史
-				</router-link>
+				</a>
 				<router-link
 					class="nav"
 					to="/options"
@@ -143,6 +145,8 @@ const partition = ref('主页');
 provide('partition', partition);
 const searchinfo = ref('');
 provide('searchinfo', searchinfo);
+const searchsort = ref('home');
+provide('searchsort', searchsort);
 const heatPosts = ref([]);
 const isPC = ref(true);
 provide('isPC', isPC);
@@ -168,9 +172,18 @@ const search = () => {
 const changeTomain = () => {
 	partition.value = '主页';
 	searchinfo.value = '';
+	searchsort.value = 'home';
 };
 const changeToCourse = () => {
 	partition.value = '课程专区';
+	searchinfo.value = '';
+	searchsort.value = 'home';
+};
+const changeToSave = () => {
+	searchsort.value = 'save';
+};
+const changeToHistory = () => {
+	searchsort.value = 'history';
 };
 const sendPartition = (p) => {
 	partition.value = p;

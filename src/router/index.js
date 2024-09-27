@@ -40,11 +40,6 @@ const routes = [
         component: () => import('@/views/ProfileView.vue')
     },
     {
-        path: '/save',
-        name: 'Save',
-        component: () => import('@/views/SaveView.vue')
-    },
-    {
         path: '/history',
         name: 'History',
         component: () => import('@/views/HistoryView.vue')

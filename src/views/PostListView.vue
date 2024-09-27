@@ -70,6 +70,7 @@ import { ref, onMounted, inject, watch, provide, watchEffect } from 'vue';
 const userInfo = inject('userInfo');
 const partition = inject('partition');
 const searchinfo = inject('searchinfo');
+const searchsort = inject('searchsort');
 const posts = ref([]);
 const totalNum = ref(0);
 const curPage = ref(0);
@@ -160,7 +161,7 @@ watch(searchinfo, async (newVal) => {
 	curPage.value = 0;
 	const id = await getPostsNum(
 		partition.value,
-		'home',
+		searchsort.value,
 		newVal,
 		userInfo.value.phone
 	);
@@ -168,8 +169,27 @@ watch(searchinfo, async (newVal) => {
 		5,
 		curPage.value,
 		partition.value,
-		'home',
+		searchsort.value,
 		newVal,
+		userInfo.value.phone
+	);
+	posts.value = arr;
+	totalNum.value = id;
+});
+watch(searchsort, async (newVal) => {
+	curPage.value = 0;
+	const id = await getPostsNum(
+		partition.value,
+		newVal,
+		searchinfo.value,
+		userInfo.value.phone
+	);
+	const arr = await getPosts(
+		5,
+		curPage.value,
+		partition.value,
+		newVal,
+		searchinfo.value,
 		userInfo.value.phone
 	);
 	posts.value = arr;
