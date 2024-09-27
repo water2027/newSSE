@@ -226,7 +226,8 @@ const editComment = (type) => {
 }
 
 .title {
-    margin-top: 10%;
+    margin-top: 100px !important;
+    margin-bottom: auto;
     top: 0;
 }
 
@@ -275,5 +276,18 @@ const editComment = (type) => {
 
 .container textarea {
     height: 100px;
+}
+
+@media screen and (max-width: 768px) {
+    .title {
+        margin-top: 10px;
+    }
+
+    .editorButton {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        width: 100%;
+    }
+    
 }
 </style>
