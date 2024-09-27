@@ -135,8 +135,10 @@
 <script setup>
 import { computed, onMounted, provide, ref } from 'vue'
 import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { getHeatPosts } from '@/utils/getPosts';
 const route = useRoute()
+const router = useRouter()
 const partition = ref("主页")
 provide('partition', partition)
 const searchinfo = ref('')
@@ -178,6 +180,7 @@ const toggleNav = () => {
     }
 }
 onMounted(async () => {
+    router.push('/')
     if (window.innerWidth < 768) {
         isPC.value = false
         navIsOpen.value = false
@@ -185,6 +188,8 @@ onMounted(async () => {
     const posts = await getHeatPosts()
     heatPosts.value = posts
 })
+
+
 </script>
 <style scoped>
 p{

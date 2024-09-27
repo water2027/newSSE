@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/html-indent -->
 <template>
     <div class="pageWithLoginButton">
         <span class="title">{{ isLogin ? 'Login' : 'Register' }}</span>
@@ -68,10 +69,8 @@
 <script setup>
 import { ref } from 'vue'
 import { userLogin, sendCode, userRegister } from '@/utils/LoginAndReg';
-import { useRouter } from 'vue-router'
 import { showMsg } from '@/utils/msgbox'
 const emit = defineEmits(['sendLoginSuccess'])
-const router = useRouter()
 const email = ref(null)
 const username = ref(null)
 const password1 = ref(null)
