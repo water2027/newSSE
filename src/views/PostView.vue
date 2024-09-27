@@ -5,7 +5,6 @@
     <div class="root">
         <div class="inputData title">
             <h3>标题</h3>
-            // eslint-disable-next-line vue/html-self-closing
             <input 
             ref="title" 
             type="text" 
