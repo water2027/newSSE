@@ -212,14 +212,6 @@ header input {
     padding: 1%;
 }
 
-header button {
-    height: 100%;
-    border-radius: 15px;
-    border: 1px solid black;
-    background-color: #f0f0f06d;
-    text-align: center;
-}
-
 main {
     width: 100%;
     padding: 0;
@@ -393,10 +385,6 @@ main {
         width: 80%;
     }
 
-    header button {
-        width: 20%;
-    }
-
     header video {
         display: none;
     }
@@ -472,6 +460,18 @@ main {
 
     .heat {
         display: none;
+    }
+
+    .search{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: row;
+      margin-top: 15%;
+    }
+
+    .search button{
+      height: auto;
     }
 }
 </style>

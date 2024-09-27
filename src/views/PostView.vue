@@ -6,6 +6,18 @@
         </div>
         <div class="inputData post">
             <h3>正文</h3>
+            <div class="editorButton">
+                <button @click="editComment('标题')">标题</button>
+                <button @click="editComment('粗体')">粗体</button>
+                <button @click="editComment('斜体')">斜体</button>
+                <button @click="editComment('删除线')">删除线</button>
+                <button @click="editComment('引用')">引用</button>
+                <button @click="editComment('无序列表')">无序列表</button>
+                <button @click="editComment('有序列表')">有序列表</button>
+                <button @click="editComment('表格')">表格</button>
+                <button @click="editComment('分割线')">分割线</button>
+                <button @click="editComment('代码块')">代码块</button>
+            </div>
             <div class="container">
                 <textarea @input="autoResize" v-model="postContent" placeholder="请输入正文"></textarea>
                 <div id="content" ref="mdContainer" v-html="safeHTML(postContent)"></div>
@@ -13,7 +25,7 @@
         </div>
         <div class="inputData">
             <h3>图片上传</h3>
-            <input type="file" @input="upload" accept="image/*" />
+            <input class="fileInput" type="file" @input="upload" accept="image/*" />
         </div>
         <div class="inputData">
             <h3>分区</h3>
@@ -72,6 +84,8 @@ const safeHTML = (str) => {
         const childElements = mdContainer.value.querySelectorAll('*')
         childElements.forEach((child) => {
             child.style.whiteSpace = 'pre-wrap'
+            child.style.wordBreak = 'break-all'
+            child.style.overflowWrap = 'break-word'
         })
     }, 0)
     return finalHTML;
@@ -103,9 +117,47 @@ const upload = async (event) => {
         const data = await uploadPhoto(file);
         console.log(data)
         showMsg(data.message);
-        postContent.value += `![${file.name}](${data.fileURL})`;
+        // postContent.value += `![${file.name}](${data.fileURL})`;
+        postContent.value += `<img src="${data.fileURL}" alt="${file.name}" />`;
     } else {
         console.error('No file selected');
+    }
+}
+
+const editComment = (type) => {
+    switch (type) {
+        case '标题':
+            postContent.value += '### 标题'
+            break
+        case '粗体':
+            postContent.value += '**粗体**'
+            break
+        case '斜体':
+            postContent.value += '*斜体*'
+            break
+        case '删除线':
+            postContent.value += '~~删除线~~'
+            break
+        case '引用':
+            postContent.value += '> 引用'
+            break
+        case '无序列表':
+            postContent.value += '- 无序列表'
+            break
+        case '有序列表':
+            postContent.value += '1. 有序列表'
+            break
+        case '表格':
+            postContent.value += '| 表头1 | 表头2 |\n| --- | --- |\n| 内容1 | 内容2 |'
+            break
+        case '分割线':
+            postContent.value += '---'
+            break
+        case '代码块':
+            postContent.value += '```language\n代码块\n```'
+            break
+        default:
+            break
     }
 }
 </script>
@@ -118,12 +170,13 @@ const upload = async (event) => {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    min-height: 100%;
     width: 100%;
+    height: auto;
 }
 
 .title {
-    margin-top: 2%;
+    margin-top: 10%;
     top: 0;
 }
 

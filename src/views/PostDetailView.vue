@@ -45,7 +45,19 @@
                 <button @click="commentButtonIsShow = !commentButtonIsShow">{{ commentButtonIsShow ? '隐藏' : '发评论'
                     }}</button>
                 <button @click="send" v-if="commentButtonIsShow">发送</button>
-                <input type="file" v-if="commentButtonIsShow" @input="upload">
+                <input class="fileInput" type="file" v-if="commentButtonIsShow" @input="upload">
+            </div>
+            <div class="editorButton" v-if="commentButtonIsShow">
+                <button @click="editComment('标题')">标题</button>
+                <button @click="editComment('粗体')">粗体</button>
+                <button @click="editComment('斜体')">斜体</button>
+                <button @click="editComment('删除线')">删除线</button>
+                <button @click="editComment('引用')">引用</button>
+                <button @click="editComment('无序列表')">无序列表</button>
+                <button @click="editComment('有序列表')">有序列表</button>
+                <button @click="editComment('表格')">表格</button>
+                <button @click="editComment('分割线')">分割线</button>
+                <button @click="editComment('代码块')">代码块</button>
             </div>
             <div id="mdEditorContainer" v-if="commentButtonIsShow">
                 <textarea @input="autoResize" v-model="commentContent" placeholder="请输入正文"></textarea>
@@ -154,6 +166,43 @@ const autoResize = (event) => {
     event.target.style.height = event.target.scrollHeight + 'px';
 }
 
+const editComment = (type) => {
+    switch (type) {
+        case '标题':
+            commentContent.value += '### 标题'
+            break
+        case '粗体':
+            commentContent.value += '**粗体**'
+            break
+        case '斜体':
+            commentContent.value += '*斜体*'
+            break
+        case '删除线':
+            commentContent.value += '~~删除线~~'
+            break
+        case '引用':
+            commentContent.value += '> 引用'
+            break
+        case '无序列表':
+            commentContent.value += '- 无序列表'
+            break
+        case '有序列表':
+            commentContent.value += '1. 有序列表'
+            break
+        case '表格':
+            commentContent.value += '| 表头1 | 表头2 |\n| --- | --- |\n| 内容1 | 内容2 |'
+            break
+        case '分割线':
+            commentContent.value += '---'
+            break
+        case '代码块':
+            commentContent.value += '```language\n代码块\n```'
+            break
+        default:
+            break
+    }
+}
+
 const send = async () => {
     const res = await sendComment(commentContent.value, Number(route.params.id), userInfo.value.phone)
     if (res) {
@@ -169,7 +218,8 @@ const upload = async (event) => {
     if (file) {
         const data = await uploadPhoto(file);
         showMsg(data.message);
-        commentContent.value += `![${file.name}](${data.fileURL})`;
+        // commentContent.value += `![${file.name}](${data.fileURL})`;
+        commentContent.value += `<img src="${data.fileURL}" alt="${file.name}" />`;
     } else {
         console.error('No file selected');
     }
@@ -250,6 +300,12 @@ onMounted(async () => {
     margin-top: 10px;
 }
 
+.editorButton {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+}
+
 @media screen and (min-width: 768px) {
     .user {
         --userImage: 50px;
@@ -320,6 +376,30 @@ onMounted(async () => {
         color: #fff;
         border-radius: 50%;
     }
+
+    .commentButton {
+        width: 100%;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+    }
+
+    .commentButton> :nth-child(1) {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .commentButton> :nth-child(2) {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .commentButton> :nth-child(3) {
+        grid-column: 1 / span 2;
+        grid-row: 2;
+    }
+
+    
 }
 
 .postInfo {

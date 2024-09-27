@@ -162,21 +162,6 @@ watch(searchinfo, async (newVal) => {
     justify-content: space-around;
 }
 
-.buttons button {
-    width: 30px;
-    height: 30px;
-    border: 1px solid #333;
-    border-radius: 50%;
-    background-color: #333;
-    color: white;
-    font-size: 1.5rem;
-    cursor: pointer;
-}
-
-.buttons button:hover {
-    background-color: #333333e1;
-}
-
 p::after {
     content: "...";
 
