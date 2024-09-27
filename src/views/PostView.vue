@@ -158,17 +158,15 @@ const upload = async (event) => {
     justify-content: center;
     width: 100%;
     height: auto;
-    min-height: 100%;
 }
 
 .container textarea,
 .container div {
     width: 100%;
-    height: auto;
     min-height: 100%;
     border-radius: 5px;
     padding: 10px;
-    resize: none;
+    height: auto;
     overflow-y: hidden;
 }
 

@@ -61,4 +61,25 @@ async function sendPost(content, partition, photos, tagList, title, userTelephon
   return data
 }
 
-export { uploadPhoto, sendPost }
+async function sendComment(content, postID, userTelephone) {
+  const token = getItemWithExpiry('token')
+  if (!token) {
+    return
+  }
+  const response = await fetch(`${apiUrl}/auth/postPcomment`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      content: content,
+      postID: postID,
+      userTelephone: userTelephone
+    })
+  })
+  const data = await response.json()
+  return data
+}
+
+export { uploadPhoto, sendPost, sendComment }
