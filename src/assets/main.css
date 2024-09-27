@@ -39,9 +39,6 @@ button{
 button:hover{
     background-color: #333;
     color: #f1f1f1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 textarea{
