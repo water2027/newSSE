@@ -60,7 +60,10 @@
 						</g>
 					</svg>
 				</span>
-				<span>
+				<span
+					:class="post.IsLiked ? 'like' : ''"
+					@click="like(post.IsLiked, post.PostID, userInfo.phone)"
+				>
 					{{ post.Like }}
 					<svg
 						viewBox="0 0 16 16"
@@ -208,6 +211,7 @@ import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
 import DOMPurify from 'dompurify';
 import { showMsg } from '@/utils/msgbox';
+import { likePost } from '@/utils/saveAndDel';
 
 import MarkdownEditor from '@/components/MarkdownEditor.vue';
 const route = useRoute();
@@ -345,7 +349,14 @@ const sendPCommentFunc = async (PcommentID) => {
 		Number(route.params.id),
 		userInfo.value.phone
 	);
-	showMsg(res.msg);
+	if (res) {
+		getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
+			(res) => {
+				comments.value = res;
+				showMsg('评论成功');
+			}
+		);
+	}
 };
 
 const copyCode = async (event) => {
@@ -364,6 +375,18 @@ const handleCommentBox = (id) => {
 	commentBoxVIsibility.value[id] = !commentBoxVIsibility.value[id];
 };
 
+const like = async (isLiked, postID, userTelephone) => {
+	const res = await likePost(isLiked, postID, userTelephone);
+	post.value.IsLiked = !post.value.IsLiked;
+	if (post.value.IsLiked) {
+		post.value.Like++;
+		showMsg('点赞成功');
+	} else {
+		post.value.Like--;
+		showMsg('取消点赞');
+	}
+};
+
 onMounted(async () => {
 	try {
 		const curPost = await getPostByID(
@@ -376,11 +399,12 @@ onMounted(async () => {
 		);
 		post.value = curPost;
 		comments.value = curComments;
-		curComments.forEach((comment) => {
-			commentVisibility.value[comment.PcommentID] = false;
-			commentBoxVIsibility.value[comment.PcommentID] = false;
-			pCommentContent.value[comment.PcommentID] = '';
-		});
+		curComments &&
+			curComments.forEach((comment) => {
+				commentVisibility.value[comment.PcommentID] = false;
+				commentBoxVIsibility.value[comment.PcommentID] = false;
+				pCommentContent.value[comment.PcommentID] = '';
+			});
 	} catch (e) {
 		showMsg(`获取帖子失败: ${e}`);
 	}

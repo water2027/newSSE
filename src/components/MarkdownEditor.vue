@@ -71,34 +71,34 @@ const handleINput = (event) => {
 };
 
 const safeHTML = computed(() => {
-  if (!props.modelValue) {
-    return '';
-  }
-  marked.setOptions({
-    renderer: new marked.Renderer(),
-    pedantic: false,
-    gfm: true,
-    breaks: true,
-    sanitize: false,
-    smartLists: true,
-    smartypants: false,
-    xhtml: false,
-  });
-  const target = marked(props.modelValue);
-  const finalHTML = DOMPurify.sanitize(target);
-  
-  // 使用 nextTick 来确保 DOM 更新后再执行
-  nextTick(() => {
-    highlightcode();
-    const childElements = mdContainer.value.querySelectorAll('*');
-    childElements.forEach((child) => {
-      child.style.whiteSpace = 'pre-wrap';
-      child.style.wordBreak = 'break-all';
-      child.style.overflowWrap = 'break-word';
-    });
-  });
-  
-  return finalHTML;
+	if (!props.modelValue) {
+		return '';
+	}
+	marked.setOptions({
+		renderer: new marked.Renderer(),
+		pedantic: false,
+		gfm: true,
+		breaks: true,
+		sanitize: false,
+		smartLists: true,
+		smartypants: false,
+		xhtml: false,
+	});
+	const target = marked(props.modelValue);
+	const finalHTML = DOMPurify.sanitize(target);
+
+	// 使用 nextTick 来确保 DOM 更新后再执行
+	nextTick(() => {
+		highlightcode();
+		const childElements = mdContainer.value.querySelectorAll('*');
+		childElements.forEach((child) => {
+			child.style.whiteSpace = 'pre-wrap';
+			child.style.wordBreak = 'break-all';
+			child.style.overflowWrap = 'break-word';
+		});
+	});
+
+	return finalHTML;
 });
 
 const highlightcode = () => {

@@ -1,5 +1,27 @@
 import { getItemWithExpiry } from "./LoginAndReg";
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
+async function likePost(isLiked,postID,userTelephone) {
+    const token = getItemWithExpiry('token')
+    if(!token){
+        return null
+    }
+    const response = await fetch(`${apiUrl}/auth/updateLike`,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            isLiked:isLiked,
+            postID:postID,
+            userTelephone:userTelephone
+        })
+    })
+    const data = await response.text();
+    return data
+}
+
 async function savePost(isSaved,postID,userTelephone){
     const token = getItemWithExpiry('token')
     if(!token){
@@ -17,7 +39,7 @@ async function savePost(isSaved,postID,userTelephone){
             userTelephone:userTelephone
         })
     });
-    const data = await response.json();
+    const data = await response.text();
     return data
 }
 
@@ -36,8 +58,8 @@ async function delPost(postID){
             postID:postID
         })
     });
-    const data = await response.json();
+    const data = await response.text();
     return data
 }
 
-export { savePost, delPost }
+export { savePost, delPost, likePost }
