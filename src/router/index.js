@@ -50,6 +50,8 @@ router.beforeEach((to, from, next) => {
 	const token = getItemWithExpiry('token');
 	if (to.name !== '/' && !token) {
 		next('/');
+	}else{
+		next();
 	}
 });
 
