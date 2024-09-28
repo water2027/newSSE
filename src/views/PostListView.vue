@@ -151,23 +151,32 @@ const handleSave = async (isSaved, postID, userTelephone) => {
 };
 
 const like = async (isLiked, postID, userTelephone) => {
-	const res = await likePost(isLiked, postID, userTelephone);
+	await likePost(isLiked, postID, userTelephone);
 	posts.value.forEach((element) => {
 		if (element.PostID === postID) {
 			element.IsLiked = !element.IsLiked;
 			if (element.IsLiked) {
 				element.Like++;
+				showMsg('点赞成功？');
 			} else {
 				element.Like--;
+				showMsg('取消成功？');
 			}
 		}
 	});
-	showMsg(res);
 };
 
 const handleDelete = async (postID) => {
 	await delPost(postID);
-	posts.value = posts.value.filter((element) => element.PostID !== postID);
+	const res = await getPosts(
+		5,
+		curPage.value,
+		partition.value,
+		searchsort.value,
+		searchinfo.value,
+		userInfo.value.phone
+	);
+	posts.value = res;
 	showMsg('删除成功？');
 };
 
@@ -178,7 +187,7 @@ const lastPage = async () => {
 			5,
 			curPage.value,
 			partition.value,
-			'home',
+			searchsort.value,
 			searchinfo.value,
 			userInfo.value.phone
 		);
@@ -193,7 +202,7 @@ const nextPage = async () => {
 			5,
 			curPage.value,
 			partition.value,
-			'home',
+			searchsort.value,
 			searchinfo.value,
 			userInfo.value.phone
 		);

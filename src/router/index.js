@@ -40,11 +40,6 @@ const routes = [
         component: () => import('@/views/ProfileView.vue')
     },
     {
-        path: '/history',
-        name: 'History',
-        component: () => import('@/views/HistoryView.vue')
-    },
-    {
         path: '/options',
         name: 'Options',
         component: () => import('@/views/OptionsView.vue')

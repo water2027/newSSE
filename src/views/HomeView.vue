@@ -51,7 +51,6 @@
 				<router-link
 					class="nav"
 					to="/partitions"
-					@send-partition="sendPartition"
 				>
 					分区
 				</router-link>
@@ -86,20 +85,20 @@
 				>
 					个人信息
 				</router-link>
-				<a
+				<router-link
 					class="nav"
-					href="javascript:;"
+					to="/"
 					@click="changeToSave"
 				>
 					我的收藏
-				</a>
-				<a
+				</router-link>
+				<router-link
 					class="nav"
-					href="javascript:;"
+					to="/"
 					@click="changeToHistory"
 				>
 					发帖历史
-				</a>
+				</router-link>
 				<router-link
 					class="nav"
 					to="/options"
