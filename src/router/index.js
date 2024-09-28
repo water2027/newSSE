@@ -35,11 +35,6 @@ const routes = [
         component: () => import('@/views/FeedbackView.vue')
     },
     {
-        path: '/profile',
-        name: 'Profile',
-        component: () => import('@/views/ProfileView.vue')
-    },
-    {
         path: '/options',
         name: 'Options',
         component: () => import('@/views/OptionsView.vue')
