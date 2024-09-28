@@ -30,16 +30,20 @@ async function getInfo(){
  * @returns {Promise}
  */
 async function getAllInfo(userTelephone){
+    const token = getItemWithExpiry('token')
+    if(!token){
+        return null
+    }
     const response = await fetch(`${apiUrl}/auth/getInfo`,{
-        method:'GET',
+        method:'POST',
         headers:{
             'Content-Type':'application/json',
-            'Authorization':`Bearer ${localStorage.getItem('token')}`
+            'Authorization':`Bearer ${token}`
         },
         body:JSON.stringify({phone:userTelephone})
     })
     const data = await response.json()
-    return data.data.user 
+    return data
 }
 
 export { getInfo, getAllInfo }

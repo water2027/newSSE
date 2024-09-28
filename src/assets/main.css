@@ -54,6 +54,12 @@ textarea{
 
 }
 
+.like{
+    color: #ff0000;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
 @media screen and (max-width: 768px){
     .fileInput,
     button{

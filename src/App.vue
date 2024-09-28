@@ -1,13 +1,12 @@
+<!-- eslint-disable vue/html-indent -->
+<!-- eslint-disable vue/max-attributes-per-line -->
 <template>
-  <HomeViewVue v-if="isLogin" />
-  <LoginViewVue
-    v-else
-    @send-login-success="sendLoginSuccess"
-  />
+    <HomeViewVue v-if="isLogin" />
+    <LoginViewVue v-else @send-login-success="sendLoginSuccess" />
 </template>
 
 <script setup>
-import { onMounted, ref, provide } from 'vue';
+import { onMounted, ref, provide, onUnmounted } from 'vue';
 import HomeViewVue from './views/HomeView.vue';
 import { userLogin, getItemWithExpiry } from './utils/LoginAndReg';
 import LoginViewVue from './views/LoginView.vue';
@@ -17,7 +16,7 @@ const userInfo = ref({})
 provide('userInfo', userInfo)
 const isLogin = ref(false);
 const sendLoginSuccess = async (success) => {
-    if(!success) return;
+    if (!success) return;
     const info = await getInfo()
     userInfo.value = info
     if (localStorage.rememberMe) {
@@ -25,17 +24,26 @@ const sendLoginSuccess = async (success) => {
     }
     isLogin.value = success;
 }
+
+const handleBeforeUnload = () => {
+    //如果localStorage.rememberMe不存在，删除token
+    if (!localStorage.rememberMe) {
+        localStorage.removeItem('token');
+    }
+};
+
 onMounted(async () => {
     if (localStorage.rememberMe) {
         const token = getItemWithExpiry('token');
-        if (token) {
+        const tempInfo = localStorage.getItem('userInfo');
+        if (token && tempInfo) {
             isLogin.value = true;
-            userInfo.value = JSON.parse(localStorage.userInfo)
+            userInfo.value = JSON.parse(tempInfo);
         }
         else {
             const email = localStorage.email;
             const password = localStorage.password;
-            const loginSuccess = userLogin(email, password);
+            const loginSuccess = await userLogin(email, password);
             if (loginSuccess) {
                 const info = await getInfo()
                 userInfo.value = info
@@ -44,6 +52,11 @@ onMounted(async () => {
             }
         }
     }
+    window.addEventListener('beforeunload', handleBeforeUnload);
+});
+
+onUnmounted(() => {
+    window.removeEventListener('beforeunload', handleBeforeUnload);
 });
 </script>
 
