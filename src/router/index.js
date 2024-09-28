@@ -47,12 +47,12 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-	const token = getItemWithExpiry('token');
-	if (to.name !== '/' && !token) {
-		next('/');
-	}else{
-		next();
-	}
+    const token = getItemWithExpiry('token');
+    if (to.path !== '/' && !token) {
+        next('/');
+    } else {
+        next();
+    }
 });
 
 export default router;
