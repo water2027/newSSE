@@ -12,7 +12,7 @@
 				<img
 					v-if="post.UserAvatar"
 					:src="post.UserAvatar"
-				/>
+				>
 				<span>{{ post.UserName }}</span>
 				<div class="userButtons">
 					<button
@@ -45,7 +45,7 @@
 					v-for="img in post.Photos.split('|')"
 					:key="img"
 					:src="img"
-				/>
+				>
 			</div>
 			<span>{{ post.PostTime.replace('T', ' ') }}</span>
 			<div class="postInfo">
@@ -121,7 +121,9 @@
 			<button @click="lastPage">
 				{{ '<' }}
 			</button>
-			<button @click="nextPage">></button>
+			<button @click="nextPage">
+				>
+			</button>
 		</div>
 	</div>
 </template>

@@ -11,7 +11,7 @@
 				<source
 					src="https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/vedio/Background.mp4"
 					type="video/mp4"
-				/>
+				>
 			</video>
 			<div id="title">
 				<button
@@ -31,8 +31,10 @@
 					placeholder="在当前分区搜索"
 					type="search"
 					@keydown.enter="search"
-				/>
-				<button @click="search">搜索</button>
+				>
+				<button @click="search">
+					搜索
+				</button>
 			</div>
 		</header>
 		<main>
