@@ -1,0 +1,45 @@
+{
+  "name": "newsse",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "vite build",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
+    "dev": "vite",
+    "format": "prettier --write src/",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@vitejs/plugin-vue-jsx": "^4.0.1",
+    "crypto-js": "^4.1.1",
+    "dompurify": "^3.1.6",
+    "dotenv": "^16.4.5",
+    "highlight.js": "^11.10.0",
+    "marked": "^14.1.2",
+    "newsse": "file:",
+    "register-service-worker": "^1.7.2",
+    "vue": "^3.4.29",
+    "vue-router": "^4.3.3",
+    "workbox-cacheable-response": "^7.1.0",
+    "workbox-expiration": "^7.1.0",
+    "workbox-window": "^7.1.0"
+  },
+  "devDependencies": {
+    "@rushstack/eslint-patch": "^1.8.0",
+    "@types/dompurify": "^3.0.5",
+    "@vitejs/plugin-vue": "^5.0.5",
+    "@vue/babel-plugin-jsx": "^1.2.5",
+    "@vue/babel-preset-jsx": "^1.4.0",
+    "@vue/eslint-config-prettier": "^9.0.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-jsx-a11y": "^6.10.0",
+    "eslint-plugin-vue": "^9.23.0",
+    "prettier": "^3.2.5",
+    "vite": "^5.3.1",
+    "vite-plugin-pwa": "^0.20.5",
+    "workbox-precaching": "^7.1.0",
+    "workbox-routing": "^7.1.0",
+    "workbox-strategies": "^7.1.0"
+  },
+  "type": "module"
+}
