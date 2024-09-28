@@ -343,12 +343,35 @@ const sendCommentFunc = async () => {
 };
 
 const sendPCommentFunc = async (PcommentID) => {
-	const res = await sendPComment(
-		pCommentContent.value[PcommentID],
-		PcommentID,
-		Number(route.params.id),
-		userInfo.value.phone
+	const res = await sendPComment({
+		content: pCommentContent.value[PcommentID],
+		pcommentID: PcommentID,
+		postID: Number(route.params.id),
+		userTelephone: userInfo.value.phone,
+	});
+	if (res) {
+		getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
+			(res) => {
+				comments.value = res;
+				showMsg('评论成功');
+			}
+		);
+	}
+};
+
+//TODO: 评论回复评论
+const sendSubCommentFunc = async (ccommentID) => {
+	const target = comments.value.find(
+		(comment) => comment.CcommentID === ccommentID
 	);
+	const res = await sendPComment({
+		ccommentID: ccommentID,
+		content: pCommentContent.value[ccommentID],
+		pcommentID: target.PcommentID,
+		postID: Number(route.params.id),
+		userTargetName: target.author,
+		userTelephone: userInfo.value.phone,
+	});
 	if (res) {
 		getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
 			(res) => {

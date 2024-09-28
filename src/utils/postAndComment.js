@@ -89,26 +89,43 @@ async function sendComment(content, postID, userTelephone) {
 	return data;
 }
 
-async function sendPComment(content,pcommentID,postID,userTelephone) {
-    const token = getItemWithExpiry('token');
-    if (!token) {
-        return;
-    }
-    const response = await fetch(`${apiUrl}/auth/postCcomment`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-            content: content,
-            pcommentID: pcommentID,
-            postID: postID,
-            userTelephone: userTelephone,
-        }),
-    });
-    const data = await response.json();
-    return data
+// async function sendPComment(content,pcommentID,postID,userTelephone) {
+//     const token = getItemWithExpiry('token');
+//     if (!token) {
+//         return;
+//     }
+//     const response = await fetch(`${apiUrl}/auth/postCcomment`, {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//             'Authorization': `Bearer ${token}`,
+//         },
+//         body: JSON.stringify({
+//             content: content,
+//             pcommentID: pcommentID,
+//             postID: postID,
+//             userTelephone: userTelephone,
+//         }),
+//     });
+//     const data = await response.json();
+//     return data
+// }
+
+async function sendPComment(object) {
+	const token = getItemWithExpiry('token');
+	if (!token) {
+		return;
+	}
+	const response = await fetch(`${apiUrl}/auth/postCcomment`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		},
+		body: JSON.stringify(object),
+	});
+	const data = await response.json();
+	return data;
 }
 
 export { uploadPhoto, sendPost, sendComment, sendPComment };
