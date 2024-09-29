@@ -79,8 +79,8 @@
 
 <script setup>
 import { ref, inject } from 'vue';
-import { showMsg } from '@/utils/msgbox';
-import { sendPost } from '@/utils/postAndComment';
+import { showMsg } from '@/components/msgbox';
+import { sendPost } from '@/api/postAndComment';
 
 import MarkdownEditor from '@/components/MarkdownEditor.vue';
 

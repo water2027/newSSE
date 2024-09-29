@@ -1,23 +1,6 @@
 /* eslint-disable vue/multi-word-component-names */
 import { createApp, render } from "vue";
 
-// const messageBox = {
-//     props:{
-//         msg:{
-//             type:String,
-//             required:true
-//         }
-//     },
-//     render(ctx){
-//         const {$props} = ctx;
-//         return (
-//         <div id="msgbox-root">
-//             <p>{$props.msg}</p>
-//         </div>
-//         )
-//     }
-// }
-
 const messageBox = {
     props: {
         msg: {

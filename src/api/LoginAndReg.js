@@ -105,4 +105,27 @@ async function userRegister(CDKey, email, name, password1, password2, valiCode) 
     return data
 }
 
-export { userLogin, getItemWithExpiry, sendCode, userRegister }
+async function updatePassword(email,password1, password2, valiCode) {
+    const token = getItemWithExpiry('token')
+    if (!token) {
+        //没有token，就要有验证码
+    }else{
+        //有token，就直接修改密码
+        const response = await fetch(`${apiUrl}/auth/modifyPassword`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                email: email,
+                password: setPassword(password1, '16bit secret key'),
+                password2: setPassword(password2, '16bit secret key'),
+            })
+        })
+        const data = await response.json()
+        return data
+    }
+}
+
+export { userLogin, getItemWithExpiry, sendCode, userRegister, updatePassword }

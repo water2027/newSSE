@@ -2,6 +2,19 @@
 <template>
 	<div class="root">
 		<h2>当前分区：{{ partition }}</h2>
+		<select
+			v-if="partition === '课程专区'"
+			id="teacher"
+			v-model="tag"
+		>
+			<option
+				v-for="teacher in teachers"
+				:key="teacher.TagID"
+				:value="teacher.Name"
+			>
+				{{ teacher.Name }}
+			</option>
+		</select>
 		<router-link
 			v-for="post in posts"
 			:key="post.PostID"
@@ -12,7 +25,7 @@
 				<img
 					v-if="post.UserAvatar"
 					:src="post.UserAvatar"
-				>
+				/>
 				<span>{{ post.UserName }}</span>
 				<div class="userButtons">
 					<button
@@ -42,12 +55,12 @@
 			>
 				<!-- 图片路径由|分割 -->
 				<img
-					v-for="img in post.Photos.split('|')"
+					v-for="img in strHandler('img',post.Photos)"
 					:key="img"
 					:src="img"
-				>
+				/>
 			</div>
-			<span>{{ post.PostTime.replace('T', ' ') }}</span>
+			<span>{{ strHandler('time',post.PostTime) }}</span>
 			<div class="postInfo">
 				<span>
 					{{ post.Browse }}
@@ -121,16 +134,16 @@
 			<button @click="lastPage">
 				{{ '<' }}
 			</button>
-			<button @click="nextPage">
-				>
-			</button>
+			<button @click="nextPage">></button>
 		</div>
 	</div>
 </template>
 <script setup>
-import { getPosts, getPostsNum } from '@/utils/getPosts';
-import { savePost, delPost, likePost } from '@/utils/saveAndDel';
-import { showMsg } from '@/utils/msgbox';
+import { getPosts, getPostsNum } from '@/api/getPosts';
+import { savePost, delPost, likePost } from '@/api/saveAndDel';
+import { showMsg } from '@/components/msgbox';
+import { getItemWithExpiry } from '@/api/LoginAndReg';
+import { strHandler } from '@/utils/strHandler';
 import { ref, onMounted, inject, watch } from 'vue';
 
 const userInfo = inject('userInfo');
@@ -141,6 +154,9 @@ const posts = ref([]);
 const totalNum = ref(0);
 const curPage = ref(0);
 const emit = defineEmits(['sendPosts']);
+
+const teachers = ref([]);
+const tag = ref('');
 
 const handleSave = async (isSaved, postID, userTelephone) => {
 	await savePost(isSaved, postID, userTelephone);
@@ -170,14 +186,22 @@ const like = async (isLiked, postID, userTelephone) => {
 
 const handleDelete = async (postID) => {
 	await delPost(postID);
-	const res = await getPosts(
-		5,
-		curPage.value,
-		partition.value,
-		searchsort.value,
-		searchinfo.value,
-		userInfo.value.phone
-	);
+	const id = await getPostsNum({
+		partition: partition.value,
+		searchsort: searchsort.value,
+		searchinfo: searchinfo.value,
+		userTelephone: userInfo.value.phone,
+		tag: tag.value,
+	});
+	const res = await getPosts({
+		limit: 5,
+		offset: curPage.value,
+		partition: partition.value,
+		searchsort: searchsort.value,
+		searchinfo: searchinfo.value,
+		userTelephone: userInfo.value.phone,
+		tag: tag.value,
+	});
 	posts.value = res;
 	showMsg('删除成功？');
 };
@@ -185,14 +209,15 @@ const handleDelete = async (postID) => {
 const lastPage = async () => {
 	if (curPage.value > 0) {
 		curPage.value -= 5;
-		const arr = await getPosts(
-			5,
-			curPage.value,
-			partition.value,
-			searchsort.value,
-			searchinfo.value,
-			userInfo.value.phone
-		);
+		const arr = await getPosts({
+			limit: 5,
+			offset: curPage.value,
+			partition: partition.value,
+			searchsort: searchsort.value,
+			searchinfo: searchinfo.value,
+			userTelephone: userInfo.value.phone,
+			tag: tag.value,
+		});
 		posts.value = arr;
 	}
 };
@@ -200,93 +225,155 @@ const lastPage = async () => {
 const nextPage = async () => {
 	if (curPage.value < totalNum.value - 5) {
 		curPage.value += 5;
-		const arr = await getPosts(
-			5,
-			curPage.value,
-			partition.value,
-			searchsort.value,
-			searchinfo.value,
-			userInfo.value.phone
-		);
+		const arr = await getPosts({
+			limit: 5,
+			offset: curPage.value,
+			partition: partition.value,
+			searchsort: searchsort.value,
+			searchinfo: searchinfo.value,
+			userTelephone: userInfo.value.phone,
+			tag: tag.value,
+		});
 		posts.value = arr;
 	}
 };
 
 onMounted(async () => {
 	if (userInfo && userInfo.value && curPage.value >= 0) {
-		const id = await getPostsNum(
-			partition.value,
-			'home',
-			searchinfo.value,
-			userInfo.value.phone
-		);
-		const arr = await getPosts(
-			5,
-			curPage.value,
-			partition.value,
-			'home',
-			searchinfo.value,
-			userInfo.value.phone
-		);
+		const id = await getPostsNum({
+			partition: partition.value,
+			searchsort: searchsort.value,
+			searchinfo: searchinfo.value,
+			userTelephone: userInfo.value.phone,
+			tag: tag.value,
+		});
+		const arr = await getPosts({
+			limit: 5,
+			offset: curPage.value,
+			partition: partition.value,
+			searchsort: searchsort.value,
+			searchinfo: searchinfo.value,
+			userTelephone: userInfo.value.phone,
+			tag: tag.value,
+		});
 		posts.value = arr;
 		totalNum.value = id;
+	}
+	if (partition.value === '课程专区') {
+		const apiUrl = import.meta.env.VITE_API_BASE_URL;
+		const token = getItemWithExpiry('token');
+		if (token) {
+			const res = await fetch(`${apiUrl}/auth/getTags?type=course`, {
+				method: 'GET',
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+			const data = await res.json();
+			teachers.value = data.data.tags;
+		} else {
+			showMsg('获取失败');
+		}
 	}
 });
 
 watch(partition, async (newVal) => {
 	curPage.value = 0;
-	const id = await getPostsNum(
-		newVal,
-		'home',
-		searchinfo.value,
-		userInfo.value.phone
-	);
-	const arr = await getPosts(
-		5,
-		curPage.value,
-		newVal,
-		'home',
-		searchinfo.value,
-		userInfo.value.phone
-	);
+	const id = await getPostsNum({
+		partition: newVal,
+		searchsort: searchsort.value,
+		searchinfo: searchinfo.value,
+		userTelephone: userInfo.value.phone,
+		tag: tag.value,
+	});
+	const arr = await getPosts({
+		limit: 5,
+		offset: curPage.value,
+		partition: newVal,
+		searchsort: searchsort.value,
+		searchinfo: searchinfo.value,
+		userTelephone: userInfo.value.phone,
+		tag: tag.value,
+	});
 	posts.value = arr;
 	totalNum.value = id;
+	if (newVal === '课程专区') {
+		const apiUrl = import.meta.env.VITE_API_BASE_URL;
+		const token = getItemWithExpiry('token');
+		if (token) {
+			const res = await fetch(`${apiUrl}/auth/getTags?type=course`, {
+				method: 'GET',
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+			const data = await res.json();
+			teachers.value = data.data.tags;
+		} else {
+			showMsg('获取失败');
+		}
+	}
 });
 watch(searchinfo, async (newVal) => {
 	curPage.value = 0;
-	const id = await getPostsNum(
-		partition.value,
-		searchsort.value,
-		newVal,
-		userInfo.value.phone
-	);
-	const arr = await getPosts(
-		5,
-		curPage.value,
-		partition.value,
-		searchsort.value,
-		newVal,
-		userInfo.value.phone
-	);
+	const id = await getPostsNum({
+		partition: partition.value,
+		searchsort: searchsort.value,
+		searchinfo: newVal,
+		userTelephone: userInfo.value.phone,
+		tag: tag.value,
+	});
+	const arr = await getPosts({
+		limit: 5,
+		offset: curPage.value,
+		partition: partition.value,
+		searchsort: searchsort.value,
+		searchinfo: newVal,
+		userTelephone: userInfo.value.phone,
+		tag: tag.value,
+	});
 	posts.value = arr;
 	totalNum.value = id;
 });
 watch(searchsort, async (newVal) => {
 	curPage.value = 0;
-	const id = await getPostsNum(
-		partition.value,
-		newVal,
-		searchinfo.value,
-		userInfo.value.phone
-	);
-	const arr = await getPosts(
-		5,
-		curPage.value,
-		partition.value,
-		newVal,
-		searchinfo.value,
-		userInfo.value.phone
-	);
+	const id = await getPostsNum({
+		partition: partition.value,
+		searchsort: newVal,
+		searchinfo: searchinfo.value,
+		userTelephone: userInfo.value.phone,
+		tag: tag.value,
+	});
+	const arr = await getPosts({
+		limit: 5,
+		offset: curPage.value,
+		partition: partition.value,
+		searchsort: newVal,
+		searchinfo: searchinfo.value,
+		userTelephone: userInfo.value.phone,
+		tag: tag.value,
+	});
+	posts.value = arr;
+	totalNum.value = id;
+});
+watch(tag, async (newVal) => {
+	curPage.value = 0;
+	const id = await getPostsNum({
+		partition: partition.value,
+		searchsort: searchsort.value,
+		searchinfo: searchinfo.value,
+		userTelephone: userInfo.value.phone,
+		tag: newVal,
+	});
+	const arr = await getPosts({
+		limit: 5,
+		offset: curPage.value,
+		partition: partition.value,
+		searchsort: searchsort.value,
+		searchinfo: searchinfo.value,
+		userTelephone: userInfo.value.phone,
+		tag: newVal,
+	});
 	posts.value = arr;
 	totalNum.value = id;
 });

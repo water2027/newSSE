@@ -1,0 +1,12 @@
+.gradientUnderline{
+    background-image: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+    background-repeat: no-repeat;
+    background-size: 0 2px;
+    background-position: right bottom;
+    transition: background-size 0.5s ease-in;
+}
+.gradientUnderline:hover{
+    background-size: 100% 2px;
+    background-position: left bottom;
+}
+

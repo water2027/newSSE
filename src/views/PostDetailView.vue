@@ -130,6 +130,12 @@
 							:src="comment.AuthorAvatar"
 						/>
 						<span>{{ comment.Author }}</span>
+						<button
+							v-if="comment.AuthorTelephone === userInfo.phone"
+							@click="delCommentFunc(comment.PcommentID)"
+						>
+							删除
+						</button>
 					</div>
 					<div
 						class="hasImgDiv"
@@ -185,6 +191,17 @@
 											: comment.Author
 									}}</span
 								>
+								<button
+									v-if="
+										subComment.authorTelephone ===
+										userInfo.phone
+									"
+									@click="
+										delCcommentFunc(subComment.ccommentID)
+									"
+								>
+									删除
+								</button>
 							</div>
 							<div
 								class="hasImgDiv"
@@ -203,15 +220,21 @@
 <script setup>
 import { ref, inject, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { getPostByID, getCommentsByPostID } from '@/utils/getPosts';
-import { sendComment, sendPComment } from '@/utils/postAndComment';
+import { getPostByID, getCommentsByPostID } from '@/api/getPosts';
+import {
+	sendComment,
+	sendPComment,
+	delComment,
+	delCcomment,
+} from '@/api/postAndComment';
 
 import { marked } from 'marked';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
 import DOMPurify from 'dompurify';
-import { showMsg } from '@/utils/msgbox';
-import { likePost } from '@/utils/saveAndDel';
+import { showMsg } from '@/components/msgbox';
+import { likePost } from '@/api/saveAndDel';
+import { strHandler } from '@/utils/strHandler';
 
 import MarkdownEditor from '@/components/MarkdownEditor.vue';
 const route = useRoute();
@@ -238,22 +261,6 @@ const mdContainerStyle = computed(() => {
 		marginBottom: '1%',
 	};
 });
-/**
- *
- * @param  type {string}
- * @param  str {string}
- */
-const strHandler = (type, str) => {
-	if (!str) return '';
-	switch (type) {
-		case 'img':
-			return str.split('|');
-		case 'time':
-			return str.replace('T', ' ').split('+')[0];
-		default:
-			return str;
-	}
-};
 
 const safeHTML = (str) => {
 	if (!str) {
@@ -288,44 +295,6 @@ const highlightcode = () => {
 	});
 };
 
-const editComment = (type) => {
-	switch (type) {
-		case '标题':
-			commentContent.value += '### 标题';
-			break;
-		case '粗体':
-			commentContent.value += '**粗体**';
-			break;
-		case '斜体':
-			commentContent.value += '*斜体*';
-			break;
-		case '删除线':
-			commentContent.value += '~~删除线~~';
-			break;
-		case '引用':
-			commentContent.value += '> 引用';
-			break;
-		case '无序列表':
-			commentContent.value += '- 无序列表';
-			break;
-		case '有序列表':
-			commentContent.value += '1. 有序列表';
-			break;
-		case '表格':
-			commentContent.value +=
-				'| 表头1 | 表头2 |\n| --- | --- |\n| 内容1 | 内容2 |';
-			break;
-		case '分割线':
-			commentContent.value += '---';
-			break;
-		case '代码块':
-			commentContent.value += '```language\n代码块\n```';
-			break;
-		default:
-			break;
-	}
-};
-
 const sendCommentFunc = async () => {
 	const res = await sendComment(
 		commentContent.value,
@@ -336,6 +305,8 @@ const sendCommentFunc = async () => {
 		getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
 			(res) => {
 				comments.value = res;
+				commentContent.value = '';
+				commentButtonIsShow.value = false;
 				showMsg('评论成功');
 			}
 		);
@@ -353,33 +324,33 @@ const sendPCommentFunc = async (PcommentID) => {
 		getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
 			(res) => {
 				comments.value = res;
+				pCommentContent.value[PcommentID] = '';
+				commentBoxVIsibility.value[PcommentID] = false;
 				showMsg('评论成功');
 			}
 		);
 	}
 };
 
-//TODO: 评论回复评论
-const sendSubCommentFunc = async (ccommentID) => {
-	const target = comments.value.find(
-		(comment) => comment.CcommentID === ccommentID
+const delCommentFunc = async (commentID) => {
+	await delComment(commentID);
+	getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
+		(res) => {
+			comments.value = res;
+			showMsg('删除成功?');
+		}
 	);
-	const res = await sendPComment({
-		ccommentID: ccommentID,
-		content: pCommentContent.value[ccommentID],
-		pcommentID: target.PcommentID,
-		postID: Number(route.params.id),
-		userTargetName: target.author,
-		userTelephone: userInfo.value.phone,
-	});
-	if (res) {
-		getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
-			(res) => {
-				comments.value = res;
-				showMsg('评论成功');
-			}
-		);
-	}
+};
+
+// 删除评论的评论
+const delCcommentFunc = async (ccommentID) => {
+	await delCcomment(ccommentID);
+	getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
+		(res) => {
+			comments.value = res;
+			showMsg('删除成功?');
+		}
+	);
 };
 
 const copyCode = async (event) => {
@@ -399,7 +370,7 @@ const handleCommentBox = (id) => {
 };
 
 const like = async (isLiked, postID, userTelephone) => {
-	const res = await likePost(isLiked, postID, userTelephone);
+	await likePost(isLiked, postID, userTelephone);
 	post.value.IsLiked = !post.value.IsLiked;
 	if (post.value.IsLiked) {
 		post.value.Like++;
@@ -421,6 +392,8 @@ onMounted(async () => {
 			userInfo.value.phone
 		);
 		post.value = curPost;
+		//将评论倒序
+		if(curComments) curComments.reverse();
 		comments.value = curComments;
 		curComments &&
 			curComments.forEach((comment) => {
@@ -501,6 +474,10 @@ b {
 
 .subCommentList {
 	margin-left: 40px;
+}
+
+.user button {
+	margin-left: auto;
 }
 
 @media screen and (min-width: 768px) {

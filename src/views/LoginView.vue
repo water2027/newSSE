@@ -133,8 +133,8 @@
 </template>
 <script setup>
 import { ref } from 'vue';
-import { userLogin, sendCode, userRegister } from '@/utils/LoginAndReg';
-import { showMsg } from '@/utils/msgbox';
+import { userLogin, sendCode, userRegister } from '@/api/LoginAndReg';
+import { showMsg } from '@/components/msgbox';
 const emit = defineEmits(['sendLoginSuccess']);
 const email = ref(null);
 const username = ref(null);
