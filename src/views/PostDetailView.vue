@@ -143,9 +143,16 @@
 					></div>
 					<span>{{ strHandler('time', comment.CommentTime) }}</span>
 					<div class="commentButtons">
-						<button @click="handleCommentBox(comment.PcommentID)">
+						<button
+							@click="
+								commentID =
+									commentID === comment.PcommentID
+										? -1
+										: comment.PcommentID
+							"
+						>
 							{{
-								commentBoxVIsibility[comment.PcommentID]
+								commentID === comment.PcommentID
 									? '算了'
 									: '评论'
 							}}
@@ -161,11 +168,10 @@
 							}}
 						</button>
 					</div>
-
 					<!-- 在这里插入md编辑器用于评论评论 -->
 					<MarkdownEditor
-						v-if="commentBoxVIsibility[comment.PcommentID]"
-						v-model="pCommentContent[comment.PcommentID]"
+						v-if="commentID === comment.PcommentID"
+						v-model="cCommentContent"
 						@send="() => sendPCommentFunc(comment.PcommentID)"
 					/>
 					<!-- 评论区的评论区 -->
@@ -210,6 +216,29 @@
 							<span>{{
 								strHandler('time', subComment.commentTime)
 							}}</span>
+							<button
+								@click="
+									createCommentComment(
+										subComment.ccommentID,
+										comment.PcommentID,
+										subComment.author
+									)
+								"
+							>
+								{{
+									commentCommentID === subComment.ccommentID
+										? '取消'
+										: '回复'
+								}}
+							</button>
+							<MarkdownEditor
+								v-if="
+									commentCommentID === subComment.ccommentID
+								"
+								id="fuckinkEditor"
+								v-model="modelValue"
+								@send="sendCommentCommentFunc"
+							/>
 						</div>
 					</div>
 				</div>
@@ -249,7 +278,16 @@ const commentVisibility = ref({});
 const commentBoxVIsibility = ref({});
 const pCommentContent = ref({});
 const commentButtonIsShow = ref(false);
+const commentID = ref(-1);
+const cCommentContent = ref('');
+
 const root = ref(null);
+
+const modelValue = ref('');
+const commentCommentID = ref(0);
+const postCommentID = ref(0);
+const target = ref('');
+
 const mdContainerStyle = computed(() => {
 	return {
 		width: '100%',
@@ -261,6 +299,43 @@ const mdContainerStyle = computed(() => {
 		marginBottom: '1%',
 	};
 });
+
+const createCommentComment = async (ccommentID, PcommentID, targetName) => {
+	if (commentCommentID.value === ccommentID) {
+		commentCommentID.value = -1;
+		postCommentID.value = -1;
+		target.value = '';
+		return;
+	}
+	commentCommentID.value = ccommentID;
+	postCommentID.value = PcommentID;
+	target.value = targetName;
+};
+
+//回复评论的评论
+const sendCommentCommentFunc = async () => {
+	const res = await sendPComment({
+		ccommentID: commentCommentID.value,
+		content: modelValue.value,
+		pcommentID: postCommentID.value,
+		postID: Number(route.params.id),
+		userTargetName: target.value,
+		userTelephone: userInfo.value.phone,
+	});
+	if (res) {
+		getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
+			(res) => {
+				//倒序
+				res.reverse();
+				comments.value = res;
+				showMsg('评论成功');
+				commentCommentID.value = -1;
+				postCommentID.value = -1;
+				target.value = '';
+			}
+		);
+	}
+};
 
 const safeHTML = (str) => {
 	if (!str) {
@@ -289,12 +364,14 @@ const safeHTML = (str) => {
 };
 
 const highlightcode = () => {
+	console.log("wow")
 	const blocks = root.value.querySelectorAll('pre code'); // 使用 refs 获取元素
 	blocks.forEach((block) => {
 		hljs.highlightElement(block); // 高亮每个代码块
 	});
 };
 
+//回复帖子
 const sendCommentFunc = async () => {
 	const res = await sendComment(
 		commentContent.value,
@@ -304,6 +381,8 @@ const sendCommentFunc = async () => {
 	if (res) {
 		getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
 			(res) => {
+				//倒序
+				res.reverse();
 				comments.value = res;
 				commentContent.value = '';
 				commentButtonIsShow.value = false;
@@ -313,9 +392,10 @@ const sendCommentFunc = async () => {
 	}
 };
 
+//回复帖子的评论
 const sendPCommentFunc = async (PcommentID) => {
 	const res = await sendPComment({
-		content: pCommentContent.value[PcommentID],
+		content: cCommentContent,
 		pcommentID: PcommentID,
 		postID: Number(route.params.id),
 		userTelephone: userInfo.value.phone,
@@ -323,9 +403,11 @@ const sendPCommentFunc = async (PcommentID) => {
 	if (res) {
 		getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
 			(res) => {
+				//倒序
+				res.reverse();
 				comments.value = res;
-				pCommentContent.value[PcommentID] = '';
-				commentBoxVIsibility.value[PcommentID] = false;
+				cCommentContent.value = '';
+				commentID.value = -1;
 				showMsg('评论成功');
 			}
 		);
@@ -336,6 +418,8 @@ const delCommentFunc = async (commentID) => {
 	await delComment(commentID);
 	getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
 		(res) => {
+			//倒序
+			res.reverse();
 			comments.value = res;
 			showMsg('删除成功?');
 		}
@@ -347,6 +431,8 @@ const delCcommentFunc = async (ccommentID) => {
 	await delCcomment(ccommentID);
 	getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
 		(res) => {
+			//倒序
+			res.reverse();
 			comments.value = res;
 			showMsg('删除成功?');
 		}
@@ -363,10 +449,6 @@ const copyCode = async (event) => {
 
 const toggleSubComments = (id) => {
 	commentVisibility.value[id] = !commentVisibility.value[id];
-};
-
-const handleCommentBox = (id) => {
-	commentBoxVIsibility.value[id] = !commentBoxVIsibility.value[id];
 };
 
 const like = async (isLiked, postID, userTelephone) => {
@@ -393,7 +475,7 @@ onMounted(async () => {
 		);
 		post.value = curPost;
 		//将评论倒序
-		if(curComments) curComments.reverse();
+		if (curComments) curComments.reverse();
 		comments.value = curComments;
 		curComments &&
 			curComments.forEach((comment) => {

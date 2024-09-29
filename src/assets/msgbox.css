@@ -8,12 +8,13 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    color: #000;
     background-color: rgba(174, 174, 174, 0.5);
     /* 毛玻璃 */
     backdrop-filter: blur(10px);
     border-radius: 10px;
     z-index: 999;
-    animation: fade-out 6s forwards, move-down 6s forwards;
+    animation: fade-out 6s forwards, move-down 6s forwards !important;
     pointer-events: none;
 }
 

@@ -386,6 +386,7 @@ main {
 
 	.heat {
 		text-align: center !important;
+		margin-right: 3%;
 	}
 
 	h2 {
