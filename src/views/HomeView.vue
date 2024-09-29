@@ -11,7 +11,7 @@
 				<source
 					src="https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/vedio/Background.mp4"
 					type="video/mp4"
-				>
+				/>
 			</video>
 			<div id="title">
 				<button
@@ -30,10 +30,8 @@
 					placeholder="在当前分区搜索"
 					type="search"
 					@keydown.enter="search"
-				>
-				<button @click="search">
-					搜索
-				</button>
+				/>
+				<button @click="search">搜索</button>
 			</div>
 		</header>
 		<main>
@@ -69,6 +67,9 @@
 					发帖
 				</router-link>
 				<router-link
+					id="notice"
+					:notice-num="noticeNum"
+					:display-bool="displayBool"
 					class="nav"
 					to="/notice"
 				>
@@ -133,15 +134,24 @@ import { computed, onMounted, provide, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 import { getHeatPosts } from '@/api/getPosts';
+import { getNoticesNum } from '@/api/notice';
 const route = useRoute();
 const router = useRouter();
+
+const heatPosts = ref([]);
+const noticeNum = ref('');
+const displayBool = computed(() => {
+	return noticeNum.value == '0' ? 'none' : 'block';
+});
+
+const notices = ref({});
+provide('notices', notices);
 const partition = ref('主页');
 provide('partition', partition);
 const searchinfo = ref('');
 provide('searchinfo', searchinfo);
 const searchsort = ref('home');
 provide('searchsort', searchsort);
-const heatPosts = ref([]);
 const isPC = ref(true);
 provide('isPC', isPC);
 const posts = ref([]);
@@ -188,6 +198,11 @@ const toggleNav = () => {
 		navIsOpen.value = !navIsOpen.value;
 	}
 };
+const getNoticesNumFunc = async () => {
+	const temp = await getNoticesNum();
+	notices.value = temp;
+	noticeNum.value = temp.unreadTotalNum;
+};
 onMounted(async () => {
 	router.push('/');
 	if (window.innerWidth < 768) {
@@ -196,9 +211,29 @@ onMounted(async () => {
 	}
 	const posts = await getHeatPosts();
 	heatPosts.value = posts;
+	getNoticesNumFunc();
 });
 </script>
 <style scoped>
+#notice{
+	position: relative;
+}
+#notice::after{
+	content: attr(notice-num);
+	position: absolute;
+	top: 50%;
+	right: 5%;
+	transform: translate(0, -50%);
+	background-color: rgba(255, 0, 0, 0.75);
+	color: white;
+	padding: 5px;
+	font-size: 1rem;
+}
+
+#notice[notice-num="0"]::after{
+	display: none;
+}
+
 p {
 	text-indent: 2rem;
 }

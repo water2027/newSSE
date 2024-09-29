@@ -234,6 +234,7 @@ import 'highlight.js/styles/github.css';
 import DOMPurify from 'dompurify';
 import { showMsg } from '@/components/msgbox';
 import { likePost } from '@/api/saveAndDel';
+import { strHandler } from '@/utils/strHandler';
 
 import MarkdownEditor from '@/components/MarkdownEditor.vue';
 const route = useRoute();
@@ -260,22 +261,6 @@ const mdContainerStyle = computed(() => {
 		marginBottom: '1%',
 	};
 });
-/**
- *
- * @param  type {string}
- * @param  str {string}
- */
-const strHandler = (type, str) => {
-	if (!str) return '';
-	switch (type) {
-		case 'img':
-			return str.split('|');
-		case 'time':
-			return str.replace('T', ' ').split('+')[0];
-		default:
-			return str;
-	}
-};
 
 const safeHTML = (str) => {
 	if (!str) {

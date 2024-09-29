@@ -55,12 +55,12 @@
 			>
 				<!-- 图片路径由|分割 -->
 				<img
-					v-for="img in post.Photos.split('|')"
+					v-for="img in strHandler('img',post.Photos)"
 					:key="img"
 					:src="img"
 				/>
 			</div>
-			<span>{{ post.PostTime.replace('T', ' ') }}</span>
+			<span>{{ strHandler('time',post.PostTime) }}</span>
 			<div class="postInfo">
 				<span>
 					{{ post.Browse }}
@@ -143,6 +143,7 @@ import { getPosts, getPostsNum } from '@/api/getPosts';
 import { savePost, delPost, likePost } from '@/api/saveAndDel';
 import { showMsg } from '@/components/msgbox';
 import { getItemWithExpiry } from '@/api/LoginAndReg';
+import { strHandler } from '@/utils/strHandler';
 import { ref, onMounted, inject, watch } from 'vue';
 
 const userInfo = inject('userInfo');
