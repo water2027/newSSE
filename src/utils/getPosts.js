@@ -8,9 +8,10 @@ const apiUrl = import.meta.env.VITE_API_BASE_URL;
  * @param {string} searchsort 不知道是什么
  * @param {string} searchinfo 搜索信息
  * @param {string} userTelephone 手机号
+ * @param {string} tag 老师名字
  * @returns 
  */
-async function getPosts(limit,offset,partition,searchsort,searchinfo,userTelephone){
+async function getPosts(object){
     const token = getItemWithExpiry('token')
     if(!token){
         return null
@@ -21,14 +22,7 @@ async function getPosts(limit,offset,partition,searchsort,searchinfo,userTelepho
             'Content-Type':'application/json',
             'Authorization':`Bearer ${token}`
         },
-        body:JSON.stringify({
-            limit:limit,
-            offset:offset,
-            partition:partition,
-            searchinfo:searchinfo,
-            searchsort:searchsort,
-            userTelephone:userTelephone
-        })
+        body:JSON.stringify(object)
     })
     const data = await response.json()
     return data
@@ -41,7 +35,30 @@ async function getPosts(limit,offset,partition,searchsort,searchinfo,userTelepho
  * @param {string} userTelephone
  * @returns {number} 返回帖子数量
  */
-async function getPostsNum(partition,searchsort,searchinfo,userTelephone){
+// async function getPostsNum(partition,searchsort,searchinfo,userTelephone){
+//     const token = getItemWithExpiry('token')
+//     if(!token){
+//         return null
+//     }
+//     const response = await fetch(`${apiUrl}/auth/getPostNum`,{
+//         method:'POST',
+//         headers:{
+//             'Content-Type':'application/json',
+//             'Authorization':`Bearer ${token}`
+//         },
+//         body:JSON.stringify({
+//             "userTelephone": userTelephone,
+//             "partition": partition,
+//             "searchinfo": searchinfo,
+//             "searchsort": searchsort
+//         })
+//     })
+//     const data = await response.json()
+    
+//     return data.Postcount
+// }
+
+async function getPostsNum(object){
     const token = getItemWithExpiry('token')
     if(!token){
         return null
@@ -52,15 +69,9 @@ async function getPostsNum(partition,searchsort,searchinfo,userTelephone){
             'Content-Type':'application/json',
             'Authorization':`Bearer ${token}`
         },
-        body:JSON.stringify({
-            "userTelephone": userTelephone,
-            "partition": partition,
-            "searchinfo": searchinfo,
-            "searchsort": searchsort
-        })
+        body:JSON.stringify(object)
     })
     const data = await response.json()
-    
     return data.Postcount
 }
 
@@ -127,7 +138,6 @@ async function getCommentsByPostID(PostID,userTelephone){
         }) 
     })
     const data = await response.json()
-    console.log(data)
     return data
 }
 

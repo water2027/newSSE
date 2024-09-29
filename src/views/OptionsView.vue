@@ -9,7 +9,10 @@
 				:src="allInfo.avatarURL"
 				alt="头像"
 			/>
-            <input type="file">
+			<input
+				type="file"
+				class="fileInput"
+			/>
 			<div>
 				<span>用户名：</span>
 				<input
@@ -26,22 +29,20 @@
 				<span>邮箱{{ allInfo.email }}</span>
 			</div>
 		</div>
-        <div>
-            <h3>重置密码</h3>
-            <input
-                v-model="password1"
-                type="password"
-                placeholder="密码"
-            />
-            <input
-                v-model="password2"
-                type="password"
-                placeholder="确认密码"
-            />
-            <button>
-                确认
-            </button>
-        </div>
+		<div>
+			<h3>重置密码</h3>
+			<input
+				v-model="password1"
+				type="password"
+				placeholder="密码"
+			/>
+			<input
+				v-model="password2"
+				type="password"
+				placeholder="确认密码"
+			/>
+			<button>确认</button>
+		</div>
 	</div>
 </template>
 

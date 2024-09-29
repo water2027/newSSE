@@ -89,28 +89,6 @@ async function sendComment(content, postID, userTelephone) {
 	return data;
 }
 
-// async function sendPComment(content,pcommentID,postID,userTelephone) {
-//     const token = getItemWithExpiry('token');
-//     if (!token) {
-//         return;
-//     }
-//     const response = await fetch(`${apiUrl}/auth/postCcomment`, {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'Authorization': `Bearer ${token}`,
-//         },
-//         body: JSON.stringify({
-//             content: content,
-//             pcommentID: pcommentID,
-//             postID: postID,
-//             userTelephone: userTelephone,
-//         }),
-//     });
-//     const data = await response.json();
-//     return data
-// }
-
 async function sendPComment(object) {
 	const token = getItemWithExpiry('token');
 	if (!token) {
@@ -128,4 +106,42 @@ async function sendPComment(object) {
 	return data;
 }
 
-export { uploadPhoto, sendPost, sendComment, sendPComment };
+async function delComment(pcommentID) {
+	const token = getItemWithExpiry('token');
+	if (!token) {
+		return;
+	}
+	const response = await fetch(`${apiUrl}/auth/deletePcomment`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		},
+		body: JSON.stringify({
+			pcommentID:pcommentID
+		}),
+	});
+	const data = await response.text();
+	return data;
+}
+
+async function delCcomment(ccommentID) {
+	const token = getItemWithExpiry('token');
+	if (!token) {
+		return;
+	}
+	const response = await fetch(`${apiUrl}/auth/deleteCcomment`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${token}`,
+		},
+		body: JSON.stringify({
+			ccommentID:ccommentID
+		}),
+	});
+	const data = await response.text();
+	return data;
+}
+
+export { uploadPhoto, sendPost, sendComment, sendPComment, delComment, delCcomment };
