@@ -443,6 +443,7 @@ b {
 	overflow: auto;
 	pointer-events: none;
 	white-space: pre-wrap;
+	font-size: 20px !important;
 }
 
 :deep(pre::before) {
@@ -485,21 +486,22 @@ b {
 		--userImage: 50px;
 		width: 100%;
 		height: 30px;
-		/* 靠左 */
+		margin-left: 10px;
 		margin-right: auto;
 		display: flex;
 		align-items: center;
 		font-size: 1.2rem;
 		font-weight: bold;
 		color: #333;
-		margin-bottom: 10px;
-		margin-top: 10px;
+		margin-bottom: 15px;
+		margin-top: 15px;
 	}
 
 	.user img {
 		width: var(--userImage);
 		height: var(--userImage);
 		border-radius: 50%;
+		margin-top: 15px;
 	}
 
 	.user .b-avatar {
@@ -525,8 +527,10 @@ b {
 	.user {
 		--userImage: 50px;
 		width: 100%;
-		height: 30px;
+		height: auto;
 		/* 靠左 */
+		margin-top: 10px;
+		margin-left: 10px;
 		margin-right: auto;
 		margin-bottom: 10px;
 		display: flex;
@@ -594,28 +598,5 @@ b {
 	display: flex;
 	justify-content: space-around;
 	margin-top: 10px;
-}
-
-#mdEditorContainer {
-	display: flex;
-	flex-direction: row;
-	/* align-items: center; */
-	justify-content: center;
-	width: 100%;
-	height: auto;
-}
-
-#mdEditorContainer textarea,
-#mdEditorContainer div {
-	width: 100%;
-	height: 100px;
-	border-radius: 5px;
-	padding: 10px;
-	height: auto;
-	overflow-y: hidden;
-}
-
-#mdEditorContainer textarea {
-	height: 100px;
 }
 </style>

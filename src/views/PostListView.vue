@@ -2,19 +2,22 @@
 <template>
 	<div class="root">
 		<h2>当前分区：{{ partition }}</h2>
-		<select
-			v-if="partition === '课程专区'"
-			id="teacher"
-			v-model="tag"
-		>
-			<option
-				v-for="teacher in teachers"
-				:key="teacher.TagID"
-				:value="teacher.Name"
+		<div v-if="partition === '课程专区'">
+			<span class="gradientUnderline">请选择你的老师，不选也没关系 </span>
+			<select
+				v-if="partition === '课程专区'"
+				id="teacher"
+				v-model="tag"
 			>
-				{{ teacher.Name }}
-			</option>
-		</select>
+				<option
+					v-for="teacher in teachers"
+					:key="teacher.TagID"
+					:value="teacher.Name"
+				>
+					{{ teacher.Name }}
+				</option>
+			</select>
+		</div>
 		<router-link
 			v-for="post in posts"
 			:key="post.PostID"
@@ -55,12 +58,12 @@
 			>
 				<!-- 图片路径由|分割 -->
 				<img
-					v-for="img in strHandler('img',post.Photos)"
+					v-for="img in strHandler('img', post.Photos)"
 					:key="img"
 					:src="img"
 				/>
 			</div>
-			<span>{{ strHandler('time',post.PostTime) }}</span>
+			<span>{{ strHandler('time', post.PostTime) }}</span>
 			<div class="postInfo">
 				<span>
 					{{ post.Browse }}
@@ -270,7 +273,7 @@ onMounted(async () => {
 				},
 			});
 			const data = await res.json();
-			teachers.value = data.data.tags;
+			teachers.value = ['',...data.data.tags];
 		} else {
 			showMsg('获取失败');
 		}
@@ -415,8 +418,8 @@ watch(tag, async (newVal) => {
 		font-size: 1.2rem;
 		font-weight: bold;
 		color: #333;
-		margin-bottom: 10px;
-		margin-top: 10px;
+		margin-bottom: 15px;
+		margin-top: 15px;
 	}
 
 	.user img {
@@ -468,7 +471,8 @@ watch(tag, async (newVal) => {
 		height: 30px;
 		/* 靠左 */
 		margin-right: auto;
-		margin-bottom: 10px;
+		margin-top: 15px;
+		margin-bottom: 15px;
 		display: flex;
 		align-items: center;
 		font-size: 1.2rem;
