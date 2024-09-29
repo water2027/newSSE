@@ -220,20 +220,20 @@
 <script setup>
 import { ref, inject, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { getPostByID, getCommentsByPostID } from '@/utils/getPosts';
+import { getPostByID, getCommentsByPostID } from '@/api/getPosts';
 import {
 	sendComment,
 	sendPComment,
 	delComment,
 	delCcomment,
-} from '@/utils/postAndComment';
+} from '@/api/postAndComment';
 
 import { marked } from 'marked';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
 import DOMPurify from 'dompurify';
-import { showMsg } from '@/utils/msgbox';
-import { likePost } from '@/utils/saveAndDel';
+import { showMsg } from '@/components/msgbox';
+import { likePost } from '@/api/saveAndDel';
 
 import MarkdownEditor from '@/components/MarkdownEditor.vue';
 const route = useRoute();
@@ -407,6 +407,8 @@ onMounted(async () => {
 			userInfo.value.phone
 		);
 		post.value = curPost;
+		//将评论倒序
+		if(curComments) curComments.reverse();
 		comments.value = curComments;
 		curComments &&
 			curComments.forEach((comment) => {

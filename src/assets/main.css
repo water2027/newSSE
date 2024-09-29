@@ -16,16 +16,18 @@ html,body{
 .fileInput,
 button{
     cursor: pointer;
+    pointer-events: auto;
     border: none;
     outline: none;
-    background-color: #f1f1f1;
+    background-color: #f1f1f18f;
     color: #333;
-    padding: 10px 20px;
+    padding: 15px 25px;
     border-radius: 5px;
     font-size: 1rem;
     font-weight: 600;
     transition: all 0.3s ease;
     margin: 10px;
+    margin-bottom: 20px;
     display: inline-block;
     text-align: center;
     text-decoration: none;
@@ -33,6 +35,7 @@ button{
     letter-spacing: 1px;
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
+    z-index: 100;
 }
 
 .fileInput:hover,
@@ -51,13 +54,64 @@ textarea{
     border: 1px solid #333;
     border-radius: 5px;
     margin: 10px 0;
-
 }
 
 .like{
     color: #ff0000;
     cursor: pointer;
     transition: all 0.3s ease;
+}
+
+.root{
+    animation: fadeIn 0.5s ease;
+}
+
+a{
+    text-decoration: none;
+    color: #00d9ff;
+    transition: all 0.3s ease;
+}
+
+a:hover{
+    color: #ffd900;
+    background: #9cff817e;
+}
+
+p{
+    font-size: 1rem;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    margin: 10px 0;
+}
+
+ol{
+    padding: 0;
+    margin: 0;
+}
+
+li{
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+}
+
+span{
+    font-size: 1rem;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+}
+
+hr{
+    border: 1px solid #3333339d;
+}
+
+@keyframes fadeIn{
+    0%{
+        opacity: 0;
+    }
+    100%{
+        opacity: 1;
+    }
 }
 
 @media screen and (max-width: 768px){

@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import PostListView from '@/views/PostListView.vue';
-import { getItemWithExpiry } from '@/utils/LoginAndReg';
+import { getItemWithExpiry } from '@/api/LoginAndReg';
 
 const routes = [
 	{

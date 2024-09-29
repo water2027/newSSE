@@ -139,10 +139,10 @@
 	</div>
 </template>
 <script setup>
-import { getPosts, getPostsNum } from '@/utils/getPosts';
-import { savePost, delPost, likePost } from '@/utils/saveAndDel';
-import { showMsg } from '@/utils/msgbox';
-import { getItemWithExpiry } from '@/utils/LoginAndReg';
+import { getPosts, getPostsNum } from '@/api/getPosts';
+import { savePost, delPost, likePost } from '@/api/saveAndDel';
+import { showMsg } from '@/components/msgbox';
+import { getItemWithExpiry } from '@/api/LoginAndReg';
 import { ref, onMounted, inject, watch } from 'vue';
 
 const userInfo = inject('userInfo');

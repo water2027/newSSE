@@ -48,8 +48,8 @@ import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
 import DOMPurify from 'dompurify';
 
-import { showMsg } from '@/utils/msgbox';
-import { uploadPhoto } from '@/utils/postAndComment';
+import { showMsg } from '@/components/msgbox';
+import { uploadPhoto } from '@/api/postAndComment';
 
 const props = defineProps({
 	modelValue: {

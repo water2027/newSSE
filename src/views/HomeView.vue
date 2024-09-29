@@ -24,7 +24,6 @@
 				</button>
 				<h1>SSE_MARKET</h1>
 			</div>
-
 			<div class="search">
 				<input
 					ref="sinfo"
@@ -133,7 +132,7 @@
 import { computed, onMounted, provide, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
-import { getHeatPosts } from '@/utils/getPosts';
+import { getHeatPosts } from '@/api/getPosts';
 const route = useRoute();
 const router = useRouter();
 const partition = ref('主页');
@@ -233,7 +232,17 @@ main {
 	padding: 0;
 	border: 1px solid black;
 	border-radius: 5px rgba(0, 0, 0, 0.1);
+	animation: fadeIn 0.5s;
 	transition: all 0.3s;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
 }
 
 .second-nav-bar {
@@ -457,7 +466,7 @@ main {
 		margin-left: 0;
 		width: 80%;
 		position: absolute;
-		top: 5%;
+		top: 8%;
 	}
 
 	.nav-bar {

@@ -8,9 +8,9 @@
 <script setup>
 import { onMounted, ref, provide, onUnmounted } from 'vue';
 import HomeViewVue from './views/HomeView.vue';
-import { userLogin, getItemWithExpiry } from './utils/LoginAndReg';
+import { userLogin, getItemWithExpiry } from './api/LoginAndReg';
 import LoginViewVue from './views/LoginView.vue';
-import { getInfo } from '@/utils/getInfo';
+import { getInfo } from '@/api/getInfo';
 
 const userInfo = ref({})
 provide('userInfo', userInfo)
