@@ -16,6 +16,11 @@
 					:src="post.UserAvatar"
 				/>
 				<span>{{ post.UserName }}</span>
+				<span
+					title="码之气，三段！"
+					class="level"
+					>{{ expHandler(post.UserScore) }}</span
+				>
 			</div>
 			<h2>{{ post.Title }}</h2>
 			<div
@@ -106,7 +111,6 @@
 		</div>
 		<div class="comment">
 			<h2>评论</h2>
-			<!-- md编辑器，早晚要封装 -->
 			<div class="commentButton">
 				<button @click="commentButtonIsShow = !commentButtonIsShow">
 					{{ commentButtonIsShow ? '隐藏' : '发评论' }}
@@ -130,6 +134,11 @@
 							:src="comment.AuthorAvatar"
 						/>
 						<span>{{ comment.Author }}</span>
+						<span
+							title="码之气，三段！"
+							class="level"
+							>{{ expHandler(post.UserScore) }}</span
+						>
 						<button
 							v-if="comment.AuthorTelephone === userInfo.phone"
 							@click="delCommentFunc(comment.PcommentID)"
@@ -197,6 +206,11 @@
 											: comment.Author
 									}}</span
 								>
+								<span
+									title="码之气，三段！"
+									class="level"
+									>{{ expHandler(post.UserScore) }}</span
+								>
 								<button
 									v-if="
 										subComment.authorTelephone ===
@@ -256,15 +270,17 @@ import {
 	delComment,
 	delCcomment,
 } from '@/api/postAndComment';
+import { likePost } from '@/api/saveAndDel';
 
 import { marked } from 'marked';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
 import DOMPurify from 'dompurify';
-import { showMsg } from '@/components/msgbox';
-import { likePost } from '@/api/saveAndDel';
-import { strHandler } from '@/utils/strHandler';
 
+import { strHandler } from '@/utils/strHandler';
+import { expHandler } from '@/utils/expHandler';
+
+import { showMsg } from '@/components/msgbox';
 import MarkdownEditor from '@/components/MarkdownEditor.vue';
 const route = useRoute();
 
@@ -364,7 +380,6 @@ const safeHTML = (str) => {
 };
 
 const highlightcode = () => {
-	console.log("wow")
 	const blocks = root.value.querySelectorAll('pre code'); // 使用 refs 获取元素
 	blocks.forEach((block) => {
 		hljs.highlightElement(block); // 高亮每个代码块
@@ -395,7 +410,7 @@ const sendCommentFunc = async () => {
 //回复帖子的评论
 const sendPCommentFunc = async (PcommentID) => {
 	const res = await sendPComment({
-		content: cCommentContent,
+		content: cCommentContent.value,
 		pcommentID: PcommentID,
 		postID: Number(route.params.id),
 		userTelephone: userInfo.value.phone,
@@ -561,6 +576,16 @@ b {
 
 .user button {
 	margin-left: auto;
+}
+
+.level {
+	margin-left: 10px;
+	background: #ffc6c6;
+	border-radius: 50%;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 
 @media screen and (min-width: 768px) {

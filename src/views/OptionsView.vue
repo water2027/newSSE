@@ -19,6 +19,7 @@
 				<div>
 					<span>ID {{ allInfo.phone }}</span>
 					<span>邮箱 {{ allInfo.email }}</span>
+					<span>经验 {{ allInfo.score }}</span>
 				</div>
 				<span>用户名</span>
 				<input

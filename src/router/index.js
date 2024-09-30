@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import PostListView from '@/views/PostListView.vue';
+import PostDetailView from '@/views/PostDetailView.vue';
 import { getItemWithExpiry } from '@/api/LoginAndReg';
 
 const routes = [
@@ -21,7 +22,7 @@ const routes = [
 	{
 		path: '/postdetail/:id',
 		name: 'Postdetail',
-		component: () => import('@/views/PostDetailView.vue'),
+		component: PostDetailView,
 		props: true,
 	},
 	{
