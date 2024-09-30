@@ -15,7 +15,7 @@
 	</div>
 </template>
 <script setup>
-import { ref, defineEmits } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 const emit = defineEmits(['send-partition']);
