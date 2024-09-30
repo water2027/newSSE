@@ -59,5 +59,3 @@ onUnmounted(() => {
     window.removeEventListener('beforeunload', handleBeforeUnload);
 });
 </script>
-
-<style></style>
