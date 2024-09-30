@@ -2,9 +2,9 @@
 <!-- eslint-disable vue/html-indent -->
 <template>
 	<div class="pageWithLoginButton">
-		<span class="title">{{ isLogin ? 'Login' : 'Register' }}</span>
+		<span class="title">{{ title }}</span>
 		<div
-			v-if="isLogin"
+			v-if="page === 0"
 			class="loginAndRegPage"
 		>
 			<div class="inputData">
@@ -40,15 +40,23 @@
 			>
 				Login!
 			</button>
-			<div
-				class="regButtonDiv"
-				@click="jumpToReg"
-			>
-				<span class="regButton">还没有账号？</span>
+			<div class="regButtons">
+				<div
+					class="regButtonDiv"
+					@click="jumpToReg"
+				>
+					<span class="regButton">还没有账号？</span>
+				</div>
+				<div
+					class="regButtonDiv"
+					@click="forget"
+				>
+					<span class="regButton">忘记密码了？</span>
+				</div>
 			</div>
 		</div>
 		<div
-			v-else
+			v-else-if="page === 1"
 			class="loginAndRegPage reg"
 		>
 			<div class="inputData">
@@ -67,7 +75,7 @@
 					ref="email"
 					type="email"
 					required
-				>
+				/>
 				<div class="underline"></div>
 				<label for="regEmail">邮箱</label>
 			</div>
@@ -76,7 +84,7 @@
 					ref="code"
 					type="text"
 					required
-				>
+				/>
 				<div class="underline"></div>
 				<label>验证码</label>
 			</div>
@@ -98,7 +106,7 @@
 					required
 				/>
 				<div class="underline"></div>
-				<label for="password2">重复密码</label>
+				<label for="password2">重复</label>
 			</div>
 			<div class="inputData">
 				<input
@@ -129,11 +137,78 @@
 				<span class="regButton">已有账号？</span>
 			</div>
 		</div>
+		<div
+			v-else-if="page === 2"
+			class="loginAndRegPage"
+		>
+			<div class="inputData">
+				<input
+					id="loginEmail"
+					ref="email"
+					type="email"
+					required
+				/>
+				<div class="underline"></div>
+				<label for="loginEmail">邮箱</label>
+			</div>
+			<div class="inputData">
+				<input
+					ref="code"
+					type="text"
+					required
+				/>
+				<div class="underline"></div>
+				<label>验证码</label>
+			</div>
+			<div class="inputData">
+				<input
+					id="password1"
+					ref="password1"
+					type="password"
+					required
+				/>
+				<div class="underline"></div>
+				<label for="password1">密码</label>
+			</div>
+			<div class="inputData">
+				<input
+					id="password2"
+					ref="password2"
+					type="password"
+					required
+				/>
+				<div class="underline"></div>
+				<label for="password2">重复</label>
+			</div>
+			<button
+				class="LoginAndRegButton"
+				@click="getVCode"
+			>
+				发送验证码
+			</button>
+			<button
+				class="LoginAndRegButton"
+				@click="resetPwd"
+			>
+				重置!
+			</button>
+			<div
+				class="regButtonDiv"
+				@click="forget"
+			>
+				<span class="regButton">我没忘！</span>
+			</div>
+		</div>
 	</div>
 </template>
 <script setup>
 import { ref } from 'vue';
-import { userLogin, sendCode, userRegister } from '@/api/LoginAndReg';
+import {
+	userLogin,
+	sendCode,
+	userRegister,
+	updatePassword,
+} from '@/api/LoginAndReg';
 import { showMsg } from '@/components/msgbox';
 const emit = defineEmits(['sendLoginSuccess']);
 const email = ref(null);
@@ -143,10 +218,17 @@ const password2 = ref(null);
 const code = ref(null);
 const CDkey = ref(null);
 const remembered = ref(null);
-const isLogin = ref(true);
+const page = ref(0);
+const title = ref('登录');
 
 const jumpToReg = () => {
-	isLogin.value = !isLogin.value;
+	page.value = page.value === 0 ? 1 : 0;
+	title.value = page.value === 0 ? '登录' : '注册';
+};
+
+const forget = () => {
+	page.value = page.value === 0 ? 2 : 0;
+	title.value = page.value === 0 ? '登录' : '忘记密码';
 };
 
 const login = async () => {
@@ -211,6 +293,23 @@ const reg = () => {
 		} else {
 			showMsg('注册成功');
 		}
+	}
+};
+
+const resetPwd = async () => {
+	if (
+		email.value.value &&
+		password1.value.value &&
+		password2.value.value &&
+		code.value.value
+	) {
+		const res = await updatePassword(
+			email.value.value,
+			password1.value.value,
+			password2.value.value,
+			code.value.value
+		);
+		showMsg(res.msg);
 	}
 };
 </script>
@@ -328,6 +427,15 @@ const reg = () => {
 	margin-top: 20px;
 	color: #eb6b26;
 	cursor: pointer;
+}
+
+.regButtonDiv:hover {
+	color: #ff7e3b;
+}
+
+.regButtons {
+	display: flex;
+	justify-content: space-between;
 }
 
 @media screen and (max-width: 768px) {

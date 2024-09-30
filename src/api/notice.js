@@ -1,4 +1,5 @@
 import { getItemWithExpiry } from "./LoginAndReg";
+import { showMsg } from "@/components/msgbox";
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -48,7 +49,7 @@ async function readNotice(id) {
         },
     });
     const data = await response.json();
-    return data;
+    showMsg(data.msg);
 }
 
 export { getNoticesNum, getNotices, readNotice };

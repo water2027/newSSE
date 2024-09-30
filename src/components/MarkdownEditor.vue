@@ -20,7 +20,7 @@
 			<textarea
 				:value="modelValue"
 				placeholder="请输入正文"
-				@input="handleINput"
+				@input="handleInput"
 			></textarea>
 			<div
 				id="content"
@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick } from 'vue';
+import { ref, computed, nextTick, onMounted } from 'vue';
 
 import { marked } from 'marked';
 import hljs from 'highlight.js';
@@ -65,7 +65,7 @@ const autoResize = (event) => {
 	event.target.style.height = event.target.scrollHeight + 'px';
 };
 
-const handleINput = (event) => {
+const handleInput = (event) => {
 	emit('update:modelValue', event.target.value);
 	autoResize(event);
 };

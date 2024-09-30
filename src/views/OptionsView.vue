@@ -45,7 +45,7 @@
 				type="password"
 				placeholder="确认密码"
 			/>
-			<button @click="updatePasswordFunc">确认</button>
+			<button @click="updatePasswordFunc">重置</button>
 		</div>
 		<div class="data">
 			<button @click="logout">退出登录</button>
@@ -91,6 +91,12 @@ const uploadAvatarFunc = async (e) => {
 };
 
 const updateUserInfoFunc = async () => {
+	console.log(allInfo.value.name);
+	console.log(allInfo.value.name === '');
+	if(allInfo.value.name === '') {
+		showMsg('用户名不能为空');
+		return;
+	}
 	const res = await updateUserInfo(
 		allInfo.value.avatarURL,
 		allInfo.value.intro,

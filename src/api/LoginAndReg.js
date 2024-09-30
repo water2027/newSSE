@@ -1,3 +1,4 @@
+import { showMsg } from '@/components/msgbox'
 import CryptoJS from 'crypto-js'
 const apiUrl = import.meta.env.VITE_API_BASE_URL
 //后端那边是七天过期，以防万一7天减去1小时
@@ -108,7 +109,22 @@ async function userRegister(CDKey, email, name, password1, password2, valiCode) 
 async function updatePassword(email,password1, password2, valiCode) {
     const token = getItemWithExpiry('token')
     if (!token) {
+        return { code: 400, msg: '暂时无法忘记密码，请努力回想' }
         //没有token，就要有验证码
+        const response = await fetch(`${apiUrl}/auth/modifyPassword`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email,
+                valiCode: valiCode,
+                password: setPassword(password1, '16bit secret key'),
+                password2: setPassword(password2, '16bit secret key'),
+            })
+        })
+        const data = await response.json()
+        return data
     }else{
         //有token，就直接修改密码
         const response = await fetch(`${apiUrl}/auth/modifyPassword`, {

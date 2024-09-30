@@ -20,9 +20,7 @@ npm run build
   
 配置了jsx，可以更好的封装组件
 
-#### 基本完成 
-* LoginView.vue 
-
-#### 只写了大概 
-* PostListView.vue 
-* HomeView.vue 
+#### 未完成的功能 
+1. 忘记密码
+2. 回复评论的评论
+3. 课程专区的课件资料
