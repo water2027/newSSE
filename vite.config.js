@@ -15,6 +15,8 @@ export default defineConfig({
       filename: 'sw.js',
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,jpg,jpeg,svg}'],
+        navigateFallback: '/index.html',
+        navigateFallbackDenylist: [/^\/api\//],
       },
       devOptions: {
         enabled: true,
@@ -26,5 +28,8 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
+  },
+  server:{
+    hmr:false
   }
 })

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import PostListView from '@/views/PostListView.vue';
+import PostView from '@/views/PostView.vue';
 import PostDetailView from '@/views/PostDetailView.vue';
 import { getItemWithExpiry } from '@/api/LoginAndReg';
 
@@ -17,7 +18,7 @@ const routes = [
 	{
 		path: '/post',
 		name: 'Post',
-		component: () => import('@/views/PostView.vue'),
+		component: PostView,
 	},
 	{
 		path: '/postdetail/:id',
@@ -53,12 +54,12 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    const token = getItemWithExpiry('token');
-    if (to.path !== '/' && !token) {
-        next('/');
-    } else {
-        next();
-    }
+	const token = getItemWithExpiry('token');
+	if (to.path !== '/' && !token) {
+		next('/');
+	}else {
+		next();
+	}
 });
 
 export default router;
