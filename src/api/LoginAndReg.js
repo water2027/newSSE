@@ -79,7 +79,7 @@ async function sendCode(email) {
         },
         body: JSON.stringify({
             email: email,
-            mode: 1
+            mode: 0
         })
     })
     const data = await response.json()

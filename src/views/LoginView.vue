@@ -278,7 +278,7 @@ const getVCode = async () => {
 	}
 };
 
-const reg = () => {
+const reg = async () => {
 	if (
 		CDkey.value.value &&
 		email.value.value &&
@@ -287,12 +287,14 @@ const reg = () => {
 		password2.value.value &&
 		code.value.value
 	) {
-		const res = userRegister();
+		const res = await userRegister(CDkey.value.value,email.value.value,username.value.value,password1.value.value,password2.value.value,code.value.value);
 		if (res.code !== 200) {
 			showMsg(res.msg);
 		} else {
 			showMsg('注册成功');
 		}
+	}else{
+		showMsg('请填写完整信息');
 	}
 };
 
