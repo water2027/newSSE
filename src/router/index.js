@@ -31,6 +31,11 @@ const routes = [
 		component: () => import('@/views/NoticeView.vue'),
 	},
 	{
+		path: '/heat',
+		name: 'Heat',
+		component: () => import('@/views/HeatView.vue'),
+	},
+	{
 		path: '/feedback',
 		name: 'Feedback',
 		component: () => import('@/views/FeedbackView.vue'),

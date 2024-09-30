@@ -54,6 +54,13 @@
 					分区
 				</router-link>
 				<router-link
+					v-if="!isPC"
+					class="nav"
+					to="/heat"
+				>
+					热榜
+				</router-link>
+				<router-link
 					to="/"
 					class="nav"
 					@click="changeToCourse"
@@ -123,7 +130,12 @@
 					class="nav"
 					:to="'/postdetail/' + post.PostID"
 				>
-					<span class="heatTitle" :heat-score="post.Heat">{{ post.Title }}</span>
+					<span
+						class="heatTitle"
+						:heat-score="post.Heat"
+						>
+						{{ post.Title }}
+					</span>
 				</router-link>
 			</div>
 		</main>
@@ -173,6 +185,7 @@ const sinfo = ref(null);
 const search = () => {
 	searchinfo.value = sinfo.value.value;
 };
+
 const changeTomain = () => {
 	partition.value = '主页';
 	searchinfo.value = '';
@@ -189,6 +202,7 @@ const changeToSave = () => {
 const changeToHistory = () => {
 	searchsort.value = 'history';
 };
+
 const sendPartition = (p) => {
 	partition.value = p;
 	searchinfo.value = '';
@@ -217,18 +231,18 @@ onMounted(async () => {
 </script>
 <style scoped>
 #heat {
-    color: #ffffff;
-    text-shadow: 
-        0 0 10px #ff3232de,
-        0 0 20px #ff3232de,
-        0 0 50px #ff3232de,
-        0 0 100px #ff3232de,
-        0 0 200px #ff3232de
+	color: #ffffff;
+	text-shadow:
+		0 0 10px #ff3232de,
+		0 0 20px #ff3232de,
+		0 0 50px #ff3232de,
+		0 0 100px #ff3232de,
+		0 0 200px #ff3232de;
 }
-#heat::before{
+#heat::before {
 	content: '🔥';
 }
-#heat::after{
+#heat::after {
 	content: '🔥';
 }
 
