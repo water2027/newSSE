@@ -101,6 +101,12 @@ span{
     font-weight: 500;
 }
 
+img{
+    width: 25%;
+    height: 25%;
+    object-fit: cover;
+}
+
 hr{
     border: 1px solid #3333339d;
 }

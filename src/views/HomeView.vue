@@ -54,6 +54,13 @@
 					分区
 				</router-link>
 				<router-link
+					v-if="!isPC"
+					class="nav"
+					to="/heat"
+				>
+					热榜
+				</router-link>
+				<router-link
 					to="/"
 					class="nav"
 					@click="changeToCourse"
@@ -99,7 +106,7 @@
 					class="nav"
 					to="/options"
 				>
-					设置
+					个人信息
 				</router-link>
 			</div>
 			<div
@@ -116,14 +123,18 @@
 				v-if="!heatPostsIsHiden && isPC"
 				class="nav-bar heat"
 			>
-				<h2>热榜</h2>
+				<h2 id="heat">热榜</h2>
 				<router-link
 					v-for="post in heatPosts"
 					:key="post.PostID"
 					class="nav"
 					:to="'/postdetail/' + post.PostID"
 				>
-					<span>{{ post.Title }}</span>
+					<span
+						class="heatTitle"
+						>
+						{{ post.Title }}
+					</span>
 				</router-link>
 			</div>
 		</main>
@@ -173,6 +184,7 @@ const sinfo = ref(null);
 const search = () => {
 	searchinfo.value = sinfo.value.value;
 };
+
 const changeTomain = () => {
 	partition.value = '主页';
 	searchinfo.value = '';
@@ -189,9 +201,11 @@ const changeToSave = () => {
 const changeToHistory = () => {
 	searchsort.value = 'history';
 };
+
 const sendPartition = (p) => {
 	partition.value = p;
-	console.log(partition.value);
+	searchinfo.value = '';
+	searchsort.value = 'home';
 };
 const toggleNav = () => {
 	if (!isPC.value) {
@@ -215,10 +229,26 @@ onMounted(async () => {
 });
 </script>
 <style scoped>
-#notice{
+#heat {
+	color: #ffffff;
+	text-shadow:
+		0 0 10px #ff3232de,
+		0 0 20px #ff3232de,
+		0 0 50px #ff3232de,
+		0 0 100px #ff3232de,
+		0 0 200px #ff3232de;
+}
+#heat::before {
+	content: '🔥';
+}
+#heat::after {
+	content: '🔥';
+}
+
+#notice {
 	position: relative;
 }
-#notice::after{
+#notice::after {
 	content: attr(notice-num);
 	position: absolute;
 	top: 50%;
@@ -230,7 +260,7 @@ onMounted(async () => {
 	font-size: 1rem;
 }
 
-#notice[notice-num="0"]::after{
+#notice[notice-num='0']::after {
 	display: none;
 }
 
@@ -387,6 +417,7 @@ main {
 	.heat {
 		text-align: center !important;
 		margin-right: 3%;
+		width: 25%;
 	}
 
 	h2 {

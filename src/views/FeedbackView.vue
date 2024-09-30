@@ -23,5 +23,3 @@ const submitFeedback = async () => {
     }
 }
 </script>
-
-<style></style>

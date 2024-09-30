@@ -22,14 +22,12 @@ const emit = defineEmits(['send-partition']);
 const partitions = ref([
 	'日常吐槽',
 	'打听求助',
-	'恋爱交友',
 	'学习交流',
-	'二手闲置',
+	'院务',
 	'求职招募',
 	'其他',
 ]);
 const sendPartition = (p) => {
-	console.log(p);
 	emit('send-partition', p);
 	router.push('/');
 };

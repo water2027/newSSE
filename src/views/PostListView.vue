@@ -30,6 +30,7 @@
 					:src="post.UserAvatar"
 				/>
 				<span>{{ post.UserName }}</span>
+				<span title="码之气，三段！" class="level">{{ expHandler(post.UserScore) }}</span>
 				<div class="userButtons">
 					<button
 						@click.stop.prevent="
@@ -147,6 +148,8 @@ import { savePost, delPost, likePost } from '@/api/saveAndDel';
 import { showMsg } from '@/components/msgbox';
 import { getItemWithExpiry } from '@/api/LoginAndReg';
 import { strHandler } from '@/utils/strHandler';
+import { expHandler } from '@/utils/expHandler';
+
 import { ref, onMounted, inject, watch } from 'vue';
 
 const userInfo = inject('userInfo');
@@ -528,5 +531,15 @@ a {
 	text-decoration: none;
 	color: black;
 	display: block;
+}
+
+.level{
+	margin-left: 10px;
+	background: #ffc6c6;
+	border-radius: 50%;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 </style>
