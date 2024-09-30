@@ -93,9 +93,8 @@ const uploadAvatarFunc = async (e) => {
 
 const updateUserInfoFunc = async () => {
 	console.log(allInfo.value.name);
-	console.log(allInfo.value.name === '');
-	if(allInfo.value.name === '') {
-		showMsg('用户名不能为空');
+	if(/^\s+|\s+$/.test(allInfo.value.name)) {
+		showMsg('用户名不能以空格作为开头或者结尾');
 		return;
 	}
 	const res = await updateUserInfo(
