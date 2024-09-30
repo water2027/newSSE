@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/singleline-html-element-content-newline -->
 <!-- eslint-disable vue/html-self-closing -->
 <!-- eslint-disable vue/html-indent -->
 <template>
