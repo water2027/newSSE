@@ -132,7 +132,6 @@
 				>
 					<span
 						class="heatTitle"
-						:heat-score="post.Heat"
 						>
 						{{ post.Title }}
 					</span>
