@@ -291,8 +291,6 @@ const commentContent = ref('');
 const post = ref({});
 const comments = ref([]);
 const commentVisibility = ref({});
-const commentBoxVIsibility = ref({});
-const pCommentContent = ref({});
 const commentButtonIsShow = ref(false);
 const commentID = ref(-1);
 const cCommentContent = ref('');
@@ -480,12 +478,13 @@ const like = async (isLiked, postID, userTelephone) => {
 
 onMounted(async () => {
 	try {
+		const ID = Number(route.params.id);
 		const curPost = await getPostByID(
-			Number(route.params.id),
+			ID,
 			userInfo.value.phone
 		);
 		const curComments = await getCommentsByPostID(
-			Number(route.params.id),
+			ID,
 			userInfo.value.phone
 		);
 		post.value = curPost;
@@ -495,8 +494,6 @@ onMounted(async () => {
 		curComments &&
 			curComments.forEach((comment) => {
 				commentVisibility.value[comment.PcommentID] = false;
-				commentBoxVIsibility.value[comment.PcommentID] = false;
-				pCommentContent.value[comment.PcommentID] = '';
 			});
 	} catch (e) {
 		showMsg(`获取帖子失败: ${e}`);

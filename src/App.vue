@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, provide, onUnmounted } from 'vue';
+import { onMounted, ref, provide, onUnmounted, onBeforeMount } from 'vue';
 import HomeViewVue from './views/HomeView.vue';
 import { userLogin, getItemWithExpiry } from './api/LoginAndReg';
 import LoginViewVue from './views/LoginView.vue';
@@ -32,7 +32,7 @@ const handleBeforeUnload = () => {
     }
 };
 
-onMounted(async () => {
+onBeforeMount(async () => {
     if (localStorage.rememberMe) {
         const token = getItemWithExpiry('token');
         const tempInfo = localStorage.getItem('userInfo');
