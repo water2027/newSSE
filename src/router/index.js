@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router';
 import PostListView from '@/views/PostListView.vue';
 import PostView from '@/views/PostView.vue';
 import PostDetailView from '@/views/PostDetailView.vue';
@@ -49,7 +49,8 @@ const routes = [
 ];
 
 const router = createRouter({
-	history: createWebHistory(import.meta.env.BASE_URL),
+	history: createWebHashHistory(),
+	// history: createWebHistory(import.meta.env.BASE_URL),
 	routes: routes,
 });
 
