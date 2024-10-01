@@ -42,6 +42,7 @@
 import { ref, inject, onMounted } from 'vue';
 import { getNotices, readNotice } from '@/api/notice';
 import { strHandler } from '@/utils/strHandler';
+import { showMsg } from '@/components/msgbox';
 const notices = inject('notices');
 const readPage = ref(true);
 const noticesRead = ref([]);
@@ -49,11 +50,12 @@ const noticesUnread = ref([]);
 
 const readComment = async (noticeID) =>{
 	const res = await readNotice(noticeID);
-	if(res.code === 200){
+	if(res.status === 'success'){
 		const read = await getNotices(0, notices.value.readTotalNum, 1);
 		const unread = await getNotices(0, notices.value.unreadTotalNum, 0);
 		noticesRead.value = read.noticeList;
 		noticesUnread.value = unread.noticeList;
+		showMsg('success')
 	}
 }
 
