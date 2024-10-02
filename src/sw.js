@@ -34,33 +34,6 @@ registerRoute(
   })
 )
 
-// // 离线页面
-// const navigationRoute = new NavigationRoute(
-//   new NetworkOnly({
-//     networkTimeoutSeconds: 3,
-//   }),
-//   {
-//     navigationFallback: '/offline.html',
-//   }
-// )
-// registerRoute(navigationRoute)
-
-// // 定期更新缓存
-// registerRoute(
-//   ({ request }) => request.mode === 'navigate',
-//   new NetworkFirst({
-//     cacheName: 'pages',
-//     plugins: [
-//       new CacheableResponsePlugin({
-//         statuses: [200],
-//       }),
-//       new ExpirationPlugin({
-//         maxAgeSeconds: 24 * 60 * 60, // 24 hours
-//       }),
-//     ],
-//   })
-// )
-
 const navigationRoute = new NavigationRoute(
   new NetworkFirst({
     cacheName: 'pages',

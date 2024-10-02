@@ -118,7 +118,6 @@ const logout = () => {
 
 onMounted(async () => {
 	allInfo.value = await getAllInfo(userInfo.value.phone);
-	console.log(allInfo.value);
 });
 </script>
 
