@@ -46,11 +46,15 @@ const routes = [
 		name: 'Options',
 		component: () => import('@/views/OptionsView.vue'),
 	},
+	{
+		path:'/:catchAll(.*)',
+		component:() => import('@/views/NotFoundView.vue')
+	}
 ];
 
 const router = createRouter({
-	history: createWebHashHistory(),
-	// history: createWebHistory(import.meta.env.BASE_URL),
+	// history: createWebHashHistory(),
+	history: createWebHistory(import.meta.env.BASE_URL),
 	routes: routes,
 });
 
