@@ -109,6 +109,12 @@
 				>
 					个人信息
 				</router-link>
+				<router-link
+					class="nav"
+					to="/doc"
+				>
+					文档
+				</router-link>
 			</div>
 			<div
 				class="content"

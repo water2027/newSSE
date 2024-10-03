@@ -47,6 +47,11 @@ const routes = [
 		component: () => import('@/views/OptionsView.vue'),
 	},
 	{
+		path: '/doc',
+		name: 'Doc',
+		component: () => import('@/views/DocView.vue'),
+	},
+	{
 		path:'/:catchAll(.*)',
 		component:() => import('@/views/NotFoundView.vue')
 	}
