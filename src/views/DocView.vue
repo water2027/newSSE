@@ -1,7 +1,7 @@
 <template>
-	<div class="root">
+	<div class="root" ref="root">
 		<div
-			class="container"
+			id="container"
 			v-html="content"
 		></div>
 	</div>
@@ -17,6 +17,7 @@ import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
 
 const content = ref('');
+const root = ref(null);
 
 const safeHTML = (str) => {
 	if (!str) {
@@ -33,6 +34,9 @@ const safeHTML = (str) => {
 		xhtml: false,
 	});
 	const target = marked(str);
+	setTimeout(() => {
+		highlightcode();
+	}, 0);
 	return target;
 };
 
@@ -50,5 +54,19 @@ onMounted( async () => {
 
 <style scoped>
 @import '../assets/hl.css';
+
+.root{
+	padding: 0;
+}
+
+#container {
+	margin: 0;
+	padding: 0;
+}
+
+#container h2 {
+	margin: 0;
+	padding: 0;
+}
 
 </style>
