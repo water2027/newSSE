@@ -39,6 +39,7 @@
 					v-for="img in strHandler('img', post.Photos)"
 					:key="img"
 					:src="img"
+					@click="showImg(img)"
 				/>
 			</div>
 			<span>{{ strHandler('time', post.PostTime) }}</span>
@@ -279,6 +280,7 @@ import DOMPurify from 'dompurify';
 
 import { strHandler } from '@/utils/strHandler';
 import { expHandler } from '@/utils/expHandler';
+import { showImg } from '@/components/imageShower';
 
 import { showMsg } from '@/components/msgbox';
 import MarkdownEditor from '@/components/MarkdownEditor.vue';

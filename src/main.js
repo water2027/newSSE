@@ -1,5 +1,5 @@
 import './assets/main.css'
-import './assets/msgbox.css'
+import './assets/jsxComponents.css'
 import './assets/global.css'
 
 import { createApp } from 'vue'
