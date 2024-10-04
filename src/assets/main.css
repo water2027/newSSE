@@ -90,14 +90,9 @@ ol{
 
 li{
     margin: 0;
+    margin-left: 1rem;
     padding: 0;
     line-height: 1;
-}
-
-span{
-    font-size: 1rem;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 500;
 }
 
 img{
@@ -130,7 +125,10 @@ hr{
     .editorButton{
         display: grid !important;
         grid-template-columns: 1fr 1fr;
+    }
 
+    li{
+        margin-left: 2rem;
     }
 }
 

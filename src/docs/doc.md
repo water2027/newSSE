@@ -19,4 +19,8 @@
     background-position: left bottom;
 }
 ``` 
-效果:<span class="gradientUnderline">你好，世界！</span>   
+效果:<span class="gradientUnderline">你好，世界！</span> 
+使用方法: 
+```html
+<span class="gradientUnderline">你好，世界！</span>
+```   
