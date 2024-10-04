@@ -1,14 +1,22 @@
 <template>
-	<div class="root" ref="root">
-		<div
-			id="container"
-			v-html="content"
-		></div>
+	<div
+		class="root"
+		ref="root"
+	>
+		<div class="postDetail">
+			<div
+				id="content"
+				ref="mdContainer"
+				class="hasImgDiv"
+				:style="mdContainerStyle"
+				v-html="content"
+			></div>
+		</div>
 	</div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted,computed } from 'vue';
 
 import markdown from '../docs/doc.md?raw';
 
@@ -18,6 +26,18 @@ import 'highlight.js/styles/github.css';
 
 const content = ref('');
 const root = ref(null);
+
+const mdContainerStyle = computed(() => {
+	return {
+		width: '100%',
+		height: 'auto',
+		margin: '10px 0',
+		fontSize: '23px',
+		paddingLeft: '1%',
+		paddingBottom: '5%',
+		marginBottom: '1%',
+	};
+});
 
 const safeHTML = (str) => {
 	if (!str) {
@@ -36,6 +56,10 @@ const safeHTML = (str) => {
 	const target = marked(str);
 	setTimeout(() => {
 		highlightcode();
+		const childElements = root.value.querySelectorAll('*');
+		childElements.forEach((child) => {
+			child.style.whiteSpace = 'pre-wrap';
+		});
 	}, 0);
 	return target;
 };
@@ -47,26 +71,28 @@ const highlightcode = () => {
 	});
 };
 
-onMounted( async () => {
-    content.value = safeHTML(markdown);
-})
+onMounted(async () => {
+	content.value = safeHTML(markdown);
+});
 </script>
 
 <style scoped>
 @import '../assets/hl.css';
 
-.root{
-	padding: 0;
+.root {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	text-align: start;
 }
 
-#container {
-	margin: 0;
-	padding: 0;
-}
-
-#container h2 {
-	margin: 0;
-	padding: 0;
+.postDetail {
+	width: 100%;
+	margin-left: 0;
+	margin-right: auto;
+	padding: 1%;
+	border-radius: 5px;
+	box-sizing: border-box;
 }
 
 </style>
