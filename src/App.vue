@@ -6,11 +6,14 @@
 </template>
 
 <script setup>
-import { onMounted, ref, provide, onUnmounted } from 'vue';
+import { onMounted, ref, provide, onUnmounted, onBeforeMount } from 'vue';
 import HomeViewVue from './views/HomeView.vue';
 import { userLogin, getItemWithExpiry } from './api/LoginAndReg';
 import LoginViewVue from './views/LoginView.vue';
 import { getInfo } from '@/api/getInfo';
+import { useRouter,useRoute } from 'vue-router';
+const route = useRoute()
+const router = useRouter()
 
 const userInfo = ref({})
 provide('userInfo', userInfo)
@@ -32,7 +35,15 @@ const handleBeforeUnload = () => {
     }
 };
 
-onMounted(async () => {
+onBeforeMount(async () => {
+    const url = window.location.href
+    const baseUrl = import.meta.env.VITE_BASE_URL
+    const extractedString = url.replace(baseUrl,'')
+    setTimeout(()=>{
+        if(route.path !== extractedString){
+            router.push(extractedString)
+        }
+    },0)
     if (localStorage.rememberMe) {
         const token = getItemWithExpiry('token');
         const tempInfo = localStorage.getItem('userInfo');
@@ -59,5 +70,3 @@ onUnmounted(() => {
     window.removeEventListener('beforeunload', handleBeforeUnload);
 });
 </script>
-
-<style></style>

@@ -1,5 +1,5 @@
 /* eslint-disable vue/multi-word-component-names */
-import { createApp, render } from "vue";
+import { createApp } from "vue";
 
 const messageBox = {
     props: {

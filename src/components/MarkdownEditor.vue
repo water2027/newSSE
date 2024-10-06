@@ -29,6 +29,7 @@
 			></div>
 		</div>
 		<div class="inputData">
+			<button v-if="route.path === '/post'" @click="savePost">暂存为草稿</button>
 			<button @click="$emit('send')">发送</button>
 			<input
 				class="fileInput"
@@ -42,6 +43,7 @@
 
 <script setup>
 import { ref, computed, nextTick, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 
 import { marked } from 'marked';
 import hljs from 'highlight.js';
@@ -50,6 +52,8 @@ import DOMPurify from 'dompurify';
 
 import { showMsg } from '@/components/msgbox';
 import { uploadPhoto } from '@/api/postAndComment';
+
+const route = useRoute();
 
 const props = defineProps({
 	modelValue: {
@@ -202,6 +206,26 @@ const editComment = (type) => {
 	}, 0);
 };
 
+const savePost = () => {
+	const post = {
+		title: '草稿',
+		content: props.modelValue,
+	};
+	localStorage.setItem('draft', JSON.stringify(post));
+	showMsg('已暂存为草稿');
+};
+
+onMounted(() => {
+	if(route.path === '/post') {
+		const draft = JSON.parse(localStorage.getItem('draft'));
+		if (draft) {
+			emit('update:modelValue', draft.content);
+			showMsg('读取草稿成功，已删除');
+			localStorage.removeItem('draft');
+		}
+	}
+});
+
 defineExpose({
 	name: 'MarkdownEditor',
 });
@@ -233,7 +257,7 @@ defineExpose({
 
 .inputData {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 	align-items: center;
 	justify-content: center;
 	width: 100%;

@@ -1,7 +1,8 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router';
 import PostListView from '@/views/PostListView.vue';
+import PostView from '@/views/PostView.vue';
 import PostDetailView from '@/views/PostDetailView.vue';
-import { getItemWithExpiry } from '@/api/LoginAndReg';
+// import { getItemWithExpiry } from '@/api/LoginAndReg';
 
 const routes = [
 	{
@@ -17,7 +18,7 @@ const routes = [
 	{
 		path: '/post',
 		name: 'Post',
-		component: () => import('@/views/PostView.vue'),
+		component: PostView,
 	},
 	{
 		path: '/postdetail/:id',
@@ -45,20 +46,30 @@ const routes = [
 		name: 'Options',
 		component: () => import('@/views/OptionsView.vue'),
 	},
+	{
+		path: '/doc',
+		name: 'Doc',
+		component: () => import('@/views/DocView.vue'),
+	},
+	{
+		path:'/:catchAll(.*)',
+		component:() => import('@/views/NotFoundView.vue')
+	}
 ];
 
 const router = createRouter({
+	// history: createWebHashHistory(),
 	history: createWebHistory(import.meta.env.BASE_URL),
 	routes: routes,
 });
 
-router.beforeEach((to, from, next) => {
-    const token = getItemWithExpiry('token');
-    if (to.path !== '/' && !token) {
-        next('/');
-    } else {
-        next();
-    }
-});
+// router.beforeEach((to, from, next) => {
+// 	const token = getItemWithExpiry('token');
+// 	if (to.path !== '/' && !token) {
+// 		next('/');
+// 	}else {
+// 		next();
+// 	}
+// });
 
 export default router;

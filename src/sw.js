@@ -4,6 +4,13 @@ import { StaleWhileRevalidate, CacheFirst, NetworkFirst, NetworkOnly } from 'wor
 import { ExpirationPlugin } from 'workbox-expiration'
 import { CacheableResponsePlugin } from 'workbox-cacheable-response'
 
+import { setDefaultHandler } from 'workbox-routing';
+
+setDefaultHandler(new NetworkFirst({
+  cacheName: 'default',
+  networkTimeoutSeconds: 5,
+}));
+
 // 预缓存
 precacheAndRoute(self.__WB_MANIFEST)
 
@@ -27,22 +34,10 @@ registerRoute(
   })
 )
 
-// 离线页面
 const navigationRoute = new NavigationRoute(
-  new NetworkOnly({
-    networkTimeoutSeconds: 3,
-  }),
-  {
-    navigationFallback: '/offline.html',
-  }
-)
-registerRoute(navigationRoute)
-
-// 定期更新缓存
-registerRoute(
-  ({ request }) => request.mode === 'navigate',
   new NetworkFirst({
     cacheName: 'pages',
+    networkTimeoutSeconds: 5, // 增加超时时间
     plugins: [
       new CacheableResponsePlugin({
         statuses: [200],
@@ -51,7 +46,15 @@ registerRoute(
         maxAgeSeconds: 24 * 60 * 60, // 24 hours
       }),
     ],
-  })
+  }),
+  {
+    navigationFallback: '/offline.html',
+  }
 )
+registerRoute(navigationRoute)
+
+self.addEventListener('fetch', (event) => {
+  console.log('Fetch event for ', event.request.url);
+});
 
 console.log('Service Worker 已加载')

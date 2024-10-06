@@ -37,6 +37,7 @@
 		<main>
 			<div
 				v-if="isPC || navIsOpen"
+				id="mainNavBar"
 				class="nav-bar main-nav-bar"
 				@click="toggleNav"
 			>
@@ -107,6 +108,12 @@
 					to="/options"
 				>
 					个人信息
+				</router-link>
+				<router-link
+					class="nav"
+					to="/doc"
+				>
+					文档
 				</router-link>
 			</div>
 			<div
@@ -329,6 +336,10 @@ main {
 	text-align: center;
 	text-decoration: none;
 	color: black;
+}
+
+#mainNavBar {
+	z-index: 99999;
 }
 
 /* 大屏幕样式 >768px */
