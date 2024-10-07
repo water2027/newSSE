@@ -36,7 +36,7 @@
 			>
 				<!-- 图片路径由|分割 -->
 				<img
-					v-for="img in strHandler('img', post.Photos)"
+					v-for="img in strHandler('postImg', post.Photos)"
 					:key="img"
 					:src="img"
 					@click="showImg(img)"
