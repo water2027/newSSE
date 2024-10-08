@@ -29,12 +29,24 @@
 			></div>
 		</div>
 		<div class="inputData">
-			<button v-if="route.path === '/post'" @click="savePost">暂存为草稿</button>
-			<button @click="$emit('send')">发送</button>
+			<button
+				v-if="route.path === '/post'"
+				:style="buttonStyle"
+				@click="savePost"
+			>
+				暂存为草稿
+			</button>
+			<button
+				:style="buttonStyle"
+				@click="$emit('send')"
+			>
+				发送
+			</button>
 			<input
 				class="fileInput"
 				type="file"
 				accept="image/*"
+				:style="buttonStyle"
 				@input="upload"
 			/>
 		</div>
@@ -54,6 +66,19 @@ import { showMsg } from '@/components/msgbox';
 import { uploadPhoto } from '@/api/postAndComment';
 
 const route = useRoute();
+
+const buttonStyle = computed(() => {
+	if (route.path === '/post') {
+		return {
+			width: '50%',
+		};
+	}else{
+		return {
+			backgroundColor: '#f0f0f0',
+			color: '#000',
+		};
+	}
+});
 
 const props = defineProps({
 	modelValue: {
@@ -216,7 +241,7 @@ const savePost = () => {
 };
 
 onMounted(() => {
-	if(route.path === '/post') {
+	if (route.path === '/post') {
 		const draft = JSON.parse(localStorage.getItem('draft'));
 		if (draft) {
 			emit('update:modelValue', draft.content);
