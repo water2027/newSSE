@@ -68,16 +68,9 @@ import { uploadPhoto } from '@/api/postAndComment';
 const route = useRoute();
 
 const buttonStyle = computed(() => {
-	if (route.path === '/post') {
-		return {
-			width: '50%',
-		};
-	}else{
-		return {
-			backgroundColor: '#f0f0f0',
-			color: '#000',
-		};
-	}
+	return {
+		width: '50%',
+	};
 });
 
 const props = defineProps({
@@ -297,10 +290,5 @@ defineExpose({
 		grid-template-columns: repeat(3, 1fr);
 		width: 100%;
 	}
-
-	.inputData > *{
-		width: 100%;
-	}
-
 }
 </style>
