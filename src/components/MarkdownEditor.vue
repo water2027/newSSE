@@ -297,5 +297,10 @@ defineExpose({
 		grid-template-columns: repeat(3, 1fr);
 		width: 100%;
 	}
+
+	.inputData > *{
+		width: 100%;
+	}
+
 }
 </style>
