@@ -35,11 +35,13 @@
 
 <script setup>
 import { ref, inject } from 'vue';
+import { useRouter } from 'vue-router';
 import { showMsg } from '@/components/msgbox';
 import { sendPost } from '@/api/postAndComment';
 
 import MarkdownEditor from '@/components/MarkdownEditor.vue';
 
+const router = useRouter();
 const userInfo = inject('userInfo');
 const partitions = ref([
 	'主页',
@@ -56,9 +58,11 @@ const partition = ref(null);
 const tagList = ref('');
 
 const submitPost = async () => {
-	const postTitle = title.value.value;
+	let postTitle = title.value.value;
 	const content = postContent.value;
 	const postPartition = partition.value.value;
+	//去除标题的空格
+	postTitle = postTitle.replace(/(^\s*)|(\s*$)/g, '');
 
 	if (!postTitle || !content) {
 		alert('请填写完整信息');
@@ -72,6 +76,8 @@ const submitPost = async () => {
 		postTitle,
 		userInfo.value.phone
 	);
+	//清空
+	router.push('/')
 	showMsg(res.msg);
 };
 
