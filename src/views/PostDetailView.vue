@@ -36,10 +36,9 @@
 			>
 				<!-- 图片路径由|分割 -->
 				<img
-					v-for="img in strHandler('postImg', post.Photos)"
+					v-for="img in strHandler('img', post.Photos)"
 					:key="img"
 					:src="img"
-					@click="showImg(img)"
 				/>
 			</div>
 			<span>{{ strHandler('time', post.PostTime) }}</span>
@@ -459,6 +458,11 @@ const copyCode = async (event) => {
 		const code = event.target.innerText;
 		await navigator.clipboard.writeText(code);
 		showMsg('代码已复制');
+	}else if(event.target.tagName === 'IMG'){
+		//拿到图片的src
+		const src = event.target.src;
+		const uploadImg = strHandler('postImg', src); 
+		showImg(uploadImg);
 	}
 };
 
