@@ -127,7 +127,7 @@
 				<router-view v-else />
 			</div>
 			<div
-				v-if="!heatPostsIsHiden && isPC"
+				v-if="isPC&&(!heatPostsIsHiden)"
 				class="nav-bar heat"
 			>
 				<h2 id="heat">热榜</h2>

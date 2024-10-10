@@ -30,7 +30,11 @@
 					:src="post.UserAvatar"
 				/>
 				<span>{{ post.UserName }}</span>
-				<span title="码之气，三段！" class="level">{{ expHandler(post.UserScore) }}</span>
+				<span
+					title="码之气，三段！"
+					class="level"
+					>{{ expHandler(post.UserScore) }}</span
+				>
 				<div class="userButtons">
 					<button
 						@click.stop.prevent="
@@ -165,29 +169,33 @@ const teachers = ref([]);
 const tag = ref('');
 
 const handleSave = async (isSaved, postID, userTelephone) => {
-	await savePost(isSaved, postID, userTelephone);
-	posts.value.forEach((element) => {
-		if (element.PostID === postID) {
-			element.IsSaved = !element.IsSaved;
-		}
-	});
-	showMsg(isSaved ? '取消成功？' : '收藏成功？');
+	const result = await savePost(isSaved, postID, userTelephone);
+	if (result === 200) {
+		posts.value.forEach((element) => {
+			if (element.PostID === postID) {
+				element.IsSaved = !element.IsSaved;
+			}
+		});
+		showMsg(isSaved ? '取消成功' : '收藏成功');
+	}
 };
 
 const like = async (isLiked, postID, userTelephone) => {
-	await likePost(isLiked, postID, userTelephone);
-	posts.value.forEach((element) => {
-		if (element.PostID === postID) {
-			element.IsLiked = !element.IsLiked;
-			if (element.IsLiked) {
-				element.Like++;
-				showMsg('点赞成功？');
-			} else {
-				element.Like--;
-				showMsg('取消成功？');
+	const result = await likePost(isLiked, postID, userTelephone);
+	if (result) {
+		posts.value.forEach((element) => {
+			if (element.PostID === postID) {
+				element.IsLiked = !element.IsLiked;
+				if (element.IsLiked) {
+					element.Like++;
+					showMsg('点赞成功');
+				} else {
+					element.Like--;
+					showMsg('取消成功');
+				}
 			}
-		}
-	});
+		});
+	}
 };
 
 const handleDelete = async (postID) => {
@@ -209,7 +217,7 @@ const handleDelete = async (postID) => {
 		tag: tag.value,
 	});
 	posts.value = res;
-	showMsg('删除成功？');
+	showMsg('删除成功');
 };
 
 const lastPage = async () => {
@@ -276,7 +284,7 @@ onMounted(async () => {
 				},
 			});
 			const data = await res.json();
-			teachers.value = ['',...data.data.tags];
+			teachers.value = ['', ...data.data.tags];
 		} else {
 			showMsg('获取失败');
 		}
@@ -533,7 +541,7 @@ a {
 	display: block;
 }
 
-.level{
+.level {
 	margin-left: 10px;
 	background: #ffc6c6;
 	border-radius: 50%;

@@ -237,11 +237,6 @@ const login = async () => {
 		email.value.value &&
 		password1.value.value
 	) {
-		console.log(
-			remembered.value.value,
-			email.value.value,
-			password1.value.value
-		);
 		localStorage.rememberMe = true;
 		localStorage.email = email.value.value;
 		localStorage.password = password1.value.value;

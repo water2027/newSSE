@@ -430,28 +430,32 @@ const sendPCommentFunc = async (PcommentID) => {
 };
 
 const delCommentFunc = async (commentID) => {
-	await delComment(commentID);
-	getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
-		(res) => {
-			//倒序
-			res.reverse();
-			comments.value = res;
-			showMsg('删除成功?');
-		}
-	);
+	const result = await delComment(commentID);
+	if (result) {
+		getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
+			(res) => {
+				//倒序
+				res.reverse();
+				comments.value = res;
+				showMsg('删除成功?');
+			}
+		);
+	}
 };
 
 // 删除评论的评论
 const delCcommentFunc = async (ccommentID) => {
-	await delCcomment(ccommentID);
-	getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
-		(res) => {
-			//倒序
-			res.reverse();
-			comments.value = res;
-			showMsg('删除成功?');
-		}
-	);
+	const result = await delCcomment(ccommentID);
+	if (result) {
+		getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
+			(res) => {
+				//倒序
+				res.reverse();
+				comments.value = res;
+				showMsg('删除成功?');
+			}
+		);
+	}
 };
 
 const copyCode = async (event) => {
@@ -467,28 +471,24 @@ const toggleSubComments = (id) => {
 };
 
 const like = async (isLiked, postID, userTelephone) => {
-	await likePost(isLiked, postID, userTelephone);
-	post.value.IsLiked = !post.value.IsLiked;
-	if (post.value.IsLiked) {
-		post.value.Like++;
-		showMsg('点赞成功');
-	} else {
-		post.value.Like--;
-		showMsg('取消点赞');
+	const result = await likePost(isLiked, postID, userTelephone);
+	if (result) {
+		post.value.IsLiked = !post.value.IsLiked;
+		if (post.value.IsLiked) {
+			post.value.Like++;
+			showMsg('点赞成功');
+		} else {
+			post.value.Like--;
+			showMsg('取消点赞');
+		}
 	}
 };
 
 onMounted(async () => {
 	try {
 		const ID = Number(route.params.id);
-		const curPost = await getPostByID(
-			ID,
-			userInfo.value.phone
-		);
-		const curComments = await getCommentsByPostID(
-			ID,
-			userInfo.value.phone
-		);
+		const curPost = await getPostByID(ID, userInfo.value.phone);
+		const curComments = await getCommentsByPostID(ID, userInfo.value.phone);
 		post.value = curPost;
 		//将评论倒序
 		if (curComments) curComments.reverse();
