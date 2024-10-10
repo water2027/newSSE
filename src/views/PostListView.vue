@@ -169,33 +169,29 @@ const teachers = ref([]);
 const tag = ref('');
 
 const handleSave = async (isSaved, postID, userTelephone) => {
-	const result = await savePost(isSaved, postID, userTelephone);
-	if (result === 200) {
-		posts.value.forEach((element) => {
-			if (element.PostID === postID) {
-				element.IsSaved = !element.IsSaved;
-			}
-		});
-		showMsg(isSaved ? '取消成功' : '收藏成功');
-	}
+	await savePost(isSaved, postID, userTelephone);
+	posts.value.forEach((element) => {
+		if (element.PostID === postID) {
+			element.IsSaved = !element.IsSaved;
+		}
+	});
+	showMsg(isSaved ? '取消成功' : '收藏成功');
 };
 
 const like = async (isLiked, postID, userTelephone) => {
-	const result = await likePost(isLiked, postID, userTelephone);
-	if (result) {
-		posts.value.forEach((element) => {
-			if (element.PostID === postID) {
-				element.IsLiked = !element.IsLiked;
-				if (element.IsLiked) {
-					element.Like++;
-					showMsg('点赞成功');
-				} else {
-					element.Like--;
-					showMsg('取消成功');
-				}
+	await likePost(isLiked, postID, userTelephone);
+	posts.value.forEach((element) => {
+		if (element.PostID === postID) {
+			element.IsLiked = !element.IsLiked;
+			if (element.IsLiked) {
+				element.Like++;
+				showMsg('点赞成功');
+			} else {
+				element.Like--;
+				showMsg('取消成功');
 			}
-		});
-	}
+		}
+	});
 };
 
 const handleDelete = async (postID) => {
