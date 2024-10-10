@@ -431,31 +431,27 @@ const sendPCommentFunc = async (PcommentID) => {
 
 const delCommentFunc = async (commentID) => {
 	const result = await delComment(commentID);
-	if (result) {
-		getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
-			(res) => {
-				//倒序
-				res.reverse();
-				comments.value = res;
-				showMsg('删除成功?');
-			}
-		);
-	}
+	getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
+		(res) => {
+			//倒序
+			res.reverse();
+			comments.value = res;
+			showMsg('删除成功?');
+		}
+	);
 };
 
 // 删除评论的评论
 const delCcommentFunc = async (ccommentID) => {
-	const result = await delCcomment(ccommentID);
-	if (result) {
-		getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
-			(res) => {
-				//倒序
-				res.reverse();
-				comments.value = res;
-				showMsg('删除成功?');
-			}
-		);
-	}
+	await delCcomment(ccommentID);
+	getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
+		(res) => {
+			//倒序
+			res.reverse();
+			comments.value = res;
+			showMsg('删除成功?');
+		}
+	);
 };
 
 const copyCode = async (event) => {
@@ -471,16 +467,14 @@ const toggleSubComments = (id) => {
 };
 
 const like = async (isLiked, postID, userTelephone) => {
-	const result = await likePost(isLiked, postID, userTelephone);
-	if (result) {
-		post.value.IsLiked = !post.value.IsLiked;
-		if (post.value.IsLiked) {
-			post.value.Like++;
-			showMsg('点赞成功');
-		} else {
-			post.value.Like--;
-			showMsg('取消点赞');
-		}
+	await likePost(isLiked, postID, userTelephone);
+	post.value.IsLiked = !post.value.IsLiked;
+	if (post.value.IsLiked) {
+		post.value.Like++;
+		showMsg('点赞成功');
+	} else {
+		post.value.Like--;
+		showMsg('取消点赞');
 	}
 };
 
