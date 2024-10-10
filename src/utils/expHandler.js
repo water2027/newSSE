@@ -1,3 +1,8 @@
+/**
+ * @description 等级
+ * @param {number} userScore 
+ * @returns 
+ */
 function expHandler(userScore) {
 	if (userScore < 100) {
 		return 'Lv0 菜鸟';

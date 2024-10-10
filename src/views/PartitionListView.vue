@@ -27,6 +27,10 @@ const partitions = ref([
 	'求职招募',
 	'其他',
 ]);
+/**
+ * @description 告诉HomeView.vue分区改了
+ * @param p 分区
+ */
 const sendPartition = (p) => {
 	emit('send-partition', p);
 	router.push('/');

@@ -10,6 +10,7 @@
                 已读通知
             </button>
 		</div>
+		<!-- 未读界面 -->
 		<div v-if="readPage">
 			<div
 				v-for="notice in noticesUnread"
@@ -27,6 +28,7 @@
 				</button>
 			</div>
 		</div>
+		<!-- 已读界面 -->
 		<div v-else>
 			<div
 				v-for="notice in noticesRead"
@@ -57,6 +59,11 @@ const readPage = ref(true);
 const noticesRead = ref([]);
 const noticesUnread = ref([]);
 
+/**
+ * @description 标记通知为已读
+ * @param noticeID 通知ID
+ * @returns void
+ */
 const readComment = async (noticeID) =>{
 	const res = await readNotice(noticeID);
 	if(res.status === 'success'){

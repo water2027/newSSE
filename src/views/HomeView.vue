@@ -175,9 +175,15 @@ provide('isPC', isPC);
 const posts = ref([]);
 provide('posts', posts);
 
+/**
+ * @description 发帖和看帖的时候隐藏热榜
+ */
 const heatPostsIsHiden = computed(() => {
 	return /^\/post/.test(route.fullPath);
 });
+/**
+ * @description 控制主页的样式
+ */
 const contentStyle = ref({
 	width: !heatPostsIsHiden.value && isPC.value ? '100%' : '45%',
 	display: 'flex',
@@ -186,6 +192,11 @@ const contentStyle = ref({
 	justifyContent: 'center',
 });
 const navIsOpen = ref(true);
+
+/**
+ * 搜索功能，不使用v-model绑定，略微减小性能消耗。
+				它的值是目标元素而不是元素里的值
+ */
 const sinfo = ref(null);
 
 const search = () => {
@@ -214,18 +225,24 @@ const sendPartition = (p) => {
 	searchinfo.value = '';
 	searchsort.value = 'home';
 };
+
+/**
+ * @description 移动端展开导航栏
+ */
 const toggleNav = () => {
 	if (!isPC.value) {
 		navIsOpen.value = !navIsOpen.value;
 	}
 };
+/**
+ * @description 获取通知数量
+ */
 const getNoticesNumFunc = async () => {
 	const temp = await getNoticesNum();
 	notices.value = temp;
 	noticeNum.value = temp.unreadTotalNum;
 };
 onMounted(async () => {
-	router.push('/');
 	if (window.innerWidth < 768) {
 		isPC.value = false;
 		navIsOpen.value = false;

@@ -7,7 +7,7 @@
 	<div
 		ref="root"
 		class="root"
-		@click="copyCode"
+		@click="clickHandler"
 	>
 		<div class="postDetail">
 			<div class="user">
@@ -352,6 +352,10 @@ const sendCommentCommentFunc = async () => {
 	}
 };
 
+/**
+ * @description 早晚要拿出来弄成组件
+ * @param str 待转换的字符串
+ */
 const safeHTML = (str) => {
 	if (!str) {
 		return;
@@ -428,8 +432,12 @@ const sendPCommentFunc = async (PcommentID) => {
 	}
 };
 
+/**
+ * @description 后端没有返回数据
+ * @param commentID 评论ID
+ */
 const delCommentFunc = async (commentID) => {
-	const result = await delComment(commentID);
+	await delComment(commentID);
 	getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
 		(res) => {
 			//倒序
@@ -440,7 +448,10 @@ const delCommentFunc = async (commentID) => {
 	);
 };
 
-// 删除评论的评论
+/**
+ * @description 删除评论的评论。后端没有返回数据，直接页面让用户知道删了
+ * @param ccommentID 评论的ID
+ */
 const delCcommentFunc = async (ccommentID) => {
 	await delCcomment(ccommentID);
 	getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
@@ -453,7 +464,14 @@ const delCcommentFunc = async (ccommentID) => {
 	);
 };
 
-const copyCode = async (event) => {
+/**
+ * 
+ * @description 复制代码和展示图片。直接绑定根容器
+ */
+const clickHandler = async (event) => {
+	/**
+	 * @description 在css里已经去除了pre标签的点击，只保留了pre::before的点击
+	 */
 	if (event.target.tagName === 'PRE') {
 		const code = event.target.innerText;
 		await navigator.clipboard.writeText(code);
@@ -470,6 +488,12 @@ const toggleSubComments = (id) => {
 	commentVisibility.value[id] = !commentVisibility.value[id];
 };
 
+/**
+ * @description 后端没有返回数据
+ * @param isLiked 现在是否喜欢
+ * @param postID 
+ * @param userTelephone 
+ */
 const like = async (isLiked, postID, userTelephone) => {
 	await likePost(isLiked, postID, userTelephone);
 	post.value.IsLiked = !post.value.IsLiked;

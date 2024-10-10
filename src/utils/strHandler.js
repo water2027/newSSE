@@ -1,3 +1,9 @@
+/**
+ * @description 处理字符串
+ * @param {string} type img，time，postImg中的一个。img为预览图，time为时间。postImg是原图 
+ * @param {string} str 
+ * @returns 
+ */
 function strHandler(type,str) {
 	if (!str) return '';
 	switch (type) {

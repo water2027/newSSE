@@ -106,6 +106,14 @@ async function userRegister(CDKey, email, name, password1, password2, valiCode) 
     return data
 }
 
+/**
+ * @description 忘记密码由于后端漏洞，暂时不能用。虽然说也挡不住有心人吧
+ * @param {string} email 
+ * @param {string} password1 未加密 
+ * @param {string} password2 未加密
+ * @param {string} valiCode 
+ * @returns 
+ */
 async function updatePassword(email,password1, password2, valiCode) {
     const token = getItemWithExpiry('token')
     if (!token) {

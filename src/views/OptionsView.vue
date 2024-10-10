@@ -92,6 +92,9 @@ const uploadAvatarFunc = async (e) => {
 	showMsg(res.msg);
 };
 
+/**
+ * @description 更新用户信息。试图阻止空格名字，但是后端没有阻止
+ */
 const updateUserInfoFunc = async () => {
 	console.log(allInfo.value.name);
 	if(/^\s+|\s+$/.test(allInfo.value.name)) {
@@ -107,6 +110,9 @@ const updateUserInfoFunc = async () => {
 	showMsg(res.msg);
 };
 
+/**
+ * @description 删除所有信息
+ */
 const logout = () => {
 	localStorage.removeItem('userInfo');
 	localStorage.removeItem('token');

@@ -21,6 +21,11 @@ const router = useRouter();
 const userInfo = ref({});
 provide('userInfo', userInfo);
 const isLogin = ref(false);
+/***
+ * @description 发送登录成功事件，成功了就获取用户信息，如果记住我就保存用户信息并刷新（移动端bug）
+ * @param {Boolean} success 登录是否成功
+ * @returns {void}
+ */
 const sendLoginSuccess = async (success) => {
 	if (!success) return;
 	const info = await getInfo();
@@ -32,6 +37,9 @@ const sendLoginSuccess = async (success) => {
 	}
 };
 
+/**
+ * @description 离开页面时，如果localStorage.rememberMe不存在，删除token
+ */
 const handleBeforeUnload = () => {
 	//如果localStorage.rememberMe不存在，删除token
 	if (!localStorage.rememberMe) {
@@ -40,17 +48,15 @@ const handleBeforeUnload = () => {
 };
 
 onBeforeMount(async () => {
-	const url = window.location.pathname;
-	const baseUrl = import.meta.env.BASE_URL;
-	const extractedString = url.replace(baseUrl, '');
-	setTimeout(() => {
-		if (route.path !== extractedString) {
-			router.push(extractedString);
-		}
-	}, 0);
+	/**
+	 * @description 页面加载时，如果localStorage.rememberMe存在，自动登录
+	 */
 	if (localStorage.rememberMe) {
 		const token = getItemWithExpiry('token');
 		const tempInfo = localStorage.getItem('userInfo');
+		/**
+		 * @description 如果token和tempInfo存在，直接进去首页
+		 */
 		if (token && tempInfo) {
 			isLogin.value = true;
 			userInfo.value = JSON.parse(tempInfo);

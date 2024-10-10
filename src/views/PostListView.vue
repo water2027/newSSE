@@ -168,6 +168,12 @@ const emit = defineEmits(['sendPosts']);
 const teachers = ref([]);
 const tag = ref('');
 
+/**
+ * @description 收藏。后端没有返回数据，不要赋值后再更新
+ * @param isSaved 现在有没有收藏
+ * @param postID 
+ * @param userTelephone 
+ */
 const handleSave = async (isSaved, postID, userTelephone) => {
 	await savePost(isSaved, postID, userTelephone);
 	posts.value.forEach((element) => {
@@ -178,6 +184,12 @@ const handleSave = async (isSaved, postID, userTelephone) => {
 	showMsg(isSaved ? '取消成功' : '收藏成功');
 };
 
+/**
+ * @description 点赞。后端没有返回数据，不要赋值后再更新
+ * @param isLiked 现在有没有点赞
+ * @param postID 
+ * @param userTelephone 
+ */
 const like = async (isLiked, postID, userTelephone) => {
 	await likePost(isLiked, postID, userTelephone);
 	posts.value.forEach((element) => {
@@ -194,6 +206,10 @@ const like = async (isLiked, postID, userTelephone) => {
 	});
 };
 
+/**
+ * @description 删除帖子。后端没有返回数据，不要赋值后再更新
+ * @param postID 
+ */
 const handleDelete = async (postID) => {
 	await delPost(postID);
 	const id = await getPostsNum({
@@ -219,6 +235,9 @@ const handleDelete = async (postID) => {
 const lastPage = async () => {
 	if (curPage.value > 0) {
 		curPage.value -= 5;
+		/**
+		 * @description 可以考虑抽象成一个函数，每次调用这个函数就可以了
+		 */
 		const arr = await getPosts({
 			limit: 5,
 			offset: curPage.value,
@@ -287,6 +306,9 @@ onMounted(async () => {
 	}
 });
 
+/**
+ * 这四个watch之后可以考虑改成watchEffect
+ */
 watch(partition, async (newVal) => {
 	curPage.value = 0;
 	const id = await getPostsNum({

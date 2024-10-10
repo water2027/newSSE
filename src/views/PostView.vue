@@ -76,7 +76,6 @@ const submitPost = async () => {
 		postTitle,
 		userInfo.value.phone
 	);
-	//清空
 	router.push('/')
 	showMsg(res.msg);
 };

@@ -5,16 +5,16 @@
 <template>
 	<div id="mdRoot">
 		<div class="editorButton">
-			<button @click="editComment('标题')">标题</button>
-			<button @click="editComment('粗体')">粗体</button>
-			<button @click="editComment('斜体')">斜体</button>
-			<button @click="editComment('删除线')">删除线</button>
-			<button @click="editComment('引用')">引用</button>
-			<button @click="editComment('无序列表')">无序列表</button>
-			<button @click="editComment('有序列表')">有序列表</button>
-			<button @click="editComment('表格')">表格</button>
-			<button @click="editComment('分割线')">分割线</button>
-			<button @click="editComment('代码块')">代码块</button>
+			<button @click="editContent('标题')">标题</button>
+			<button @click="editContent('粗体')">粗体</button>
+			<button @click="editContent('斜体')">斜体</button>
+			<button @click="editContent('删除线')">删除线</button>
+			<button @click="editContent('引用')">引用</button>
+			<button @click="editContent('无序列表')">无序列表</button>
+			<button @click="editContent('有序列表')">有序列表</button>
+			<button @click="editContent('表格')">表格</button>
+			<button @click="editContent('分割线')">分割线</button>
+			<button @click="editContent('代码块')">代码块</button>
 		</div>
 		<div class="container">
 			<textarea
@@ -92,6 +92,9 @@ const handleInput = (event) => {
 	autoResize(event);
 };
 
+/**
+ * @description 感觉真的早晚得弄成组件
+ */
 const safeHTML = computed(() => {
 	if (!props.modelValue) {
 		return '';
@@ -154,7 +157,7 @@ const upload = async (event) => {
 	}
 };
 
-const editComment = (type) => {
+const editContent = (type) => {
 	let insertion = '';
 	let cursorOffset = 0;
 
@@ -224,6 +227,9 @@ const editComment = (type) => {
 	}, 0);
 };
 
+/**
+ * @description 保存草稿
+ */
 const savePost = () => {
 	const post = {
 		title: '草稿',
