@@ -315,6 +315,12 @@ const mdContainerStyle = computed(() => {
 	};
 });
 
+/**
+ * @description 创建评论的评论
+ * @param ccommentID 根评论的ID
+ * @param PcommentID 根评论的评论的ID
+ * @param targetName 根评论的评论的作者
+ */
 const createCommentComment = async (ccommentID, PcommentID, targetName) => {
 	if (commentCommentID.value === ccommentID) {
 		commentCommentID.value = -1;
@@ -327,7 +333,9 @@ const createCommentComment = async (ccommentID, PcommentID, targetName) => {
 	target.value = targetName;
 };
 
-//回复评论的评论
+/**
+ * @description 发送评论的评论
+ */
 const sendCommentCommentFunc = async () => {
 	const res = await sendPComment({
 		ccommentID: commentCommentID.value,
@@ -389,7 +397,9 @@ const highlightcode = () => {
 	});
 };
 
-//回复帖子
+/**
+ * @description 发送评论
+ */
 const sendCommentFunc = async () => {
 	const res = await sendComment(
 		commentContent.value,
@@ -410,7 +420,10 @@ const sendCommentFunc = async () => {
 	}
 };
 
-//回复帖子的评论
+/**
+ * @description 发送评论的评论
+ * @param PcommentID 评论的ID
+ */
 const sendPCommentFunc = async (PcommentID) => {
 	const res = await sendPComment({
 		content: cCommentContent.value,
@@ -433,10 +446,11 @@ const sendPCommentFunc = async (PcommentID) => {
 };
 
 /**
- * @description 后端没有返回数据
+ * @description 删除评论
  * @param commentID 评论ID
  */
 const delCommentFunc = async (commentID) => {
+	//后端没有返回数据
 	await delComment(commentID);
 	getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
 		(res) => {
@@ -449,10 +463,11 @@ const delCommentFunc = async (commentID) => {
 };
 
 /**
- * @description 删除评论的评论。后端没有返回数据，直接页面让用户知道删了
+ * @description 删除评论的评论。
  * @param ccommentID 评论的ID
  */
 const delCcommentFunc = async (ccommentID) => {
+	//后端没有返回数据
 	await delCcomment(ccommentID);
 	getCommentsByPostID(Number(route.params.id), userInfo.value.phone).then(
 		(res) => {
@@ -470,7 +485,7 @@ const delCcommentFunc = async (ccommentID) => {
  */
 const clickHandler = async (event) => {
 	/**
-	 * @description 在css里已经去除了pre标签的点击，只保留了pre::before的点击
+	 * 在css里已经去除了pre标签的点击，只保留了pre::before的点击
 	 */
 	if (event.target.tagName === 'PRE') {
 		const code = event.target.innerText;
@@ -489,12 +504,13 @@ const toggleSubComments = (id) => {
 };
 
 /**
- * @description 后端没有返回数据
+ * @description 点赞
  * @param isLiked 现在是否喜欢
  * @param postID 
  * @param userTelephone 
  */
 const like = async (isLiked, postID, userTelephone) => {
+	// 后端没有返回数据
 	await likePost(isLiked, postID, userTelephone);
 	post.value.IsLiked = !post.value.IsLiked;
 	if (post.value.IsLiked) {

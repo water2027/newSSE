@@ -169,12 +169,13 @@ const teachers = ref([]);
 const tag = ref('');
 
 /**
- * @description 收藏。后端没有返回数据，不要赋值后再更新
+ * @description 收藏。
  * @param isSaved 现在有没有收藏
  * @param postID 
  * @param userTelephone 
  */
 const handleSave = async (isSaved, postID, userTelephone) => {
+	//后端没有返回数据，不要赋值后再更新
 	await savePost(isSaved, postID, userTelephone);
 	posts.value.forEach((element) => {
 		if (element.PostID === postID) {
@@ -185,12 +186,13 @@ const handleSave = async (isSaved, postID, userTelephone) => {
 };
 
 /**
- * @description 点赞。后端没有返回数据，不要赋值后再更新
+ * @description 点赞。
  * @param isLiked 现在有没有点赞
  * @param postID 
  * @param userTelephone 
  */
 const like = async (isLiked, postID, userTelephone) => {
+	//后端没有返回数据，不要赋值后再更新
 	await likePost(isLiked, postID, userTelephone);
 	posts.value.forEach((element) => {
 		if (element.PostID === postID) {
@@ -207,10 +209,11 @@ const like = async (isLiked, postID, userTelephone) => {
 };
 
 /**
- * @description 删除帖子。后端没有返回数据，不要赋值后再更新
+ * @description 删除帖子。
  * @param postID 
  */
 const handleDelete = async (postID) => {
+	//后端没有返回数据，不要赋值后再更新
 	await delPost(postID);
 	const id = await getPostsNum({
 		partition: partition.value,
