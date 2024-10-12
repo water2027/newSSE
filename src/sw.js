@@ -1,24 +1,34 @@
 import { precacheAndRoute } from 'workbox-precaching'
-import { registerRoute, NavigationRoute } from 'workbox-routing'
+import { registerRoute, NavigationRoute, setDefaultHandler } from 'workbox-routing'
 import { StaleWhileRevalidate, CacheFirst, NetworkFirst, NetworkOnly } from 'workbox-strategies'
 import { ExpirationPlugin } from 'workbox-expiration'
 import { CacheableResponsePlugin } from 'workbox-cacheable-response'
+import { BackgroundSyncPlugin } from 'workbox-background-sync'
 
-import { setDefaultHandler } from 'workbox-routing';
 
+precacheAndRoute(self.__WB_MANIFEST);
+
+// 设置默认处理策略
 setDefaultHandler(new NetworkFirst({
   cacheName: 'default',
   networkTimeoutSeconds: 5,
 }));
 
-// 预缓存
-precacheAndRoute(self.__WB_MANIFEST)
-
 // 脚本文件缓存策略
 registerRoute(
   ({ request }) => request.destination === 'script',
-  new StaleWhileRevalidate()
-)
+  new StaleWhileRevalidate({
+    cacheName: 'scripts'
+  })
+);
+
+// 样式文件缓存策略
+registerRoute(
+  ({ request }) => request.destination === 'style',
+  new StaleWhileRevalidate({
+    cacheName: 'styles'
+  })
+);
 
 // 图片缓存策略
 registerRoute(
@@ -32,12 +42,26 @@ registerRoute(
       }),
     ],
   })
-)
+);
 
-const navigationRoute = new NavigationRoute(
+// API请求处理（包含背景同步）
+const bgSyncPlugin = new BackgroundSyncPlugin('apiQueue', {
+  maxRetentionTime: 24 * 60 // 最多重试24小时（以分钟为单位）
+});
+
+registerRoute(
+  ({url}) => url.pathname.startsWith('/api/'),
+  new NetworkOnly({
+    plugins: [bgSyncPlugin]
+  }),
+  'POST'
+);
+
+// 动态页面导航路由
+const dynamicPageRoute = new NavigationRoute(
   new NetworkFirst({
-    cacheName: 'pages',
-    networkTimeoutSeconds: 5, // 增加超时时间
+    cacheName: 'dynamic-pages',
+    networkTimeoutSeconds: 5,
     plugins: [
       new CacheableResponsePlugin({
         statuses: [200],
@@ -48,13 +72,51 @@ const navigationRoute = new NavigationRoute(
     ],
   }),
   {
+    allowlist: [/^\/blog\//],
+  }
+);
+
+// 静态页面导航路由
+const staticPageRoute = new NavigationRoute(
+  new CacheFirst({
+    cacheName: 'static-pages',
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [200],
+      }),
+      new ExpirationPlugin({
+        maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
+      }),
+    ],
+  }),
+  {
+    allowlist: [/^\/about/, /^\/contact/, /^\/faq/],
+  }
+);
+
+registerRoute(dynamicPageRoute);
+registerRoute(staticPageRoute);
+
+// 离线回退
+const offlineFallbackRoute = new NavigationRoute(
+  new CacheFirst({
+    cacheName: 'offline-fallback',
+  }),
+  {
     navigationFallback: '/offline.html',
   }
-)
-registerRoute(navigationRoute)
+);
 
-self.addEventListener('fetch', (event) => {
-  console.log('Fetch event for ', event.request.url);
+registerRoute(offlineFallbackRoute);
+
+// 安装事件
+self.addEventListener('install', (event) => {
+  console.log('Service Worker 已安装');
 });
 
-console.log('Service Worker 已加载')
+// 激活事件
+self.addEventListener('activate', (event) => {
+  console.log('Service Worker 已激活');
+});
+
+console.log('Service Worker 已加载');

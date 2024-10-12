@@ -3,6 +3,7 @@
 	<div id="root">
 		<header>
 			<video
+				v-if="isPC"
 				autoplay="autoplay"
 				loop="loop"
 				muted="muted"
@@ -11,7 +12,7 @@
 				<source
 					src="https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/vedio/Background.mp4"
 					type="video/mp4"
-				/>
+				>
 			</video>
 			<div id="title">
 				<button
