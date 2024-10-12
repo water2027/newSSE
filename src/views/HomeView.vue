@@ -395,7 +395,7 @@ main {
 }
 
 #mainNavBar {
-	z-index: 1000;
+	z-index: 3000;
 }
 
 /* 大屏幕样式 >768px */
@@ -521,7 +521,7 @@ main {
 		/* 让button贴紧左边，h1居中 */
 		justify-content: space-between;
 		background-color: rgba(136, 243, 255, 0.683);
-		z-index: 10000;
+		z-index: 2000;
 	}
 
 	#title h1 {
@@ -600,12 +600,7 @@ main {
 	}
 
 	.nav-bar {
-		z-index: 10001;
 		background-color: #f0f0f0;
-	}
-
-	.nav {
-		z-index: 10001;
 	}
 
 	.heat {
