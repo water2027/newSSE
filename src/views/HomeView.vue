@@ -600,12 +600,12 @@ main {
 	}
 
 	.nav-bar {
-		z-index: 1001;
+		z-index: 10001;
 		background-color: #f0f0f0;
 	}
 
 	.nav {
-		z-index: 1001;
+		z-index: 10001;
 	}
 
 	.heat {
