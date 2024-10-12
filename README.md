@@ -36,7 +36,7 @@ npm run build
 1. `imageShower.jsx`用于放大图片。导出函数`showImg(img:string)`, `img`为图片地址
 2. `MarkdownEditor.vue` markdown编辑器。需要传入一个响应式变量和一个发送函数。 
 3. `msgbox.jsx` 最开始没有启用eslint，命名不规范。展示一个6s的弹窗，导出函数`showMsg(msg:string)`,msg是要展示的信息 
-4. `MarkdownContainer` 用于将md转为html，挺多地方用的，但是还没有做成组件。
+4. `MarkdownContainer` 用于将md转为html。
 #### docs文件夹 
 可有可无，相当于一个公告吧。 
 #### utils文件夹 

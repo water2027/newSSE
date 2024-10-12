@@ -147,9 +147,10 @@
 	</div>
 </template>
 <script setup>
+import { getTeachers } from '@/api/postAndComment';
 import { getPosts, getPostsNum } from '@/api/getPosts';
 import { savePost, delPost, likePost } from '@/api/saveAndDel';
-import { showMsg } from '@/components/msgbox';
+import { showMsg } from '@/components/MessageBox';
 import { getItemWithExpiry } from '@/api/LoginAndReg';
 import { strHandler } from '@/utils/strHandler';
 import { expHandler } from '@/utils/expHandler';
@@ -171,8 +172,8 @@ const tag = ref('');
 /**
  * @description 收藏。
  * @param isSaved 现在有没有收藏
- * @param postID 
- * @param userTelephone 
+ * @param postID
+ * @param userTelephone
  */
 const handleSave = async (isSaved, postID, userTelephone) => {
 	//后端没有返回数据，不要赋值后再更新
@@ -188,8 +189,8 @@ const handleSave = async (isSaved, postID, userTelephone) => {
 /**
  * @description 点赞。
  * @param isLiked 现在有没有点赞
- * @param postID 
- * @param userTelephone 
+ * @param postID
+ * @param userTelephone
  */
 const like = async (isLiked, postID, userTelephone) => {
 	//后端没有返回数据，不要赋值后再更新
@@ -210,7 +211,7 @@ const like = async (isLiked, postID, userTelephone) => {
 
 /**
  * @description 删除帖子。
- * @param postID 
+ * @param postID
  */
 const handleDelete = async (postID) => {
 	//后端没有返回数据，不要赋值后再更新
@@ -292,20 +293,8 @@ onMounted(async () => {
 		totalNum.value = id;
 	}
 	if (partition.value === '课程专区') {
-		const apiUrl = import.meta.env.VITE_API_BASE_URL;
-		const token = getItemWithExpiry('token');
-		if (token) {
-			const res = await fetch(`${apiUrl}/auth/getTags?type=course`, {
-				method: 'GET',
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
-			const data = await res.json();
-			teachers.value = ['', ...data.data.tags];
-		} else {
-			showMsg('获取失败');
-		}
+		const data = await getTeachers();
+		teachers.value = ['', ...data];
 	}
 });
 

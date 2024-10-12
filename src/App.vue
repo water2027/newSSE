@@ -14,9 +14,6 @@ import HomeViewVue from './views/HomeView.vue';
 import { userLogin, getItemWithExpiry } from './api/LoginAndReg';
 import LoginViewVue from './views/LoginView.vue';
 import { getInfo } from '@/api/getInfo';
-import { useRouter, useRoute } from 'vue-router';
-const route = useRoute();
-const router = useRouter();
 
 const userInfo = ref({});
 provide('userInfo', userInfo);
@@ -33,7 +30,6 @@ const sendLoginSuccess = async (success) => {
 	isLogin.value = success;
 	if (localStorage.rememberMe) {
 		localStorage.setItem('userInfo', JSON.stringify(info));
-		window.location.reload();
 	}
 };
 

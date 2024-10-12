@@ -3,9 +3,9 @@
 <!-- eslint-disable vue/no-v-html -->
 <!-- eslint-disable vue/html-self-closing -->
 <!-- eslint-disable vue/html-indent -->
+ <!-- 禁用了一些eslint规则，这是不好的，但是我手贱，一直用格式化工具 -->
 <template>
 	<div
-		ref="root"
 		class="root"
 		@click="clickHandler"
 	>
@@ -23,13 +23,7 @@
 				>
 			</div>
 			<h2>{{ post.Title }}</h2>
-			<div
-				id="content"
-				ref="mdContainer"
-				class="hasImgDiv"
-				:style="mdContainerStyle"
-				v-html="safeHTML(post.Content)"
-			></div>
+			<MarkdownContainer :markdown-content="post.Content||'loading'" />
 			<div
 				v-if="post.Photos"
 				class="imgs"
@@ -122,6 +116,7 @@
 				@send="sendCommentFunc"
 			/>
 			<!-- 这是评论区 -->
+			 <!-- 考虑做成组件，但是貌似只有这一个地方用了，好像又没啥必要 -->
 			<div class="commentList">
 				<div
 					v-for="comment in comments"
@@ -146,10 +141,7 @@
 							删除
 						</button>
 					</div>
-					<div
-						class="hasImgDiv"
-						v-html="safeHTML(comment.Content)"
-					></div>
+					<MarkdownContainer :markdown-content="comment.Content||'loading'" />
 					<span>{{ strHandler('time', comment.CommentTime) }}</span>
 					<div class="commentButtons">
 						<button
@@ -223,10 +215,9 @@
 									删除
 								</button>
 							</div>
-							<div
-								class="hasImgDiv"
-								v-html="safeHTML(subComment.content)"
-							></div>
+							<MarkdownContainer
+								:markdown-content="subComment.content||'loading'"
+							/>
 							<span>{{
 								strHandler('time', subComment.commentTime)
 							}}</span>
@@ -261,7 +252,7 @@
 	</div>
 </template>
 <script setup>
-import { ref, inject, onMounted, computed } from 'vue';
+import { ref, inject, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { getPostByID, getCommentsByPostID } from '@/api/getPosts';
 import {
@@ -272,21 +263,16 @@ import {
 } from '@/api/postAndComment';
 import { likePost } from '@/api/saveAndDel';
 
-import { marked } from 'marked';
-import hljs from 'highlight.js';
-import 'highlight.js/styles/github.css';
-import DOMPurify from 'dompurify';
-
 import { strHandler } from '@/utils/strHandler';
 import { expHandler } from '@/utils/expHandler';
 import { showImg } from '@/components/imageShower';
 
-import { showMsg } from '@/components/msgbox';
+import { showMsg } from '@/components/MessageBox';
 import MarkdownEditor from '@/components/MarkdownEditor.vue';
+import MarkdownContainer from '@/components/MarkdownContainer.vue';
 const route = useRoute();
 
 const userInfo = inject('userInfo');
-const isPC = inject('isPC');
 const commentContent = ref('');
 
 const post = ref({});
@@ -296,24 +282,10 @@ const commentButtonIsShow = ref(false);
 const commentID = ref(-1);
 const cCommentContent = ref('');
 
-const root = ref(null);
-
 const modelValue = ref('');
 const commentCommentID = ref(0);
 const postCommentID = ref(0);
 const target = ref('');
-
-const mdContainerStyle = computed(() => {
-	return {
-		width: '100%',
-		height: 'auto',
-		margin: '10px 0',
-		fontSize: isPC.value ? '23px' : '23px',
-		paddingLeft: '1%',
-		paddingBottom: '5%',
-		marginBottom: '1%',
-	};
-});
 
 /**
  * @description 创建评论的评论
@@ -358,43 +330,6 @@ const sendCommentCommentFunc = async () => {
 			}
 		);
 	}
-};
-
-/**
- * @description 早晚要拿出来弄成组件
- * @param str 待转换的字符串
- */
-const safeHTML = (str) => {
-	if (!str) {
-		return;
-	}
-	marked.setOptions({
-		renderer: new marked.Renderer(),
-		pedantic: false,
-		gfm: true,
-		breaks: true,
-		sanitize: false,
-		smartLists: true,
-		smartypants: false,
-		xhtml: false,
-	});
-	const target = marked(str);
-	const finalHTML = DOMPurify.sanitize(target);
-	setTimeout(() => {
-		highlightcode();
-		const childElements = root.value.querySelectorAll('*');
-		childElements.forEach((child) => {
-			child.style.whiteSpace = 'pre-wrap';
-		});
-	}, 0);
-	return finalHTML;
-};
-
-const highlightcode = () => {
-	const blocks = root.value.querySelectorAll('pre code'); // 使用 refs 获取元素
-	blocks.forEach((block) => {
-		hljs.highlightElement(block); // 高亮每个代码块
-	});
 };
 
 /**
@@ -480,7 +415,7 @@ const delCcommentFunc = async (ccommentID) => {
 };
 
 /**
- * 
+ *
  * @description 复制代码和展示图片。直接绑定根容器
  */
 const clickHandler = async (event) => {
@@ -491,10 +426,10 @@ const clickHandler = async (event) => {
 		const code = event.target.innerText;
 		await navigator.clipboard.writeText(code);
 		showMsg('代码已复制');
-	}else if(event.target.tagName === 'IMG'){
+	} else if (event.target.tagName === 'IMG') {
 		//拿到图片的src
 		const src = event.target.src;
-		const uploadImg = strHandler('postImg', src); 
+		const uploadImg = strHandler('postImg', src);
 		showImg(uploadImg);
 	}
 };
@@ -506,8 +441,8 @@ const toggleSubComments = (id) => {
 /**
  * @description 点赞
  * @param isLiked 现在是否喜欢
- * @param postID 
- * @param userTelephone 
+ * @param postID
+ * @param userTelephone
  */
 const like = async (isLiked, postID, userTelephone) => {
 	// 后端没有返回数据
@@ -719,22 +654,6 @@ b {
 	.commentButton > :nth-child(3) {
 		grid-column: 1 / span 2;
 		grid-row: 2;
-	}
-
-	:deep(.hasImgDiv img) {
-		width: 100vw;
-		height: auto;
-		margin: 10px 0;
-		font-size: 23px;
-		margin-bottom: 1%;
-	}
-
-	.hasImgDiv img {
-		width: 100vw;
-		height: auto;
-		margin: 10px 0;
-		font-size: 23px;
-		margin-bottom: 1%;
 	}
 }
 

@@ -209,7 +209,7 @@ import {
 	userRegister,
 	updatePassword,
 } from '@/api/LoginAndReg';
-import { showMsg } from '@/components/msgbox';
+import { showMsg } from '@/components/MessageBox';
 const emit = defineEmits(['sendLoginSuccess']);
 const email = ref(null);
 const username = ref(null);

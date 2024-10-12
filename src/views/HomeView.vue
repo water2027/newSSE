@@ -12,7 +12,7 @@
 				<source
 					src="https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/vedio/Background.mp4"
 					type="video/mp4"
-				>
+				/>
 			</video>
 			<div id="title">
 				<button
@@ -23,7 +23,10 @@
 					<span />
 					<span />
 				</button>
-				<h1>SSE_MARKET</h1>
+				<h1 @click="mobileChangeToMain">SSE_MARKET</h1>
+				<button class="toPost" @click="changeToPost">
+					+
+				</button>
 			</div>
 			<div class="search">
 				<input
@@ -43,9 +46,10 @@
 				@click="toggleNav"
 			>
 				<router-link
+					v-if="isPC"
 					class="nav"
 					to="/"
-					@click="changeTomain"
+					@click="changeToMain"
 				>
 					主页
 				</router-link>
@@ -70,6 +74,8 @@
 					课程专区
 				</router-link>
 				<router-link
+					v-if="isPC"
+					id="post"
 					class="nav"
 					to="/post"
 				>
@@ -125,10 +131,14 @@
 					v-if="route.fullPath == '/partitions'"
 					@send-partition="sendPartition"
 				/>
+				<router-view
+					v-else-if="route.fullPath == '/notice'"
+					@send-notice-num="sendNoticeNum"
+				/>
 				<router-view v-else />
 			</div>
 			<div
-				v-if="isPC&&(!heatPostsIsHiden)"
+				v-if="isPC && !heatPostsIsHiden"
 				class="nav-bar heat"
 			>
 				<h2 id="heat">热榜</h2>
@@ -138,9 +148,7 @@
 					class="nav"
 					:to="'/postdetail/' + post.PostID"
 				>
-					<span
-						class="heatTitle"
-						>
+					<span class="heatTitle">
 						{{ post.Title }}
 					</span>
 				</router-link>
@@ -150,8 +158,7 @@
 </template>
 <script setup>
 import { computed, onMounted, provide, ref } from 'vue';
-import { useRoute } from 'vue-router';
-import { useRouter } from 'vue-router';
+import { useRoute,useRouter } from 'vue-router';
 import { getHeatPosts } from '@/api/getPosts';
 import { getNoticesNum } from '@/api/notice';
 const route = useRoute();
@@ -171,8 +178,16 @@ const searchinfo = ref('');
 provide('searchinfo', searchinfo);
 const searchsort = ref('home');
 provide('searchsort', searchsort);
-const isPC = ref(true);
+
+const windowWidth = ref(window.innerWidth);
+const updateWidth = () => {
+	windowWidth.value = window.innerWidth;
+};
+const isPC = computed(() => {
+	return windowWidth.value > 768;
+});
 provide('isPC', isPC);
+
 const posts = ref([]);
 provide('posts', posts);
 
@@ -186,7 +201,7 @@ const heatPostsIsHiden = computed(() => {
  * @description 控制主页的样式
  */
 const contentStyle = ref({
-	width: !heatPostsIsHiden.value && isPC.value ? '100%' : '45%',
+	width: '100%',
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
@@ -204,7 +219,11 @@ const search = () => {
 	searchinfo.value = sinfo.value.value;
 };
 
-const changeTomain = () => {
+const mobileChangeToMain = () => {
+	changeToMain();
+	router.push('/')
+};
+const changeToMain = () => {
 	partition.value = '主页';
 	searchinfo.value = '';
 	searchsort.value = 'home';
@@ -220,11 +239,25 @@ const changeToSave = () => {
 const changeToHistory = () => {
 	searchsort.value = 'history';
 };
+const changeToPost = () => {
+	router.push('/post');
+};
 
+/**
+ * @description 这是分区页面的回调函数，分区页面选择分区后调用
+ * @param p 分区名
+ */
 const sendPartition = (p) => {
 	partition.value = p;
 	searchinfo.value = '';
 	searchsort.value = 'home';
+};
+
+/**
+ * @description 这是通知页面的回调函数，已读通知后调用
+ */
+const sendNoticeNum = () => {
+	noticeNum.value--;
 };
 
 /**
@@ -244,13 +277,14 @@ const getNoticesNumFunc = async () => {
 	noticeNum.value = temp.unreadTotalNum;
 };
 onMounted(async () => {
-	if (window.innerWidth < 768) {
-		isPC.value = false;
+	if (!isPC.value) {
 		navIsOpen.value = false;
+	} else {
+		const posts = await getHeatPosts();
+		heatPosts.value = posts;
 	}
-	const posts = await getHeatPosts();
-	heatPosts.value = posts;
 	getNoticesNumFunc();
+	window.addEventListener('resize', updateWidth);
 });
 </script>
 <style scoped>
@@ -436,11 +470,11 @@ main {
 	}
 
 	.content {
-		width: 45%;
 		margin-left: 5%;
 		margin-right: 5%;
 		border: 1px solid black;
 		border-radius: 5px;
+		height: auto;
 	}
 
 	.heat {
@@ -491,11 +525,6 @@ main {
 		position: absolute;
 		left: 50%;
 		transform: translateX(-50%);
-	}
-
-	.search {
-		width: 80%;
-		margin: 0;
 	}
 
 	header input {
@@ -579,6 +608,8 @@ main {
 	}
 
 	.search {
+		width: 90%;
+		margin: 0;
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -587,7 +618,28 @@ main {
 	}
 
 	.search button {
-		height: auto;
+		padding-top: 0;
+		padding-bottom: 0;
+		height: 150%;
+		width: 25%;
+	}
+
+	.toPost{
+		position: absolute;
+		right: 10px;
+		top: 10px;
+		font-size: 2rem;
+		color: white;
+		text-decoration: none;
+		border: 1px solid #333;
+		border-radius: 50%;
+		width: 30px;
+		height: 30px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		background-color: #a1a1a1e1;
+		text-align: center;
 	}
 }
 </style>

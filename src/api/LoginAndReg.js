@@ -1,4 +1,4 @@
-import { showMsg } from '@/components/msgbox'
+import { showMsg } from '@/components/MessageBox'
 import CryptoJS from 'crypto-js'
 const apiUrl = import.meta.env.VITE_API_BASE_URL
 //后端那边是七天过期，以防万一7天减去1小时

@@ -15,6 +15,7 @@
 			<button @click="editContent('表格')">表格</button>
 			<button @click="editContent('分割线')">分割线</button>
 			<button @click="editContent('代码块')">代码块</button>
+			<button @click="isPreview = !isPreview">{{ isPreview?'不想看了':'看看效果' }}</button>
 		</div>
 		<div class="container">
 			<textarea
@@ -22,11 +23,11 @@
 				placeholder="请输入正文"
 				@input="handleInput"
 			></textarea>
-			<div
-				id="content"
+			<MarkdownContainer
+				v-if="isPreview"
 				ref="mdContainer"
-				v-html="safeHTML"
-			></div>
+				:markdown-content="modelValue"
+			/>
 		</div>
 		<div class="inputData">
 			<button
@@ -54,18 +55,17 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 
-import { marked } from 'marked';
-import hljs from 'highlight.js';
-import 'highlight.js/styles/github.css';
-import DOMPurify from 'dompurify';
+import MarkdownContainer from './MarkdownContainer.vue';
 
-import { showMsg } from '@/components/msgbox';
+import { showMsg } from '@/components/MessageBox';
 import { uploadPhoto } from '@/api/postAndComment';
 
 const route = useRoute();
+
+const isPreview = ref(false);
 
 const buttonStyle = computed(() => {
 	return {
@@ -81,7 +81,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:modelValue', 'send']);
-const mdContainer = ref(null);
 const autoResize = (event) => {
 	event.target.style.height = '100px';
 	event.target.style.height = event.target.scrollHeight + 'px';
@@ -90,47 +89,6 @@ const autoResize = (event) => {
 const handleInput = (event) => {
 	emit('update:modelValue', event.target.value);
 	autoResize(event);
-};
-
-/**
- * @description 感觉真的早晚得弄成组件
- */
-const safeHTML = computed(() => {
-	if (!props.modelValue) {
-		return '';
-	}
-	marked.setOptions({
-		renderer: new marked.Renderer(),
-		pedantic: false,
-		gfm: true,
-		breaks: true,
-		sanitize: false,
-		smartLists: true,
-		smartypants: false,
-		xhtml: false,
-	});
-	const target = marked(props.modelValue);
-	const finalHTML = DOMPurify.sanitize(target);
-
-	// 使用 nextTick 来确保 DOM 更新后再执行
-	nextTick(() => {
-		highlightcode();
-		const childElements = mdContainer.value.querySelectorAll('*');
-		childElements.forEach((child) => {
-			child.style.whiteSpace = 'pre-wrap';
-			child.style.wordBreak = 'break-all';
-			child.style.overflowWrap = 'break-word';
-		});
-	});
-
-	return finalHTML;
-});
-
-const highlightcode = () => {
-	const blocks = mdContainer.value.querySelectorAll('pre code'); // 使用 refs 获取元素
-	blocks.forEach((block) => {
-		hljs.highlightElement(block); // 高亮每个代码块
-	});
 };
 
 const upload = async (event) => {
@@ -276,7 +234,7 @@ defineExpose({
 }
 
 .container textarea {
-	height: 100px;
+	height: 450px;
 }
 
 .inputData {

@@ -143,4 +143,17 @@ async function delCcomment(ccommentID) {
 	return data;
 }
 
-export { uploadPhoto, sendPost, sendComment, sendPComment, delComment, delCcomment };
+async function getTeachers() {
+	const apiUrl = import.meta.env.VITE_API_BASE_URL;
+	const token = getItemWithExpiry('token');
+	const res = await fetch(`${apiUrl}/auth/getTags?type=course`, {
+		method: 'GET',
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	const data = await res.json();
+	return data.data.tags;
+}
+
+export { uploadPhoto, sendPost, sendComment, sendPComment, delComment, delCcomment, getTeachers };

@@ -59,7 +59,7 @@
 import { ref, inject, onMounted } from 'vue';
 import { getAllInfo, updateUserInfo, uploadAvatar } from '@/api/getInfo';
 import { useRouter } from 'vue-router';
-import { showMsg } from '@/components/msgbox';
+import { showMsg } from '@/components/MessageBox';
 import { updatePassword } from '@/api/LoginAndReg';
 const router = useRouter();
 
@@ -120,6 +120,7 @@ const logout = () => {
 	localStorage.removeItem('password');
 	localStorage.removeItem('rememberMe');
 	router.push('/');
+	window.location.reload();
 };
 
 onMounted(async () => {
