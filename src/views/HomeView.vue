@@ -24,7 +24,10 @@
 					<span />
 				</button>
 				<h1 @click="mobileChangeToMain">SSE_MARKET</h1>
-				<button class="toPost" @click="changeToPost">
+				<button
+					class="toPost"
+					@click="changeToPost"
+				>
 					+
 				</button>
 			</div>
@@ -158,7 +161,7 @@
 </template>
 <script setup>
 import { computed, onMounted, provide, ref } from 'vue';
-import { useRoute,useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { getHeatPosts } from '@/api/getPosts';
 import { getNoticesNum } from '@/api/notice';
 const route = useRoute();
@@ -217,11 +220,12 @@ const sinfo = ref(null);
 
 const search = () => {
 	searchinfo.value = sinfo.value.value;
+	router.push('/')
 };
 
 const mobileChangeToMain = () => {
 	changeToMain();
-	router.push('/')
+	router.push('/');
 };
 const changeToMain = () => {
 	partition.value = '主页';
@@ -391,7 +395,7 @@ main {
 }
 
 #mainNavBar {
-	z-index: 99999;
+	z-index: 1000;
 }
 
 /* 大屏幕样式 >768px */
@@ -517,6 +521,7 @@ main {
 		/* 让button贴紧左边，h1居中 */
 		justify-content: space-between;
 		background-color: rgba(136, 243, 255, 0.683);
+		z-index: 10000;
 	}
 
 	#title h1 {
@@ -545,7 +550,7 @@ main {
 		border: none;
 		cursor: pointer;
 		padding: 0;
-		z-index: 9998;
+		z-index: 1001;
 		margin-left: 0;
 	}
 
@@ -595,12 +600,12 @@ main {
 	}
 
 	.nav-bar {
-		z-index: 9999;
+		z-index: 1001;
 		background-color: #f0f0f0;
 	}
 
 	.nav {
-		z-index: 9998;
+		z-index: 1001;
 	}
 
 	.heat {
@@ -624,7 +629,7 @@ main {
 		width: 25%;
 	}
 
-	.toPost{
+	.toPost {
 		position: absolute;
 		right: 10px;
 		top: 10px;
