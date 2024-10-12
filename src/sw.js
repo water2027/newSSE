@@ -50,7 +50,7 @@ const bgSyncPlugin = new BackgroundSyncPlugin('apiQueue', {
 });
 
 registerRoute(
-  ({url}) => url.pathname.startsWith('/api/'),
+  ({url}) => url.href.startsWith('https://ssemarket.cn/api'),
   new NetworkOnly({
     plugins: [bgSyncPlugin]
   }),
@@ -72,30 +72,11 @@ const dynamicPageRoute = new NavigationRoute(
     ],
   }),
   {
-    allowlist: [/^\/blog\//],
-  }
-);
-
-// 静态页面导航路由
-const staticPageRoute = new NavigationRoute(
-  new CacheFirst({
-    cacheName: 'static-pages',
-    plugins: [
-      new CacheableResponsePlugin({
-        statuses: [200],
-      }),
-      new ExpirationPlugin({
-        maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
-      }),
-    ],
-  }),
-  {
-    allowlist: [/^\/about/, /^\/contact/, /^\/faq/],
+    allowlist: [/^\/new\//],
   }
 );
 
 registerRoute(dynamicPageRoute);
-registerRoute(staticPageRoute);
 
 // 离线回退
 const offlineFallbackRoute = new NavigationRoute(
@@ -103,7 +84,7 @@ const offlineFallbackRoute = new NavigationRoute(
     cacheName: 'offline-fallback',
   }),
   {
-    navigationFallback: '/offline.html',
+    navigationFallback: './offline.html',
   }
 );
 
