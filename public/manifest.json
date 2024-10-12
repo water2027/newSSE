@@ -1,8 +1,8 @@
 {
     "name": "SSE MARKET",
     "short_name": "SSE",
-    "scope": "/",
-    "start_url": "/",
+    "scope": "/new/",
+    "start_url": "/new/",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#000000",
