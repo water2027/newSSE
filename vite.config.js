@@ -21,6 +21,7 @@ export default defineConfig({
         navigateFallbackDenylist: [/^\/api\//],
       },
       devOptions: {
+        // 开发环境是否开启 PWA
         enabled: false,
         type: 'module', 
       }

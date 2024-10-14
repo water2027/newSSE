@@ -232,19 +232,7 @@ const forget = () => {
 };
 
 const login = async () => {
-	if (
-		remembered.value.checked &&
-		email.value.value &&
-		password1.value.value
-	) {
-		localStorage.rememberMe = true;
-		localStorage.email = email.value.value;
-		localStorage.password = password1.value.value;
-	} else {
-		localStorage.removeItem('rememberMe');
-		localStorage.removeItem('email');
-		localStorage.removeItem('password');
-	}
+	email.value.value = email.value.value.trim();
 	if (email.value.value && password1.value.value) {
 		const loginSuccess = await userLogin(
 			email.value.value,
@@ -257,10 +245,21 @@ const login = async () => {
 		}
 	} else {
 		showMsg('请输入邮箱和密码');
+		return;
+	}
+	if (remembered.value.checked) {
+		localStorage.rememberMe = true;
+		localStorage.email = email.value.value;
+		localStorage.password = password1.value.value;
+	} else {
+		localStorage.removeItem('rememberMe');
+		localStorage.removeItem('email');
+		localStorage.removeItem('password');
 	}
 };
 
 const getVCode = async () => {
+	email.value.value = email.value.value.trim();
 	if (email.value.value) {
 		const res = await sendCode(email.value.value);
 		if (res.code !== 200) {
@@ -274,6 +273,9 @@ const getVCode = async () => {
 };
 
 const reg = async () => {
+	//邀请码应该没有空格吧？
+	//CDkey.value.value = CDkey.value.value.trim();
+	email.value.value = email.value.value.trim();
 	if (
 		CDkey.value.value &&
 		email.value.value &&
@@ -282,18 +284,27 @@ const reg = async () => {
 		password2.value.value &&
 		code.value.value
 	) {
-		const res = await userRegister(CDkey.value.value,email.value.value,username.value.value,password1.value.value,password2.value.value,code.value.value);
+		const res = await userRegister(
+			CDkey.value.value,
+			email.value.value,
+			username.value.value,
+			password1.value.value,
+			password2.value.value,
+			code.value.value
+		);
 		if (res.code !== 200) {
 			showMsg(res.msg);
 		} else {
 			showMsg('注册成功');
 		}
-	}else{
+	} else {
 		showMsg('请填写完整信息');
 	}
 };
 
 const resetPwd = async () => {
+	email.value.value = email.value.value.trim();
+	code.value.value = code.value.value.trim();
 	if (
 		email.value.value &&
 		password1.value.value &&
@@ -307,6 +318,8 @@ const resetPwd = async () => {
 			code.value.value
 		);
 		showMsg(res.msg);
+	}else{
+		showMsg("不要输入空白信息")
 	}
 };
 </script>

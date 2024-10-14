@@ -22,12 +22,16 @@
 import { ref, onMounted } from 'vue';
 
 import { getHeatPosts } from '@/api/getPosts';
+import { showMsg } from '@/components/MessageBox';
 
 const heatPosts = ref([]);
 
 onMounted(async () => {
-	const posts = await getHeatPosts();
-	heatPosts.value = posts;
+	try{
+		heatPosts.value = await getHeatPosts();
+	}catch(e){
+		showMsg(`获取热帖失败:${e}`)
+	}
 });
 </script>
 

@@ -9,11 +9,15 @@
 </template>
 
 <script setup>
-import { onMounted, ref, provide, onUnmounted, onBeforeMount } from 'vue';
+import { ref, provide, onUnmounted, onBeforeMount } from 'vue';
+
 import HomeViewVue from './views/HomeView.vue';
-import { userLogin, getItemWithExpiry } from './api/LoginAndReg';
 import LoginViewVue from './views/LoginView.vue';
+
+import { userLogin, getItemWithExpiry } from './api/LoginAndReg';
 import { getInfo } from '@/api/getInfo';
+
+import { showMsg } from './components/MessageBox';
 
 const userInfo = ref({});
 provide('userInfo', userInfo);
@@ -25,11 +29,15 @@ const isLogin = ref(false);
  */
 const sendLoginSuccess = async (success) => {
 	if (!success) return;
-	const info = await getInfo();
-	userInfo.value = info;
-	isLogin.value = success;
-	if (localStorage.rememberMe) {
-		localStorage.setItem('userInfo', JSON.stringify(info));
+	try {
+		const info = await getInfo();
+		userInfo.value = info;
+		isLogin.value = success;
+		if (localStorage.rememberMe) {
+			localStorage.setItem('userInfo', JSON.stringify(info));
+		}
+	} catch (e) {
+		showMsg(`获取用户信息失败：${e}`);
 	}
 };
 
@@ -43,22 +51,19 @@ const handleBeforeUnload = () => {
 	}
 };
 
-onBeforeMount(async () => {
+const autoLogin = async () => {
+	const token = getItemWithExpiry('token');
+	const tempInfo = localStorage.getItem('userInfo');
 	/**
-	 * @description 页面加载时，如果localStorage.rememberMe存在，自动登录
+	 * @description 如果token和tempInfo存在，直接进去首页
 	 */
-	if (localStorage.rememberMe) {
-		const token = getItemWithExpiry('token');
-		const tempInfo = localStorage.getItem('userInfo');
-		/**
-		 * @description 如果token和tempInfo存在，直接进去首页
-		 */
-		if (token && tempInfo) {
-			isLogin.value = true;
-			userInfo.value = JSON.parse(tempInfo);
-		} else {
-			const email = localStorage.email;
-			const password = localStorage.password;
+	if (token && tempInfo) {
+		isLogin.value = true;
+		userInfo.value = JSON.parse(tempInfo);
+	} else {
+		const email = localStorage.email;
+		const password = localStorage.password;
+		try {
 			const loginSuccess = await userLogin(email, password);
 			if (loginSuccess) {
 				const info = await getInfo();
@@ -66,7 +71,18 @@ onBeforeMount(async () => {
 				localStorage.setItem('userInfo', JSON.stringify(info));
 				isLogin.value = true;
 			}
+		} catch (e) {
+			showMsg(`自动登录失败：${e}`);
 		}
+	}
+};
+
+onBeforeMount(async () => {
+	/**
+	 * @description 页面加载时，如果localStorage.rememberMe存在，自动登录
+	 */
+	if (localStorage.rememberMe) {
+		await autoLogin();
 	}
 	window.addEventListener('beforeunload', handleBeforeUnload);
 });

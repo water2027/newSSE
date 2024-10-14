@@ -64,7 +64,7 @@ const safeHTML = (str) => {
 	const target = marked(str);
 	const finalHTML = DOMPurify.sanitize(target);
 	setTimeout(() => {
-		highlightcode();
+		highlightCode();
 		const childElements = content.value.querySelectorAll('*');
 		childElements.forEach((child) => {
 			child.style.whiteSpace = 'pre-wrap';
@@ -76,7 +76,7 @@ const safeHTML = (str) => {
 	return finalHTML;
 };
 
-const highlightcode = () => {
+const highlightCode = () => {
 	const blocks = content.value.querySelectorAll('pre code'); // 使用 refs 获取元素
 	blocks.forEach((block) => {
 		hljs.highlightElement(block); // 高亮每个代码块
@@ -88,6 +88,7 @@ defineExpose({
 });
 </script>
 <style scoped>
+@import url("@/assets/hl.css");
 #content {
   max-width: 100%;
   overflow-wrap: break-word;

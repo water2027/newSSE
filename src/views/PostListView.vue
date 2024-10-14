@@ -56,7 +56,7 @@
 				</div>
 			</div>
 			<h2>{{ post.Title }}</h2>
-			<p>{{ post.Content.slice(0, 100) }}</p>
+			<p>{{ post.Content.slice(0, 50) }}</p>
 			<div
 				v-if="post.Photos"
 				class="imgs"

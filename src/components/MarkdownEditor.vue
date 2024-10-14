@@ -22,6 +22,7 @@
 				:value="modelValue"
 				placeholder="请输入正文"
 				@input="handleInput"
+				@keydown="handleKeydown"
 			></textarea>
 			<MarkdownContainer
 				v-if="isPreview"
@@ -89,6 +90,20 @@ const autoResize = (event) => {
 const handleInput = (event) => {
 	emit('update:modelValue', event.target.value);
 	autoResize(event);
+};
+
+const handleKeydown = (event) => {
+    if (event.key === 'Tab') {
+        event.preventDefault();
+        // 在光标位置插入四个空格
+        const textarea = event.target;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const value = textarea.value;
+        const spaces = '    '; // 四个空格
+        textarea.value = value.substring(0, start) + spaces + value.substring(end);
+        textarea.selectionStart = textarea.selectionEnd = start + spaces.length;
+    }
 };
 
 const upload = async (event) => {

@@ -17,6 +17,10 @@
 				v-model="postContent"
 				@send="submitPost"
 			/>
+			<!-- <NewEditor
+				v-model="postContent"
+				@send="submitPost"
+			/> -->
 		</div>
 		<div class="inputData">
 			<h3>分区</h3>
@@ -54,6 +58,7 @@ import { showMsg } from '@/components/MessageBox';
 import { sendPost } from '@/api/postAndComment';
 
 import MarkdownEditor from '@/components/MarkdownEditor.vue';
+// import NewEditor from '@/components/NewEditor.vue';
 
 const router = useRouter();
 const userInfo = inject('userInfo');

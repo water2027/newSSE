@@ -57,6 +57,21 @@ registerRoute(
   'POST'
 );
 
+// 缓存 GET 请求
+registerRoute(
+  ({url}) => url.href.startsWith('https://ssemarket.cn/api'),
+  new CacheFirst({
+    cacheName: 'api-cache',
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 50, // 缓存的最大条目数
+        maxAgeSeconds: 24 * 60 * 60, // 缓存的最长时间（以秒为单位）
+      }),
+    ],
+  }),
+  'GET'
+);
+
 // 动态页面导航路由
 const dynamicPageRoute = new NavigationRoute(
   new NetworkFirst({

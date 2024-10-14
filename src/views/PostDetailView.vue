@@ -476,8 +476,6 @@ onMounted(async () => {
 });
 </script>
 <style scoped>
-@import '../assets/hl.css';
-
 b {
 	font-size: 16px;
 }
