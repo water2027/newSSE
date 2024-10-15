@@ -15,9 +15,13 @@ export default defineConfig({
       scope:'/new/',
       srcDir: 'src',
       filename: 'sw.js',
+      injectManifest: {
+        // 配置无需引入 workbox 的内容
+        globPatterns: ['**/*.{js,css,html,png,jpg,svg,webp}'],
+      },
       devOptions: {
         // 开发环境是否开启 PWA
-        enabled: true,
+        enabled: false,
         type: 'module', 
       }
     })
