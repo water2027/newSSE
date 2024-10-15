@@ -15,14 +15,9 @@ export default defineConfig({
       scope:'/new/',
       srcDir: 'src',
       filename: 'sw.js',
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,png,jpg,jpeg,svg}'],
-        navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/api\//],
-      },
       devOptions: {
         // 开发环境是否开启 PWA
-        enabled: false,
+        enabled: true,
         type: 'module', 
       }
     })

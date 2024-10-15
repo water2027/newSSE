@@ -1,118 +1,86 @@
-import { precacheAndRoute } from 'workbox-precaching'
-import { registerRoute, NavigationRoute, setDefaultHandler } from 'workbox-routing'
-import { StaleWhileRevalidate, CacheFirst, NetworkFirst, NetworkOnly } from 'workbox-strategies'
-import { ExpirationPlugin } from 'workbox-expiration'
-import { CacheableResponsePlugin } from 'workbox-cacheable-response'
-import { BackgroundSyncPlugin } from 'workbox-background-sync'
+const CACHE_NAME = 'cache-v1';
+const CACHE_PERIOD = 24 * 60 * 60 * 1000;
 
+const STATIC_ASSETS = ['/', '/index.html'];
 
-precacheAndRoute(self.__WB_MANIFEST);
+// 删除旧缓存
+async function cleanOldCaches() {
+	const keys = await caches.keys();
+	const cachesToDelete = keys.filter((key) => key !== CACHE_NAME);
+	await Promise.all(cachesToDelete.map((key) => caches.delete(key)));
+}
 
-// 设置默认处理策略
-setDefaultHandler(new NetworkFirst({
-  cacheName: 'default',
-  networkTimeoutSeconds: 5,
-}));
+// 放在定期更新更好一些，但是我不知道为什么没有权限
+async function updateCachePeriodically() {
+	const cache = await caches.open(CACHE_NAME);
+	const requests = await cache.keys();
+	await Promise.all(
+		requests.map(async (request) => {
+			const response = await cache.match(request);
+			if (response && response.headers.get('date')) {
+				const cacheDate = new Date(response.headers.get('date'));
+				if (Date.now() - cacheDate.getTime() > CACHE_PERIOD) {
+					return cache.delete(request);
+				}
+			}
+		})
+	);
+}
 
-// 脚本文件缓存策略
-registerRoute(
-  ({ request }) => request.destination === 'script',
-  new StaleWhileRevalidate({
-    cacheName: 'scripts'
-  })
-);
-
-// 样式文件缓存策略
-registerRoute(
-  ({ request }) => request.destination === 'style',
-  new StaleWhileRevalidate({
-    cacheName: 'styles'
-  })
-);
-
-// 图片缓存策略
-registerRoute(
-  ({ request }) => request.destination === 'image',
-  new CacheFirst({
-    cacheName: 'images',
-    plugins: [
-      new ExpirationPlugin({
-        maxEntries: 60,
-        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
-      }),
-    ],
-  })
-);
-
-// API请求处理（包含背景同步）
-const bgSyncPlugin = new BackgroundSyncPlugin('apiQueue', {
-  maxRetentionTime: 24 * 60 // 最多重试24小时（以分钟为单位）
+// 安装 Service Worker
+self.addEventListener('install',async (event) => {
+	event.waitUntil(
+		caches.open(CACHE_NAME).then((cache) => {
+			console.log('Opened cache');
+			return cache.addAll(STATIC_ASSETS).catch((error)=>{
+        console.error(error)
+      })
+		})
+	);
 });
 
-registerRoute(
-  ({url}) => url.href.startsWith('https://ssemarket.cn/api'),
-  new NetworkOnly({
-    plugins: [bgSyncPlugin]
-  }),
-  'POST'
-);
-
-// 缓存 GET 请求
-registerRoute(
-  ({url}) => url.href.startsWith('https://ssemarket.cn/api'),
-  new CacheFirst({
-    cacheName: 'api-cache',
-    plugins: [
-      new ExpirationPlugin({
-        maxEntries: 50, // 缓存的最大条目数
-        maxAgeSeconds: 24 * 60 * 60, // 缓存的最长时间（以秒为单位）
-      }),
-    ],
-  }),
-  'GET'
-);
-
-// 动态页面导航路由
-const dynamicPageRoute = new NavigationRoute(
-  new NetworkFirst({
-    cacheName: 'dynamic-pages',
-    networkTimeoutSeconds: 5,
-    plugins: [
-      new CacheableResponsePlugin({
-        statuses: [200],
-      }),
-      new ExpirationPlugin({
-        maxAgeSeconds: 24 * 60 * 60, // 24 hours
-      }),
-    ],
-  }),
-  {
-    allowlist: [/^\/new\//],
-  }
-);
-
-registerRoute(dynamicPageRoute);
-
-// 离线回退
-const offlineFallbackRoute = new NavigationRoute(
-  new CacheFirst({
-    cacheName: 'offline-fallback',
-  }),
-  {
-    navigationFallback: './offline.html',
-  }
-);
-
-registerRoute(offlineFallbackRoute);
-
-// 安装事件
-self.addEventListener('install', (event) => {
-  console.log('Service Worker 已安装');
-});
-
-// 激活事件
+// 激活 Service Worker
 self.addEventListener('activate', (event) => {
-  console.log('Service Worker 已激活');
+	event.waitUntil(Promise.all([cleanOldCaches(), updateCachePeriodically()]));
 });
 
-console.log('Service Worker 已加载');
+async function networkFirst(request) {
+	try {
+		const networkResponse = await fetch(request);
+		if (networkResponse.ok) {
+			const cache = await caches.open(CACHE_NAME);
+			await cache.put(request, networkResponse.clone());
+		}
+		return networkResponse;
+	} catch (error) { 
+		const cachedResponse = await caches.match(request, { ignoreSearch: true });
+		if (cachedResponse) {
+			return cachedResponse;
+		}
+		return new Response('Network error happened', {
+			status: 408,
+			headers: { 'Content-Type': 'text/plain' },
+		});
+	}
+}
+
+async function cacheFirst(request) {
+	try {
+		const cachedResponse = await caches.match(request);
+		return cachedResponse || fetch(request);
+	} catch (error) {
+		return new Response('Cache error happened', {
+			status: 408,
+			headers: { 'Content-Type': 'text/plain' },
+		});
+	}
+}
+
+self.addEventListener('fetch', (event) => {
+	const { request } = event;
+	if (request.url.startsWith('https://api.ssemarket.cn/api')) {
+		event.respondWith(networkFirst(request));
+	} else {
+		event.respondWith(cacheFirst(request));
+	}
+});
