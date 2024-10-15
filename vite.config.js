@@ -14,9 +14,25 @@ export default defineConfig({
       scope:'/new/',
       srcDir: 'src',
       filename: 'sw.js',
+      manifest:{
+        "name": "SSE MARKET",
+        "short_name": "SSE",
+        "scope": "/new/",
+        "start_url": "/new/",
+        "display": "standalone",
+        "background_color": "#ffffff",
+        "theme_color": "#000000",
+        "icons": [
+          {
+            "src": "icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+          }
+        ]
+      },
       devOptions: {
         // 开发环境是否开启 PWA
-        enabled: true,
+        enabled: false,
         type: 'module', 
       }
     })

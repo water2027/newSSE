@@ -14,7 +14,10 @@
 import { ref, computed } from 'vue';
 
 import { marked } from 'marked';
-import hljs from 'highlight.js';
+import hljs from 'highlight.js/lib/core';
+import javascript from 'highlight.js/lib/languages/javascript';
+
+hljs.registerLanguage('javascript', javascript);
 import 'highlight.js/styles/github.css';
 import DOMPurify from 'dompurify';
 
