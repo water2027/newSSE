@@ -84,6 +84,7 @@ async function getPostByID(PostID, userTelephone) {
 	if (!token) {
 		return null;
 	}
+	await updateBrowseNum(PostID,userTelephone);
 	const response = await fetch(`${apiUrl}/auth/showDetails`, {
 		method: 'POST',
 		headers: {
@@ -97,6 +98,24 @@ async function getPostByID(PostID, userTelephone) {
 	});
 	const data = await response.json();
 	return data;
+}
+
+async function updateBrowseNum(PostID,userTelephone){
+	const token = getItemWithExpiry('token');
+	if (!token) {
+		return null;
+	}
+	await fetch(`${apiUrl}/auth/updateBrowseNum`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		},
+		body: JSON.stringify({
+			postID: PostID,
+			userTelephone: userTelephone,
+		}),
+	});
 }
 
 async function getCommentsByPostID(PostID, userTelephone) {
