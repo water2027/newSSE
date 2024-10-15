@@ -1,7 +1,7 @@
 const CACHE_NAME = 'cache-v1';
 const CACHE_PERIOD = 24 * 60 * 60 * 1000;
 
-const STATIC_ASSETS = ['/', '/index.html'];
+const STATIC_ASSETS = ['/new/', '/new/index.html'];
 
 // 删除旧缓存
 async function cleanOldCaches() {
