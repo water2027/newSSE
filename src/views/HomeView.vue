@@ -23,7 +23,7 @@
 					<span />
 					<span />
 				</button>
-				<h1 @click="mobileChangeToMain">SSE_MARKET</h1>
+				<h1 :class="{ mobileSelected: selected == '/' }" @click="mobileChangeToMain">SSE_MARKET</h1>
 				<button
 					class="toPost"
 					@click="changeToPost"
@@ -51,6 +51,7 @@
 				<router-link
 					v-if="isPC"
 					class="nav"
+					:class="{ selected: selected == '/' }"
 					to="/"
 					@click="changeToMain"
 				>
@@ -58,6 +59,7 @@
 				</router-link>
 				<router-link
 					class="nav"
+					:class="{ selected: selected == '/partitions' }"
 					to="/partitions"
 				>
 					分区
@@ -65,13 +67,15 @@
 				<router-link
 					v-if="!isPC"
 					class="nav"
+					:class="{ selected: selected == '/heat' }"
 					to="/heat"
 				>
 					热榜
 				</router-link>
 				<router-link
-					to="/"
+					to="/course"
 					class="nav"
+					:class="{ selected: selected == '/course' }"
 					@click="changeToCourse"
 				>
 					课程专区
@@ -80,6 +84,7 @@
 					v-if="isPC"
 					id="post"
 					class="nav"
+					:class="{ selected: selected == '/post' }"
 					to="/post"
 				>
 					发帖
@@ -89,38 +94,44 @@
 					:notice-num="noticeNum"
 					:display-bool="displayBool"
 					class="nav"
+					:class="{ selected: selected == '/notice' }"
 					to="/notice"
 				>
 					通知
 				</router-link>
 				<router-link
 					class="nav"
+					:class="{ selected: selected == '/feedback' }"
 					to="/feedback"
 				>
 					反馈
 				</router-link>
 				<router-link
 					class="nav"
-					to="/"
+					:class="{ selected: selected == '/save' }"
+					to="/save"
 					@click="changeToSave"
 				>
 					我的收藏
 				</router-link>
 				<router-link
 					class="nav"
-					to="/"
+					:class="{ selected: selected == '/history' }"
+					to="/history"
 					@click="changeToHistory"
 				>
 					发帖历史
 				</router-link>
 				<router-link
 					class="nav"
+					:class="{ selected: selected == '/options' }"
 					to="/options"
 				>
 					个人信息
 				</router-link>
 				<router-link
 					class="nav"
+					:class="{ selected: selected == '/doc' }"
 					to="/doc"
 				>
 					文档
@@ -181,6 +192,10 @@ const searchinfo = ref('');
 provide('searchinfo', searchinfo);
 const searchsort = ref('home');
 provide('searchsort', searchsort);
+
+const selected = computed(() => {
+	return route.fullPath;
+});
 
 const windowWidth = ref(window.innerWidth);
 const updateWidth = () => {
@@ -293,6 +308,11 @@ onMounted(async () => {
 });
 </script>
 <style scoped>
+.selected {
+	box-shadow:
+		rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset,
+		rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+}
 #heat {
 	color: #ffffff;
 	text-shadow:
@@ -503,6 +523,9 @@ main {
 
 /* 小屏幕样式 <768px */
 @media screen and (max-width: 768px) {
+	.mobileSelected {
+		color: #00a4af;
+	}
 	header {
 		height: 20vh;
 		margin: 0;
@@ -529,6 +552,7 @@ main {
 		position: absolute;
 		left: 50%;
 		transform: translateX(-50%);
+		transition: all 0.3s;
 	}
 
 	header input {

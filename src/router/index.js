@@ -11,6 +11,21 @@ const routes = [
 		component: PostListView,
 	},
 	{
+		path: '/course',
+		name: 'Course',
+		component: PostListView,
+	},
+	{
+		path: '/save',
+		name: 'Save',
+		component: PostListView,
+	},
+	{
+		path: '/history',
+		name: 'History',
+		component: PostListView,
+	},
+	{
 		path: '/partitions',
 		name: 'Partitions',
 		component: () => import('@/views/PartitionListView.vue'),
@@ -62,14 +77,5 @@ const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
 	routes: routes,
 });
-
-// router.beforeEach((to, from, next) => {
-// 	const token = getItemWithExpiry('token');
-// 	if (to.path !== '/' && !token) {
-// 		next('/');
-// 	}else {
-// 		next();
-// 	}
-// });
 
 export default router;
