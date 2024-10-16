@@ -194,6 +194,8 @@ provide('isPC', isPC);
 const posts = ref([]);
 provide('posts', posts);
 
+const navIsOpen = ref(true);
+
 /**
  * @description 发帖和看帖的时候隐藏热榜
  */
@@ -210,7 +212,6 @@ const contentStyle = ref({
 	alignItems: 'center',
 	justifyContent: 'center',
 });
-const navIsOpen = ref(true);
 
 /**
  * 搜索功能，不使用v-model绑定，略微减小性能消耗。
@@ -220,7 +221,7 @@ const sinfo = ref(null);
 
 const search = () => {
 	searchinfo.value = sinfo.value.value;
-	router.push('/')
+	router.push('/');
 };
 
 const mobileChangeToMain = () => {
@@ -476,8 +477,6 @@ main {
 	.content {
 		margin-left: 5%;
 		margin-right: 5%;
-		border: 1px solid black;
-		border-radius: 5px;
 		height: auto;
 	}
 

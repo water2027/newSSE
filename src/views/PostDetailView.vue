@@ -476,6 +476,17 @@ onMounted(async () => {
 });
 </script>
 <style scoped>
+a{
+    text-decoration: none;
+    color: #00d9ff;
+    transition: all 0.3s ease;
+}
+
+a:hover{
+    color: #ffd900;
+    background: #9cff817e;
+}
+
 b {
 	font-size: 16px;
 }

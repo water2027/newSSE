@@ -164,6 +164,7 @@ const searchsort = inject('searchsort');
 const posts = ref([]);
 const totalNum = ref(0);
 const curPage = ref(0);
+const limit = ref(5);
 const emit = defineEmits(['sendPosts']);
 
 const teachers = ref([]);
@@ -209,13 +210,7 @@ const like = async (isLiked, postID, userTelephone) => {
 	});
 };
 
-/**
- * @description 删除帖子。
- * @param postID
- */
-const handleDelete = async (postID) => {
-	//后端没有返回数据，不要赋值后再更新
-	await delPost(postID);
+const updateID = async ()=>{
 	const id = await getPostsNum({
 		partition: partition.value,
 		searchsort: searchsort.value,
@@ -223,8 +218,12 @@ const handleDelete = async (postID) => {
 		userTelephone: userInfo.value.phone,
 		tag: tag.value,
 	});
+	totalNum.value = id;
+}
+
+const updatePosts = async ()=>{
 	const res = await getPosts({
-		limit: 5,
+		limit: limit.value,
 		offset: curPage.value,
 		partition: partition.value,
 		searchsort: searchsort.value,
@@ -233,64 +232,38 @@ const handleDelete = async (postID) => {
 		tag: tag.value,
 	});
 	posts.value = res;
+}
+
+/**
+ * @description 删除帖子。
+ * @param postID
+ */
+const handleDelete = async (postID) => {
+	//后端没有返回数据，不要赋值后再更新
+	await delPost(postID);
+	await updateID();
+	await updatePosts();
 	showMsg('删除成功');
 };
 
 const lastPage = async () => {
 	if (curPage.value > 0) {
-		curPage.value -= 5;
-		/**
-		 * @description 可以考虑抽象成一个函数，每次调用这个函数就可以了
-		 */
-		const arr = await getPosts({
-			limit: 5,
-			offset: curPage.value,
-			partition: partition.value,
-			searchsort: searchsort.value,
-			searchinfo: searchinfo.value,
-			userTelephone: userInfo.value.phone,
-			tag: tag.value,
-		});
-		posts.value = arr;
+		curPage.value -= limit.value;
+		await updatePosts();
 	}
 };
 
 const nextPage = async () => {
-	if (curPage.value < totalNum.value - 5) {
-		curPage.value += 5;
-		const arr = await getPosts({
-			limit: 5,
-			offset: curPage.value,
-			partition: partition.value,
-			searchsort: searchsort.value,
-			searchinfo: searchinfo.value,
-			userTelephone: userInfo.value.phone,
-			tag: tag.value,
-		});
-		posts.value = arr;
+	if (curPage.value < totalNum.value - limit.value) {
+		curPage.value += limit.value;
+		await updatePosts();
 	}
 };
 
 onMounted(async () => {
 	if (userInfo && userInfo.value && curPage.value >= 0) {
-		const id = await getPostsNum({
-			partition: partition.value,
-			searchsort: searchsort.value,
-			searchinfo: searchinfo.value,
-			userTelephone: userInfo.value.phone,
-			tag: tag.value,
-		});
-		const arr = await getPosts({
-			limit: 5,
-			offset: curPage.value,
-			partition: partition.value,
-			searchsort: searchsort.value,
-			searchinfo: searchinfo.value,
-			userTelephone: userInfo.value.phone,
-			tag: tag.value,
-		});
-		posts.value = arr;
-		totalNum.value = id;
+		await updateID();
+		await updatePosts();
 	}
 	if (partition.value === '课程专区') {
 		const data = await getTeachers();
@@ -311,7 +284,7 @@ watch(partition, async (newVal) => {
 		tag: tag.value,
 	});
 	const arr = await getPosts({
-		limit: 5,
+		limit: limit.value,
 		offset: curPage.value,
 		partition: newVal,
 		searchsort: searchsort.value,
@@ -348,7 +321,7 @@ watch(searchinfo, async (newVal) => {
 		tag: tag.value,
 	});
 	const arr = await getPosts({
-		limit: 5,
+		limit: limit.value,
 		offset: curPage.value,
 		partition: partition.value,
 		searchsort: searchsort.value,
@@ -369,7 +342,7 @@ watch(searchsort, async (newVal) => {
 		tag: tag.value,
 	});
 	const arr = await getPosts({
-		limit: 5,
+		limit: limit.value,
 		offset: curPage.value,
 		partition: partition.value,
 		searchsort: newVal,
@@ -390,7 +363,7 @@ watch(tag, async (newVal) => {
 		tag: newVal,
 	});
 	const arr = await getPosts({
-		limit: 5,
+		limit: limit.value,
 		offset: curPage.value,
 		partition: partition.value,
 		searchsort: searchsort.value,
@@ -515,6 +488,15 @@ watch(tag, async (newVal) => {
 		color: #fff;
 		border-radius: 50%;
 	}
+}
+
+.post{
+	box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+	transition: all 0.5s;
+}
+.post:hover{
+	box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+	transform: scale(1.05);
 }
 
 .userButtons {
