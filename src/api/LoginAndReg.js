@@ -71,7 +71,11 @@ async function userLogin(useremail, userpassword) {
     }
 }
 
-async function sendCode(email) {
+/***
+ * @param {string} email
+ * @param {number} mode 模式，未注册要用0，注册了的要用1
+ */
+async function sendCode(email,mode) {
     const response = await fetch(`${apiUrl}/auth/validateEmail`, {
         method: 'POST',
         headers: {
@@ -79,7 +83,7 @@ async function sendCode(email) {
         },
         body: JSON.stringify({
             email: email,
-            mode: 0
+            mode: mode
         })
     })
     const data = await response.json()

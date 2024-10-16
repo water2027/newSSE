@@ -3,6 +3,7 @@
 <template>
 	<div class="pageWithLoginButton">
 		<span class="title">{{ title }}</span>
+		<!-- 登录 -->
 		<div
 			v-if="page === 0"
 			class="loginAndRegPage"
@@ -55,6 +56,7 @@
 				</div>
 			</div>
 		</div>
+		<!-- 注册 -->
 		<div
 			v-else-if="page === 1"
 			class="loginAndRegPage reg"
@@ -120,7 +122,7 @@
 			</div>
 			<button
 				class="LoginAndRegButton"
-				@click="getVCode"
+				@click="getVCode(0)"
 			>
 				发送验证码
 			</button>
@@ -137,6 +139,7 @@
 				<span class="regButton">已有账号？</span>
 			</div>
 		</div>
+		<!-- 忘记密码 -->
 		<div
 			v-else-if="page === 2"
 			class="loginAndRegPage"
@@ -182,7 +185,7 @@
 			</div>
 			<button
 				class="LoginAndRegButton"
-				@click="getVCode"
+				@click="getVCode(1)"
 			>
 				发送验证码
 			</button>
@@ -258,10 +261,13 @@ const login = async () => {
 	}
 };
 
-const getVCode = async () => {
+/***
+ * @param {number} mode 0:注册 1:重置密码
+ */
+const getVCode = async (mode) => {
 	email.value.value = email.value.value.trim();
 	if (email.value.value) {
-		const res = await sendCode(email.value.value);
+		const res = await sendCode(email.value.value,mode);
 		if (res.code !== 200) {
 			showMsg(res.msg);
 		} else {
