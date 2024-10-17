@@ -83,7 +83,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'send']);
 const autoResize = (event) => {
-	event.target.style.height = '100px';
+	event.target.style.height = '450px';
 	event.target.style.height = event.target.scrollHeight + 'px';
 };
 

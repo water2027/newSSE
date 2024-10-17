@@ -23,7 +23,12 @@
 					<span />
 					<span />
 				</button>
-				<h1 :class="{ mobileSelected: selected == '/' }" @click="mobileChangeToMain">SSE_MARKET</h1>
+				<h1
+					:class="{ mobileSelected: selected == '/' }"
+					@click="mobileChangeToMain"
+				>
+					SSE_MARKET
+				</h1>
 				<button
 					class="toPost"
 					@click="changeToPost"
@@ -137,7 +142,9 @@
 					文档
 				</router-link>
 			</div>
-			<div
+			<transition
+				name="bounce"
+				mode="out-in"
 				class="content"
 				:style="contentStyle"
 			>
@@ -150,35 +157,21 @@
 					@send-notice-num="sendNoticeNum"
 				/>
 				<router-view v-else />
-			</div>
-			<div
-				v-if="isPC && !heatPostsIsHiden"
-				class="nav-bar heat"
-			>
-				<h2 id="heat">热榜</h2>
-				<router-link
-					v-for="post in heatPosts"
-					:key="post.PostID"
-					class="nav"
-					:to="'/postdetail/' + post.PostID"
-				>
-					<span class="heatTitle">
-						{{ post.Title }}
-					</span>
-				</router-link>
-			</div>
+			</transition>
+			<heat-list v-if="isPC && !heatPostsIsHidden" />
 		</main>
 	</div>
 </template>
 <script setup>
 import { computed, onMounted, provide, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { getHeatPosts } from '@/api/getPosts';
+
 import { getNoticesNum } from '@/api/notice';
+
+import HeatList from '@/components/HeatList.vue';
 const route = useRoute();
 const router = useRouter();
 
-const heatPosts = ref([]);
 const noticeNum = ref('');
 const displayBool = computed(() => {
 	return noticeNum.value == '0' ? 'none' : 'block';
@@ -214,7 +207,7 @@ const navIsOpen = ref(true);
 /**
  * @description 发帖和看帖的时候隐藏热榜
  */
-const heatPostsIsHiden = computed(() => {
+const heatPostsIsHidden = computed(() => {
 	return /^\/post/.test(route.fullPath);
 });
 /**
@@ -254,9 +247,13 @@ const changeToCourse = () => {
 	searchsort.value = 'home';
 };
 const changeToSave = () => {
+	partition.value = '收藏';
+	searchinfo.value = '';
 	searchsort.value = 'save';
 };
 const changeToHistory = () => {
+	partition.value = '历史';
+	searchinfo.value = '';
 	searchsort.value = 'history';
 };
 const changeToPost = () => {
@@ -299,9 +296,26 @@ const getNoticesNumFunc = async () => {
 onMounted(async () => {
 	if (!isPC.value) {
 		navIsOpen.value = false;
-	} else {
-		const posts = await getHeatPosts();
-		heatPosts.value = posts;
+	}
+	// 刷新时跳转到获取对应界面数据
+	// 之后考虑在组件加载时获取
+	const baseUrl = import.meta.env.BASE_URL;
+	const path = window.location.pathname.replace(baseUrl, '');
+	switch (path) {
+		case '':
+			changeToMain();
+			break;
+		case 'save':
+			changeToSave();
+			break;
+		case 'history':
+			changeToHistory();
+			break;
+		case 'course':
+			changeToCourse();
+			break;
+		default:
+			break;
 	}
 	getNoticesNumFunc();
 	window.addEventListener('resize', updateWidth);
@@ -312,21 +326,6 @@ onMounted(async () => {
 	box-shadow:
 		rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset,
 		rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
-}
-#heat {
-	color: #ffffff;
-	text-shadow:
-		0 0 10px #ff3232de,
-		0 0 20px #ff3232de,
-		0 0 50px #ff3232de,
-		0 0 100px #ff3232de,
-		0 0 200px #ff3232de;
-}
-#heat::before {
-	content: '🔥';
-}
-#heat::after {
-	content: '🔥';
 }
 
 #notice {
@@ -419,6 +418,24 @@ main {
 	z-index: 3000;
 }
 
+.bounce-enter-active {
+	animation: bounce-in 0.5s;
+}
+.bounce-leave-active {
+	animation: bounce-in 0.5s reverse;
+}
+@keyframes bounce-in {
+	0% {
+		transform: scale(0);
+	}
+	50% {
+		transform: scale(1.25);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
 /* 大屏幕样式 >768px */
 @media screen and (min-width: 768px) {
 	.asideButton {
@@ -497,13 +514,8 @@ main {
 	.content {
 		margin-left: 5%;
 		margin-right: 5%;
+		width: 100%;
 		height: auto;
-	}
-
-	.heat {
-		text-align: center !important;
-		margin-right: 3%;
-		width: 25%;
 	}
 
 	h2 {
@@ -624,10 +636,6 @@ main {
 
 	.nav-bar {
 		background-color: #f0f0f0;
-	}
-
-	.heat {
-		display: none;
 	}
 
 	.search {

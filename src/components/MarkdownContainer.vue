@@ -31,19 +31,19 @@ const props = defineProps({
 });
 
 const mdContainerStyle = computed(() => {
-  return {
-    width: '100%',
-    maxWidth: '100%',
-    height: 'auto',
-    margin: '10px 0',
-    fontSize: '23px',
-    paddingLeft: '1%',
-    paddingBottom: '5%',
-    marginBottom: '1%',
-    overflowWrap: 'break-word',
-    wordWrap: 'break-word',
-    wordBreak: 'break-all',
-  };
+	return {
+		width: '100%',
+		maxWidth: '100%',
+		height: 'auto',
+		margin: '10px 0',
+		fontSize: '23px',
+		paddingLeft: '1%',
+		paddingBottom: '5%',
+		marginBottom: '1%',
+		overflowWrap: 'break-word',
+		wordWrap: 'break-word',
+		wordBreak: 'break-all',
+	};
 });
 
 /**
@@ -72,8 +72,8 @@ const safeHTML = (str) => {
 		childElements.forEach((child) => {
 			child.style.whiteSpace = 'pre-wrap';
 			child.style.wordWrap = 'break-word';
-			child.style.overflowWrap = 'break-word'
-			child.style.wordBreak = 'break-all'; 
+			child.style.overflowWrap = 'break-word';
+			child.style.wordBreak = 'break-all';
 		});
 	}, 0);
 	return finalHTML;
@@ -91,42 +91,66 @@ defineExpose({
 });
 </script>
 <style scoped>
-@import url("@/assets/hl.css");
+@import url('@/assets/hl.css');
 #content {
-  max-width: 100%;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-all;
+	max-width: 100%;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	word-break: break-all;
 }
 
 :deep(*) {
-  max-width: 100%;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-all;
+	max-width: 100%;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	word-break: break-all;
 }
 
 :deep(pre) {
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  overflow-x: auto;
-  max-width: 100%;
+	display: block;
+	background-color: #f4f4f4;
+	border: 1px solid #ccc;
+	padding: 10px;
+	margin-bottom: 5px;
+	position: relative;
+	pointer-events: none;
+	font-size: 20px !important;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	overflow-x: auto;
+	z-index: 0;
+	max-width: 100%;
+}
+
+:deep(pre::before) {
+	content: '';
+	background-image: url('/PhCopy.webp');
+	background-size: cover;
+	display: block;
+	width: 20px;
+	height: 20px;
+	position: absolute;
+	z-index: 20;
+	top: 3px;
+	right: 3px;
+	pointer-events: auto;
+	/* 确保伪元素可以接收鼠标事件 */
 }
 
 :deep(code) {
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  word-break: break-all;
-  max-width: 100%;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	word-break: break-all;
+	max-width: 100%;
 }
 
 @media screen and (max-width: 768px) {
-  :deep(.hasImgDiv img) {
-    width: 100%;
-    height: auto;
-    margin: 10px 0;
-    font-size: 23px;
-    margin-bottom: 1%;
-  }
+	:deep(.hasImgDiv img) {
+		width: 100%;
+		height: auto;
+		margin: 10px 0;
+		font-size: 23px;
+		margin-bottom: 1%;
+	}
 }
 </style>

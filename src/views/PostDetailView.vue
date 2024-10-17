@@ -1,9 +1,7 @@
-<!-- eslint-disable vue/html-closing-bracket-newline -->
-<!-- eslint-disable vue/max-attributes-per-line -->
 <!-- eslint-disable vue/no-v-html -->
 <!-- eslint-disable vue/html-self-closing -->
 <!-- eslint-disable vue/html-indent -->
- <!-- 禁用了一些eslint规则，这是不好的，但是我手贱，一直用格式化工具 -->
+<!-- 禁用了一些eslint规则，这是不好的，但是我手贱，一直用格式化工具 -->
 <template>
 	<div
 		class="root"
@@ -23,7 +21,7 @@
 				>
 			</div>
 			<h2>{{ post.Title }}</h2>
-			<MarkdownContainer :markdown-content="post.Content||'loading'" />
+			<MarkdownContainer :markdown-content="post.Content || 'loading'" />
 			<div
 				v-if="post.Photos"
 				class="imgs"
@@ -116,7 +114,7 @@
 				@send="sendCommentFunc"
 			/>
 			<!-- 这是评论区 -->
-			 <!-- 考虑做成组件，但是貌似只有这一个地方用了，好像又没啥必要 -->
+			<!-- 考虑做成组件，但是貌似只有这一个地方用了，好像又没啥必要 -->
 			<div class="commentList">
 				<div
 					v-for="comment in comments"
@@ -141,7 +139,9 @@
 							删除
 						</button>
 					</div>
-					<MarkdownContainer :markdown-content="comment.Content||'loading'" />
+					<MarkdownContainer
+						:markdown-content="comment.Content || 'loading'"
+					/>
 					<span>{{ strHandler('time', comment.CommentTime) }}</span>
 					<div class="commentButtons">
 						<button
@@ -216,7 +216,9 @@
 								</button>
 							</div>
 							<MarkdownContainer
-								:markdown-content="subComment.content||'loading'"
+								:markdown-content="
+									subComment.content || 'loading'
+								"
 							/>
 							<span>{{
 								strHandler('time', subComment.commentTime)
@@ -476,15 +478,15 @@ onMounted(async () => {
 });
 </script>
 <style scoped>
-a{
-    text-decoration: none;
-    color: #00d9ff;
-    transition: all 0.3s ease;
+a {
+	text-decoration: none;
+	color: #00d9ff;
+	transition: all 0.3s ease;
 }
 
-a:hover{
-    color: #ffd900;
-    background: #9cff817e;
+a:hover {
+	color: #ffd900;
+	background: #9cff817e;
 }
 
 b {
@@ -503,51 +505,23 @@ b {
 	height: auto;
 }
 
+.commentList{
+	min-width: 100%;
+	width: 100%;
+}
+
 .commentItem {
 	display: flex;
 	flex-direction: column;
 	margin-top: 10px;
 	margin-bottom: 10px;
 	border: 1px solid #f0f0f0;
-}
-
-:deep(pre) {
-	display: block;
-	background-color: #f4f4f4;
-	border: 1px solid #ccc;
-	padding: 10px;
-	margin-bottom: 5px;
-	position: relative;
-	overflow: auto;
-	pointer-events: none;
-	white-space: pre-wrap;
-	font-size: 20px !important;
-}
-
-:deep(pre::before) {
-	content: '';
-	background-image: url('https://img.icons8.com/?size=100&id=86206&format=png&color=000000');
-	background-size: cover;
-	display: block;
-	width: 20px;
-	height: 20px;
-	position: absolute;
-	z-index: 10;
-	top: 3px;
-	right: 3px;
-	pointer-events: auto;
-	/* 确保伪元素可以接收鼠标事件 */
+	width: 100%;
 }
 
 .commentButton {
 	display: flex;
 	justify-content: space-between;
-	margin-top: 10px;
-}
-
-.editorButton {
-	display: flex;
-	justify-content: space-around;
 	margin-top: 10px;
 }
 
