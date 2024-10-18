@@ -3,7 +3,7 @@ import { getTokenWithExpiry } from "../auth";
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 async function getNoticesNum() {
-    const token = getItemWithExpiry('token');
+    const token = getTokenWithExpiry('token');
     if (!token) {
         return null;
     }
@@ -19,7 +19,7 @@ async function getNoticesNum() {
 }
 
 async function getNotices(requireID,pageSize,read) {
-    const token = getItemWithExpiry('token');
+    const token = getTokenWithExpiry('token');
     if (!token) {
         return null;
     }
@@ -36,7 +36,7 @@ async function getNotices(requireID,pageSize,read) {
 }
 
 async function readNotice(id) {
-    const token = getItemWithExpiry('token');
+    const token = getTokenWithExpiry('token');
     if (!token) {
         return null;
     }

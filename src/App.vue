@@ -14,8 +14,9 @@ import { ref, provide, onUnmounted, onBeforeMount } from 'vue';
 import HomeViewVue from './views/HomeView.vue';
 import LoginViewVue from './views/LoginView.vue';
 
-import { userLogin, getItemWithExpiry } from './api/LoginAndReg';
-import { getInfo } from '@/api/getInfo';
+import { userLogin } from './api/LoginAndRegister/login';
+import { getTokenWithExpiry } from './api/auth';
+import { getInfo } from './api/info/getInfo';
 
 import { showMsg } from './components/MessageBox';
 
@@ -52,7 +53,7 @@ const handleBeforeUnload = () => {
 };
 
 const autoLogin = async () => {
-	const token = getItemWithExpiry('token');
+	const token = getTokenWithExpiry('token');
 	const tempInfo = localStorage.getItem('userInfo');
 	/**
 	 * @description 如果token和tempInfo存在，直接进去首页
