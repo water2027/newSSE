@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/html-indent -->
 <template>
 	<div class="root nav-bar heat">
 		<h2 id="heat">热榜</h2>
@@ -20,7 +21,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 
-import { getHeatPosts } from '@/api/getPosts';
+import { getHeatPosts } from '@/api/browse/getPost';
 import { showMsg } from '@/components/MessageBox';
 
 const heatPosts = ref([]);

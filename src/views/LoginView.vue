@@ -206,12 +206,12 @@
 </template>
 <script setup>
 import { ref } from 'vue';
-import {
-	userLogin,
-	sendCode,
-	userRegister,
-	updatePassword,
-} from '@/api/LoginAndReg';
+
+import { userLogin } from '@/api/LoginAndRegister/login';
+import { sendCode } from '@/api/LoginAndRegister/utils';
+import { userRegister } from '@/api/LoginAndRegister/register';
+import { updatePassword } from '@/api/LoginAndRegister/forgetPwd';
+
 import { showMsg } from '@/components/MessageBox';
 const emit = defineEmits(['sendLoginSuccess']);
 const email = ref(null);

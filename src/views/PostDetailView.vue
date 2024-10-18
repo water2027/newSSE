@@ -256,22 +256,20 @@
 <script setup>
 import { ref, inject, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { getPostByID, getCommentsByPostID } from '@/api/getPosts';
-import {
-	sendComment,
-	sendPComment,
-	delComment,
-	delCcomment,
-} from '@/api/postAndComment';
-import { likePost } from '@/api/saveAndDel';
+
+import { getPostByID } from '@/api/browse/getPost';
+import { getCommentsByPostID } from '@/api/browse/getComment';
+import { sendComment,sendPComment,delComment,delCcomment } from '@/api/editPostAndComment/editComment';
+import { likePost } from '@/api/SaveAndLike.js/SaveAndLike';
 
 import { strHandler } from '@/utils/strHandler';
 import { expHandler } from '@/utils/expHandler';
-import { showImg } from '@/components/imageShower';
 
+import { showImg } from '@/components/imageShower';
 import { showMsg } from '@/components/MessageBox';
 import MarkdownEditor from '@/components/MarkdownEditor.vue';
 import MarkdownContainer from '@/components/MarkdownContainer.vue';
+
 const route = useRoute();
 
 const userInfo = inject('userInfo');

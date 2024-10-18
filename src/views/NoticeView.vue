@@ -40,10 +40,14 @@
 
 <script setup>
 import { ref, inject, onMounted } from 'vue';
-import { getNotices, readNotice, getNoticesNum } from '@/api/notice';
-import { strHandler } from '@/utils/strHandler';
-import { showMsg } from '@/components/MessageBox';
 import { useRouter } from 'vue-router';
+
+import { getNotices, readNotice, getNoticesNum } from '@/api/notice/notice';
+
+
+import { strHandler } from '@/utils/strHandler';
+
+import { showMsg } from '@/components/MessageBox';
 const router = useRouter();
 
 const notices = inject('notices');

@@ -53,10 +53,10 @@
 import { ref, inject, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { getTeachers } from '@/api/postAndComment';
-import { showMsg } from '@/components/MessageBox';
-import { sendPost } from '@/api/postAndComment';
+import { getTeachers } from '@/api/info/getTeacher';
+import { sendPost } from '@/api/editPostAndComment/editPost';
 
+import { showMsg } from '@/components/MessageBox';
 import MarkdownEditor from '@/components/MarkdownEditor.vue';
 // import NewEditor from '@/components/NewEditor.vue';
 

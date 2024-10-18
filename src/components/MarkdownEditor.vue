@@ -62,7 +62,7 @@ import { useRoute } from 'vue-router';
 import MarkdownContainer from './MarkdownContainer.vue';
 
 import { showMsg } from '@/components/MessageBox';
-import { uploadPhoto } from '@/api/postAndComment';
+import { uploadPhoto } from '@/api/editPostAndComment/utils';
 
 const route = useRoute();
 

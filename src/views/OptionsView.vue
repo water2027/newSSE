@@ -57,10 +57,14 @@
 
 <script setup>
 import { ref, inject, onMounted } from 'vue';
-import { getAllInfo, updateUserInfo, uploadAvatar } from '@/api/getInfo';
 import { useRouter } from 'vue-router';
+
 import { showMsg } from '@/components/MessageBox';
-import { updatePassword } from '@/api/LoginAndReg';
+
+import { getAllInfo } from '@/api/info/getInfo';
+import { updateUserInfo,uploadAvatar } from '@/api/info/updateInfo';
+import { updatePassword } from '@/api/LoginAndRegister/forgetPwd';
+
 const router = useRouter();
 
 const userInfo = inject('userInfo');

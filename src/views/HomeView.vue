@@ -167,7 +167,7 @@
 import { computed, onMounted, provide, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import { getNoticesNum } from '@/api/notice';
+import { getNoticesNum } from '@/api/notice/notice';
 
 import HeatList from '@/components/HeatList.vue';
 const route = useRoute();

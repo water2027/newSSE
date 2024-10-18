@@ -117,7 +117,8 @@ import { expHandler } from '@/utils/expHandler';
 
 import { showMsg } from '@/components/MessageBox';
 
-import { savePost, delPost, likePost } from '@/api/saveAndDel';
+import { savePost, likePost } from '@/api/SaveAndLike.js/SaveAndLike';
+import { delPost } from '@/api/editPostAndComment/editPost';
 
 const props = defineProps({
 	post: {
