@@ -254,6 +254,7 @@ defineExpose({
 
 .root {
 	width: 100%;
+	color: var(--color-text);
 }
 
 .bottomDiv {
@@ -269,7 +270,7 @@ p::after {
 
 a {
 	text-decoration: none;
-	color: black;
+	color: var(--color-text);
 	display: block;
 }
 

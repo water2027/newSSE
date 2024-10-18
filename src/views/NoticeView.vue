@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/html-indent -->
 <template>
 	<div class="root">
-		<h2 class="animation">通知</h2>
+		<h2 class="notice-title">通知</h2>
 		<div class="noticeButtons animation">
 			<button @click="readPage = true">未读通知</button>
 			<button @click="readPage = false">已读通知</button>
@@ -90,8 +90,8 @@ onMounted(async () => {
 });
 </script>
 <style scoped>
-.animation {
-	transition: all 0.5s;
+.notice-title {
+	color: var(--color-text);
 }
 .notice {
 	border: 1px solid #000;

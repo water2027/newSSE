@@ -9,7 +9,7 @@
 				v-if="postData.UserAvatar"
 				:src="postData.UserAvatar"
 			/>
-			<span>{{ postData.UserName }}</span>
+			<span class="user-name">{{ postData.UserName }}</span>
 			<span
 				title="码之气，三段！"
 				class="level"
@@ -198,15 +198,15 @@ const handleDelete = async () => {
 	height: auto;
 	display: flex;
 	flex-direction: column;
-	border: 1px solid rgba(0, 0, 0, 0.1);
+	border: 1px solid var(--color-border);
 	margin: 10px 0;
 	padding: 10px;
-	box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+	box-shadow: var(--color-post-card-box-shadow) 0px 3px 8px;
 	transition: all 0.5s;
 }
 
 .post:hover {
-	box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+	box-shadow: var(--color-post-card-hover-box-shadow) 0px 5px 15px;
 	transform: scale(1.05);
 }
 
@@ -228,7 +228,10 @@ const handleDelete = async () => {
 	align-items: center;
 	font-size: 1.2rem;
 	font-weight: bold;
-	color: #333;
+}
+
+.user .user-name{
+	color: var(--color-user-text);
 }
 
 .user img {
@@ -290,7 +293,7 @@ a {
 
 .level {
 	margin-left: 10px;
-	background: #ffc6c6;
+	background: var(--color-level);
 	border-radius: 50%;
 	padding-left: 10px;
 	padding-right: 10px;

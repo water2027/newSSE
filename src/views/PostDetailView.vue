@@ -476,15 +476,18 @@ onMounted(async () => {
 });
 </script>
 <style scoped>
+.root{
+	color: var(--color-text);
+}
 a {
 	text-decoration: none;
-	color: #00d9ff;
+	color: var(--color-a-in-post);
 	transition: all 0.3s ease;
 }
 
 a:hover {
-	color: #ffd900;
-	background: #9cff817e;
+	color: var(--color-a-hover-in-post);
+	background: var(--color-a-hover-bg-in-post);
 }
 
 b {
@@ -553,7 +556,7 @@ b {
 		align-items: center;
 		font-size: 1.2rem;
 		font-weight: bold;
-		color: #333;
+		color: var(--color-user-text);
 		margin-bottom: 15px;
 		margin-top: 15px;
 	}
@@ -563,15 +566,6 @@ b {
 		height: var(--userImage);
 		border-radius: 50%;
 		margin-top: 15px;
-	}
-
-	.user .b-avatar {
-		width: calc(var(--userImage) + 10px);
-		height: calc(var(--userImage) + 10px);
-		margin-right: 0.5rem;
-		background-color: #6c757d;
-		color: #fff;
-		border-radius: 50%;
 	}
 
 	.postDetail {
@@ -598,21 +592,12 @@ b {
 		align-items: center;
 		font-size: 1.2rem;
 		font-weight: bold;
-		color: #333;
+		color: var(--color-user-text);
 	}
 
 	.user img {
 		width: var(--userImage);
 		height: var(--userImage);
-		border-radius: 50%;
-	}
-
-	.user .b-avatar {
-		width: calc(var(--userImage) + 10px);
-		height: calc(var(--userImage) + 10px);
-		margin-right: 0.5rem;
-		background-color: #6c757d;
-		color: #fff;
 		border-radius: 50%;
 	}
 

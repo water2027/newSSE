@@ -2,21 +2,83 @@
 /* 直接使用属性则改变根元素的css */
 /* 子元素使用css变量 */
 
-/* 明亮模式 */
-div.light-mode {
-    background-color: rgb(218, 211, 197);
-    --color-text: #181818;
+/* 根元素，所有元素都能访问它的变量。但是has可能有些浏览器不兼容 */
+:root:has(div.light-mode){
+    --color-bg:rgb(218, 211, 197);
     --color-button-bg: #f1f1f18f;
     --color-button:#333;
+}
+
+:root:has(div.dark-mode){
+    --color-bg:rgb(27, 27, 27);
+    --color-button-bg:#333 ;
+    --color-button:#f1f1f18f;
+}
+
+
+/* 明亮模式 */
+div.light-mode {
+    --color-text: #181818;
     --color-hr:#3333339d;
-    --color-a-hover:rgba(241, 236, 226, 0.901);
+
+    --color-border:rgba(0, 0, 0, 0.1);
+
+    --color-nav-bg:#f0f0f0;
+    --color-nav-hover:rgba(241, 236, 226, 0.901);
+
+    --color-selected-shadow-first:rgba(70, 70, 94, 0.25);
+    --color-selected-shadow-second:rgba(0, 0, 0, 0.3);
+
+    --color-title-selected:#00a4af;
+    --color-title-bg:rgba(136, 243, 255, 0.683);
+
+    --color-to-post:white;
+    --color-to-post-bg:#a1a1a1e1;
+    --color-to-post-border:#333;
+
+    --color-level:#ffc6c6;
+
+    --color-a-in-post:#00d9ff;
+    --color-a-hover-in-post:#ffd900;
+    --color-a-hover-bg-in-post:#9cff817e;
+
+    --color-user-text:#333;
+    --color-user-avatar-bg:#6c757d;
+    --color-user-avatar:#fff;
+
+    --color-post-card-box-shadow:rgba(0, 0, 0, 0.24);
+    --color-post-card-hover-box-shadow:rgba(0, 0, 0, 0.35);
+
 }
 
 /* 黑暗模式 */
 div.dark-mode {
-    background-color: #181818;
     --color-text: rgb(218, 211, 197);
-    --color-button-bg:#333 ;
-    --color-button:#f1f1f18f;
-    --color-hr:#f1f1f18f
+    --color-hr:#f1f1f18f;
+
+    --color-border:rgba(214, 214, 214, 0.8);
+
+    --color-nav-bg:#383737;
+    --color-nav-hover:rgba(68, 68, 68, 0.901);
+
+    --color-selected-shadow-first: rgba(255, 255, 255, 0.1);
+    --color-selected-shadow-second: rgba(255, 255, 255, 0.2);
+
+    --color-title-selected:#B8860B;
+    --color-title-bg:#ffb700cd;
+
+    --color-to-post:white;
+    --color-to-post-bg:#a1a1a1e1;
+    --color-to-post-border:#333;
+
+    --color-level:#c79900;
+
+    --color-a-in-post:#00d9ff;
+    --color-a-hover-in-post:#ffd900;
+    --color-a-hover-bg-in-post:#9cff817e;
+
+    --color-user-text:#cbb745;
+
+    --color-post-card-box-shadow:rgba(255, 255, 255, 0.24);
+    --color-post-card-hover-box-shadow:rgba(255, 255, 255, 0.35);
 }

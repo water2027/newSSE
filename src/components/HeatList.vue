@@ -66,14 +66,15 @@ onMounted(async () => {
 	margin-top: 10px;
 	margin-bottom: 10px;
 	padding: 20px;
-	border: 1px solid rgba(0, 0, 0, 0.1);
+	border: 1px solid var(--color-border);
 	text-align: center;
 	text-decoration: none;
-	color: black;
+	color: var(--color-text);
+	transition: all 0.3s;
 }
 
 .nav:hover {
-	background-color: #f0f0f0;
+	background-color: var(--color-nav-hover);
 }
 
 .score {

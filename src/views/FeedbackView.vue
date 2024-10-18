@@ -25,3 +25,8 @@ const submitFeedback = async () => {
 	}
 };
 </script>
+<style scoped>
+.root{
+	color: var(--color-text);
+}
+</style>

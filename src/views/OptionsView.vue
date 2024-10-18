@@ -133,6 +133,9 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.root{
+	color: var(--color-text);
+}
 .data {
 	display: flex;
 	flex-direction: column;

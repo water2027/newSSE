@@ -4,6 +4,7 @@
 	<HomeViewVue
 		v-if="isLogin"
 		:class="mode"
+		@change-mode="changeMode"
 	/>
 	<LoginViewVue
 		v-else
@@ -24,9 +25,13 @@ import { getInfo } from './api/info/getInfo';
 
 import { showMsg } from './components/MessageBox';
 
-const mode = ref('dev')
+// const mode = ref('dev')
 // const mode = ref('light-mode');
-// const mode = ref('dark-mode');
+const mode = ref('dark-mode');
+const changeMode = () => {
+	mode.value = mode.value === 'light-mode' ? 'dark-mode' : 'light-mode';
+};
+provide('mode', mode);
 
 const userInfo = ref({});
 provide('userInfo', userInfo);

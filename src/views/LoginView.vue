@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/html-self-closing -->
 <!-- eslint-disable vue/html-indent -->
 <template>
-	<div class="pageWithLoginButton">
+	<div id="root" class="pageWithLoginButton">
 		<span class="title">{{ title }}</span>
 		<!-- 登录 -->
 		<div

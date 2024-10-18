@@ -2,20 +2,9 @@
 <template>
 	<div id="root">
 		<header>
-			<video
-				v-if="isPC"
-				autoplay="autoplay"
-				loop="loop"
-				muted="muted"
-				playsinline=""
-			>
-				<source
-					src="https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/vedio/Background.mp4"
-					type="video/mp4"
-				/>
-			</video>
 			<div id="title">
 				<button
+					v-if="!isPC"
 					class="hamburgerMenu"
 					@click="toggleNav"
 				>
@@ -30,6 +19,7 @@
 					SSE_MARKET
 				</h1>
 				<button
+					v-if="!isPC"
 					class="toPost"
 					@click="changeToPost"
 				>
@@ -45,7 +35,12 @@
 				/>
 				<button @click="search">搜索</button>
 			</div>
+			<button v-if="isPC" @click="DarkOrLight">{{ mode }}</button>
 		</header>
+		<div
+			v-if="isPC"
+			class="none"
+		></div>
 		<main>
 			<div
 				v-if="isPC || navIsOpen"
@@ -164,12 +159,18 @@
 	</div>
 </template>
 <script setup>
-import { computed, onMounted, provide, ref } from 'vue';
+import { computed, onMounted, provide, ref, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { getNoticesNum } from '@/api/notice/notice';
 
 import HeatList from '@/components/HeatList.vue';
+const mode = inject('mode');
+const emit = defineEmits(['change-mode']);
+const DarkOrLight = () => {
+	emit('change-mode');
+};
+
 const route = useRoute();
 const router = useRouter();
 
@@ -325,8 +326,8 @@ onMounted(async () => {
 <style scoped>
 .selected {
 	box-shadow:
-		rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset,
-		rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+		var(--color-selected-shadow-first) 0px 30px 60px -12px inset,
+		var(--color-selected-shadow-second) 0px 18px 36px -18px inset;
 }
 
 #notice {
@@ -379,8 +380,8 @@ main {
 
 .main-nav-bar {
 	padding: 0;
-	border: 1px solid black;
-	border-radius: 5px rgba(0, 0, 0, 0.1);
+	border: 1px solid var(--color-border);
+	border-radius: 5px var(--color-border);
 	animation: fadeIn 0.5s;
 	transition: all 0.3s;
 }
@@ -409,10 +410,10 @@ main {
 	margin-top: 0;
 	margin-bottom: 0;
 	padding: 15px;
-	border: 1px solid rgba(0, 0, 0, 0.1);
+	border: 1px solid var(--color-border);
 	text-align: center;
 	text-decoration: none;
-	color: black;
+	color: var(--color-text);
 }
 
 #mainNavBar {
@@ -429,9 +430,9 @@ main {
 	0% {
 		transform: scale(0);
 	}
-	50% {
-		transform: scale(1.25);
-	}
+	/* 50% {
+		transform: scale(1.05);
+	} */
 	100% {
 		transform: scale(1);
 	}
@@ -452,50 +453,56 @@ main {
 	}
 
 	header {
-		height: 30vh;
-		background-color: #f0f0f0;
-		position: relative;
-	}
-
-	header button,
-	header a {
-		display: none;
-	}
-
-	header video {
+		height: 10vh;
+		margin: 0;
+		padding-left: 25px;
+		padding-right: 15px;
+		padding-top: 0;
+		padding-bottom: 0;
 		width: 100%;
-		height: 100%;
-		object-fit: cover;
+		background-color: var(--color-title-bg);
+		position: fixed;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	header .title{
+		margin-right: auto;
+	}
+
+	.none {
+		height: 15vh;
 	}
 
 	header h1 {
-		position: absolute;
 		font-size: 3rem;
 		color: transparent;
 		-webkit-text-stroke: 3px rgba(255, 255, 255, 0.95);
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -75%);
 	}
 
-	.search {
-		position: absolute;
-		width: 50%;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, 50%);
+	header .search{
+		display: flex;
+		flex-direction: row;
+		height: 80%;
+		margin-top: auto;
+		margin-bottom: auto;
+		margin-right: auto;
+		margin-left: 3%;
 	}
 
-	header input {
-		width: 95%;
+	header .search input{
+		width: 100%;
+		height: 60%;
+		margin-top: auto;
+		margin-bottom: auto;
 	}
 
-	header button {
-		width: 5%;
-	}
-
-	header button:hover {
-		background-color: #f0f0f0;
+	header .search button{
+		margin-top: auto;
+		margin-bottom: auto;
+		height: 90%;
 	}
 
 	main {
@@ -530,20 +537,21 @@ main {
 	}
 
 	.nav:hover {
-		background-color: #f0f0f0;
+		background-color: var(--color-nav-hover);
 	}
 }
 
 /* 小屏幕样式 <768px */
 @media screen and (max-width: 768px) {
 	.mobileSelected {
-		color: #00a4af;
+		color: var(--color-title-selected);
 	}
+
 	header {
 		height: 20vh;
 		margin: 0;
 		flex-direction: column;
-		background-color: rgba(136, 243, 255, 0.683);
+		background-color: var(--color-title-bg);
 	}
 
 	#title {
@@ -555,7 +563,7 @@ main {
 		padding: 10px;
 		/* 让button贴紧左边，h1居中 */
 		justify-content: space-between;
-		background-color: rgba(136, 243, 255, 0.683);
+		background-color: var(--color-title-bg);
 		z-index: 2000;
 	}
 
@@ -570,10 +578,6 @@ main {
 
 	header input {
 		width: 80%;
-	}
-
-	header video {
-		display: none;
 	}
 
 	.hamburgerMenu {
@@ -599,24 +603,6 @@ main {
 		position: relative;
 	}
 
-	header a {
-		position: absolute;
-		top: 10px;
-		right: 10px;
-		font-size: 2rem;
-		color: white;
-		text-decoration: none;
-		border: 1px solid #333;
-		border-radius: 50%;
-		width: 30px;
-		height: 30px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		background-color: #333333e1;
-		text-align: center;
-	}
-
 	main {
 		margin: 0 !important;
 		padding: 0;
@@ -636,7 +622,7 @@ main {
 	}
 
 	.nav-bar {
-		background-color: #f0f0f0;
+		background-color: var(--color-nav-bg);
 	}
 
 	.search {
@@ -661,16 +647,16 @@ main {
 		right: 10px;
 		top: 10px;
 		font-size: 2rem;
-		color: white;
+		color: var(--color-to-post);
 		text-decoration: none;
-		border: 1px solid #333;
+		border: 1px solid var(--color-to-post-border);
 		border-radius: 50%;
 		width: 30px;
 		height: 30px;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		background-color: #a1a1a1e1;
+		background-color: var(--color-to-post-bg);
 		text-align: center;
 	}
 }

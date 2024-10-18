@@ -44,6 +44,7 @@ const sendPartition = (p) => {
 	justify-content: center;
 	height: 100%;
 	position: relative;
+	color: var(--color-text);
 }
 
 .root h2 {
@@ -74,10 +75,12 @@ const sendPartition = (p) => {
 	border-radius: 5px;
 	cursor: pointer;
 	transition: all 0.3s;
+	background-color: var(--color-button-bg);
+	color: var(--color-button);
 }
 
 .partition:hover {
-	background-color: #000;
-	color: #fff;
+	background-color: var(--color-button);
+	color: var(--color-button-bg);
 }
 </style>
