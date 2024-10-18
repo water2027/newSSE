@@ -130,7 +130,7 @@
 						<span
 							title="码之气，三段！"
 							class="level"
-							>{{ expHandler(post.UserScore) }}</span
+							>{{ expHandler(comment.AuthorScore) }}</span
 						>
 						<button
 							v-if="comment.AuthorTelephone === userInfo.phone"

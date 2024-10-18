@@ -11,17 +11,6 @@
 				placeholder="请输入标题"
 			/>
 		</div>
-		<div class="inputData post">
-			<h3>正文</h3>
-			<MarkdownEditor
-				v-model="postContent"
-				@send="submitPost"
-			/>
-			<!-- <NewEditor
-				v-model="postContent"
-				@send="submitPost"
-			/> -->
-		</div>
 		<div class="inputData">
 			<h3>分区</h3>
 			<select v-model="partition">
@@ -45,6 +34,17 @@
 					{{ t.Name }}
 				</option>
 			</select>
+		</div>
+		<div class="inputData post">
+			<h3>正文</h3>
+			<MarkdownEditor
+				v-model="postContent"
+				@send="submitPost"
+			/>
+			<!-- <NewEditor
+				v-model="postContent"
+				@send="submitPost"
+			/> -->
 		</div>
 	</div>
 </template>

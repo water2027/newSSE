@@ -1,6 +1,7 @@
 import './assets/main.css'
 import './assets/jsxComponents.css'
 import './assets/global.css'
+import './assets/mode.css'
 
 import { createApp } from 'vue'
 import App from './App.vue'

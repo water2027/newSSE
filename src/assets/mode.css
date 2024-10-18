@@ -1,0 +1,22 @@
+/* 存放明亮模式和黑暗模式的颜色 */
+/* 直接使用属性则改变根元素的css */
+/* 子元素使用css变量 */
+
+/* 明亮模式 */
+div.light-mode {
+    background-color: rgb(218, 211, 197);
+    --color-text: #181818;
+    --color-button-bg: #f1f1f18f;
+    --color-button:#333;
+    --color-hr:#3333339d;
+    --color-a-hover:rgba(241, 236, 226, 0.901);
+}
+
+/* 黑暗模式 */
+div.dark-mode {
+    background-color: #181818;
+    --color-text: rgb(218, 211, 197);
+    --color-button-bg:#333 ;
+    --color-button:#f1f1f18f;
+    --color-hr:#f1f1f18f
+}

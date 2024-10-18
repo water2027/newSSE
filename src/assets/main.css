@@ -18,8 +18,8 @@ button{
     pointer-events: auto;
     border: none;
     outline: none;
-    background-color: #f1f1f18f;
-    color: #333;
+    background-color: var(--color-button-bg);
+    color: var(--color-button);
     padding: 15px 25px;
     border-radius: 5px;
     font-size: 1rem;
@@ -39,8 +39,8 @@ button{
 
 .fileInput:hover,
 button:hover{
-    background-color: #333;
-    color: #f1f1f1;
+    background-color: var(--color-button);
+    color: var(--color-button-bg);
 }
 
 textarea{
@@ -91,7 +91,7 @@ img{
 }
 
 hr{
-    border: 1px solid #3333339d;
+    border: 1px solid var(--color-hr);
 }
 
 @keyframes fadeIn{

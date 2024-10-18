@@ -1,9 +1,13 @@
 <!-- eslint-disable vue/html-indent -->
 <!-- eslint-disable vue/max-attributes-per-line -->
 <template>
-	<HomeViewVue v-if="isLogin" />
+	<HomeViewVue
+		v-if="isLogin"
+		:class="mode"
+	/>
 	<LoginViewVue
 		v-else
+		:mode="mode"
 		@send-login-success="sendLoginSuccess"
 	/>
 </template>
@@ -19,6 +23,10 @@ import { getTokenWithExpiry } from './api/auth';
 import { getInfo } from './api/info/getInfo';
 
 import { showMsg } from './components/MessageBox';
+
+const mode = ref('dev')
+// const mode = ref('light-mode');
+// const mode = ref('dark-mode');
 
 const userInfo = ref({});
 provide('userInfo', userInfo);
