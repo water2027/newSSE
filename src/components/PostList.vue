@@ -86,7 +86,6 @@ const addPosts = async () => {
 		userTelephone: userInfo.value.phone,
 		tag: tag.value,
 	});
-	console.log(res);
 	posts.value = [...posts.value, ...res];
 };
 

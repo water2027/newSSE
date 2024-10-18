@@ -142,22 +142,23 @@
 					文档
 				</router-link>
 			</div>
-			<transition
-				name="bounce"
-				mode="out-in"
+			<div
 				class="content"
 				:style="contentStyle"
 			>
-				<router-view
-					v-if="route.fullPath == '/partitions'"
-					@send-partition="sendPartition"
-				/>
-				<router-view
-					v-else-if="route.fullPath == '/notice'"
-					@send-notice-num="sendNoticeNum"
-				/>
-				<router-view v-else />
-			</transition>
+				<router-view v-slot="{ Component }">
+					<transition
+						name="bounce"
+						mode="out-in"
+					>
+						<component
+							:is="Component"
+							@send-partition="sendPartition"
+							@send-notice-num="sendNoticeNum"
+						/>
+					</transition>
+				</router-view>
+			</div>
 			<heat-list v-if="isPC && !heatPostsIsHidden" />
 		</main>
 	</div>

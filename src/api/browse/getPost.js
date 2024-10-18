@@ -1,4 +1,4 @@
-import { getItemWithExpiry } from './LoginAndReg';
+import { getTokenWithExpiry } from "../auth";
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 /**
  *
@@ -12,7 +12,7 @@ const apiUrl = import.meta.env.VITE_API_BASE_URL;
  * @returns
  */
 async function getPosts(object) {
-	const token = getItemWithExpiry('token');
+	const token = getTokenWithExpiry('token');
 	if (!token) {
 		return null;
 	}
@@ -37,7 +37,7 @@ async function getPosts(object) {
  * @returns {number} 返回帖子数量
  */
 async function getPostsNum(object) {
-	const token = getItemWithExpiry('token');
+	const token = getTokenWithExpiry('token');
 	if (!token) {
 		return null;
 	}
@@ -58,7 +58,7 @@ async function getPostsNum(object) {
  * @returns 帖子数组
  */
 async function getHeatPosts() {
-	const token = getItemWithExpiry('token');
+	const token = getTokenWithExpiry('token');
 	if (!token) {
 		return null;
 	}
@@ -80,7 +80,7 @@ async function getHeatPosts() {
  * @returns {object} 返回帖子详情
  */
 async function getPostByID(PostID, userTelephone) {
-	const token = getItemWithExpiry('token');
+	const token = getTokenWithExpiry('token');
 	if (!token) {
 		return null;
 	}
@@ -101,7 +101,7 @@ async function getPostByID(PostID, userTelephone) {
 }
 
 async function updateBrowseNum(PostID,userTelephone){
-	const token = getItemWithExpiry('token');
+	const token = getTokenWithExpiry('token');
 	if (!token) {
 		return null;
 	}
@@ -118,30 +118,4 @@ async function updateBrowseNum(PostID,userTelephone){
 	});
 }
 
-async function getCommentsByPostID(PostID, userTelephone) {
-	const token = getItemWithExpiry('token');
-	if (!token) {
-		return null;
-	}
-	const response = await fetch(`${apiUrl}/auth/showPcomments`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-		},
-		body: JSON.stringify({
-			postID: PostID,
-			userTelephone: userTelephone,
-		}),
-	});
-	const data = await response.json();
-	return data;
-}
-
-export {
-	getPosts,
-	getPostsNum,
-	getHeatPosts,
-	getPostByID,
-	getCommentsByPostID,
-};
+export { getPosts, getPostsNum, getHeatPosts, getPostByID };

@@ -1,4 +1,4 @@
-import { getItemWithExpiry } from "./LoginAndReg";
+import { getTokenWithExpiry } from "../auth";
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 /**
@@ -8,11 +8,15 @@ const apiUrl = import.meta.env.VITE_API_BASE_URL;
  * @returns 
  */
 async function feedback(ftext,attachment) {
+  const token = getTokenWithExpiry();
+  if (!token) {
+    return { error: "token is expired" };
+  }
   const response = await fetch(`${apiUrl}/auth/submitFeedback`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      'Authorization': `Bearer ${getItemWithExpiry("token")}`
+      'Authorization': `Bearer ${token}`
     },
     body: JSON.stringify({ ftext, attachment })
   });

@@ -11,7 +11,7 @@
 <script setup>
 import { ref } from 'vue';
 import { showMsg } from '@/components/MessageBox';
-import { feedback } from '@/api/feedback';
+import { feedback } from '@/api/feedback/feedback';
 
 const feedbackContent = ref(null);
 const submitFeedback = async () => {
