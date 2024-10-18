@@ -20,13 +20,13 @@
 			</div>
 			<div class="inputData">
 				<input
-					id="loginpwd"
+					id="loginPassword"
 					ref="password1"
 					type="password"
 					required
 				/>
 				<div class="underline"></div>
-				<label for="loginpwd">密码</label>
+				<label for="loginPassword">密码</label>
 			</div>
 			<div>
 				<input

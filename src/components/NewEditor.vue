@@ -42,7 +42,7 @@ import Editor from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 
 import { showMsg } from '@/components/MessageBox';
-import { uploadPhoto } from '@/api/postAndComment';
+import { uploadPhoto } from '@/api/editPostAndComment/utils';
 
 const route = useRoute();
 
