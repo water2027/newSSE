@@ -90,6 +90,9 @@ onMounted(async () => {
 });
 </script>
 <style scoped>
+.root{
+	color: var(--color-text);
+}
 .notice-title {
 	color: var(--color-text);
 }

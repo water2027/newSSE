@@ -1,11 +1,9 @@
 ## 安装依赖
-
 ```sh
 npm install
 ```
 
 ### 开发环境
-
 ```sh
 npm run dev
 ```
@@ -26,7 +24,7 @@ npm run build
 #### 不太重要但是最好早点做的事情    
 - HomeView.vue,PostDetailView.vue,代码太长了，其中很多可以考虑做成组件。      
 对于PostDetailView.vue,可以将文章和评论做成一个组件，文章只比评论多一个浏览量。      
-对于HomeView.vue,可以考虑将Header,NavBar做成两个组件。
+对于HomeView.vue,可以考虑将Header,NavBar做成两个组件。    
 
 ### 文件夹概要 
 #### `api`文件夹
