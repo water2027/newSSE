@@ -26,8 +26,8 @@ import { getInfo } from './api/info/getInfo';
 import { showMsg } from './components/MessageBox';
 
 // const mode = ref('dev')
-// const mode = ref('light-mode');
-const mode = ref('dark-mode');
+const mode = ref('light-mode');
+// const mode = ref('dark-mode');
 const changeMode = () => {
 	mode.value = mode.value === 'light-mode' ? 'dark-mode' : 'light-mode';
 };

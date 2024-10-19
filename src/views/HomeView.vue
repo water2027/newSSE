@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/html-self-closing -->
 <!-- eslint-disable vue/html-indent -->
 <template>
 	<div id="root">
@@ -35,7 +36,12 @@
 				/>
 				<button @click="search">搜索</button>
 			</div>
-			<button v-if="isPC" @click="DarkOrLight">{{ mode }}</button>
+			<button
+				v-if="isPC"
+				@click="DarkOrLight"
+			>
+				{{ mode }}
+			</button>
 		</header>
 		<div
 			v-if="isPC"
@@ -155,6 +161,31 @@
 				</router-view>
 			</div>
 			<heat-list v-if="isPC && !heatPostsIsHidden" />
+			<div
+				v-if="!isPC"
+				class="ball"
+			>
+				<div
+					class="first"
+					@click="OpenAndCloseBall"
+				>
+					{{ ballIsOpen ? 'X' : 'O' }}
+				</div>
+				<div
+					ref="second"
+					class="second"
+					@click="DarkOrLight"
+				>
+					{{ mode == 'light-mode' ? 'L' : 'D' }}
+				</div>
+				<div
+					ref="third"
+					class="third"
+					@click="returnToTop"
+				>
+					&uarr;
+				</div>
+			</div>
 		</main>
 	</div>
 </template>
@@ -175,6 +206,9 @@ const route = useRoute();
 const router = useRouter();
 
 const noticeNum = ref('');
+const second = ref(null);
+const third = ref(null);
+
 const displayBool = computed(() => {
 	return noticeNum.value == '0' ? 'none' : 'block';
 });
@@ -205,6 +239,7 @@ const posts = ref([]);
 provide('posts', posts);
 
 const navIsOpen = ref(true);
+const ballIsOpen = ref(false);
 
 /**
  * @description 发帖和看帖的时候隐藏热榜
@@ -287,6 +322,57 @@ const toggleNav = () => {
 		navIsOpen.value = !navIsOpen.value;
 	}
 };
+
+const OpenAndCloseBall = () => {
+	if (ballIsOpen.value) {
+		ballIsOpen.value = false;
+		second.value.animate(
+			[{ transform: 'translateX(100%)' }, { transform: 'translateX(0)' }],
+			{
+				duration: 500,
+				easing: 'ease-in-out',
+				fill: 'forwards',
+			}
+		);
+		third.value.animate(
+			[
+				{ transform: 'translateY(-100%)' },
+				{ transform: 'translateY(0)' },
+			],
+			{
+				duration: 500,
+				easing: 'ease-in-out',
+				fill: 'forwards',
+			}
+		);
+	} else {
+		ballIsOpen.value = true;
+		second.value.animate(
+			[{ transform: 'translateX(0)' }, { transform: 'translateX(100%)' }],
+			{
+				duration: 500,
+				easing: 'ease-in-out',
+				fill: 'forwards',
+			}
+		);
+		third.value.animate(
+			[
+				{ transform: 'translateY(0)' },
+				{ transform: 'translateY(-100%)' },
+			],
+			{
+				duration: 500,
+				easing: 'ease-in-out',
+				fill: 'forwards',
+			}
+		);
+	}
+};
+
+const returnToTop = () => {
+	document.body.scrollTop = 0;
+};
+
 /**
  * @description 获取通知数量
  */
@@ -324,6 +410,40 @@ onMounted(async () => {
 });
 </script>
 <style scoped>
+.ball {
+	position: fixed;
+	bottom: 25px;
+	left: 10px;
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	display: flex;
+	flex-direction: column;
+	background-color: var(--color-ball-bg);
+	color: var(--color-ball-text);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	box-shadow: var(--color-ball-box-shadow) 0px 1px 4px;
+}
+
+.ball > * {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	border-radius: 100%;
+	background-color: var(--color-ball-bg);
+	color: var(--color-ball-text);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	box-shadow: var(--color-ball-box-shadow) 0px 1px 4px;
+}
+
+.ball .first {
+	z-index: 3;
+}
+
 .selected {
 	box-shadow:
 		var(--color-selected-shadow-first) 0px 30px 60px -12px inset,
@@ -468,7 +588,7 @@ main {
 		align-items: center;
 	}
 
-	header .title{
+	header .title {
 		margin-right: auto;
 	}
 
@@ -482,7 +602,7 @@ main {
 		-webkit-text-stroke: 3px rgba(255, 255, 255, 0.95);
 	}
 
-	header .search{
+	header .search {
 		display: flex;
 		flex-direction: row;
 		height: 80%;
@@ -492,14 +612,14 @@ main {
 		margin-left: 3%;
 	}
 
-	header .search input{
+	header .search input {
 		width: 100%;
 		height: 60%;
 		margin-top: auto;
 		margin-bottom: auto;
 	}
 
-	header .search button{
+	header .search button {
 		margin-top: auto;
 		margin-bottom: auto;
 		height: 90%;

@@ -26,6 +26,10 @@ div.light-mode {
     --color-nav-bg:#f0f0f0;
     --color-nav-hover:rgba(241, 236, 226, 0.901);
 
+    --color-ball-bg:#f0f0f0;
+    --color-ball-text:#181818;
+    --color-ball-box-shadow:rgba(0, 0, 0, 0.35);
+
     --color-selected-shadow-first:rgba(70, 70, 94, 0.25);
     --color-selected-shadow-second:rgba(0, 0, 0, 0.3);
 
@@ -60,6 +64,10 @@ div.dark-mode {
 
     --color-nav-bg:#383737;
     --color-nav-hover:rgba(68, 68, 68, 0.901);
+
+    --color-ball-bg:#3d3d3d;
+    --color-ball-text:#bababa;
+    --color-ball-box-shadow:rgba(255, 255, 255, 0.35);
 
     --color-selected-shadow-first: rgba(255, 255, 255, 0.1);
     --color-selected-shadow-second: rgba(255, 255, 255, 0.2);

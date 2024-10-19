@@ -518,7 +518,7 @@ b {
 	margin-top: 10px;
 	margin-bottom: 10px;
 	border: 1px solid #f0f0f0;
-	width: 100%;
+	width: 97%;
 }
 
 .commentButton {
@@ -528,7 +528,7 @@ b {
 }
 
 .subCommentList {
-	margin-left: 40px;
+	margin-left: 3%;
 }
 
 .user button {
