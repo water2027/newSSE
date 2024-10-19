@@ -57,7 +57,7 @@ const posts = ref([]);
 const totalNum = ref(0);
 const curPage = ref(0);
 const limit = ref(5);
-const isLoading = computed(() => curPage.value < totalNum.value - limit.value);
+const isLoading = computed(() => curPage.value <= totalNum.value - limit.value);
 
 const teachers = ref([]);
 const tag = ref('');
@@ -65,7 +65,7 @@ const tag = ref('');
 const bottom = ref(null);
 let observer = null;
 
-const updateID = async () => {
+const updateNum = async () => {
 	const id = await getPostsNum({
 		partition: partition.value,
 		searchsort: searchsort.value,
@@ -102,7 +102,7 @@ const updatePosts = async (id) => {
 };
 
 const updateData = async (id) => {
-	await updateID();
+	await updateNum();
 	await updatePosts(id);
 };
 
@@ -115,7 +115,7 @@ const getMore = async () => {
 
 onMounted(async () => {
 	if (userInfo && userInfo.value && curPage.value >= 0) {
-		await updateID();
+		await updateNum();
 	}
 	if (partition.value === '课程专区') {
 		const data = await getTeachers();

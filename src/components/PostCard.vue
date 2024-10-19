@@ -146,7 +146,7 @@ const handleSave = async () => {
 			userInfo.value.phone
 		);
 		postData.value.IsSaved = !postData.value.IsSaved;
-		showMsg(isSaved ? '取消成功' : '收藏成功');
+		showMsg(postData.value.IsSaved ? '收藏成功' : '取消成功');
 	} catch (e) {
 		showMsg('失败了:-(');
 	}
