@@ -2,7 +2,7 @@
 <template>
 	<div class="root">
 		<h2 class="notice-title">通知</h2>
-		<div class="noticeButtons animation">
+		<div class="noticeButtons">
 			<button @click="readPage = true">未读通知</button>
 			<button @click="readPage = false">已读通知</button>
 		</div>
