@@ -5,12 +5,20 @@
 /* 根元素，所有元素都能访问它的变量。但是has可能有些浏览器不兼容 */
 :root:has(div.light-mode){
     --color-bg:rgb(218, 211, 197);
+
+    --color-scroll:rgba(0, 0, 0, 0.1);
+    --color-scroll-thumb:rgba(0, 0, 0, 0.5);
+
     --color-button-bg: #f1f1f18f;
     --color-button:#333;
 }
 
 :root:has(div.dark-mode){
     --color-bg:rgb(27, 27, 27);
+
+    --color-scroll:rgba(255, 255, 255, 0.1);
+    --color-scroll-thumb:rgba(255, 255, 255, 0.5);
+
     --color-button-bg:#333 ;
     --color-button:#f1f1f18f;
 }

@@ -1,125 +1,139 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 }
 
-html,body{
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-    background-color: var(--color-bg);
-    scroll-behavior: smooth;
+html,
+body {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	overflow-x: hidden;
+	overflow: auto;
+	background-color: var(--color-bg);
+	scroll-behavior: smooth;
+}
+
+@media screen and (min-width: 768px) {
+	/* 调整body的滚动条 */
+	body::-webkit-scrollbar {
+		width: 10px;
+		background-color: var(--color-scroll);
+	}
+
+	body::-webkit-scrollbar-thumb {
+		background-color: var(--color-scroll-thumb);
+		border-radius: 10px;
+	}
 }
 
 .fileInput,
-button{
-    cursor: pointer;
-    pointer-events: auto;
-    border: none;
-    outline: none;
-    background-color: var(--color-button-bg);
-    color: var(--color-button);
-    padding: 15px 25px;
-    border-radius: 5px;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    margin: 10px;
-    margin-bottom: 20px;
-    display: inline-block;
-    text-align: center;
-    text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 500;
-    z-index: 100;
+button {
+	cursor: pointer;
+	pointer-events: auto;
+	border: none;
+	outline: none;
+	background-color: var(--color-button-bg);
+	color: var(--color-button);
+	padding: 15px 25px;
+	border-radius: 5px;
+	font-size: 1rem;
+	font-weight: 600;
+	transition: all 0.3s ease;
+	margin: 10px;
+	margin-bottom: 20px;
+	display: inline-block;
+	text-align: center;
+	text-decoration: none;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-family: 'Roboto', sans-serif;
+	font-weight: 500;
+	z-index: 100;
 }
 
 .fileInput:hover,
-button:hover{
-    background-color: var(--color-button);
-    color: var(--color-button-bg);
+button:hover {
+	background-color: var(--color-button);
+	color: var(--color-button-bg);
 }
 
-textarea{
-    width: 100%;
-    height: 100%;
-    padding: 10px;
-    font-size: 1rem;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 500;
-    border: 1px solid #333;
-    border-radius: 5px;
-    margin: 10px 0;
+textarea {
+	width: 100%;
+	height: 100%;
+	padding: 10px;
+	font-size: 1rem;
+	font-family: 'Roboto', sans-serif;
+	font-weight: 500;
+	border: 1px solid #333;
+	border-radius: 5px;
+	margin: 10px 0;
 }
 
-.like{
-    color: #ff0000;
-    cursor: pointer;
-    transition: all 0.3s ease;
+.like {
+	color: #ff0000;
+	cursor: pointer;
+	transition: all 0.3s ease;
 }
 
-.root{
-    animation: fadeIn 0.5s ease;
+.root {
+	animation: fadeIn 0.5s ease;
 }
 
-p{
-    font-size: 1rem;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 500;
-    margin: 10px 0;
+p {
+	font-size: 1rem;
+	font-family: 'Roboto', sans-serif;
+	font-weight: 500;
+	margin: 10px 0;
 }
 
-ol{
-    padding: 0;
-    margin: 0;
+ol {
+	padding: 0;
+	margin: 0;
 }
 
-li{
-    margin: 0;
-    margin-left: 1rem;
-    padding: 0;
-    line-height: 1;
+li {
+	margin: 0;
+	margin-left: 1rem;
+	padding: 0;
+	line-height: 1;
 }
 
-img{
-    width: 25%;
-    height: 25%;
-    object-fit: cover;
+img {
+	width: 25%;
+	height: 25%;
+	object-fit: cover;
 }
 
-hr{
-    border: 1px solid var(--color-hr);
+hr {
+	border: 1px solid var(--color-hr);
 }
 
-@keyframes fadeIn{
-    0%{
-        opacity: 0;
-    }
-    100%{
-        opacity: 1;
-    }
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 
-@media screen and (max-width: 768px){
-    .fileInput,
-    button{
-        padding: 5%;
-        margin-left: 1%;
-        margin-right: 1%;
-    }
+@media screen and (max-width: 768px) {
+	.fileInput,
+	button {
+		padding: 5%;
+		margin-left: 1%;
+		margin-right: 1%;
+	}
 
-    .editorButton{
-        display: grid !important;
-        grid-template-columns: 1fr 1fr;
-    }
+	.editorButton {
+		display: grid !important;
+		grid-template-columns: 1fr 1fr;
+	}
 
-    li{
-        margin-left: 2rem;
-    }
+	li {
+		margin-left: 2rem;
+	}
 }
-
