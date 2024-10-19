@@ -537,7 +537,7 @@ main {
 }
 
 #mainNavBar {
-	z-index: 5;
+	z-index: 4;
 }
 
 .bounce-enter-active {
