@@ -57,7 +57,7 @@ const posts = ref([]);
 const totalNum = ref(0);
 const curPage = ref(0);
 const limit = ref(5);
-const isLoading = computed(() => curPage.value <= totalNum.value - limit.value);
+const isLoading = computed(() => curPage.value < totalNum.value);
 
 const teachers = ref([]);
 const tag = ref('');
