@@ -423,6 +423,7 @@ onMounted(async () => {
 	justify-content: center;
 	align-items: center;
 	box-shadow: var(--color-ball-box-shadow) 0px 1px 4px;
+	z-index: 4;
 }
 
 .ball > * {
@@ -476,7 +477,7 @@ header {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	z-index: 200;
+	z-index: 5;
 }
 
 .search {
@@ -536,7 +537,7 @@ main {
 }
 
 #mainNavBar {
-	z-index: 3000;
+	z-index: 5;
 }
 
 .bounce-enter-active {
@@ -683,7 +684,6 @@ main {
 		/* 让button贴紧左边，h1居中 */
 		justify-content: space-between;
 		background-color: var(--color-title-bg);
-		z-index: 2000;
 	}
 
 	#title h1 {
@@ -709,7 +709,6 @@ main {
 		border: none;
 		cursor: pointer;
 		padding: 0;
-		z-index: 1001;
 		margin-left: 0;
 	}
 
