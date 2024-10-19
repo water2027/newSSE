@@ -162,6 +162,20 @@ defineExpose({
 	max-width: 100%;
 }
 
+:deep(a){
+	color: var(--color-a-in-post);
+}
+
+:deep(a:hover){
+	color: var(--color-a-hover-in-post);
+	background-color: var(--color-a-hover-bg-in-post);
+}
+
+:deep(p){
+	line-height: 1.5;
+	text-indent: 2rem;
+}
+
 @media screen and (max-width: 768px) {
 	:deep(.hasImgDiv img) {
 		width: 100%;

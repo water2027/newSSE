@@ -198,11 +198,6 @@
 											: comment.Author
 									}}</span
 								>
-								<span
-									title="码之气，三段！"
-									class="level"
-									>{{ expHandler(post.UserScore) }}</span
-								>
 								<button
 									v-if="
 										subComment.authorTelephone ===
