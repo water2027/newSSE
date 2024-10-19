@@ -11,7 +11,7 @@
 	></div>
 </template>
 <script setup>
-import { ref, computed, inject, watchEffect } from 'vue';
+import { ref, computed } from 'vue';
 
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
@@ -34,15 +34,8 @@ hljs.registerLanguage('json', json);
 hljs.registerLanguage('python', python);
 hljs.registerLanguage('go', go);
 
-const mode = inject('mode');
+import('highlight.js/styles/atom-one-dark.css');
 
-watchEffect(() => {
-  if (mode.value === 'dark-mode') {
-    import('highlight.js/styles/atom-one-dark.css');
-  } else {
-    import('highlight.js/styles/github.css');
-  }
-});
 
 const content = ref(null);
 
@@ -131,7 +124,7 @@ defineExpose({
 
 :deep(pre) {
 	display: block;
-	background-color: var(--color-bg);
+	background-color: #282c34;
 	border: 1px solid #ccc;
 	padding: 10px;
 	margin-bottom: 5px;
@@ -149,7 +142,7 @@ defineExpose({
 	content: '';
 	color: var(--color-text);
 	background-image: url('/PhCopy.webp');
-	filter: var(--filter-code);
+	filter: invert(1);
 	background-size: cover;
 	display: block;
 	width: 20px;

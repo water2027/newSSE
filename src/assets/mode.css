@@ -61,8 +61,6 @@ div.light-mode {
     --color-post-card-box-shadow:rgba(0, 0, 0, 0.24);
     --color-post-card-hover-box-shadow:rgba(0, 0, 0, 0.35);
 
-    --filter-code:invert(0);
-
 }
 
 /* 黑暗模式 */
@@ -100,5 +98,4 @@ div.dark-mode {
     --color-post-card-box-shadow:rgba(255, 255, 255, 0.24);
     --color-post-card-hover-box-shadow:rgba(255, 255, 255, 0.35);
 
-    --filter-code:invert(1);
 }
