@@ -92,10 +92,10 @@ const addPosts = async () => {
 const updatePosts = async (id) => {
 	// 从posts中删除PostID为id的post
 	try {
-        const index = posts.value.findIndex((post) => post.PostID === id);
-        if (index !== -1) {
-            posts.value.splice(index, 1);
-        }
+		const index = posts.value.findIndex((post) => post.PostID === id);
+		if (index !== -1) {
+			posts.value.splice(index, 1);
+		}
 	} catch (error) {
 		console.error('Failed to update posts:', error);
 	}
@@ -109,18 +109,11 @@ const updateData = async (id) => {
 const getMore = async () => {
 	if (isLoading.value) {
 		await addPosts();
-		curPage.value += limit.value;
+		curPage.value = posts.value.length;
 	}
 };
 
-onMounted(async () => {
-	if (userInfo && userInfo.value && curPage.value >= 0) {
-		await updateNum();
-	}
-	if (partition.value === '课程专区') {
-		const data = await getTeachers();
-		teachers.value = ['', ...data];
-	}
+const startObserver = () => {
 	observer = new IntersectionObserver(
 		(entries) => {
 			entries.forEach(async (entry) => {
@@ -138,26 +131,36 @@ onMounted(async () => {
 	if (bottom.value) {
 		observer.observe(bottom.value);
 	}
-});
+};
 
-onUnmounted(() => {
+const endObserver = () => {
 	if (observer) {
 		observer.disconnect();
 	}
+};
+
+onMounted(async () => {
+	if (userInfo && userInfo.value && curPage.value >= 0) {
+		await updateNum();
+	}
+	if (partition.value === '课程专区') {
+		const data = await getTeachers();
+		teachers.value = ['', ...data];
+	}
+	startObserver();
+});
+
+onUnmounted(() => {
+	endObserver();
 });
 
 /**
  * 这四个watch之后可以考虑改成watchEffect
  */
 watch(partition, async (newVal) => {
+	endObserver()
+	posts.value = [];
 	curPage.value = 0;
-	const id = await getPostsNum({
-		partition: newVal,
-		searchsort: searchsort.value,
-		searchinfo: searchinfo.value,
-		userTelephone: userInfo.value.phone,
-		tag: tag.value,
-	});
 	const arr = await getPosts({
 		limit: limit.value,
 		offset: curPage.value,
@@ -168,21 +171,25 @@ watch(partition, async (newVal) => {
 		tag: tag.value,
 	});
 	posts.value = arr;
+	curPage.value = arr.length
+	const id = await getPostsNum({
+		partition: newVal,
+		searchsort: searchsort.value,
+		searchinfo: searchinfo.value,
+		userTelephone: userInfo.value.phone,
+		tag: tag.value,
+	});
 	totalNum.value = id;
 	if (newVal === '课程专区') {
 		const data = await getTeachers();
 		teachers.value = ['', ...data];
 	}
+	startObserver()
 });
 watch(searchinfo, async (newVal) => {
+	endObserver()
+	posts.value = [];
 	curPage.value = 0;
-	const id = await getPostsNum({
-		partition: partition.value,
-		searchsort: searchsort.value,
-		searchinfo: newVal,
-		userTelephone: userInfo.value.phone,
-		tag: tag.value,
-	});
 	const arr = await getPosts({
 		limit: limit.value,
 		offset: curPage.value,
@@ -193,17 +200,21 @@ watch(searchinfo, async (newVal) => {
 		tag: tag.value,
 	});
 	posts.value = arr;
+	curPage.value = arr.length
+	const id = await getPostsNum({
+		partition: partition.value,
+		searchsort: searchsort.value,
+		searchinfo: newVal,
+		userTelephone: userInfo.value.phone,
+		tag: tag.value,
+	});
 	totalNum.value = id;
+	startObserver()
 });
 watch(searchsort, async (newVal) => {
+	endObserver()
+	posts.value = [];
 	curPage.value = 0;
-	const id = await getPostsNum({
-		partition: partition.value,
-		searchsort: newVal,
-		searchinfo: searchinfo.value,
-		userTelephone: userInfo.value.phone,
-		tag: tag.value,
-	});
 	const arr = await getPosts({
 		limit: limit.value,
 		offset: curPage.value,
@@ -214,17 +225,21 @@ watch(searchsort, async (newVal) => {
 		tag: tag.value,
 	});
 	posts.value = arr;
+	curPage.value = arr.length
+	const id = await getPostsNum({
+		partition: partition.value,
+		searchsort: newVal,
+		searchinfo: searchinfo.value,
+		userTelephone: userInfo.value.phone,
+		tag: tag.value,
+	});
 	totalNum.value = id;
+	startObserver()
 });
 watch(tag, async (newVal) => {
+	endObserver()
+	posts.value = [];
 	curPage.value = 0;
-	const id = await getPostsNum({
-		partition: partition.value,
-		searchsort: searchsort.value,
-		searchinfo: searchinfo.value,
-		userTelephone: userInfo.value.phone,
-		tag: newVal,
-	});
 	const arr = await getPosts({
 		limit: limit.value,
 		offset: curPage.value,
@@ -235,7 +250,16 @@ watch(tag, async (newVal) => {
 		tag: newVal,
 	});
 	posts.value = arr;
+	curPage.value = arr.length
+	const id = await getPostsNum({
+		partition: partition.value,
+		searchsort: searchsort.value,
+		searchinfo: searchinfo.value,
+		userTelephone: userInfo.value.phone,
+		tag: newVal,
+	});
 	totalNum.value = id;
+	startObserver()
 });
 defineExpose({
 	name: 'PostList',
