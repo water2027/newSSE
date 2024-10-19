@@ -21,6 +21,7 @@ import MarkdownContainer from '@/components/MarkdownContainer.vue';
 	flex-direction: column;
 	width: 100%;
 	text-align: start;
+	color: var(--color-text);
 }
 
 .postDetail {
