@@ -30,6 +30,7 @@ const mode = ref('light-mode');
 // const mode = ref('dark-mode');
 const changeMode = () => {
 	mode.value = mode.value === 'light-mode' ? 'dark-mode' : 'light-mode';
+	localStorage.setItem('mode', mode.value);
 };
 provide('mode', mode);
 
@@ -92,6 +93,11 @@ const autoLogin = async () => {
 };
 
 onBeforeMount(async () => {
+	if (localStorage.mode) {
+		mode.value = localStorage.mode;
+	}else{
+		localStorage.setItem('mode', mode.value);
+	}
 	/**
 	 * @description 页面加载时，如果localStorage.rememberMe存在，自动登录
 	 */
