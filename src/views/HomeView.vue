@@ -15,7 +15,6 @@
 				</button>
 				<h1
 					:class="{ mobileSelected: selected == '/' }"
-					@click="mobileChangeToMain"
 				>
 					SSE_MARKET
 				</h1>
@@ -55,7 +54,6 @@
 				@click="toggleNav"
 			>
 				<router-link
-					v-if="isPC"
 					class="nav"
 					:class="{ selected: selected == '/' }"
 					to="/"
