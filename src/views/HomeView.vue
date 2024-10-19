@@ -412,7 +412,7 @@ onMounted(async () => {
 <style scoped>
 .ball {
 	position: fixed;
-	bottom: 25px;
+	bottom: 45px;
 	left: 10px;
 	width: 50px;
 	height: 50px;
