@@ -209,6 +209,10 @@ const handleDelete = async () => {
 	transform: scale(1.05);
 }
 
+.post .user{
+	height: auto;
+}
+
 .imgs img {
 	width: 100px;
 	height: 100px;
