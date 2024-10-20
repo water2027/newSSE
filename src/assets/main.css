@@ -51,7 +51,6 @@ button {
 	letter-spacing: 1px;
 	font-family: 'Roboto', sans-serif;
 	font-weight: 500;
-	z-index: 3;
 }
 
 .fileInput:hover,

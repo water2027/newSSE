@@ -100,7 +100,7 @@ import { useRoute } from 'vue-router'
 const emit = defineEmits(['changePath'])
 const route = useRoute()
 
-const noticeNum = inject('noticeNum')
+const { noticeNum } = inject('noticeNum')
 const displayBool = computed(() => {
 	return noticeNum.value == '0' ? 'none' : 'block';
 });

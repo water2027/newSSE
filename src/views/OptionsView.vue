@@ -8,10 +8,15 @@
         :src="allInfo.avatarURL"
         alt="头像"
       />
+      <label
+        for="fileInput"
+        class="custom-file-label fileInput"
+      >选择图片</label>
       <input
+        id="fileInput"
         type="file"
-        class="fileInput"
         accept="image/*"
+        style="display: none;"
         @change="uploadAvatarFunc"
       />
       <div>
@@ -157,6 +162,15 @@ img {
 	width: 100px;
 	height: 100px;
 	border-radius: 50%;
+}
+.custom-file-label {
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+	width: 100%;
+	height: auto;
+	border: none;
+	border-bottom: 1px solid #000;
 }
 input {
 	width: 100%;

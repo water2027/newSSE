@@ -1,5 +1,8 @@
 <template>
-  <div class="root nav-bar heat">
+  <div
+    v-if="isPC && !heatPostsIsHidden"
+    class="root nav-bar heat"
+  >
     <h2 id="heat">
       热榜
     </h2>
@@ -20,12 +23,22 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed,inject } from 'vue';
+import { useRoute } from 'vue-router'
 
 import { getHeatPosts } from '@/api/browse/getPost';
 import { showMsg } from '@/components/MessageBox';
+const route = useRoute()
 
 const heatPosts = ref([]);
+
+const isPC = inject('isPC')
+/**
+ * @description 发帖和看帖的时候隐藏热榜
+ */
+ const heatPostsIsHidden = computed(() => {
+	return /^\/post/.test(route.fullPath);
+});
 
 onMounted(async () => {
 	try {

@@ -50,25 +50,27 @@
         :markdown-content="modelValue"
       />
     </div>
-    <div class="inputData">
+    <div class="buttons">
       <button
         v-if="route.path === '/post'"
-        :style="buttonStyle"
         @click="savePost"
       >
         暂存为草稿
       </button>
       <button
-        :style="buttonStyle"
         @click="$emit('send')"
       >
         发送
       </button>
-      <input
+      <label
+        for="fileInput"
         class="fileInput"
+      >选择图片</label>
+      <input
+        id="fileInput"
         type="file"
         accept="image/*"
-        :style="buttonStyle"
+        style="display: none;"
         @input="upload"
       />
     </div>
@@ -87,12 +89,6 @@ import { uploadPhoto } from '@/api/editPostAndComment/utils';
 const route = useRoute();
 
 const isPreview = ref(false);
-
-const buttonStyle = computed(() => {
-	return {
-		width: '50%',
-	};
-});
 
 const props = defineProps({
 	modelValue: {
@@ -249,6 +245,11 @@ defineExpose({
 </script>
 
 <style scoped>
+#mdRoot{
+	width: 100%;
+	margin-left: 0;
+	margin-right: 0;
+}
 .container {
 	display: flex;
 	flex-direction: row;
@@ -272,7 +273,7 @@ defineExpose({
 	height: 450px;
 }
 
-.inputData {
+.buttons {
 	display: flex;
 	flex-direction: row;
 	align-items: center;

@@ -53,18 +53,17 @@ import { useRouter } from 'vue-router';
 
 import { getNotices, readNotice, getNoticesNum } from '@/api/notice/notice';
 
-
 import { strHandler } from '@/utils/strHandler';
 
 import { showMsg } from '@/components/MessageBox';
+
 const router = useRouter();
 
+const { reduceNoticeNum } = inject('noticeNum')
 const notices = inject('notices');
 const readPage = ref(true);
 const noticesRead = ref([]);
 const noticesUnread = ref([]);
-
-const emit = defineEmits(['send-notice-num']);
 
 /**
  * @description 标记通知为已读
@@ -78,7 +77,7 @@ const readComment = async (noticeID) => {
 		const unread = await getNotices(0, notices.value.unreadTotalNum, 0);
 		noticesRead.value = read.noticeList;
 		noticesUnread.value = unread.noticeList;
-		emit("send-notice-num")
+    reduceNoticeNum();
 		showMsg('success');
 	}
 };
@@ -101,17 +100,21 @@ onMounted(async () => {
 <style scoped>
 .root{
 	color: var(--color-text);
+  display: flex;
+  flex-direction: column;
 }
 .notice-title {
 	color: var(--color-text);
+  margin-left: auto;
+	margin-right: auto;
 }
 .notice {
-	border: 1px solid #000;
+	border: 1px solid var(--color-border);
 	margin: 10px;
 	padding: 10px;
 }
 .noticeButtons {
-	margin-bottom: auto;
+  margin-left: auto;
 	margin-right: auto;
 }
 p {

@@ -31,7 +31,7 @@ const sendLoginSuccess = async (success) => {
 	if (!success) return;
 	try {
 		const info = await getInfo();
-		userInfo.value = info;
+		userInfo.value = Object.freeze(info);
 		isLogin.value = success;
 		if (localStorage.rememberMe) {
 			localStorage.setItem('userInfo', JSON.stringify(info));
@@ -59,7 +59,7 @@ const autoLogin = async () => {
 	 */
 	if (token && tempInfo) {
 		isLogin.value = true;
-		userInfo.value = JSON.parse(tempInfo);
+		userInfo.value = Object.freeze(JSON.parse(tempInfo));
 	} else {
 		const email = localStorage.email;
 		const password = localStorage.password;
@@ -67,7 +67,7 @@ const autoLogin = async () => {
 			const loginSuccess = await userLogin(email, password);
 			if (loginSuccess) {
 				const info = await getInfo();
-				userInfo.value = info;
+				userInfo.value = Object.freeze(info);
 				localStorage.setItem('userInfo', JSON.stringify(info));
 				isLogin.value = true;
 			}

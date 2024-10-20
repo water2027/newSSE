@@ -252,7 +252,7 @@ import { likePost } from '@/api/SaveAndLike.js/SaveAndLike';
 import { strHandler } from '@/utils/strHandler';
 import { expHandler } from '@/utils/expHandler';
 
-import { showImg } from '@/components/imageShower';
+import { showImg } from '@/components/ImageShower';
 import { showMsg } from '@/components/MessageBox';
 import MarkdownEditor from '@/components/MarkdownEditor.vue';
 import MarkdownContainer from '@/components/MarkdownContainer.vue';

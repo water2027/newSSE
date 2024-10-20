@@ -60,12 +60,11 @@
             <component
               :is="Component"
               @send-partition="sendPartition"
-              @send-notice-num="sendNoticeNum"
             />
           </transition>
         </router-view>
       </div>
-      <heat-list v-if="isPC && !heatPostsIsHidden" />
+      <heat-list />
       <suspended-ball
         v-if="!isPC"
         :mode="mode"
@@ -99,17 +98,27 @@ const isPC = computed(() => {
 	return windowWidth.value > 768;
 });
 provide('isPC', isPC);
+const windowWidth = ref(window.innerWidth);
+const updateWidth = () => {
+	windowWidth.value = window.innerWidth;
+};
+
 const noticeNum = ref('');
-provide('noticeNum', noticeNum);
+const reduceNoticeNum = ()=>{
+	noticeNum.value--
+}
+provide('noticeNum', {
+	noticeNum,reduceNoticeNum
+});
 const notices = ref({});
 provide('notices', notices);
+
 const partition = ref('主页');
 provide('partition', partition);
 const searchinfo = ref('');
 provide('searchinfo', searchinfo);
 const searchsort = ref('home');
 provide('searchsort', searchsort);
-
 const changeToMain = () => {
 	partition.value = '主页';
 	searchinfo.value = '';
@@ -130,6 +139,9 @@ const changeToHistory = () => {
 	searchinfo.value = '';
 	searchsort.value = 'history';
 };
+const changeToPost = () => {
+	router.push('/post');
+};
 const changePathHandler = (path) => {
 	switch (path) {
 		case 'main':
@@ -148,6 +160,18 @@ const changePathHandler = (path) => {
 			break;
 	}
 };
+
+/**
+ * 搜索功能，不使用v-model绑定，略微减小性能消耗。
+				它的值是目标元素而不是元素里的值
+ */
+const sinfo = ref(null);
+const search = () => {
+	searchinfo.value = sinfo.value.value;
+	router.push('/');
+};
+
+const navIsOpen = ref(true);
 /**
  * @description 移动端展开导航栏
  */
@@ -155,39 +179,6 @@ const toggleNav = () => {
 	if (!isPC.value) {
 		navIsOpen.value = !navIsOpen.value;
 	}
-};
-
-const windowWidth = ref(window.innerWidth);
-const updateWidth = () => {
-	windowWidth.value = window.innerWidth;
-};
-
-const navIsOpen = ref(true);
-
-/**
- * @description 发帖和看帖的时候隐藏热榜
- */
-const heatPostsIsHidden = computed(() => {
-	return /^\/post/.test(route.fullPath);
-});
-
-/**
- * 搜索功能，不使用v-model绑定，略微减小性能消耗。
-				它的值是目标元素而不是元素里的值
- */
-const sinfo = ref(null);
-
-const search = () => {
-	searchinfo.value = sinfo.value.value;
-	router.push('/');
-};
-
-const mobileChangeToMain = () => {
-	changeToMain();
-	router.push('/');
-};
-const changeToPost = () => {
-	router.push('/post');
 };
 
 /**
@@ -201,13 +192,6 @@ const sendPartition = (p) => {
 };
 
 /**
- * @description 这是通知页面的回调函数，已读通知后调用
- */
-const sendNoticeNum = () => {
-	noticeNum.value--;
-};
-
-/**
  * @description 获取通知数量
  */
 const getNoticesNumFunc = async () => {
@@ -215,6 +199,7 @@ const getNoticesNumFunc = async () => {
 	notices.value = temp;
 	noticeNum.value = temp.unreadTotalNum;
 };
+
 onMounted(async () => {
 	if (!isPC.value) {
 		navIsOpen.value = false;
@@ -261,7 +246,7 @@ header {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	z-index: 5;
+	z-index: 10;
 }
 
 .search {
@@ -311,10 +296,6 @@ main {
 
 /* 大屏幕样式 >768px */
 @media screen and (min-width: 768px) {
-	.asideButton {
-		display: none;
-	}
-
 	#root {
 		width: 100%;
 		height: 100%;
@@ -401,10 +382,6 @@ main {
 
 /* 小屏幕样式 <768px */
 @media screen and (max-width: 768px) {
-	.mobileSelected {
-		color: var(--color-title-selected);
-	}
-
 	header {
 		height: 20vh;
 		margin: 0;
