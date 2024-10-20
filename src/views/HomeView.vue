@@ -34,6 +34,12 @@
       </div>
       <button
         v-if="isPC"
+        @click="returnToTop"
+      >
+        &uarr;
+      </button>
+      <button
+        v-if="isPC"
         @click="changeMode"
       >
         {{ mode }}
@@ -69,6 +75,7 @@
         v-if="!isPC"
         :mode="mode"
         :change-mode="changeMode"
+        :return-to-top="returnToTop"
       />
     </main>
   </div>
@@ -90,6 +97,10 @@ const changeMode = () => {
 		currentMode == 'light-mode' ? 'dark-mode' : 'light-mode';
 	mode.value = currentMode == 'light-mode' ? 'dark-mode' : 'light-mode';
 	localStorage.setItem('mode', document.body.className);
+};
+
+const returnToTop = () => {
+	document.body.scrollTop = 0;
 };
 
 const router = useRouter();

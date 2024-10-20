@@ -13,7 +13,7 @@
       class="second"
       @click="changeMode"
     >
-      {{ props.mode == 'light-mode' ? 'L' : 'D' }}
+      {{ mode == 'light-mode' ? 'L' : 'D' }}
     </div>
     <div
       ref="third"
@@ -25,9 +25,9 @@
   </div>
 </template>
 <script setup>
-import { inject, ref } from 'vue'
+import { ref } from 'vue'
 
-const props = defineProps({
+defineProps({
     mode:{
         type: String,
 		required: true,
@@ -35,7 +35,11 @@ const props = defineProps({
     changeMode:{
         type:Function,
         required:true,
-    }
+    },
+	returnToTop:{
+		type:Function,
+		required:true,
+	}
 })
 
 const second = ref(null);
@@ -87,12 +91,6 @@ const OpenAndCloseBall = () => {
 		);
 	}
 };
-
-const returnToTop = () => {
-	document.body.scrollTop = 0;
-};
-
-
 </script>
 <style scoped>
 .ball {
