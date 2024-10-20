@@ -4,12 +4,12 @@
 
 /* 根元素，所有元素都能访问它的变量。但是has可能有些浏览器不兼容 */
 body.light-mode{
-    --color-bg:rgb(218, 211, 197);
+    --color-bg:rgb(226, 226, 226);
 
     --color-scroll:rgba(0, 0, 0, 0.1);
     --color-scroll-thumb:rgba(0, 0, 0, 0.5);
 
-    --color-button-bg: #f1f1f18f;
+    --color-button-bg: #a8b4b08f;
     --color-button:#333;
 
     --color-text: #181818;
@@ -20,7 +20,7 @@ body.light-mode{
     --color-nav-bg:#f0f0f0;
     --color-nav-hover:rgba(241, 236, 226, 0.901);
 
-    --color-ball-bg:#f0f0f0;
+    --color-ball-bg:#fffdfd;
     --color-ball-text:#181818;
     --color-ball-box-shadow:rgba(0, 0, 0, 0.35);
 
@@ -33,8 +33,6 @@ body.light-mode{
     --color-to-post:white;
     --color-to-post-bg:#a1a1a1e1;
     --color-to-post-border:#333;
-
-    --color-level:#ffc6c6;
 
     --color-a-in-post:#00d9ff;
     --color-a-hover-in-post:#ffd900;
