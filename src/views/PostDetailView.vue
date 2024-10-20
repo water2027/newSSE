@@ -100,14 +100,14 @@
           {{ commentButtonIsShow ? '隐藏' : '发评论' }}
         </button>
       </div>
-    </div>
-    <div class="comment">
-      <h2>评论</h2>
       <MarkdownEditor
         v-if="commentButtonIsShow"
         v-model="commentContent"
         @send="sendCommentFunc"
       />
+    </div>
+    <div class="comment">
+      <h2>评论</h2>
       <!-- 这是评论区 -->
       <!-- 考虑做成组件，但是貌似只有这一个地方用了，好像又没啥必要 -->
       <div class="commentList">

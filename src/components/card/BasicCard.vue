@@ -96,7 +96,7 @@
         </svg>
       </span>
     </div>
-    <slot name="commentButton"></slot>
+    <slot name="comment"></slot>
   </div>
 </template>
 <script setup>
