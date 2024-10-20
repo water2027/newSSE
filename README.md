@@ -46,9 +46,9 @@ npm run build
 4. `MessageBox.jsx` 展示一个6s的弹窗，导出函数`showMsg(msg:string)`,msg是要展示的信息 
 5. `MarkdownContainer.vue` 用于将md转为html。   
 6. `HeatList.vue`热榜     
-7. `NewEditor.vue`md编辑器的planB，如果`MarkdownEditor.vue`反响不好可考虑换成这个第三方的编辑器。     
-8. `PostCard.vue`帖子卡片，只记录概要，用在PostList里，需要传入一个Post     
-9. `PostList.vue`帖子列表
+7. `NewEditor.vue`md编辑器的planB，如果`MarkdownEditor.vue`反响不好可考虑换成这个第三方的编辑器。      
+8. `PostList.vue`帖子列表      
+9. `card`文件夹，里面有封装好的卡片，`BasicCard.vue`是基础卡片，相当于父类，其他的都是子类。`CommentCard.vue`未完成      
 ***
 #### docs文件夹 
 可有可无，相当于一个公告吧。 
