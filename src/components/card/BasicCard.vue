@@ -13,16 +13,7 @@
       >{{ expHandler(basicData.UserScore) }}
       </span>
       <div class="userButtons">
-        <slot name="save"></slot>
-        <button @click.stop.prevent="handleSave">
-          {{ basicData.IsSaved ? '取消' : '收藏' }}
-        </button>
-        <button
-          v-if="basicData.UserTelephone === userInfo.phone"
-          @click.stop.prevent="handleDelete"
-        >
-          删除
-        </button>
+        <slot name="userButtons"></slot>
       </div>
     </div>
     <h2>{{ basicData.Title }}</h2>
@@ -109,7 +100,7 @@
   </div>
 </template>
 <script setup>
-import { ref,inject } from 'vue'
+import { ref } from 'vue'
 
 import { strHandler } from '@/utils/strHandler';
 import { expHandler } from '@/utils/expHandler';
@@ -117,39 +108,17 @@ import { expHandler } from '@/utils/expHandler';
 import { showMsg } from '@/components/MessageBox';
 import MarkdownContainer from '../MarkdownContainer.vue';
 
-import { savePost, likePost } from '@/api/SaveAndLike.js/SaveAndLike';
-import { delPost } from '@/api/editPostAndComment/editPost';
-
 const props = defineProps({
     cardData: {
         type: Object,
         required: true
     },
-    deleteFunc: {
-        type: Function,
-        required: true
+    likeHandler:{
+        type:Function,
+        required:true
     }
 })
-const basicData = ref(cardData)
-const userInfo = inject('userInfo')
-
-/**
- * @description 收藏。
- */
-const handleSave = async () => {
-	//后端没有返回数据，不要赋值后再更新
-	try {
-		await savePost(
-			postData.value.IsSaved,
-			postData.value.PostID,
-			userInfo.value.phone
-		);
-		postData.value.IsSaved = !postData.value.IsSaved;
-		showMsg(postData.value.IsSaved ? '收藏成功' : '取消成功');
-	} catch (e) {
-		showMsg('失败了:-(');
-	}
-};
+const basicData = ref(props.cardData)
 
 /**
  * @description 点赞。
@@ -157,17 +126,13 @@ const handleSave = async () => {
 const like = async () => {
 	//后端没有返回数据，不要赋值后再更新
 	try {
-		await likePost(
-			postData.value.IsLiked,
-			postData.value.PostID,
-			userInfo.value.phone
-		);
-		postData.value.IsLiked = !postData.value.IsLiked;
-		if (postData.value.IsLiked) {
-			postData.value.Like++;
+		props.likeHandler()
+		basicData.value.IsLiked = !basicData.value.IsLiked;
+		if (basicData.value.IsLiked) {
+			basicData.value.Like++;
 			showMsg('点赞成功');
 		} else {
-			postData.value.Like--;
+			basicData.value.Like--;
 			showMsg('取消成功');
 		}
 	} catch (e) {
@@ -175,19 +140,9 @@ const like = async () => {
 	}
 };
 
-/**
- * @description 删除帖子。
- */
-const handleDelete = async () => {
-	//后端没有返回数据，不要赋值后再更新
-	try {
-		await delPost(postData.value.PostID);
-		emit('updateData', postData.value.PostID);
-		showMsg('删除成功');
-	} catch (e) {
-		showMsg('失败了:-(');
-	}
-};
+defineExpose({
+    name:'BasicCard'
+})
 
 </script>
 <style scoped>
