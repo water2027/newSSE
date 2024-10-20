@@ -1,41 +1,50 @@
-<!-- eslint-disable vue/html-indent -->
 <template>
-	<div class="root">
-		<h2 class="notice-title">通知</h2>
-		<div class="noticeButtons">
-			<button @click="readPage = true">未读通知</button>
-			<button @click="readPage = false">已读通知</button>
-		</div>
-		<!-- 未读界面 -->
-		<div v-if="readPage">
-			<div
-				v-for="notice in noticesUnread"
-				:key="notice.noticeID"
-				class="notice"
-			>
-				<span>{{ notice.senderName }}</span>
-				<p>{{ notice.content }}</p>
-				<span>{{ strHandler('time', notice.time) }}</span>
-				<button @click="readComment(notice.noticeID)">
-					标记为已读
-				</button>
-				<button @click="changeToPost(notice.postID)">查看原帖</button>
-			</div>
-		</div>
-		<!-- 已读界面 -->
-		<div v-else>
-			<div
-				v-for="notice in noticesRead"
-				:key="notice.noticeID"
-				class="notice"
-			>
-				<span>{{ notice.senderName }}</span>
-				<p>{{ notice.content }}</p>
-				<span>{{ strHandler('time', notice.time) }}</span>
-				<button @click="changeToPost(notice.postID)">查看原帖</button>
-			</div>
-		</div>
-	</div>
+  <div class="root">
+    <h2 class="notice-title">
+      通知
+    </h2>
+    <div class="noticeButtons">
+      <button @click="readPage = true">
+        未读通知
+      </button>
+      <button @click="readPage = false">
+        已读通知
+      </button>
+    </div>
+    <!-- 未读界面 -->
+    <div v-if="readPage">
+      <div
+        v-for="notice in noticesUnread"
+        :key="notice.noticeID"
+        class="notice"
+      >
+        <span>{{ notice.senderName }}</span>
+        <p>{{ notice.content }}</p>
+        <span>{{ strHandler('time', notice.time) }}</span>
+        <button @click="readComment(notice.noticeID)">
+          标记为已读
+        </button>
+        <button @click="changeToPost(notice.postID)">
+          查看原帖
+        </button>
+      </div>
+    </div>
+    <!-- 已读界面 -->
+    <div v-else>
+      <div
+        v-for="notice in noticesRead"
+        :key="notice.noticeID"
+        class="notice"
+      >
+        <span>{{ notice.senderName }}</span>
+        <p>{{ notice.content }}</p>
+        <span>{{ strHandler('time', notice.time) }}</span>
+        <button @click="changeToPost(notice.postID)">
+          查看原帖
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>

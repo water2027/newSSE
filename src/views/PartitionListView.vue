@@ -1,18 +1,17 @@
-<!-- eslint-disable vue/html-indent -->
 <template>
-	<div class="root">
-		<h2>选择分区</h2>
-		<div class="partitions">
-			<div
-				v-for="(p, index) in partitions"
-				:key="index"
-				class="partition"
-				@click="sendPartition(p)"
-			>
-				{{ p }}
-			</div>
-		</div>
-	</div>
+  <div class="root">
+    <h2>选择分区</h2>
+    <div class="partitions">
+      <div
+        v-for="(p, index) in partitions"
+        :key="index"
+        class="partition"
+        @click="sendPartition(p)"
+      >
+        {{ p }}
+      </div>
+    </div>
+  </div>
 </template>
 <script setup>
 import { ref } from 'vue';
@@ -63,7 +62,7 @@ const sendPartition = (p) => {
 
 	max-width: 600px;
 	padding: 10px;
-	border: 1px solid #000;
+	border: 1px solid var(--color-border);
 	border-radius: 5px;
 	cursor: pointer;
 	transition: all 0.3s;

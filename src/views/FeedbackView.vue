@@ -1,11 +1,13 @@
 <!-- eslint-disable vue/html-indent -->
 <template>
-	<div class="root">
-		<h1>反馈</h1>
-		<p>请在下方输入您的反馈信息</p>
-		<textarea ref="feedbackContent" />
-		<button @click="submitFeedback">提交</button>
-	</div>
+  <div class="root">
+    <h1>反馈</h1>
+    <p>请在下方输入您的反馈信息</p>
+    <textarea ref="feedbackContent" />
+    <button @click="submitFeedback">
+		  提交
+	  </button>
+  </div>
 </template>
 
 <script setup>

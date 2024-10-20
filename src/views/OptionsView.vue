@@ -1,58 +1,62 @@
-<!-- eslint-disable vue/singleline-html-element-content-newline -->
 <!-- eslint-disable vue/html-self-closing -->
-<!-- eslint-disable vue/html-indent -->
 <template>
-	<div class="root">
-		<h2>设置</h2>
-		<div class="data">
-			<h3>个人信息</h3>
-			<img
-				:src="allInfo.avatarURL"
-				alt="头像"
-			/>
-			<input
-				type="file"
-				class="fileInput"
-				accept="image/*"
-				@change="uploadAvatarFunc"
-			/>
-			<div>
-				<div>
-					<span>ID {{ allInfo.phone }}</span>
-					<span>邮箱 {{ allInfo.email }}</span>
-					<span>经验 {{ allInfo.score }}</span>
-				</div>
-				<span>用户名</span>
-				<input
-					v-model="allInfo.name"
-					type="text"
-				/>
-				<span>简介</span>
-				<input
-					v-model="allInfo.intro"
-					type="text"
-				/>
-				<button @click="updateUserInfoFunc">修改信息</button>
-			</div>
-		</div>
-		<div class="data">
-			<h3>重置密码</h3>
-			<input
-				ref="password1"
-				type="password"
-				placeholder="密码"
-			/>
-			<input
-				ref="password2"
-				type="password"
-				placeholder="确认密码"
-			/>
-			<button @click="updatePasswordFunc">重置</button>
-		</div>
-		<div class="data">
-			<button @click="logout">退出登录</button>
-		</div>
-	</div>
+  <div class="root">
+    <h2>设置</h2>
+    <div class="data">
+      <h3>个人信息</h3>
+      <img
+        :src="allInfo.avatarURL"
+        alt="头像"
+      />
+      <input
+        type="file"
+        class="fileInput"
+        accept="image/*"
+        @change="uploadAvatarFunc"
+      />
+      <div>
+        <div>
+          <span>ID {{ allInfo.phone }}</span>
+          <span>邮箱 {{ allInfo.email }}</span>
+          <span>经验 {{ allInfo.score }}</span>
+        </div>
+        <span>用户名</span>
+        <input
+          v-model="allInfo.name"
+          type="text"
+        />
+        <span>简介</span>
+        <input
+          v-model="allInfo.intro"
+          type="text"
+        />
+        <button @click="updateUserInfoFunc">
+          修改信息
+        </button>
+      </div>
+    </div>
+    <div class="data">
+      <h3>重置密码</h3>
+      <input
+        ref="password1"
+        type="password"
+        placeholder="密码"
+      />
+      <input
+        ref="password2"
+        type="password"
+        placeholder="确认密码"
+      />
+      <button @click="updatePasswordFunc">
+        重置
+      </button>
+    </div>
+    <div class="data">
+      <button @click="logout">
+        退出登录
+      </button>
+    </div>
+  </div>
 </template>
 
 <script setup>

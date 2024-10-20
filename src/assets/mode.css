@@ -3,7 +3,7 @@
 /* 子元素使用css变量 */
 
 /* 根元素，所有元素都能访问它的变量。但是has可能有些浏览器不兼容 */
-:root:has(div.light-mode){
+body.light-mode{
     --color-bg:rgb(218, 211, 197);
 
     --color-scroll:rgba(0, 0, 0, 0.1);
@@ -11,21 +11,7 @@
 
     --color-button-bg: #f1f1f18f;
     --color-button:#333;
-}
 
-:root:has(div.dark-mode){
-    --color-bg:rgb(27, 27, 27);
-
-    --color-scroll:rgba(255, 255, 255, 0.1);
-    --color-scroll-thumb:rgba(255, 255, 255, 0.5);
-
-    --color-button-bg:#333 ;
-    --color-button:#f1f1f18f;
-}
-
-
-/* 明亮模式 */
-div.light-mode {
     --color-text: #181818;
     --color-hr:#3333339d;
 
@@ -60,11 +46,17 @@ div.light-mode {
 
     --color-post-card-box-shadow:rgba(0, 0, 0, 0.24);
     --color-post-card-hover-box-shadow:rgba(0, 0, 0, 0.35);
-
 }
 
-/* 黑暗模式 */
-div.dark-mode {
+body.dark-mode{
+    --color-bg:rgb(27, 27, 27);
+
+    --color-scroll:rgba(255, 255, 255, 0.1);
+    --color-scroll-thumb:rgba(255, 255, 255, 0.5);
+
+    --color-button-bg:#333 ;
+    --color-button:#f1f1f18f;
+
     --color-text: rgb(218, 211, 197);
     --color-hr:#f1f1f18f;
 
@@ -97,5 +89,4 @@ div.dark-mode {
 
     --color-post-card-box-shadow:rgba(255, 255, 255, 0.24);
     --color-post-card-hover-box-shadow:rgba(255, 255, 255, 0.35);
-
 }

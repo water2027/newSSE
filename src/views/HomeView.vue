@@ -1,191 +1,78 @@
 <!-- eslint-disable vue/html-self-closing -->
-<!-- eslint-disable vue/html-indent -->
 <template>
-	<div id="root">
-		<header>
-			<div id="title">
-				<button
-					v-if="!isPC"
-					class="hamburgerMenu"
-					@click="toggleNav"
-				>
-					<span />
-					<span />
-					<span />
-				</button>
-				<h1
-					:class="{ mobileSelected: selected == '/' }"
-				>
-					SSE_MARKET
-				</h1>
-				<button
-					v-if="!isPC"
-					class="toPost"
-					@click="changeToPost"
-				>
-					+
-				</button>
-			</div>
-			<div class="search">
-				<input
-					ref="sinfo"
-					placeholder="在当前分区搜索"
-					type="search"
-					@keydown.enter="search"
-				/>
-				<button @click="search">搜索</button>
-			</div>
-			<button
-				v-if="isPC"
-				@click="DarkOrLight"
-			>
-				{{ mode }}
-			</button>
-		</header>
-		<div
-			v-if="isPC"
-			class="none"
-		></div>
-		<main>
-			<div
-				v-if="isPC || navIsOpen"
-				id="mainNavBar"
-				class="nav-bar main-nav-bar"
-				@click="toggleNav"
-			>
-				<router-link
-					class="nav"
-					:class="{ selected: selected == '/' }"
-					to="/"
-					@click="changeToMain"
-				>
-					主页
-				</router-link>
-				<router-link
-					class="nav"
-					:class="{ selected: selected == '/partitions' }"
-					to="/partitions"
-				>
-					分区
-				</router-link>
-				<router-link
-					v-if="!isPC"
-					class="nav"
-					:class="{ selected: selected == '/heat' }"
-					to="/heat"
-				>
-					热榜
-				</router-link>
-				<router-link
-					to="/course"
-					class="nav"
-					:class="{ selected: selected == '/course' }"
-					@click="changeToCourse"
-				>
-					课程专区
-				</router-link>
-				<router-link
-					v-if="isPC"
-					id="post"
-					class="nav"
-					:class="{ selected: selected == '/post' }"
-					to="/post"
-				>
-					发帖
-				</router-link>
-				<router-link
-					id="notice"
-					:notice-num="noticeNum"
-					:display-bool="displayBool"
-					class="nav"
-					:class="{ selected: selected == '/notice' }"
-					to="/notice"
-				>
-					通知
-				</router-link>
-				<router-link
-					class="nav"
-					:class="{ selected: selected == '/feedback' }"
-					to="/feedback"
-				>
-					反馈
-				</router-link>
-				<router-link
-					class="nav"
-					:class="{ selected: selected == '/save' }"
-					to="/save"
-					@click="changeToSave"
-				>
-					我的收藏
-				</router-link>
-				<router-link
-					class="nav"
-					:class="{ selected: selected == '/history' }"
-					to="/history"
-					@click="changeToHistory"
-				>
-					发帖历史
-				</router-link>
-				<router-link
-					class="nav"
-					:class="{ selected: selected == '/options' }"
-					to="/options"
-				>
-					个人信息
-				</router-link>
-				<router-link
-					class="nav"
-					:class="{ selected: selected == '/doc' }"
-					to="/doc"
-				>
-					文档
-				</router-link>
-			</div>
-			<div
-				class="content"
-				:style="contentStyle"
-			>
-				<router-view v-slot="{ Component }">
-					<transition
-						name="bounce"
-						mode="out-in"
-					>
-						<component
-							:is="Component"
-							@send-partition="sendPartition"
-							@send-notice-num="sendNoticeNum"
-						/>
-					</transition>
-				</router-view>
-			</div>
-			<heat-list v-if="isPC && !heatPostsIsHidden" />
-			<div
-				v-if="!isPC"
-				class="ball"
-			>
-				<div
-					class="first"
-					@click="OpenAndCloseBall"
-				>
-					{{ ballIsOpen ? 'X' : 'O' }}
-				</div>
-				<div
-					ref="second"
-					class="second"
-					@click="DarkOrLight"
-				>
-					{{ mode == 'light-mode' ? 'L' : 'D' }}
-				</div>
-				<div
-					ref="third"
-					class="third"
-					@click="returnToTop"
-				>
-					&uarr;
-				</div>
-			</div>
-		</main>
-	</div>
+  <div id="root">
+    <header>
+      <div id="title">
+        <button
+          v-if="!isPC"
+          class="hamburgerMenu"
+          @click="toggleNav"
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+        <h1>SSE_MARKET</h1>
+        <button
+          v-if="!isPC"
+          class="toPost"
+          @click="changeToPost"
+        >
+          +
+        </button>
+      </div>
+      <div class="search">
+        <input
+          ref="sinfo"
+          placeholder="在当前分区搜索"
+          type="search"
+          @keydown.enter="search"
+        />
+        <button @click="search">
+          搜索
+        </button>
+      </div>
+      <button
+        v-if="isPC"
+        @click="changeMode"
+      >
+        {{ mode }}
+      </button>
+    </header>
+    <div
+      v-if="isPC"
+      class="none"
+    ></div>
+    <main>
+      <link-list
+        v-if="isPC || navIsOpen"
+        @change-path="changePathHandler"
+        @click="toggleNav"
+      />
+      <div
+        class="content"
+      >
+        <router-view v-slot="{ Component }">
+          <transition
+            name="bounce"
+            mode="out-in"
+          >
+            <component
+              :is="Component"
+              @send-partition="sendPartition"
+              @send-notice-num="sendNoticeNum"
+            />
+          </transition>
+        </router-view>
+      </div>
+      <heat-list v-if="isPC && !heatPostsIsHidden" />
+      <suspended-ball
+        v-if="!isPC"
+        :mode="mode"
+        :change-mode="changeMode"
+      />
+    </main>
+  </div>
 </template>
 <script setup>
 import { computed, onMounted, provide, ref, inject } from 'vue';
@@ -194,23 +81,26 @@ import { useRoute, useRouter } from 'vue-router';
 import { getNoticesNum } from '@/api/notice/notice';
 
 import HeatList from '@/components/HeatList.vue';
-const mode = inject('mode');
-const emit = defineEmits(['change-mode']);
-const DarkOrLight = () => {
-	emit('change-mode');
+import LinkList from '@/components/LinkList.vue';
+import SuspendedBall from '@/components/SuspendedBall.vue';
+
+const mode = ref(document.body.className);
+const changeMode = () => {
+	const currentMode = document.body.className;
+	document.body.className =
+		currentMode == 'light-mode' ? 'dark-mode' : 'light-mode';
+	mode.value = currentMode == 'light-mode' ? 'dark-mode' : 'light-mode';
 };
 
 const route = useRoute();
 const router = useRouter();
 
-const noticeNum = ref('');
-const second = ref(null);
-const third = ref(null);
-
-const displayBool = computed(() => {
-	return noticeNum.value == '0' ? 'none' : 'block';
+const isPC = computed(() => {
+	return windowWidth.value > 768;
 });
-
+provide('isPC', isPC);
+const noticeNum = ref('');
+provide('noticeNum', noticeNum);
 const notices = ref({});
 provide('notices', notices);
 const partition = ref('主页');
@@ -220,57 +110,6 @@ provide('searchinfo', searchinfo);
 const searchsort = ref('home');
 provide('searchsort', searchsort);
 
-const selected = computed(() => {
-	return route.fullPath;
-});
-
-const windowWidth = ref(window.innerWidth);
-const updateWidth = () => {
-	windowWidth.value = window.innerWidth;
-};
-const isPC = computed(() => {
-	return windowWidth.value > 768;
-});
-provide('isPC', isPC);
-
-const posts = ref([]);
-provide('posts', posts);
-
-const navIsOpen = ref(true);
-const ballIsOpen = ref(false);
-
-/**
- * @description 发帖和看帖的时候隐藏热榜
- */
-const heatPostsIsHidden = computed(() => {
-	return /^\/post/.test(route.fullPath);
-});
-/**
- * @description 控制主页的样式
- */
-const contentStyle = ref({
-	width: '100%',
-	display: 'flex',
-	flexDirection: 'column',
-	alignItems: 'center',
-	justifyContent: 'center',
-});
-
-/**
- * 搜索功能，不使用v-model绑定，略微减小性能消耗。
-				它的值是目标元素而不是元素里的值
- */
-const sinfo = ref(null);
-
-const search = () => {
-	searchinfo.value = sinfo.value.value;
-	router.push('/');
-};
-
-const mobileChangeToMain = () => {
-	changeToMain();
-	router.push('/');
-};
 const changeToMain = () => {
 	partition.value = '主页';
 	searchinfo.value = '';
@@ -291,6 +130,62 @@ const changeToHistory = () => {
 	searchinfo.value = '';
 	searchsort.value = 'history';
 };
+const changePathHandler = (path) => {
+	switch (path) {
+		case 'main':
+			changeToMain();
+			break;
+		case 'save':
+			changeToSave();
+			break;
+		case 'history':
+			changeToHistory();
+			break;
+		case 'course':
+			changeToCourse();
+			break;
+		default:
+			break;
+	}
+};
+/**
+ * @description 移动端展开导航栏
+ */
+const toggleNav = () => {
+	if (!isPC.value) {
+		navIsOpen.value = !navIsOpen.value;
+	}
+};
+
+const windowWidth = ref(window.innerWidth);
+const updateWidth = () => {
+	windowWidth.value = window.innerWidth;
+};
+
+const navIsOpen = ref(true);
+
+/**
+ * @description 发帖和看帖的时候隐藏热榜
+ */
+const heatPostsIsHidden = computed(() => {
+	return /^\/post/.test(route.fullPath);
+});
+
+/**
+ * 搜索功能，不使用v-model绑定，略微减小性能消耗。
+				它的值是目标元素而不是元素里的值
+ */
+const sinfo = ref(null);
+
+const search = () => {
+	searchinfo.value = sinfo.value.value;
+	router.push('/');
+};
+
+const mobileChangeToMain = () => {
+	changeToMain();
+	router.push('/');
+};
 const changeToPost = () => {
 	router.push('/post');
 };
@@ -310,65 +205,6 @@ const sendPartition = (p) => {
  */
 const sendNoticeNum = () => {
 	noticeNum.value--;
-};
-
-/**
- * @description 移动端展开导航栏
- */
-const toggleNav = () => {
-	if (!isPC.value) {
-		navIsOpen.value = !navIsOpen.value;
-	}
-};
-
-const OpenAndCloseBall = () => {
-	if (ballIsOpen.value) {
-		ballIsOpen.value = false;
-		second.value.animate(
-			[{ transform: 'translateX(100%)' }, { transform: 'translateX(0)' }],
-			{
-				duration: 500,
-				easing: 'ease-in-out',
-				fill: 'forwards',
-			}
-		);
-		third.value.animate(
-			[
-				{ transform: 'translateY(-100%)' },
-				{ transform: 'translateY(0)' },
-			],
-			{
-				duration: 500,
-				easing: 'ease-in-out',
-				fill: 'forwards',
-			}
-		);
-	} else {
-		ballIsOpen.value = true;
-		second.value.animate(
-			[{ transform: 'translateX(0)' }, { transform: 'translateX(100%)' }],
-			{
-				duration: 500,
-				easing: 'ease-in-out',
-				fill: 'forwards',
-			}
-		);
-		third.value.animate(
-			[
-				{ transform: 'translateY(0)' },
-				{ transform: 'translateY(-100%)' },
-			],
-			{
-				duration: 500,
-				easing: 'ease-in-out',
-				fill: 'forwards',
-			}
-		);
-	}
-};
-
-const returnToTop = () => {
-	document.body.scrollTop = 0;
 };
 
 /**
@@ -408,64 +244,12 @@ onMounted(async () => {
 });
 </script>
 <style scoped>
-.ball {
-	position: fixed;
-	bottom: 45px;
-	left: 10px;
-	width: 50px;
-	height: 50px;
-	border-radius: 50%;
+.content{
+	width: 100%;
 	display: flex;
 	flex-direction: column;
-	background-color: var(--color-ball-bg);
-	color: var(--color-ball-text);
-	display: flex;
-	justify-content: center;
 	align-items: center;
-	box-shadow: var(--color-ball-box-shadow) 0px 1px 4px;
-	z-index: 4;
-}
-
-.ball > * {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	border-radius: 100%;
-	background-color: var(--color-ball-bg);
-	color: var(--color-ball-text);
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	box-shadow: var(--color-ball-box-shadow) 0px 1px 4px;
-}
-
-.ball .first {
-	z-index: 3;
-}
-
-.selected {
-	box-shadow:
-		var(--color-selected-shadow-first) 0px 30px 60px -12px inset,
-		var(--color-selected-shadow-second) 0px 18px 36px -18px inset;
-}
-
-#notice {
-	position: relative;
-}
-#notice::after {
-	content: attr(notice-num);
-	position: absolute;
-	top: 50%;
-	right: 5%;
-	transform: translate(0, -50%);
-	background-color: rgba(255, 0, 0, 0.75);
-	color: white;
-	padding: 5px;
-	font-size: 1rem;
-}
-
-#notice[notice-num='0']::after {
-	display: none;
+	/* justify-content: center; */
 }
 
 p {
@@ -498,14 +282,6 @@ main {
 	padding: 0;
 }
 
-.main-nav-bar {
-	padding: 0;
-	border: 1px solid var(--color-border);
-	border-radius: 5px var(--color-border);
-	animation: fadeIn 0.5s;
-	transition: all 0.3s;
-}
-
 @keyframes fadeIn {
 	from {
 		opacity: 0;
@@ -513,31 +289,6 @@ main {
 	to {
 		opacity: 1;
 	}
-}
-
-.second-nav-bar {
-	width: 100%;
-}
-
-.nav-bar {
-	display: flex;
-	flex-direction: column;
-	align-items: self-start;
-}
-
-.nav {
-	width: 100%;
-	margin-top: 0;
-	margin-bottom: 0;
-	padding: 15px;
-	border: 1px solid var(--color-border);
-	text-align: center;
-	text-decoration: none;
-	color: var(--color-text);
-}
-
-#mainNavBar {
-	z-index: 4;
 }
 
 .bounce-enter-active {
@@ -630,15 +381,6 @@ main {
 		flex-direction: row;
 	}
 
-	.main-nav-bar {
-		margin-left: 2%;
-		width: 20%;
-	}
-
-	body:not(:has(header)) .main-nav-bar {
-		position: fixed;
-	}
-
 	.content {
 		margin-left: 5%;
 		margin-right: 5%;
@@ -654,10 +396,6 @@ main {
 
 	footer {
 		display: none;
-	}
-
-	.nav:hover {
-		background-color: var(--color-nav-hover);
 	}
 }
 
@@ -730,17 +468,6 @@ main {
 		width: 100%;
 		margin: 0;
 		border: none;
-	}
-
-	.main-nav-bar {
-		margin-left: 0;
-		width: 80%;
-		position: absolute;
-		top: 8%;
-	}
-
-	.nav-bar {
-		background-color: var(--color-nav-bg);
 	}
 
 	.search {

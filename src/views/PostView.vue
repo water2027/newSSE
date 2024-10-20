@@ -1,52 +1,51 @@
 <!-- eslint-disable vue/no-v-html -->
 <!-- eslint-disable vue/html-self-closing -->
-<!-- eslint-disable vue/html-indent -->
 <template>
-	<div class="root">
-		<div class="inputData title">
-			<h3>标题</h3>
-			<input
-				ref="title"
-				type="text"
-				placeholder="请输入标题"
-			/>
-		</div>
-		<div class="inputData">
-			<h3>分区</h3>
-			<select v-model="partition">
-				<option
-					v-for="(p, index) in partitions"
-					:key="index"
-					:value="p"
-				>
-					{{ p }}
-				</option>
-			</select>
-			<select
-				v-if="partition === '课程专区'"
-				v-model="teacher"
-			>
-				<option
-					v-for="t in teachers"
-					:key="t.TagID"
-					:value="t.Name"
-				>
-					{{ t.Name }}
-				</option>
-			</select>
-		</div>
-		<div class="inputData post">
-			<h3>正文</h3>
-			<MarkdownEditor
-				v-model="postContent"
-				@send="submitPost"
-			/>
-			<!-- <NewEditor
+  <div class="root">
+    <div class="inputData title">
+      <h3>标题</h3>
+      <input
+        ref="title"
+        type="text"
+        placeholder="请输入标题"
+      />
+    </div>
+    <div class="inputData">
+      <h3>分区</h3>
+      <select v-model="partition">
+        <option
+          v-for="(p, index) in partitions"
+          :key="index"
+          :value="p"
+        >
+          {{ p }}
+        </option>
+      </select>
+      <select
+        v-if="partition === '课程专区'"
+        v-model="teacher"
+      >
+        <option
+          v-for="t in teachers"
+          :key="t.TagID"
+          :value="t.Name"
+        >
+          {{ t.Name }}
+        </option>
+      </select>
+    </div>
+    <div class="inputData post">
+      <h3>正文</h3>
+      <MarkdownEditor
+        v-model="postContent"
+        @send="submitPost"
+      />
+      <!-- <NewEditor
 				v-model="postContent"
 				@send="submitPost"
 			/> -->
-		</div>
-	</div>
+    </div>
+  </div>
 </template>
 
 <script setup>

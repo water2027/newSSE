@@ -1,5 +1,5 @@
 <template>
-	<heat-list />
+  <heat-list />
 </template>
 
 <script setup>

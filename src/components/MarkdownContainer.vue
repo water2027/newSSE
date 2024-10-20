@@ -1,14 +1,13 @@
-<!-- eslint-disable vue/html-indent -->
 <!-- eslint-disable vue/html-self-closing -->
 <!-- eslint-disable vue/no-v-html -->
 <template>
-	<div
-		id="content"
-		ref="content"
-		class="hasImgDiv"
-		:style="mdContainerStyle"
-		v-html="safeHTML(markdownContent)"
-	></div>
+  <div
+    id="content"
+    ref="content"
+    class="hasImgDiv"
+    :style="mdContainerStyle"
+    v-html="safeHTML(markdownContent)"
+  ></div>
 </template>
 <script setup>
 import { ref, computed } from 'vue';

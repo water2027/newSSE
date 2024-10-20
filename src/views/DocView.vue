@@ -1,12 +1,12 @@
 <template>
-	<div
-		class="root"
-		ref="root"
-	>
-		<div class="postDetail">
-			<MarkdownContainer :markdown-content="markdown||'loading'" />
-		</div>
-	</div>
+  <div
+    ref="root"
+    class="root"
+  >
+    <div class="postDetail">
+      <MarkdownContainer :markdown-content="markdown||'loading'" />
+    </div>
+  </div>
 </template>
 
 <script setup>

@@ -1,45 +1,44 @@
-<!-- eslint-disable vue/html-indent -->
 <template>
-	<div class="root">
-		<h2>当前分区：{{ partition }}</h2>
-		<div v-if="partition === '课程专区'">
-			<span class="gradientUnderline">请选择你的老师，不选也没关系 </span>
-			<select
-				v-if="partition === '课程专区'"
-				id="teacher"
-				v-model="tag"
-			>
-				<option
-					v-for="teacher in teachers"
-					:key="teacher.TagID"
-					:value="teacher.Name"
-				>
-					{{ teacher.Name }}
-				</option>
-			</select>
-		</div>
-		<transition-group name="list">
-			<post-card
-				v-for="post in posts"
-				:key="post.PostID"
-				:post="post"
-				@update-data="updateData"
-			/>
-		</transition-group>
-		<div
-			v-if="isLoading"
-			ref="bottom"
-			class="bottomDiv"
-		>
-			loading...
-		</div>
-		<div
-			v-else
-			class="bottomDiv"
-		>
-			noMore
-		</div>
-	</div>
+  <div class="root">
+    <h2>当前分区：{{ partition }}</h2>
+    <div v-if="partition === '课程专区'">
+      <span class="gradientUnderline">请选择你的老师，不选也没关系 </span>
+      <select
+        v-if="partition === '课程专区'"
+        id="teacher"
+        v-model="tag"
+      >
+        <option
+          v-for="teacher in teachers"
+          :key="teacher.TagID"
+          :value="teacher.Name"
+        >
+          {{ teacher.Name }}
+        </option>
+      </select>
+    </div>
+    <transition-group name="list">
+      <post-card
+        v-for="post in posts"
+        :key="post.PostID"
+        :post="post"
+        @update-data="updateData"
+      />
+    </transition-group>
+    <div
+      v-if="isLoading"
+      ref="bottom"
+      class="bottomDiv"
+    >
+      loading...
+    </div>
+    <div
+      v-else
+      class="bottomDiv"
+    >
+      noMore
+    </div>
+  </div>
 </template>
 <script setup>
 import { ref, onMounted, inject, watch, onUnmounted, computed } from 'vue';
