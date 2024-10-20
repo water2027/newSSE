@@ -89,3 +89,9 @@ onMounted(()=>{
 	postData.value.Content = postData.value.Content.slice(0,50)
 })
 </script>
+<style scoped>
+.card-root:hover {
+	box-shadow: var(--color-post-card-hover-box-shadow) 0px 5px 15px;
+	transform: scale(1.05);
+}
+</style>

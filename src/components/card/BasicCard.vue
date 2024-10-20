@@ -160,11 +160,6 @@ defineExpose({
 	transition: all 0.5s;
 }
 
-.card-root:hover {
-	box-shadow: var(--color-post-card-hover-box-shadow) 0px 5px 15px;
-	transform: scale(1.05);
-}
-
 .card-root .user{
 	height: auto;
 }

@@ -5,8 +5,11 @@
       :like-handler="like"
     >
       <template #userButtons>
-        <button @click.stop.prevent="handleSave">
-          {{ postData.IsSaved ? '取消' : '收藏' }}
+        <button
+          v-if="postData.UserTelephone === userInfo.phone"
+          @click.stop.prevent="handleDelete"
+        >
+          删除
         </button>
       </template>
       <template #comment>
