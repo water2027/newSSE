@@ -15,7 +15,7 @@
         </button>
         <button
           v-if="postData.UserTelephone === userInfo.phone"
-          @click.stop.prevent="handleDelete"
+          @click.stop.prevent="deleteHandler(deleteFunc)"
         >
           删除
         </button>
@@ -37,12 +37,13 @@ const props = defineProps({
 		type: Object,
 		required: true,
 	},
+	deleteHandler: {
+		type: Function,
+		required: true,
+	},
 });
 // 不能直接修改props，所以要用ref包装
 const postData = ref(props.post);
-
-// 提醒父组件更新数据，删除帖子时用
-const emit = defineEmits(['updateData']);
 
 const userInfo = inject('userInfo');
 
@@ -75,14 +76,13 @@ const like = async () => {
 /**
  * @description 删除帖子。
  */
-const handleDelete = async () => {
+const deleteFunc = async () => {
 	//后端没有返回数据，不要赋值后再更新
 	try {
 		await delPost(postData.value.PostID);
-		emit('updateData', postData.value.PostID);
-		showMsg('删除成功');
+		return true;
 	} catch (e) {
-		showMsg('失败了:-(');
+		return false;
 	}
 };
 onMounted(()=>{

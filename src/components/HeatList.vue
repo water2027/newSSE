@@ -12,13 +12,9 @@
       class="nav"
       :to="'/postdetail/' + post.PostID"
     >
-      <span
-        class="heatTitle"
-        :heat-score="post.Heat"
-      >
+      <span>
         {{ post.Title }}
       </span>
-      <span class="score">{{ post.Heat }}</span>
     </router-link>
   </div>
 </template>
@@ -91,10 +87,6 @@ onMounted(async () => {
 	background-color: var(--color-nav-hover);
 }
 
-.score {
-	margin-left: 10px;
-	color: #ff3232de;
-}
 @media screen and (min-width: 768px) {
 	.root {
 		width: 25%;

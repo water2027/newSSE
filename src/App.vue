@@ -4,6 +4,7 @@
   />
   <LoginViewVue
     v-else
+    @send-login-success="sendLoginSuccess"
   />
 </template>
 

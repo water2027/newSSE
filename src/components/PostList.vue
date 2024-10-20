@@ -22,7 +22,7 @@
         v-for="post in posts"
         :key="post.PostID"
         :post="post"
-        @update-data="updateData"
+        :delete-handler="deleteHandler"
       />
     </transition-group>
     <div
@@ -100,9 +100,12 @@ const updatePosts = async (id) => {
 	}
 };
 
-const updateData = async (id) => {
-	await updateNum();
-	await updatePosts(id);
+const deleteHandler = async (callback) => {
+	const res = await callback();
+	if(res){
+		await updateNum();
+		await updatePosts(id);
+	}
 };
 
 const getMore = async () => {

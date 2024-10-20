@@ -1,13 +1,14 @@
+<!-- eslint-disable vue/html-self-closing -->
 <template>
   <div class="postDetail">
     <basic-card
-      :card-data="postData"
+      :card-data="commentData"
       :like-handler="like"
     >
       <template #userButtons>
         <button
-          v-if="postData.UserTelephone === userInfo.phone"
-          @click.stop.prevent="handleDelete"
+          v-if="commentData.UserTelephone === userInfo.phone"
+          @click.stop.prevent="deleteHandler(deleteFunc)"
         >
           删除
         </button>
@@ -17,6 +18,7 @@
           <button @click="commentButtonIsShow = !commentButtonIsShow">
             {{ commentButtonIsShow ? '隐藏' : '发评论' }}
           </button>
+          <slot name="showCommentButton"></slot>
         </div>
         <MarkdownEditor
           v-if="commentButtonIsShow"
@@ -30,15 +32,13 @@
 <script setup>
 import { ref, inject, onMounted } from 'vue';
 
-import { showMsg } from '@/components/MessageBox';
 import BasicCard from './BasicCard.vue';
 import MarkdownEditor from '../MarkdownEditor.vue';
 
-import { savePost, likePost } from '@/api/SaveAndLike.js/SaveAndLike';
-import { sendComment } from '@/api/editPostAndComment/editComment';
+import { sendPComment } from '@/api/editPostAndComment/editComment';
 
 const props = defineProps({
-	post: {
+	comment: {
 		type: Object,
 		required: true,
 	},
@@ -46,48 +46,45 @@ const props = defineProps({
 		type: Function,
 		required: true,
 	},
+  deleteHandler:{
+    type:Function,
+    required:true,
+  }
 });
 // 不能直接修改props，所以要用ref包装
-const postData = ref(props.post);
+const commentData = ref(props.comment);
 
 const commentButtonIsShow = ref(false);
 const commentContent = ref('');
 
 const userInfo = inject('userInfo');
+const postID = inject('postID')
 
 /**
  * @description 发送评论
  */
 const sendCommentFunc = async () => {
-	const res = await sendComment(
-		commentContent.value,
-		Number(postData.value.PostID),
-		userInfo.value.phone
-	);
+  let sendingData = {
+    content:commentContent.value,
+    userTelephone:userInfo.value.phone,
+    postID:postID.value,
+  }
+  if(commentData.value.hasOwnProperty('userTargetName')){
+    sendingData['userTargetName'] = commentData.value.author
+  }
+  if(commentData.value.hasOwnProperty('PcommentID')){
+    sendingData['PcommentID'] = commentData.value.PcommentID
+  }
+  if(commentData.value.hasOwnProperty('ccommentID')){
+    sendingData['ccommentID'] = commentData.value.ccommentID
+  }
+	const res = await sendPComment(sendingData);
 	if (res) {
 		commentContent.value = '';
 		commentButtonIsShow.value = false;
 		return true;
 	} else {
 		return false;
-	}
-};
-
-/**
- * @description 收藏。
- */
-const handleSave = async () => {
-	//后端没有返回数据，不要赋值后再更新
-	try {
-		await savePost(
-			postData.value.IsSaved,
-			postData.value.PostID,
-			userInfo.value.phone
-		);
-		postData.value.IsSaved = !postData.value.IsSaved;
-		showMsg(postData.value.IsSaved ? '收藏成功' : '取消成功');
-	} catch (e) {
-		showMsg('失败了:-(');
 	}
 };
 
@@ -99,5 +96,4 @@ const like = async () => {
 	await likePost();
 };
 
-onMounted(() => {});
 </script>
