@@ -1,6 +1,5 @@
 <template>
   <div
-    v-if="isPC && !heatPostsIsHidden"
     class="root nav-bar heat"
   >
     <h2 id="heat">
@@ -29,16 +28,13 @@ const route = useRoute()
 const heatPosts = ref([]);
 
 const isPC = inject('isPC')
-/**
- * @description 发帖和看帖的时候隐藏热榜
- */
- const heatPostsIsHidden = computed(() => {
-	return /^\/post/.test(route.fullPath);
-});
 
 onMounted(async () => {
 	try {
+		console.log("www")
 		heatPosts.value = await getHeatPosts();
+		console.log(heatPosts.value)
+		console.log(isPC.value && !heatPostsIsHidden.value)
 	} catch (e) {
 		showMsg(`获取热帖失败:${e}`);
 	}

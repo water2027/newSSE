@@ -70,7 +70,7 @@
           </transition>
         </router-view>
       </div>
-      <heat-list />
+      <heat-list v-if="isPC && !heatPostsIsHidden" />
       <suspended-ball
         v-if="!isPC"
         :mode="mode"
@@ -89,6 +89,8 @@ import { getNoticesNum } from '@/api/notice/notice';
 import HeatList from '@/components/HeatList.vue';
 import LinkList from '@/components/LinkList.vue';
 import SuspendedBall from '@/components/SuspendedBall.vue';
+
+const route = useRoute()
 
 const mode = ref(document.body.className);
 const changeMode = () => {
@@ -113,6 +115,13 @@ const windowWidth = ref(window.innerWidth);
 const updateWidth = () => {
 	windowWidth.value = window.innerWidth;
 };
+
+/**
+ * @description 发帖和看帖的时候隐藏热榜
+ */
+ const heatPostsIsHidden = computed(() => {
+	return /^\/post/.test(route.fullPath);
+});
 
 const noticeNum = ref('');
 const reduceNoticeNum = ()=>{
