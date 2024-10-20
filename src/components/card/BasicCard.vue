@@ -5,12 +5,13 @@
       <img
         v-if="basicData.UserAvatar"
         :src="basicData.UserAvatar"
-      >
+      />
       <span class="user-name">{{ basicData.UserName }}</span>
       <span
         title="码之气，三段！"
         class="level"
-      >{{ expHandler(basicData.UserScore) }}
+        :class="levelClassHandler(basicData.UserScore)"
+      >{{ levelNameHandler(basicData.UserScore) }}
       </span>
       <div class="userButtons">
         <slot name="userButtons"></slot>
@@ -27,7 +28,7 @@
         v-for="img in strHandler('img', basicData.Photos)"
         :key="img"
         :src="img"
-      >
+      />
     </div>
     <span>{{ strHandler('time', basicData.PostTime) }}</span>
     <div class="basicInfo">
@@ -100,25 +101,25 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
 import { strHandler } from '@/utils/strHandler';
-import { expHandler } from '@/utils/expHandler';
+import { levelNameHandler, levelClassHandler } from '@/utils/level';
 
 import { showMsg } from '@/components/MessageBox';
 import MarkdownContainer from '../MarkdownContainer.vue';
 
 const props = defineProps({
-    cardData: {
-        type: Object,
-        required: true
-    },
-    likeHandler:{
-        type:Function,
-        required:true
-    }
-})
-const basicData = ref(props.cardData)
+	cardData: {
+		type: Object,
+		required: true,
+	},
+	likeHandler: {
+		type: Function,
+		required: true,
+	},
+});
+const basicData = ref(props.cardData);
 
 /**
  * @description 点赞。
@@ -126,7 +127,7 @@ const basicData = ref(props.cardData)
 const like = async () => {
 	//后端没有返回数据，不要赋值后再更新
 	try {
-		props.likeHandler()
+		props.likeHandler();
 		basicData.value.IsLiked = !basicData.value.IsLiked;
 		if (basicData.value.IsLiked) {
 			basicData.value.Like++;
@@ -141,9 +142,8 @@ const like = async () => {
 };
 
 defineExpose({
-    name:'BasicCard'
-})
-
+	name: 'BasicCard',
+});
 </script>
 <style scoped>
 .card-root {
@@ -160,7 +160,7 @@ defineExpose({
 	transition: all 0.5s;
 }
 
-.card-root .user{
+.card-root .user {
 	height: auto;
 }
 
@@ -184,7 +184,7 @@ defineExpose({
 	font-weight: bold;
 }
 
-.user .user-name{
+.user .user-name {
 	color: var(--color-user-text);
 }
 
@@ -246,12 +246,117 @@ a {
 }
 
 .level {
+  font-size: 1rem;
 	margin-left: 10px;
-	background: var(--color-level);
-	border-radius: 50%;
+	border-radius: 10%;
 	padding-left: 10px;
 	padding-right: 10px;
 	padding-top: 5px;
 	padding-bottom: 5px;
+}
+.level-undefined {
+	text-shadow:
+		0.2em 0.2em var(--color-level-undefined-box-shadow),
+		-0.2em -0.2em var(--color-level-undefined-box-shadow);
+}
+.level-0 {
+	background-color: #23a1b1de;
+}
+.level-1 {
+	background-color: #52b123;
+}
+.level-2 {
+	background-color: #b12323;
+}
+.level-3 {
+	background-color: rgb(197, 85, 29);
+}
+.level-4 {
+	background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #845ef7);
+	background-size: 300% 300%;
+	animation: change-color 5s ease infinite;
+}
+
+.level-5 {
+	background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #845ef7);
+	background-size: 300% 300%;
+	color: transparent;
+	background-clip: text;
+	animation: change-color 5s ease infinite;
+}
+
+.level-6{
+  position: relative;
+  background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #845ef7);
+	background-size: 300% 300%;
+	color: transparent;
+	background-clip: text;
+	animation: change-color 5s ease infinite;
+}
+.level-6::before {
+	content: 'Lv6 专家';
+	position: absolute;
+	transform: rotateX(180deg);
+	transform-origin: bottom;
+	line-height: 32px;
+	background: linear-gradient(0deg, var(--color-level-6-bg) 0, transparent 80%);
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+	opacity: 0.5;
+}
+.level-7 {
+	position: relative;
+	line-height: 32px;
+	background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #845ef7);
+  color: transparent;
+	background-clip: text;
+	-webkit-background-clip: text;
+  animation: change-color 5s ease infinite;
+  background-size: 300% 300%;
+	color: transparent;
+}
+.level-7::before{
+  content: 'Lv7 大神';
+  transform: rotateX(180deg);
+  position: absolute;
+  transform-origin: bottom;
+  background: linear-gradient(45deg, #ff6b6b3e, #f065953e, #cc5de83e, #845ef73e,transparent,#845ef73e, #cc5de83e, #f065953e, #ff6b6b3e);
+	background-size: 300% 300%;
+	color: transparent;
+	background-clip: text;
+	animation: change-color 5s ease infinite;
+  opacity: 0.5;
+}
+.level-8 {
+	position: relative;
+	line-height: 32px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), 
+  -2px -2px 4px rgba(255, 255, 255, 0.3);
+}
+.level-8::before {
+    content: '祖师爷';
+    transform: rotateX(160deg) skew(10deg);
+    position: absolute;
+    transform-origin: bottom;
+    background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #845ef7, transparent, #845ef7, #cc5de8, #f06595, #ff6b6b);
+    background-size: 300% 300%;
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+    animation: change-color 5s ease infinite;
+    opacity: 0.25;
+}
+
+@keyframes change-color {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }
 </style>

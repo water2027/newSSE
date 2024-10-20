@@ -30,7 +30,7 @@
             <span
               title="码之气，三段！"
               class="level"
-            >{{ expHandler(comment.AuthorScore) }}</span>
+            >{{ levelNameHandler(comment.AuthorScore) }}</span>
             <button
               v-if="comment.AuthorTelephone === userInfo.phone"
               @click="delCommentFunc(comment.PcommentID)"
@@ -152,10 +152,9 @@ import { useRoute } from 'vue-router';
 import { getPostByID } from '@/api/browse/getPost';
 import { getCommentsByPostID } from '@/api/browse/getComment';
 import { sendPComment,delComment,delCcomment } from '@/api/editPostAndComment/editComment';
-import { likePost } from '@/api/SaveAndLike.js/SaveAndLike';
 
 import { strHandler } from '@/utils/strHandler';
-import { expHandler } from '@/utils/expHandler';
+import { levelNameHandler } from '@/utils/level';
 
 import { showImg } from '@/components/ImageShower';
 import { showMsg } from '@/components/MessageBox';

@@ -104,7 +104,7 @@ const deleteHandler = async (callback) => {
 	const res = await callback();
 	if(res){
 		await updateNum();
-		await updatePosts(id);
+		await updatePosts(res);
 	}
 };
 

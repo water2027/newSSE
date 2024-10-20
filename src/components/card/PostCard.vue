@@ -80,9 +80,9 @@ const deleteFunc = async () => {
 	//后端没有返回数据，不要赋值后再更新
 	try {
 		await delPost(postData.value.PostID);
-		return true;
+		return postData.value.PostID;
 	} catch (e) {
-		return false;
+		return 0;
 	}
 };
 onMounted(()=>{
