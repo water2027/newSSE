@@ -46,7 +46,7 @@ import { ref, onMounted, inject, watch, onUnmounted, computed } from 'vue';
 import { getTeachers } from '@/api/info/getTeacher';
 import { getPosts, getPostsNum } from '@/api/browse/getPost';
 
-import PostCard from './PostCard.vue';
+import PostCard from './card/PostCard.vue';
 
 const userInfo = inject('userInfo');
 const partition = inject('partition');
