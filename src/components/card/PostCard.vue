@@ -27,7 +27,7 @@
 import { ref, inject, onMounted } from 'vue';
 
 import { showMsg } from '@/components/MessageBox';
-import BasicCard from './card/BasicCard.vue';
+import BasicCard from './BasicCard.vue';
 
 import { savePost, likePost } from '@/api/SaveAndLike.js/SaveAndLike';
 import { delPost } from '@/api/editPostAndComment/editPost';
