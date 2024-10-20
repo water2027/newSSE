@@ -23,18 +23,12 @@ import { useRoute } from 'vue-router'
 
 import { getHeatPosts } from '@/api/browse/getPost';
 import { showMsg } from '@/components/MessageBox';
-const route = useRoute()
 
 const heatPosts = ref([]);
 
-const isPC = inject('isPC')
-
 onMounted(async () => {
 	try {
-		console.log("www")
 		heatPosts.value = await getHeatPosts();
-		console.log(heatPosts.value)
-		console.log(isPC.value && !heatPostsIsHidden.value)
 	} catch (e) {
 		showMsg(`获取热帖失败:${e}`);
 	}
