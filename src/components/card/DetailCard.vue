@@ -93,7 +93,7 @@ const handleSave = async () => {
  */
 const like = async () => {
 	//后端没有返回数据，不要赋值后再更新
-	await likePost();
+	await likePost(postData.value.IsLiked, postData.value.PostID,userInfo.value.phone);
 };
 
 onMounted(() => {});
