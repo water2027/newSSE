@@ -177,7 +177,7 @@
             <div
               v-for="subComment in comment.SubComments"
               :key="subComment.ccommentID"
-              class="commentItem"
+              class="commentItem subCommentItem"
             >
               <div class="user">
                 <img
@@ -504,8 +504,12 @@ b {
 	flex-direction: column;
 	margin-top: 10px;
 	margin-bottom: 10px;
-	border: 1px solid #f0f0f0;
-	width: 97%;
+	border: 1px solid var(--color-border);
+	width: 100%;
+}
+
+.subCommentItem{
+  width: 97%;
 }
 
 .commentButton {
