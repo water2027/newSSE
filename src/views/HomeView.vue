@@ -253,6 +253,10 @@ header {
 	height: 30px;
 }
 
+.search button{
+	overflow: hidden;
+}
+
 header input {
 	height: 100%;
 	border-radius: 15px;

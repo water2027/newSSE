@@ -95,14 +95,14 @@
           </svg>
         </span>
       </div>
-    </div>
-    <div class="comment">
-      <h2>评论</h2>
       <div class="commentButton">
         <button @click="commentButtonIsShow = !commentButtonIsShow">
           {{ commentButtonIsShow ? '隐藏' : '发评论' }}
         </button>
       </div>
+    </div>
+    <div class="comment">
+      <h2>评论</h2>
       <MarkdownEditor
         v-if="commentButtonIsShow"
         v-model="commentContent"
