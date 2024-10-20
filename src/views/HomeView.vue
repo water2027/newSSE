@@ -74,7 +74,7 @@
   </div>
 </template>
 <script setup>
-import { computed, onMounted, provide, ref, inject } from 'vue';
+import { computed, onMounted, provide, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { getNoticesNum } from '@/api/notice/notice';
@@ -89,9 +89,9 @@ const changeMode = () => {
 	document.body.className =
 		currentMode == 'light-mode' ? 'dark-mode' : 'light-mode';
 	mode.value = currentMode == 'light-mode' ? 'dark-mode' : 'light-mode';
+	localStorage.setItem('mode', document.body.className);
 };
 
-const route = useRoute();
 const router = useRouter();
 
 const isPC = computed(() => {
@@ -201,6 +201,8 @@ const getNoticesNumFunc = async () => {
 };
 
 onMounted(async () => {
+	mode.value = localStorage.getItem('mode') || 'light-mode';
+	document.body.className = mode.value;
 	if (!isPC.value) {
 		navIsOpen.value = false;
 	}
