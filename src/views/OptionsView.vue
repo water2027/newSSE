@@ -127,13 +127,15 @@ const updateUserInfoFunc = async () => {
  * @description 删除所有信息
  */
 const logout = () => {
-	localStorage.removeItem('userInfo');
-	localStorage.removeItem('token');
-	localStorage.removeItem('email');
-	localStorage.removeItem('password');
-	localStorage.removeItem('rememberMe');
-	router.push('/');
-	window.location.reload();
+  if(confirm("确定要退出登录吗")){
+    localStorage.removeItem('userInfo');
+    localStorage.removeItem('token');
+    localStorage.removeItem('email');
+    localStorage.removeItem('password');
+    localStorage.removeItem('rememberMe');
+    router.push('/');
+    window.location.reload();
+  }
 };
 
 onMounted(async () => {
