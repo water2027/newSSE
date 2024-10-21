@@ -6,6 +6,7 @@
     <basic-card
       :card-data="postData"
       :like-handler="like"
+      :is-post="true"
     >
       <template
         #userButtons

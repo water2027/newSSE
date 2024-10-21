@@ -22,7 +22,13 @@
       </div>
     </div>
     <h2>{{ basicData.Title }}</h2>
-    <MarkdownContainer :markdown-content="basicData.Content || 'loading'" />
+    <p v-if="isPost">
+      {{ basicData.Content||'loading' }}
+    </p>
+    <MarkdownContainer
+      v-else
+      :markdown-content="basicData.Content || 'loading'"
+    />
     <div
       v-if="basicData.Photos"
       class="imgs"
@@ -122,6 +128,12 @@ const props = defineProps({
 		type: Function,
 		required: true,
 	},
+	// 如果是帖子卡片
+	isPost:{
+		type:Boolean,
+		required:false,
+		default:false
+	}
 });
 const basicData = ref(props.cardData);
 
