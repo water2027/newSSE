@@ -7,7 +7,7 @@
         class="user-avatar"
         :src="basicData.UserAvatar"
       />
-      <span class="user-name">{{ basicData.UserName }}</span>
+      <span class="user-name"><span v-if="basicData.UserIdentity==='teacher'" class="teacher_identity">老师</span>{{ basicData.UserName }}</span>
       <span
         title="码之气，三段！"
         class="level"
@@ -244,6 +244,12 @@ a {
 	text-decoration: none;
 	color: black;
 	display: block;
+}
+.teacher_identity{
+	color: #7d6c02;
+	margin-left: 8px;
+	margin-right: 10px;
+	background-color: #53a42180; 
 }
 
 .level {
