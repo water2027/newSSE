@@ -19,7 +19,6 @@
     </div>
     <transition-group
       name="list"
-      class="list"
     >
       <post-card
         v-for="post in posts"
