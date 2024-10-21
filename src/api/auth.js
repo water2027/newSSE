@@ -9,7 +9,7 @@ function getTokenWithExpiry() {
     const now = new Date()
 
     if (now.getTime() > item.expiry) {
-        localStorage.removeItem(key)
+        localStorage.removeItem('token')
         return null
     }
 
