@@ -1,6 +1,6 @@
 <template>
   <div
-    class="ball"
+    class="ball root"
   >
     <div
       class="first"

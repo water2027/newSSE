@@ -1,7 +1,10 @@
 <!-- eslint-disable vue/no-v-html -->
 <!-- eslint-disable vue/html-self-closing -->
 <template>
-  <div id="mdRoot">
+  <div
+    id="mdRoot"
+    class="root"
+  >
     <div class="editorButton">
       <button @click="editContent('标题')">
         标题

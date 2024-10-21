@@ -1,5 +1,8 @@
 <template>
-  <div id="myRoot">
+  <div
+    id="myRoot"
+    class="root"
+  >
     <editor
       editor-class="editor"
       :model-value="modelValue"

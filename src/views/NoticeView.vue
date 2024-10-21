@@ -21,12 +21,14 @@
         <span>{{ notice.senderName }}</span>
         <p>{{ notice.content }}</p>
         <span>{{ strHandler('time', notice.time) }}</span>
-        <button @click="readComment(notice.noticeID)">
-          标记为已读
-        </button>
-        <button @click="changeToPost(notice.postID)">
-          查看原帖
-        </button>
+        <div class="noticeButtons">
+          <button @click="readComment(notice.noticeID)">
+            标记为已读
+          </button>
+          <button @click="changeToPost(notice.postID)">
+            查看原帖
+          </button>
+        </div>
       </div>
     </div>
     <!-- 已读界面 -->
@@ -39,9 +41,11 @@
         <span>{{ notice.senderName }}</span>
         <p>{{ notice.content }}</p>
         <span>{{ strHandler('time', notice.time) }}</span>
-        <button @click="changeToPost(notice.postID)">
-          查看原帖
-        </button>
+        <div>
+          <button @click="changeToPost(notice.postID)">
+            查看原帖
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -99,14 +103,20 @@ onMounted(async () => {
 </script>
 <style scoped>
 .root{
+  width: 100%;
 	color: var(--color-text);
   display: flex;
   flex-direction: column;
 }
+.notice-title, .noticeButtons {
+  width: 100%;
+}
+
 .notice-title {
 	color: var(--color-text);
   margin-left: auto;
 	margin-right: auto;
+  text-align: center;
 }
 .notice {
 	border: 1px solid var(--color-border);
@@ -114,13 +124,16 @@ onMounted(async () => {
 	padding: 10px;
 }
 .noticeButtons {
-  margin-left: auto;
-	margin-right: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  /* margin-left: auto;
+	margin-right: auto; */
 }
 p {
 	text-indent: 2rem;
   word-break: break-all;
   white-space: pre-wrap;
-  
+
 }
 </style>

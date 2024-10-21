@@ -1,6 +1,6 @@
 <template>
   <router-link
-    class="post"
+    class="post root"
     :to="'/postdetail/' + postData.PostID"
   >
     <basic-card

@@ -1,6 +1,9 @@
 <!-- eslint-disable vue/html-self-closing -->
 <template>
-  <div id="root">
+  <div
+    id="root"
+    class="root"
+  >
     <header>
       <div id="title">
         <button

@@ -1,7 +1,7 @@
 <template>
   <div
     id="mainNavBar"
-    class="nav-bar main-nav-bar"
+    class="nav-bar main-nav-bar root"
     @click="toggleNav"
   >
     <router-link

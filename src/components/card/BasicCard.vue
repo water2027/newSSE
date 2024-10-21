@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/html-self-closing -->
 <template>
-  <div class="card-root">
+  <div class="card-root root">
     <div class="user">
       <img
         v-if="basicData.UserAvatar"

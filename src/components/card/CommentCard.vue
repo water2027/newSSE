@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/html-self-closing -->
 <template>
-  <div class="postDetail">
+  <div class="postDetail root">
     <basic-card
       :card-data="commentData"
       :like-handler="like"

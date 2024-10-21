@@ -1,5 +1,5 @@
 <template>
-  <div class="postDetail">
+  <div class="postDetail root">
     <basic-card
       :card-data="postData"
       :like-handler="like"

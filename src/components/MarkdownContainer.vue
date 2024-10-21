@@ -4,7 +4,7 @@
   <div
     id="content"
     ref="content"
-    class="hasImgDiv"
+    class="hasImgDiv root"
     :style="mdContainerStyle"
     v-html="safeHTML(markdownContent)"
   ></div>

@@ -123,3 +123,7 @@ hr {
 		margin-left: 2rem;
 	}
 }
+
+.root{
+	color: var(--color-text);
+}

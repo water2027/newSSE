@@ -1,8 +1,7 @@
 <!-- eslint-disable vue/html-self-closing -->
 <template>
   <div
-    id="root"
-    class="pageWithLoginButton"
+    class="pageWithLoginButton root"
   >
     <span class="title">{{ title }}</span>
     <!-- 登录 -->
