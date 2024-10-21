@@ -123,6 +123,39 @@ defineExpose({
   word-break: break-all;
 }
 
+:deep(pre) {
+	display: block;
+	background-color: #282c34;
+	border: 1px solid #ccc;
+	padding: 10px;
+	margin-bottom: 5px;
+	position: relative;
+	pointer-events: none;
+	font-size: 20px !important;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	overflow-x: auto;
+	z-index: 0;
+	max-width: 100%;
+}
+
+:deep(pre::before) {
+	content: '';
+	color: var(--color-text);
+	background-image: url('/PhCopy.webp');
+	filter: invert(1);
+	background-size: cover;
+	display: block;
+	width: 20px;
+	height: 20px;
+	position: absolute;
+	z-index: 1;
+	top: 3px;
+	right: 3px;
+	pointer-events: auto;
+	/* 确保伪元素可以接收鼠标事件 */
+}
+
 :deep(h1), :deep(h2), :deep(h3), :deep(h4), :deep(h5), :deep(h6) {
   margin-top: 1.5em;
   margin-bottom: 0.5em;
