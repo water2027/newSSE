@@ -93,7 +93,7 @@ onMounted(()=>{
 @media screen and (min-width:768px) {
 	.card-root:hover {
 		box-shadow: var(--color-post-card-hover-box-shadow) 0px 5px 15px;
-		transform: scale(1.05);
+		transform: scale(1.03);
 	}
 }
 </style>
