@@ -610,10 +610,9 @@ main {
   .post-button {
     color: #444;
     font-weight: bold;
-    font-size: 24px;
-    height: 100%;
 
     svg {
+      font-size: 24px;
       vertical-align: middle;
     }
   }
