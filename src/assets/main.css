@@ -107,6 +107,9 @@ hr {
 }
 
 @media screen and (max-width: 768px) {
+	*{
+		overflow-x: hidden;
+	}
 	.fileInput,
 	button {
 		padding: 5%;
@@ -127,3 +130,5 @@ hr {
 .root{
 	color: var(--color-text);
 }
+
+

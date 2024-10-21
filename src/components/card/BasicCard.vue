@@ -4,6 +4,7 @@
     <div class="user">
       <img
         v-if="basicData.UserAvatar"
+        class="user-avatar"
         :src="basicData.UserAvatar"
       />
       <span class="user-name">{{ basicData.UserName }}</span>
