@@ -7,7 +7,6 @@
     <header>
       <div class="site-top">
         <div
-          v-if="isPC"
           class="top-left"
         ></div>
         <div
@@ -20,15 +19,14 @@
           SSE MARKET
         </div>
         <div
-          v-if="isPC"
           class="top-right"
         >
           <div
             class="mode-select"
             @click="changeMode"
           >
-            <!-- 改成图标 -->
-            {{ mode }}
+            <Icon v-if="mode === 'dark-mode'" icon="material-symbols:dark-mode" />
+            <Icon v-else icon="material-symbols:light-mode" />
           </div>
         </div>
       </div>
@@ -71,7 +69,7 @@
             @keydown.enter="search"
           />
           <button @click="search">
-            搜
+            <Icon icon="material-symbols:search" />
           </button>
           <!-- 改成图标 -->
         </div>
@@ -104,34 +102,15 @@
             {{ userInfo.name }}
           </router-link>
         </div>
-        <button
+        <div
           v-if="!isPC"
-          class="toPost"
+          class="post-button"
           @click="changeToPost"
         >
-          +
-        </button>
+          <Icon icon="material-symbols:add" />
+        </div>
       </div>
     </header>
-    <!-- <header>
-      <div id="title">
-        <button v-if="!isPC" class="hamburgerMenu" @click="toggleNav">
-          <span />
-          <span />
-          <span />
-        </button>
-        <h1>SSE_MARKET</h1>
-        <button v-if="!isPC" class="toPost" @click="changeToPost">+</button>
-      </div>
-      <div class="search">
-        <input ref="sinfo" placeholder="在当前分区搜索" type="search" @keydown.enter="search" />
-        <button @click="search">搜索</button>
-      </div>
-      <button v-if="isPC" @click="returnToTop">&uarr;</button>
-      <button v-if="isPC" @click="changeMode">
-        {{ mode }}
-      </button>
-    </header> -->
     <main>
       <link-list
         v-if="!isPC && navIsOpen"
@@ -166,6 +145,8 @@ import { computed, onMounted, provide, inject, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { getNoticesNum } from '@/api/notice/notice';
+
+import { Icon } from '@iconify/vue';
 
 import HeatList from '@/components/HeatList.vue';
 import LinkList from '@/components/LinkList.vue';
@@ -361,7 +342,7 @@ header {
 
   .top-left,
   .top-right {
-    width: 8rem;
+    width: 0;
     display: flex;
     align-items: center;
     justify-content: end;
@@ -370,8 +351,9 @@ header {
 
   .mode-select {
     color: #eee;
+    display: flex;
+    align-items: center;
     cursor: pointer;
-    font-family: 'Ubuntu', Arial, Helvetica, sans-serif;
   }
 }
 
@@ -430,7 +412,7 @@ header {
       width: 100%;
       max-width: 48em;
       height: 2em;
-      padding: 0 0.75em;
+      padding: 0 2em 0 0.75em;
       border: 1px solid #ccc;
       border-radius: 5px;
       line-height: 0.8;
@@ -439,10 +421,10 @@ header {
 
     button {
       background: unset;
-      height: 2em;
-      width: 2em;
+      height: 1em;
+      width: 1em;
       padding: 0;
-      margin: 0 0 0 -2em;
+      margin: 0 0 0 -1.5em;
       vertical-align: middle;
     }
   }
@@ -625,23 +607,14 @@ main {
     width: 25%;
   }
 
-  .toPost {
-    margin-top: auto;
-    margin-bottom: auto;
-    margin-left: auto;
-    
-    font-size: 2rem;
-    color: var(--color-to-post);
-    text-decoration: none;
-    border: 1px solid var(--color-to-post-border);
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--color-to-post-bg);
-    text-align: center;
+  .post-button {
+    color: #444;
+    font-weight: bold;
+
+    svg {
+      font-size: 24px;
+      vertical-align: middle;
+    }
   }
 }
 </style>
