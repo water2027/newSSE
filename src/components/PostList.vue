@@ -280,10 +280,15 @@ defineExpose({
 	}
 }
 
+@media screen and (max-width: 768px) {
+	.root {
+		overflow-x: hidden;
+	}
+}
+
 .root {
 	width: 100%;
 	color: var(--color-text);
-	overflow-x: hidden;
 }
 
 .bottomDiv {
