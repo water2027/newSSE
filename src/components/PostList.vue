@@ -17,7 +17,10 @@
         </option>
       </select>
     </div>
-    <transition-group name="list">
+    <transition-group
+      name="list"
+      class="list"
+    >
       <post-card
         v-for="post in posts"
         :key="post.PostID"
@@ -281,6 +284,7 @@ defineExpose({
 .root {
 	width: 100%;
 	color: var(--color-text);
+	overflow-x: hidden;
 }
 
 .bottomDiv {

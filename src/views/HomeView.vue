@@ -6,7 +6,10 @@
   >
     <header>
       <div class="site-top">
-        <div v-if="isPC" class="top-left"></div>
+        <div
+          v-if="isPC"
+          class="top-left"
+        ></div>
         <div
           class="title"
           @click="
@@ -16,38 +19,91 @@
         >
           SSE MARKET
         </div>
-        <div v-if="isPC" class="top-right">
-          <div class="mode-select" @click="changeMode">
+        <div
+          v-if="isPC"
+          class="top-right"
+        >
+          <div
+            class="mode-select"
+            @click="changeMode"
+          >
             <!-- 改成图标 -->
             {{ mode }}
           </div>
         </div>
       </div>
       <div class="site-header">
-        <button v-if="!isPC" class="hamburgerMenu" @click="toggleNav">
+        <button
+          v-if="!isPC"
+          class="hamburgerMenu"
+          @click="toggleNav"
+        >
           <span />
           <span />
           <span />
         </button>
-        <div v-if="isPC" class="links">
-          <router-link to="/post" @click="changeToPost">发帖</router-link>
-          <router-link to="/partitions">分区</router-link>
-          <router-link to="/course" @click="changeToCourse">课程专区</router-link>
-          <router-link to="/feedback">反馈</router-link>
+        <div
+          v-if="isPC"
+          class="links"
+        >
+          <router-link
+            to="/post"
+            @click="changeToPost"
+          >
+            发帖
+          </router-link>
+          <router-link to="/partitions">
+            分区
+          </router-link>
+          <router-link
+            to="/course"
+            @click="changeToCourse"
+          >
+            课程专区
+          </router-link>
+          <router-link to="/feedback">
+            反馈
+          </router-link>
         </div>
         <div class="search">
-          <input ref="sinfo" placeholder="在 当前分区 搜索..." @keydown.enter="search" />
-          <button @click="search">搜</button>
+          <input
+            ref="sinfo"
+            placeholder="在 当前分区 搜索..."
+            @keydown.enter="search"
+          />
+          <button @click="search">
+            搜
+          </button>
           <!-- 改成图标 -->
         </div>
-        <div v-if="isPC" class="account links">
-          <router-link to="/save" @click="changeToSave">收藏</router-link>
-          <router-link to="/history" @click="changeToHistory">发帖历史</router-link>
+        <div
+          v-if="isPC"
+          class="account links"
+        >
+          <router-link
+            to="/save"
+            @click="changeToSave"
+          >
+            收藏
+          </router-link>
+          <router-link
+            to="/history"
+            @click="changeToHistory"
+          >
+            发帖历史
+          </router-link>
           <router-link to="/notice">
             通知
-            <div v-if="noticeNum" class="notice-num">{{ noticeNum }}</div>
+            <div
+              v-if="noticeNum"
+              class="notice-num"
+            >
+              {{ noticeNum }}
+            </div>
           </router-link>
-          <router-link to="/options">{{ userInfo.name }}</router-link>
+          <router-link to="/options">
+            {{ userInfo.name }}
+          </router-link>
         </div>
       </div>
     </header>
@@ -71,16 +127,31 @@
       </button>
     </header> -->
     <main>
-      <link-list v-if="!isPC && navIsOpen" @change-path="changePathHandler" @click="toggleNav" />
+      <link-list
+        v-if="!isPC && navIsOpen"
+        @change-path="changePathHandler"
+        @click="toggleNav"
+      />
       <div class="content">
         <router-view v-slot="{ Component }">
-          <transition name="bounce" mode="out-in">
-            <component :is="Component" @send-partition="sendPartition" />
+          <transition
+            name="bounce"
+            mode="out-in"
+          >
+            <component
+              :is="Component"
+              @send-partition="sendPartition"
+            />
           </transition>
         </router-view>
       </div>
       <heat-list v-if="isPC && !heatPostsIsHidden" />
-      <suspended-ball v-if="!isPC" :mode="mode" :change-mode="changeMode" :return-to-top="returnToTop" />
+      <suspended-ball
+        v-if="!isPC"
+        :mode="mode"
+        :change-mode="changeMode"
+        :return-to-top="returnToTop"
+      />
     </main>
   </div>
 </template>
