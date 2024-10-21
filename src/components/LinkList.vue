@@ -94,7 +94,7 @@
   </div>
 </template>
 <script setup>
-import { ref,inject, computed } from 'vue'
+import { inject, computed } from 'vue'
 import { useRoute } from 'vue-router'
 
 const emit = defineEmits(['changePath'])

@@ -315,22 +315,7 @@ onMounted(async () => {
   // 之后考虑在组件加载时获取
   const baseUrl = import.meta.env.BASE_URL;
   const path = window.location.pathname.replace(baseUrl, '');
-  switch (path) {
-    case '':
-      changeToMain();
-      break;
-    case 'save':
-      changeToSave();
-      break;
-    case 'history':
-      changeToHistory();
-      break;
-    case 'course':
-      changeToCourse();
-      break;
-    default:
-      break;
-  }
+  changePathHandler(path)
   getNoticesNumFunc();
   window.addEventListener('resize', updateWidth);
 });

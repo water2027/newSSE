@@ -18,8 +18,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, computed,inject } from 'vue';
-import { useRoute } from 'vue-router'
+import { ref, onMounted } from 'vue';
 
 import { getHeatPosts } from '@/api/browse/getPost';
 import { showMsg } from '@/components/MessageBox';
