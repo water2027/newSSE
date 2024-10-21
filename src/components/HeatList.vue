@@ -1,25 +1,25 @@
-<!-- eslint-disable vue/html-indent -->
 <template>
-	<div class="root nav-bar heat">
-		<h2 id="heat">热榜</h2>
-		<router-link
-			v-for="post in heatPosts"
-			:key="post.PostID"
-			class="nav"
-			:to="'/postdetail/' + post.PostID"
-		>
-			<span
-				class="heatTitle"
-				:heat-score="post.Heat"
-			>
-				{{ post.Title }}
-			</span>
-			<span class="score">{{ post.Heat }}</span>
-		</router-link>
-	</div>
+  <div
+    class="root nav-bar heat"
+  >
+    <h2 id="heat">
+      热榜
+    </h2>
+    <router-link
+      v-for="post in heatPosts"
+      :key="post.PostID"
+      class="nav"
+      :to="'/postdetail/' + post.PostID"
+    >
+      <span>
+        {{ post.Title }}
+      </span>
+    </router-link>
+  </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed,inject } from 'vue';
+import { useRoute } from 'vue-router'
 
 import { getHeatPosts } from '@/api/browse/getPost';
 import { showMsg } from '@/components/MessageBox';
@@ -77,10 +77,6 @@ onMounted(async () => {
 	background-color: var(--color-nav-hover);
 }
 
-.score {
-	margin-left: 10px;
-	color: #ff3232de;
-}
 @media screen and (min-width: 768px) {
 	.root {
 		width: 25%;

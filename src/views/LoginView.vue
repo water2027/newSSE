@@ -1,208 +1,209 @@
 <!-- eslint-disable vue/html-self-closing -->
-<!-- eslint-disable vue/html-indent -->
 <template>
-	<div id="root" class="pageWithLoginButton">
-		<span class="title">{{ title }}</span>
-		<!-- 登录 -->
-		<div
-			v-if="page === 0"
-			class="loginAndRegPage"
-		>
-			<div class="inputData">
-				<input
-					id="loginEmail"
-					ref="email"
-					type="email"
-					required
-				/>
-				<div class="underline"></div>
-				<label for="loginEmail">邮箱</label>
-			</div>
-			<div class="inputData">
-				<input
-					id="loginPassword"
-					ref="password1"
-					type="password"
-					required
-				/>
-				<div class="underline"></div>
-				<label for="loginPassword">密码</label>
-			</div>
-			<div>
-				<input
-					ref="remembered"
-					type="checkbox"
-					class="checkbox"
-				/>记住我
-			</div>
-			<button
-				class="LoginAndRegButton"
-				@click="login"
-			>
-				Login!
-			</button>
-			<div class="regButtons">
-				<div
-					class="regButtonDiv"
-					@click="jumpToReg"
-				>
-					<span class="regButton">还没有账号？</span>
-				</div>
-				<div
-					class="regButtonDiv"
-					@click="forget"
-				>
-					<span class="regButton">忘记密码了？</span>
-				</div>
-			</div>
-		</div>
-		<!-- 注册 -->
-		<div
-			v-else-if="page === 1"
-			class="loginAndRegPage reg"
-		>
-			<div class="inputData">
-				<input
-					id="username"
-					ref="username"
-					type="text"
-					required
-				/>
-				<div class="underline"></div>
-				<label for="username">用户名</label>
-			</div>
-			<div class="inputData">
-				<input
-					id="regEmail"
-					ref="email"
-					type="email"
-					required
-				/>
-				<div class="underline"></div>
-				<label for="regEmail">邮箱</label>
-			</div>
-			<div class="inputData">
-				<input
-					ref="code"
-					type="text"
-					required
-				/>
-				<div class="underline"></div>
-				<label>验证码</label>
-			</div>
-			<div class="inputData">
-				<input
-					id="password1"
-					ref="password1"
-					type="password"
-					required
-				/>
-				<div class="underline"></div>
-				<label for="password1">密码</label>
-			</div>
-			<div class="inputData">
-				<input
-					id="password2"
-					ref="password2"
-					type="password"
-					required
-				/>
-				<div class="underline"></div>
-				<label for="password2">重复</label>
-			</div>
-			<div class="inputData">
-				<input
-					id="CDkey"
-					ref="CDkey"
-					type="text"
-					required
-				/>
-				<div class="underline"></div>
-				<label for="CDkey">邀请码</label>
-			</div>
-			<button
-				class="LoginAndRegButton"
-				@click="getVCode(0)"
-			>
-				发送验证码
-			</button>
-			<button
-				class="LoginAndRegButton"
-				@click="reg"
-			>
-				Register!
-			</button>
-			<div
-				class="regButtonDiv"
-				@click="jumpToReg"
-			>
-				<span class="regButton">已有账号？</span>
-			</div>
-		</div>
-		<!-- 忘记密码 -->
-		<div
-			v-else-if="page === 2"
-			class="loginAndRegPage"
-		>
-			<div class="inputData">
-				<input
-					id="loginEmail"
-					ref="email"
-					type="email"
-					required
-				/>
-				<div class="underline"></div>
-				<label for="loginEmail">邮箱</label>
-			</div>
-			<div class="inputData">
-				<input
-					ref="code"
-					type="text"
-					required
-				/>
-				<div class="underline"></div>
-				<label>验证码</label>
-			</div>
-			<div class="inputData">
-				<input
-					id="password1"
-					ref="password1"
-					type="password"
-					required
-				/>
-				<div class="underline"></div>
-				<label for="password1">密码</label>
-			</div>
-			<div class="inputData">
-				<input
-					id="password2"
-					ref="password2"
-					type="password"
-					required
-				/>
-				<div class="underline"></div>
-				<label for="password2">重复</label>
-			</div>
-			<button
-				class="LoginAndRegButton"
-				@click="getVCode(1)"
-			>
-				发送验证码
-			</button>
-			<button
-				class="LoginAndRegButton"
-				@click="resetPwd"
-			>
-				重置!
-			</button>
-			<div
-				class="regButtonDiv"
-				@click="forget"
-			>
-				<span class="regButton">我没忘！</span>
-			</div>
-		</div>
-	</div>
+  <div
+    class="pageWithLoginButton root"
+  >
+    <span class="title">{{ title }}</span>
+    <!-- 登录 -->
+    <div
+      v-if="page === 0"
+      class="loginAndRegPage"
+    >
+      <div class="inputData">
+        <input
+          id="loginEmail"
+          ref="email"
+          type="email"
+          required
+        />
+        <div class="underline"></div>
+        <label for="loginEmail">邮箱</label>
+      </div>
+      <div class="inputData">
+        <input
+          id="loginPassword"
+          ref="password1"
+          type="password"
+          required
+        />
+        <div class="underline"></div>
+        <label for="loginPassword">密码</label>
+      </div>
+      <div>
+        <input
+          ref="remembered"
+          type="checkbox"
+          class="checkbox"
+        />记住我
+      </div>
+      <button
+        class="LoginAndRegButton"
+        @click="login"
+      >
+        Login!
+      </button>
+      <div class="regButtons">
+        <div
+          class="regButtonDiv"
+          @click="jumpToReg"
+        >
+          <span class="regButton">还没有账号？</span>
+        </div>
+        <div
+          class="regButtonDiv"
+          @click="forget"
+        >
+          <span class="regButton">忘记密码了？</span>
+        </div>
+      </div>
+    </div>
+    <!-- 注册 -->
+    <div
+      v-else-if="page === 1"
+      class="loginAndRegPage reg"
+    >
+      <div class="inputData">
+        <input
+          id="username"
+          ref="username"
+          type="text"
+          required
+        />
+        <div class="underline"></div>
+        <label for="username">用户名</label>
+      </div>
+      <div class="inputData">
+        <input
+          id="regEmail"
+          ref="email"
+          type="email"
+          required
+        />
+        <div class="underline"></div>
+        <label for="regEmail">邮箱</label>
+      </div>
+      <div class="inputData">
+        <input
+          ref="code"
+          type="text"
+          required
+        />
+        <div class="underline"></div>
+        <label>验证码</label>
+      </div>
+      <div class="inputData">
+        <input
+          id="password1"
+          ref="password1"
+          type="password"
+          required
+        />
+        <div class="underline"></div>
+        <label for="password1">密码</label>
+      </div>
+      <div class="inputData">
+        <input
+          id="password2"
+          ref="password2"
+          type="password"
+          required
+        />
+        <div class="underline"></div>
+        <label for="password2">重复</label>
+      </div>
+      <div class="inputData">
+        <input
+          id="CDkey"
+          ref="CDkey"
+          type="text"
+          required
+        />
+        <div class="underline"></div>
+        <label for="CDkey">邀请码</label>
+      </div>
+      <button
+        class="LoginAndRegButton"
+        @click="getVCode(0)"
+      >
+        发送验证码
+      </button>
+      <button
+        class="LoginAndRegButton"
+        @click="reg"
+      >
+        Register!
+      </button>
+      <div
+        class="regButtonDiv"
+        @click="jumpToReg"
+      >
+        <span class="regButton">已有账号？</span>
+      </div>
+    </div>
+    <!-- 忘记密码 -->
+    <div
+      v-else-if="page === 2"
+      class="loginAndRegPage"
+    >
+      <div class="inputData">
+        <input
+          id="loginEmail"
+          ref="email"
+          type="email"
+          required
+        />
+        <div class="underline"></div>
+        <label for="loginEmail">邮箱</label>
+      </div>
+      <div class="inputData">
+        <input
+          ref="code"
+          type="text"
+          required
+        />
+        <div class="underline"></div>
+        <label>验证码</label>
+      </div>
+      <div class="inputData">
+        <input
+          id="password1"
+          ref="password1"
+          type="password"
+          required
+        />
+        <div class="underline"></div>
+        <label for="password1">密码</label>
+      </div>
+      <div class="inputData">
+        <input
+          id="password2"
+          ref="password2"
+          type="password"
+          required
+        />
+        <div class="underline"></div>
+        <label for="password2">重复</label>
+      </div>
+      <button
+        class="LoginAndRegButton"
+        @click="getVCode(1)"
+      >
+        发送验证码
+      </button>
+      <button
+        class="LoginAndRegButton"
+        @click="resetPwd"
+      >
+        重置!
+      </button>
+      <div
+        class="regButtonDiv"
+        @click="forget"
+      >
+        <span class="regButton">我没忘！</span>
+      </div>
+    </div>
+  </div>
 </template>
 <script setup>
 import { ref } from 'vue';
@@ -267,7 +268,7 @@ const login = async () => {
 const getVCode = async (mode) => {
 	email.value.value = email.value.value.trim();
 	if (email.value.value) {
-		const res = await sendCode(email.value.value,mode);
+		const res = await sendCode(email.value.value, mode);
 		if (res.code !== 200) {
 			showMsg(res.msg);
 		} else {
@@ -324,8 +325,8 @@ const resetPwd = async () => {
 			code.value.value
 		);
 		showMsg(res.msg);
-	}else{
-		showMsg("不要输入空白信息")
+	} else {
+		showMsg('不要输入空白信息');
 	}
 };
 </script>

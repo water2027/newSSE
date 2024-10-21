@@ -1,45 +1,46 @@
-<!-- eslint-disable vue/html-indent -->
 <template>
-	<div class="root">
-		<h2>当前分区：{{ partition }}</h2>
-		<div v-if="partition === '课程专区'">
-			<span class="gradientUnderline">请选择你的老师，不选也没关系 </span>
-			<select
-				v-if="partition === '课程专区'"
-				id="teacher"
-				v-model="tag"
-			>
-				<option
-					v-for="teacher in teachers"
-					:key="teacher.TagID"
-					:value="teacher.Name"
-				>
-					{{ teacher.Name }}
-				</option>
-			</select>
-		</div>
-		<transition-group name="list">
-			<post-card
-				v-for="post in posts"
-				:key="post.PostID"
-				:post="post"
-				@update-data="updateData"
-			/>
-		</transition-group>
-		<div
-			v-if="isLoading"
-			ref="bottom"
-			class="bottomDiv"
-		>
-			loading...
-		</div>
-		<div
-			v-else
-			class="bottomDiv"
-		>
-			noMore
-		</div>
-	</div>
+  <div class="root">
+    <h2>当前分区：{{ partition }}</h2>
+    <div v-if="partition === '课程专区'">
+      <span class="gradientUnderline">请选择你的老师，不选也没关系 </span>
+      <select
+        v-if="partition === '课程专区'"
+        id="teacher"
+        v-model="tag"
+      >
+        <option
+          v-for="teacher in teachers"
+          :key="teacher.TagID"
+          :value="teacher.Name"
+        >
+          {{ teacher.Name }}
+        </option>
+      </select>
+    </div>
+    <transition-group
+      name="list"
+    >
+      <post-card
+        v-for="post in posts"
+        :key="post.PostID"
+        :post="post"
+        :delete-handler="deleteHandler"
+      />
+    </transition-group>
+    <div
+      v-if="isLoading"
+      ref="bottom"
+      class="bottomDiv"
+    >
+      loading...
+    </div>
+    <div
+      v-else
+      class="bottomDiv"
+    >
+      noMore
+    </div>
+  </div>
 </template>
 <script setup>
 import { ref, onMounted, inject, watch, onUnmounted, computed } from 'vue';
@@ -47,7 +48,7 @@ import { ref, onMounted, inject, watch, onUnmounted, computed } from 'vue';
 import { getTeachers } from '@/api/info/getTeacher';
 import { getPosts, getPostsNum } from '@/api/browse/getPost';
 
-import PostCard from './PostCard.vue';
+import PostCard from './card/PostCard.vue';
 
 const userInfo = inject('userInfo');
 const partition = inject('partition');
@@ -101,9 +102,12 @@ const updatePosts = async (id) => {
 	}
 };
 
-const updateData = async (id) => {
-	await updateNum();
-	await updatePosts(id);
+const deleteHandler = async (callback) => {
+	const res = await callback();
+	if(res){
+		await updateNum();
+		await updatePosts(res);
+	}
 };
 
 const getMore = async () => {
@@ -273,6 +277,12 @@ defineExpose({
 	}
 	p {
 		text-indent: 2rem;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	.root {
+		overflow-x: hidden;
 	}
 }
 

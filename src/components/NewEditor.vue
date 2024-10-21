@@ -1,37 +1,37 @@
-<!-- eslint-disable vue/v-on-event-hyphenation -->
-<!-- eslint-disable vue/attribute-hyphenation -->
-<!-- eslint-disable vue/html-indent -->
 <template>
-	<div id="myRoot">
-		<editor
-			editorClass="editor"
-			:modelValue="modelValue"
-			@update:modelValue="$emit('update:modelValue', $event)"
-			@keydown="handleKeydown"
-		/>
-		<div class="inputData">
-			<button
-				v-if="route.path === '/post'"
-				:style="buttonStyle"
-				@click="savePost"
-			>
-				暂存为草稿
-			</button>
-			<button
-				:style="buttonStyle"
-				@click="$emit('send')"
-			>
-				发送
-			</button>
-			<input
-				class="fileInput"
-				type="file"
-				accept="image/*"
-				:style="buttonStyle"
-				@input="upload"
-			>
-		</div>
-	</div>
+  <div
+    id="myRoot"
+    class="root"
+  >
+    <editor
+      editor-class="editor"
+      :model-value="modelValue"
+      @update:model-value="$emit('update:modelValue', $event)"
+      @keydown="handleKeydown"
+    />
+    <div class="inputData">
+      <button
+        v-if="route.path === '/post'"
+        :style="buttonStyle"
+        @click="savePost"
+      >
+        暂存为草稿
+      </button>
+      <button
+        :style="buttonStyle"
+        @click="$emit('send')"
+      >
+        发送
+      </button>
+      <input
+        class="fileInput"
+        type="file"
+        accept="image/*"
+        :style="buttonStyle"
+        @input="upload"
+      >
+    </div>
+  </div>
 </template>
 
 <script setup>

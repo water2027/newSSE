@@ -1,58 +1,83 @@
-<!-- eslint-disable vue/singleline-html-element-content-newline -->
 <!-- eslint-disable vue/no-v-html -->
 <!-- eslint-disable vue/html-self-closing -->
-<!-- eslint-disable vue/html-indent -->
 <template>
-	<div id="mdRoot">
-		<div class="editorButton">
-			<button @click="editContent('标题')">标题</button>
-			<button @click="editContent('粗体')">粗体</button>
-			<button @click="editContent('斜体')">斜体</button>
-			<button @click="editContent('删除线')">删除线</button>
-			<button @click="editContent('引用')">引用</button>
-			<button @click="editContent('无序列表')">无序列表</button>
-			<button @click="editContent('有序列表')">有序列表</button>
-			<button @click="editContent('表格')">表格</button>
-			<button @click="editContent('分割线')">分割线</button>
-			<button @click="editContent('代码块')">代码块</button>
-			<button @click="isPreview = !isPreview">{{ isPreview?'不想看了':'看看效果' }}</button>
-		</div>
-		<div class="container">
-			<textarea
-				:value="modelValue"
-				placeholder="请输入正文"
-				@input="handleInput"
-				@keydown="handleKeydown"
-			></textarea>
-			<MarkdownContainer
-				v-if="isPreview"
-				ref="mdContainer"
-				:markdown-content="modelValue"
-			/>
-		</div>
-		<div class="inputData">
-			<button
-				v-if="route.path === '/post'"
-				:style="buttonStyle"
-				@click="savePost"
-			>
-				暂存为草稿
-			</button>
-			<button
-				:style="buttonStyle"
-				@click="$emit('send')"
-			>
-				发送
-			</button>
-			<input
-				class="fileInput"
-				type="file"
-				accept="image/*"
-				:style="buttonStyle"
-				@input="upload"
-			/>
-		</div>
-	</div>
+  <div
+    id="mdRoot"
+    class="root"
+  >
+    <div class="editorButton">
+      <button @click="editContent('标题')">
+        标题
+      </button>
+      <button @click="editContent('粗体')">
+        粗体
+      </button>
+      <button @click="editContent('斜体')">
+        斜体
+      </button>
+      <button @click="editContent('删除线')">
+        删除线
+      </button>
+      <button @click="editContent('引用')">
+        引用
+      </button>
+      <button @click="editContent('无序列表')">
+        无序列表
+      </button>
+      <button @click="editContent('有序列表')">
+        有序列表
+      </button>
+      <button @click="editContent('表格')">
+        表格
+      </button>
+      <button @click="editContent('分割线')">
+        分割线
+      </button>
+      <button @click="editContent('代码块')">
+        代码块
+      </button>
+      <button @click="isPreview = !isPreview">
+        {{ isPreview?'不想看了':'看看效果' }}
+      </button>
+    </div>
+    <div class="container">
+      <textarea
+        :value="modelValue"
+        placeholder="请输入正文"
+        @input="handleInput"
+        @keydown="handleKeydown"
+      ></textarea>
+      <MarkdownContainer
+        v-if="isPreview"
+        ref="mdContainer"
+        :markdown-content="modelValue"
+      />
+    </div>
+    <div class="buttons">
+      <button
+        v-if="route.path === '/post'"
+        @click="savePost"
+      >
+        暂存为草稿
+      </button>
+      <button
+        @click="$emit('send')"
+      >
+        发送
+      </button>
+      <label
+        for="fileInput"
+        class="fileInput"
+      >选择图片</label>
+      <input
+        id="fileInput"
+        type="file"
+        accept="image/*"
+        style="display: none;"
+        @input="upload"
+      />
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -67,12 +92,6 @@ import { uploadPhoto } from '@/api/editPostAndComment/utils';
 const route = useRoute();
 
 const isPreview = ref(false);
-
-const buttonStyle = computed(() => {
-	return {
-		width: '50%',
-	};
-});
 
 const props = defineProps({
 	modelValue: {
@@ -229,6 +248,11 @@ defineExpose({
 </script>
 
 <style scoped>
+#mdRoot{
+	width: 100%;
+	margin-left: 0;
+	margin-right: 0;
+}
 .container {
 	display: flex;
 	flex-direction: row;
@@ -252,7 +276,7 @@ defineExpose({
 	height: 450px;
 }
 
-.inputData {
+.buttons {
 	display: flex;
 	flex-direction: row;
 	align-items: center;

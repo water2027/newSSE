@@ -1,3 +1,5 @@
+@import url('https://fonts.font.im/css?family=Ubuntu|Ubuntu+Mono');
+
 * {
 	margin: 0;
 	padding: 0;
@@ -16,16 +18,19 @@ body {
 	scroll-behavior: smooth;
 }
 
+body {
+	overflow-y: scroll;
+}
+
 @media screen and (min-width: 768px) {
 	/* 调整body的滚动条 */
 	body::-webkit-scrollbar {
-		width: 10px;
+		width: 4px;
 		background-color: var(--color-scroll);
 	}
 
 	body::-webkit-scrollbar-thumb {
 		background-color: var(--color-scroll-thumb);
-		border-radius: 10px;
 	}
 }
 
@@ -51,7 +56,6 @@ button {
 	letter-spacing: 1px;
 	font-family: 'Roboto', sans-serif;
 	font-weight: 500;
-	z-index: 100;
 }
 
 .fileInput:hover,
@@ -124,3 +128,9 @@ hr {
 		margin-left: 2rem;
 	}
 }
+
+.root{
+	color: var(--color-text);
+}
+
+

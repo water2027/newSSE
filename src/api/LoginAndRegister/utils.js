@@ -1,4 +1,5 @@
 import CryptoJS from 'crypto-js'
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 /**
  *
  * @param {string} data 待加密数据

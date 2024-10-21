@@ -1,16 +1,11 @@
-<!-- eslint-disable vue/html-indent -->
-<!-- eslint-disable vue/max-attributes-per-line -->
 <template>
-	<HomeViewVue
-		v-if="isLogin"
-		:class="mode"
-		@change-mode="changeMode"
-	/>
-	<LoginViewVue
-		v-else
-		:mode="mode"
-		@send-login-success="sendLoginSuccess"
-	/>
+  <HomeViewVue
+    v-if="isLogin"
+  />
+  <LoginViewVue
+    v-else
+    @send-login-success="sendLoginSuccess"
+  />
 </template>
 
 <script setup>
@@ -25,15 +20,6 @@ import { getInfo } from './api/info/getInfo';
 
 import { showMsg } from './components/MessageBox';
 
-// const mode = ref('dev')
-const mode = ref('light-mode');
-// const mode = ref('dark-mode');
-const changeMode = () => {
-	mode.value = mode.value === 'light-mode' ? 'dark-mode' : 'light-mode';
-	localStorage.setItem('mode', mode.value);
-};
-provide('mode', mode);
-
 const userInfo = ref({});
 provide('userInfo', userInfo);
 const isLogin = ref(false);
@@ -46,7 +32,7 @@ const sendLoginSuccess = async (success) => {
 	if (!success) return;
 	try {
 		const info = await getInfo();
-		userInfo.value = info;
+		userInfo.value = Object.freeze(info);
 		isLogin.value = success;
 		if (localStorage.rememberMe) {
 			localStorage.setItem('userInfo', JSON.stringify(info));
@@ -74,7 +60,7 @@ const autoLogin = async () => {
 	 */
 	if (token && tempInfo) {
 		isLogin.value = true;
-		userInfo.value = JSON.parse(tempInfo);
+		userInfo.value = Object.freeze(JSON.parse(tempInfo));
 	} else {
 		const email = localStorage.email;
 		const password = localStorage.password;
@@ -82,7 +68,7 @@ const autoLogin = async () => {
 			const loginSuccess = await userLogin(email, password);
 			if (loginSuccess) {
 				const info = await getInfo();
-				userInfo.value = info;
+				userInfo.value = Object.freeze(info);
 				localStorage.setItem('userInfo', JSON.stringify(info));
 				isLogin.value = true;
 			}
@@ -94,9 +80,10 @@ const autoLogin = async () => {
 
 onBeforeMount(async () => {
 	if (localStorage.mode) {
-		mode.value = localStorage.mode;
+		document.body.className = localStorage.mode;
 	}else{
-		localStorage.setItem('mode', mode.value);
+		document.body.className = 'light-mode'
+		localStorage.setItem('mode', document.body.className);
 	}
 	/**
 	 * @description 页面加载时，如果localStorage.rememberMe存在，自动登录
