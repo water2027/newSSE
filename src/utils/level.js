@@ -69,4 +69,32 @@ function levelClassHandler(userScore) {
 	}
 }
 
-export { levelNameHandler, levelClassHandler };
+// 经验
+function levelExpHandler(userScore) {
+	if (userScore < 100) {
+		return '100';
+	}
+	if (userScore >= 100 && userScore < 300) {
+		return '300';
+	}
+	if (userScore >= 300 && userScore < 600) {
+		return '600';
+	}
+	if (userScore >= 600 && userScore < 1000) {
+		return '1000';
+	}
+	if (userScore >= 1000 && userScore < 2000) {
+		return '2000';
+	}
+	if (userScore >= 2000 && userScore < 3000) {
+		return '3000';
+	}
+	if (userScore >= 3000 && userScore < 4000) {
+		return '4000';
+	}
+	if (userScore >= 4000) {
+		return '5000'; // 满级就是5000
+	}
+ }
+
+export { levelNameHandler, levelClassHandler, levelExpHandler };
