@@ -48,7 +48,6 @@
         >
           <router-link
             to="/post"
-            @click="changeToPost"
           >
             发帖
           </router-link>
@@ -105,6 +104,13 @@
             {{ userInfo.name }}
           </router-link>
         </div>
+        <button
+          v-if="!isPC"
+          class="toPost"
+          @click="changeToPost"
+        >
+          +
+        </button>
       </div>
     </header>
     <!-- <header>
@@ -620,9 +626,10 @@ main {
   }
 
   .toPost {
-    position: absolute;
-    right: 10px;
-    top: 10px;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    
     font-size: 2rem;
     color: var(--color-to-post);
     text-decoration: none;
