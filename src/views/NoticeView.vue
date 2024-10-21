@@ -119,5 +119,8 @@ onMounted(async () => {
 }
 p {
 	text-indent: 2rem;
+  word-break: break-all;
+  white-space: pre-wrap;
+  
 }
 </style>
