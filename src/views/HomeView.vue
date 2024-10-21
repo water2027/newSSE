@@ -114,23 +114,7 @@
       </div>
     </header>
     <!-- <header>
-      <div id="title">
-        <button v-if="!isPC" class="hamburgerMenu" @click="toggleNav">
-          <span />
-          <span />
-          <span />
-        </button>
-        <h1>SSE_MARKET</h1>
-        <button v-if="!isPC" class="toPost" @click="changeToPost">+</button>
-      </div>
-      <div class="search">
-        <input ref="sinfo" placeholder="在当前分区搜索" type="search" @keydown.enter="search" />
-        <button @click="search">搜索</button>
-      </div>
       <button v-if="isPC" @click="returnToTop">&uarr;</button>
-      <button v-if="isPC" @click="changeMode">
-        {{ mode }}
-      </button>
     </header> -->
     <main>
       <link-list
