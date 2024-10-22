@@ -239,11 +239,6 @@ defineExpose({
 	display: flex;
 	flex-direction: row;
 }
-.userButtons button {
-	margin: 0;
-	margin-left: 10px;
-	pointer-events: auto;
-}
 
 p::after {
 	content: '...';

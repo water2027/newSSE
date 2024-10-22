@@ -91,6 +91,10 @@ onMounted(()=>{
 })
 </script>
 <style scoped>
+button{
+	margin-left: 5px;
+	margin-right: 5px;
+}
 @media screen and (min-width:768px) {
 	.card-root:hover {
 		box-shadow: var(--color-post-card-hover-box-shadow) 0px 5px 15px;

@@ -374,6 +374,8 @@ header {
   color: #444;
   align-items: center;
   padding: 0 1em;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+  transition: box-shadow 0.3s ease;
 
   .links {
     a {

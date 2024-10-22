@@ -287,11 +287,23 @@ defineExpose({
 	border-radius: 5px;
 }
 
+@media screen and (min-width:768px) {
+	button{
+		margin-left: 5px;
+		margin-right: 5px;
+	}
+}
+
 @media screen and (max-width: 768px) {
 	.editorButton {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
 		width: 100%;
+		gap: 10px;
+	}
+	.buttons button{
+		margin-left:5px;
+		margin-right: 5px; 
 	}
 }
 </style>
