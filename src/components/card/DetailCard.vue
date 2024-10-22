@@ -5,12 +5,17 @@
       :like-handler="like"
     >
       <template #userButtons>
-        <button @click.stop.prevent="handleSave" style="background-color: transparent; border: none;">
-			<div class="icon" :style="{ 
-				'background-image': `url(${postData.IsSaved ? 'https://img.icons8.com/?size=100&id=103&format=png&color=FA5252' : 'https://img.icons8.com/?size=100&id=103&format=png&color=000000'})`,
-			}">
-			</div>
-		</button>
+        <button
+          style="background-color: transparent; border: none;"
+          @click.stop.prevent="handleSave"
+        >
+          <div
+            class="icon"
+            :style="{ 
+              'background-image': `url(${postData.IsSaved ? 'https://img.icons8.com/?size=100&id=103&format=png&color=FA5252' : 'https://img.icons8.com/?size=100&id=103&format=png&color=000000'})`,
+            }"
+          />
+        </button>
       </template>
       <template #comment>
         <div class="commentButton">

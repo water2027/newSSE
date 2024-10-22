@@ -211,6 +211,19 @@ defineExpose({
   font-weight: bold;
 }
 
+:deep(a){
+	text-decoration: none;
+	color: var(--color-a-in-post);
+	transition: all 0.3s ease;
+}
+
+:deep(a:hover){
+	color: var(--color-a-hover-in-post);
+	background: var(--color-a-hover-bg-in-post);
+}
+
+
+
 /* 移动端适配 */
 @media screen and (max-width: 768px) {
   #content {

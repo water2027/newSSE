@@ -28,7 +28,7 @@ async function likePostComment(isLiked,pcommentID,userTelephone){
         return null
     }
     try{
-        await fetch(`${apiUrl}/auth/updateLikeComment`,{
+        await fetch(`${apiUrl}/auth/updatePcommentLike`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ async function likeCommentComment(isLiked,ccommentID,userTelephone){
         return null
     }
     try{
-        await fetch(`${apiUrl}/auth/updateLikeCommentComment`,{
+        await fetch(`${apiUrl}/auth/updateCcommentLike`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

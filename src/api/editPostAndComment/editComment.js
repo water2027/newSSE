@@ -6,20 +6,29 @@ async function sendComment(content, postID, userTelephone) {
 	if (!token) {
 		return;
 	}
-	const response = await fetch(`${apiUrl}/auth/postPcomment`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-		},
-		body: JSON.stringify({
-			content: content,
-			postID: postID,
-			userTelephone: userTelephone,
-		}),
-	});
-	const data = await response.json();
-	return data;
+	try{
+		const response = await fetch(`${apiUrl}/auth/postPcomment`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			body: JSON.stringify({
+				content: content,
+				postID: postID,
+				userTelephone: userTelephone,
+			}),
+		});
+		if(response.status === 200){
+			return true;
+		}else{
+			console.log(response.status)
+			return false;
+		}
+	}catch(e){
+		console.error(e)
+		return false;
+	}
 }
 
 async function sendPComment(object) {
@@ -27,16 +36,24 @@ async function sendPComment(object) {
 	if (!token) {
 		return;
 	}
-	const response = await fetch(`${apiUrl}/auth/postCcomment`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-		},
-		body: JSON.stringify(object),
-	});
-	const data = await response.json();
-	return data;
+	try{
+		const response = await fetch(`${apiUrl}/auth/postCcomment`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			body: JSON.stringify(object),
+		});
+		if(response.status === 200){
+			return true;
+		}else{
+			return false;
+		}
+	}catch(e){
+		console.error(e)
+		return false;
+	}
 }
 
 async function delComment(pcommentID) {
@@ -44,18 +61,26 @@ async function delComment(pcommentID) {
 	if (!token) {
 		return;
 	}
-	const response = await fetch(`${apiUrl}/auth/deletePcomment`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-		},
-		body: JSON.stringify({
-			pcommentID:pcommentID
-		}),
-	});
-	const data = await response.text();
-	return data;
+	try{
+		const response = await fetch(`${apiUrl}/auth/deletePcomment`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			body: JSON.stringify({
+				pcommentID:pcommentID
+			}),
+		});
+		if(response.status === 200){
+			return true;
+		}else{
+			return false;
+		}
+	}catch(e){
+		console.error(e)
+		return false;
+	}
 }
 
 async function delCcomment(ccommentID) {
@@ -63,18 +88,26 @@ async function delCcomment(ccommentID) {
 	if (!token) {
 		return;
 	}
-	const response = await fetch(`${apiUrl}/auth/deleteCcomment`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${token}`,
-		},
-		body: JSON.stringify({
-			ccommentID:ccommentID
-		}),
-	});
-	const data = await response.text();
-	return data;
+	try{
+		const response = await fetch(`${apiUrl}/auth/deleteCcomment`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
+			body: JSON.stringify({
+				ccommentID:ccommentID
+			}),
+		});
+		if(response.status === 200){
+			return true;
+		}else{
+			return false;
+		}
+	}catch(e){
+		console.error(e)
+		return false;
+	}
 }
 
 export { sendComment, sendPComment, delComment, delCcomment };

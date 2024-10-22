@@ -10,8 +10,9 @@
       <span class="user-name"><span
         v-if="basicData.UserIdentity==='teacher'"
         class="teacher_identity"
-      >老师</span>{{ basicData.UserName }}</span>
+      >老师</span>{{ basicData.UserName }}<span v-if="basicData.hasOwnProperty('userTargetName')">回复{{ basicData.userTargetName||basicData.UserName }}</span></span>
       <span
+        v-if="!basicData.hasOwnProperty('userTargetName')"
         title="码之气，三段！"
         class="level"
         :class="levelClassHandler(basicData.UserScore)"
@@ -21,7 +22,7 @@
         <slot name="userButtons"></slot>
       </div>
     </div>
-    <h2>{{ basicData.Title }}</h2>
+    <h2>{{ basicData.Title||'' }}</h2>
     <p v-if="isPost">
       {{ basicData.Content||'loading' }}
     </p>
@@ -87,7 +88,9 @@
           </g>
         </svg>
       </span>
-      <span>
+      <span 
+        v-if="basicData.Comment"
+      >
         {{ basicData.Comment }}
         <svg
           viewBox="0 0 16 16"
@@ -143,14 +146,18 @@ const basicData = ref(props.cardData);
 const like = async () => {
 	//后端没有返回数据，不要赋值后再更新
 	try {
-		props.likeHandler();
-		basicData.value.IsLiked = !basicData.value.IsLiked;
-		if (basicData.value.IsLiked) {
-			basicData.value.Like++;
-			showMsg('点赞成功');
-		} else {
-			basicData.value.Like--;
-			showMsg('取消成功');
+		const res = await props.likeHandler();
+		if(res){
+			basicData.value.IsLiked = !basicData.value.IsLiked;
+			if (basicData.value.IsLiked) {
+				basicData.value.Like++;
+				showMsg('点赞成功');
+			} else {
+				basicData.value.Like--;
+				showMsg('取消成功');
+			}
+		}else{
+			showMsg('失败了:-(');
 		}
 	} catch (e) {
 		showMsg('失败了:-(');
