@@ -6,20 +6,28 @@ async function likePost(isLiked,postID,userTelephone) {
     if(!token){
         return null
     }
-    const response = await fetch(`${apiUrl}/auth/updateLike`,{
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-            isLiked:isLiked,
-            postID:postID,
-            userTelephone:userTelephone
+    try{
+        const response = await fetch(`${apiUrl}/auth/updateLike`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                isLiked:isLiked,
+                postID:postID,
+                userTelephone:userTelephone
+            })
         })
-    })
-    const data = await response.text();
-    return data
+        if(response.status === 200){
+            return true;
+        }else{
+            return false;
+        }
+    }catch(e){
+        console.error(e)
+        return false;
+    }
 }
 
 async function likePostComment(isLiked,pcommentID,userTelephone){
