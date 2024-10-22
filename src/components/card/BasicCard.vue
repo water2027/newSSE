@@ -282,34 +282,32 @@ a {
 		-0.2em -0.2em var(--color-level-undefined-box-shadow);
 }
 .level-0 {
-	background-color: #23a1b1de;
+	background-color: #36c7d9;
 }
 .level-1 {
-	background-color: #52b123;
+	background-color: #66d934;
 }
 .level-2 {
-	background-color: #b12323;
+	background-color: #d74a4a;
 }
 .level-3 {
-	background-color: rgb(197, 85, 29);
+	background-color: rgb(240, 133, 39);
 }
 .level-4 {
-	background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #845ef7);
+	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
 	background-size: 300% 300%;
 	animation: change-color 5s ease infinite;
 }
-
 .level-5 {
-	background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #845ef7);
+	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
 	background-size: 300% 300%;
 	color: transparent;
 	background-clip: text;
 	animation: change-color 5s ease infinite;
 }
-
-.level-6{
-  position: relative;
-  background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #845ef7);
+.level-6 {
+	position: relative;
+	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
 	background-size: 300% 300%;
 	color: transparent;
 	background-clip: text;
@@ -321,7 +319,7 @@ a {
 	transform: rotateX(180deg);
 	transform-origin: bottom;
 	line-height: 32px;
-	background: linear-gradient(0deg, var(--color-level-6-bg) 0, transparent 80%);
+	background: linear-gradient(0deg, #9a7ef8 0, transparent 80%);
 	background-clip: text;
 	-webkit-background-clip: text;
 	color: transparent;
@@ -330,46 +328,44 @@ a {
 .level-7 {
 	position: relative;
 	line-height: 32px;
-	background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #845ef7);
-  color: transparent;
+	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
+	color: transparent;
 	background-clip: text;
 	-webkit-background-clip: text;
-  animation: change-color 5s ease infinite;
-  background-size: 300% 300%;
-	color: transparent;
+	animation: change-color 5s ease infinite;
+	background-size: 300% 300%;
 }
-.level-7::before{
-  content: 'Lv7 大神';
-  transform: rotateX(180deg);
-  position: absolute;
-  transform-origin: bottom;
-  background: linear-gradient(45deg, #ff6b6b3e, #f065953e, #cc5de83e, #845ef73e,transparent,#845ef73e, #cc5de83e, #f065953e, #ff6b6b3e);
+.level-7::before {
+	content: 'Lv7 大神';
+	transform: rotateX(180deg);
+	position: absolute;
+	transform-origin: bottom;
+	background: linear-gradient(45deg, #ff7d7d3e, #ff5a993e, #e376e53e, #9a7ef83e, transparent, #9a7ef73e, #e376e53e, #ff5a993e, #ff7d7d3e);
 	background-size: 300% 300%;
 	color: transparent;
 	background-clip: text;
 	animation: change-color 5s ease infinite;
-  opacity: 0.5;
+	opacity: 0.5;
 }
 .level-8 {
 	position: relative;
 	line-height: 32px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), 
-  -2px -2px 4px rgba(255, 255, 255, 0.3);
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), 
+	-2px -2px 4px rgba(255, 255, 255, 0.3);
 }
 .level-8::before {
-    content: '祖师爷';
-    transform: rotateX(160deg) skew(10deg);
-    position: absolute;
-    transform-origin: bottom;
-    background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #845ef7, transparent, #845ef7, #cc5de8, #f06595, #ff6b6b);
-    background-size: 300% 300%;
-    color: transparent;
-    background-clip: text;
-    -webkit-background-clip: text;
-    animation: change-color 5s ease infinite;
-    opacity: 0.25;
+	content: '祖师爷';
+	transform: rotateX(160deg) skew(10deg);
+	position: absolute;
+	transform-origin: bottom;
+	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8, transparent, #9a7ef8, #e376e5, #ff5a99, #ff7d7d); 
+	background-size: 300% 300%;
+	color: transparent;
+	background-clip: text;
+	-webkit-background-clip: text;
+	animation: change-color 5s ease infinite;
+	opacity: 0.25;
 }
-
 @keyframes change-color {
 	0% {
 		background-position: 0% 50%;

@@ -1,15 +1,15 @@
 <template>
   <div class="root">
     <h2>选择分区</h2>
-    <div class="partitions">
-      <div
-        v-for="(p, index) in partitions"
-        :key="index"
-        class="partition"
-        @click="sendPartition(p)"
-      >
-        {{ p }}
-      </div>
+    <div class="partitions" style="margin: auto; margin-top: 10vh;">
+	  <div class="card" v-for="(p, index) in partitions" :key="index">
+		<img :src="p.src" class="card-img-top" style="height: 60%;">
+		<div class="card-body">
+		  <h5 class="card-title"> {{ p.name }}</h5>
+		  <p class="card-text" style="font-size: 0.8em; color: grey;">{{ p.description }}</p>
+		  <a class="btn btn-primary" @click="sendPartition(p.name)">跳转分区</a>
+		</div>
+	  </div>
     </div>
   </div>
 </template>
@@ -19,12 +19,12 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 const emit = defineEmits(['send-partition']);
 const partitions = ref([
-	'日常吐槽',
-	'打听求助',
-	'学习交流',
-	'院务',
-	'求职招募',
-	'其他',
+    { name: '日常吐槽', description: '言短情长，抒发心声。' , src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/image/daily.jpg'},
+    { name: '打听求助', description: '疑虑相询，忧难互助。', src:'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/image/help.jpg' },
+    { name: '学习交流', description: '知识碰撞，学术思辨。', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/image/study.jpg' },
+    { name: '院务', description: '院内事务，信息发布。', src:'https://pic2.zhimg.com/v2-4fd432574e38d33d52e35041a8e7fd52_720w.jpg?source=172ae18b' },
+    { name: '求职招募', description: '梦想职路，共创未来。', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/image/recruit.jpg' },
+    { name: '其他', description: '畅所欲言，创意无限。', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/image/else.jpg'},
 ]);
 /**
  * @description 告诉HomeView.vue分区改了
@@ -59,8 +59,7 @@ const sendPartition = (p) => {
 	gap: 10px;
 	margin-top: 50px;
 	width: 100%;
-
-	max-width: 600px;
+	max-width: 700px;
 	padding: 10px;
 	border: 1px solid var(--color-border);
 	border-radius: 5px;
