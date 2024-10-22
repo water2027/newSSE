@@ -14,7 +14,7 @@
       <span
         title="码之气，三段！"
         class="level"
-        :class="levelClassHandler(1500)"
+        :class="levelClassHandler(basicData.UserScore)"
       >{{ levelNameHandler(basicData.UserScore) }}
       </span>
       <div class="userButtons">
