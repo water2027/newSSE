@@ -87,7 +87,11 @@ const addPosts = async () => {
 		userTelephone: userInfo.value.phone,
 		tag: tag.value,
 	});
-	posts.value = [...posts.value, ...res];
+	if(res){
+		posts.value = [...posts.value, ...res];
+	}else{
+		totalNum.value = posts.value.length;
+	}
 };
 
 const updatePosts = async (id) => {
@@ -113,7 +117,11 @@ const deleteHandler = async (callback) => {
 const getMore = async () => {
 	if (isLoading.value) {
 		await addPosts();
-		curPage.value = posts.value.length;
+		try{
+			curPage.value = posts.value.length;
+		}catch(e){
+			curPage.value = 0;
+		}
 	}
 };
 
@@ -254,7 +262,7 @@ watch(tag, async (newVal) => {
 		tag: newVal,
 	});
 	posts.value = arr;
-	curPage.value = arr.length
+	// 后端bug，不管有没有tag，都返回课程专区总帖子数量
 	const id = await getPostsNum({
 		partition: partition.value,
 		searchsort: searchsort.value,
@@ -263,6 +271,13 @@ watch(tag, async (newVal) => {
 		tag: newVal,
 	});
 	totalNum.value = id;
+	if(!arr){
+		curPage.value = 0;
+		totalNum.value = 0;
+	}else{
+		curPage.value = arr.length
+		totalNum.value = arr.length<5?arr.length:id;
+	}
 	startObserver()
 });
 defineExpose({
