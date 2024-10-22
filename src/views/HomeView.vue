@@ -316,6 +316,7 @@ header {
   position: sticky;
   top: 0;
   width: 100%;
+  z-index: 5;
 }
 
 .site-top {
