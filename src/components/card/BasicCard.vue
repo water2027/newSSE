@@ -271,105 +271,106 @@ a {
 	background-color: #53a42180; 
 }
 
-.level {
+:deep(.level) {
   font-size: 1rem;
-	margin-left: 10px;
-	border-radius: 10%;
-	padding-left: 10px;
-	padding-right: 10px;
-	padding-top: 5px;
-	padding-bottom: 5px;
+  margin-left: 10px;
+  border-radius: 10%;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
-.level-undefined {
-	text-shadow:
-		0.2em 0.2em var(--color-level-undefined-box-shadow),
-		-0.2em -0.2em var(--color-level-undefined-box-shadow);
+:deep(.level-undefined) {
+  text-shadow:
+    0.2em 0.2em var(--color-level-undefined-box-shadow),
+    -0.2em -0.2em var(--color-level-undefined-box-shadow);
 }
-.level-0 {
-	background-color: #36c7d9;
+:deep(.level-0) {
+  background-color: #36c7d9;
 }
-.level-1 {
-	background-color: #66d934;
+:deep(.level-1) {
+  background-color: #66d934;
 }
-.level-2 {
-	background-color: #d74a4a;
+:deep(.level-2) {
+  background-color: #d74a4a;
 }
-.level-3 {
-	background-color: rgb(240, 133, 39);
+:deep(.level-3) {
+  background-color: rgb(240, 133, 39);
 }
-.level-4 {
-	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
-	background-size: 300% 300%;
-	animation: change-color 5s ease infinite;
+:deep(.level-4) {
+  background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
+  background-size: 300% 300%;
+  animation: change-color 5s ease infinite;
 }
-.level-5 {
-	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
-	background-size: 300% 300%;
-	color: transparent;
-	background-clip: text;
-	animation: change-color 5s ease infinite;
+:deep(.level-5) {
+  background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
+  background-size: 300% 300%;
+  color: transparent;
+  background-clip: text;
+  animation: change-color 5s ease infinite;
 }
-.level-6 {
-	position: relative;
-	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
-	background-size: 300% 300%;
-	color: transparent;
-	background-clip: text;
-	animation: change-color 5s ease infinite;
+:deep(.level-6) {
+  position: relative;
+  background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
+  background-size: 300% 300%;
+  color: transparent;
+  background-clip: text;
+  animation: change-color 5s ease infinite;
 }
-.level-6::before {
-	content: 'Lv6 专家';
-	position: absolute;
-	transform: rotateX(180deg);
-	transform-origin: bottom;
-	line-height: 32px;
-	background: linear-gradient(0deg, #9a7ef8 0, transparent 80%);
-	background-clip: text;
-	-webkit-background-clip: text;
-	color: transparent;
-	opacity: 0.5;
+:deep(.level-6)::before {
+  content: 'Lv6 专家';
+  position: absolute;
+  transform: rotateX(180deg);
+  transform-origin: bottom;
+  line-height: 32px;
+  background: linear-gradient(0deg, #9a7ef8 0, transparent 80%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  opacity: 0.5;
 }
-.level-7 {
-	position: relative;
-	line-height: 32px;
-	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
-	color: transparent;
-	background-clip: text;
-	-webkit-background-clip: text;
-	animation: change-color 5s ease infinite;
-	background-size: 300% 300%;
+:deep(.level-7) {
+  position: relative;
+  line-height: 32px;
+  background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: change-color 5s ease infinite;
+  background-size: 300% 300%;
 }
-.level-7::before {
-	content: 'Lv7 大神';
-	transform: rotateX(180deg);
-	position: absolute;
-	transform-origin: bottom;
-	background: linear-gradient(45deg, #ff7d7d3e, #ff5a993e, #e376e53e, #9a7ef83e, transparent, #9a7ef73e, #e376e53e, #ff5a993e, #ff7d7d3e);
-	background-size: 300% 300%;
-	color: transparent;
-	background-clip: text;
-	animation: change-color 5s ease infinite;
-	opacity: 0.5;
+:deep(.level-7)::before {
+  content: 'Lv7 大神';
+  transform: rotateX(180deg);
+  position: absolute;
+  transform-origin: bottom;
+  background: linear-gradient(45deg, #ff7d7d3e, #ff5a993e, #e376e53e, #9a7ef83e, transparent, #9a7ef73e, #e376e53e, #ff5a993e, #ff7d7d3e);
+  background-size: 300% 300%;
+  color: transparent;
+  background-clip: text;
+  animation: change-color 5s ease infinite;
+  opacity: 0.5;
 }
-.level-8 {
-	position: relative;
-	line-height: 32px;
-	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), 
-	-2px -2px 4px rgba(255, 255, 255, 0.3);
+:deep(.level-8) {
+  position: relative;
+  line-height: 32px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3),
+  -2px -2px 4px rgba(255, 255, 255, 0.3);
 }
-.level-8::before {
-	content: '祖师爷';
-	transform: rotateX(160deg) skew(10deg);
-	position: absolute;
-	transform-origin: bottom;
-	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8, transparent, #9a7ef8, #e376e5, #ff5a99, #ff7d7d); 
-	background-size: 300% 300%;
-	color: transparent;
-	background-clip: text;
-	-webkit-background-clip: text;
-	animation: change-color 5s ease infinite;
-	opacity: 0.25;
+:deep(.level-8)::before {
+  content: '祖师爷';
+  transform: rotateX(160deg) skew(10deg);
+  position: absolute;
+  transform-origin: bottom;
+  background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8, transparent, #9a7ef8, #e376e5, #ff5a99, #ff7d7d);
+  background-size: 300% 300%;
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: change-color 5s ease infinite;
+  opacity: 0.25;
 }
+
 @keyframes change-color {
 	0% {
 		background-position: 0% 50%;
