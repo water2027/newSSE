@@ -28,7 +28,10 @@
             :show-comment="postCommentID===comment.PcommentID"
           >
             <template #showComment>
-              <button v-if="comment.SubComments.length" @click="postCommentID = postCommentID===comment.PcommentID?-1:comment.PcommentID">
+              <button
+                v-if="comment.SubComments.length"
+                @click="postCommentID = postCommentID===comment.PcommentID?-1:comment.PcommentID"
+              >
                 {{ postCommentID===comment.PcommentID?'不想看了':'让我看看' }}
               </button>
             </template>
