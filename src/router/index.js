@@ -9,6 +9,9 @@ const routes = [
 		path: '/',
 		name: 'Home',
 		component: PostListView,
+		meta: {
+			keepAlive: true  // 标记需要缓存
+		}
 	},
 	{
 		path: '/course',
