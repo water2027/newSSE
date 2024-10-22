@@ -18,7 +18,7 @@
       <div class="commentList">
         <div
           v-for="comment in comments"
-          :key="comment.PcommentID"
+          :key="comment.PcommentID+comment.SubComments.length"
           class="comment"
         >	
           <comment-card
@@ -40,7 +40,7 @@
             v-if="postCommentID===comment.PcommentID"
             class="subCommentList"
           >
-            <comment-card
+            <c-comment-card
               v-for="subComment in comment.SubComments"
               :key="subComment.ccommentID"
               :p-comment-id="comment.PcommentID"
@@ -67,6 +67,7 @@ import { showImg } from '@/components/ImageShower';
 import { showMsg } from '@/components/MessageBox';
 import DetailCard from '@/components/card/DetailCard.vue';
 import CommentCard from '@/components/card/CommentCard.vue';
+import CCommentCard from '@/components/card/CCommentCard.vue';
 
 const route = useRoute();
 

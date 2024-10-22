@@ -10,7 +10,7 @@
       <span class="user-name"><span
         v-if="basicData.UserIdentity==='teacher'"
         class="teacher_identity"
-      >老师</span>{{ basicData.UserName }}<span v-if="basicData.hasOwnProperty('userTargetName')">回复{{ basicData.userTargetName||basicData.UserName }}</span></span>
+      >老师</span>{{ basicData.UserName }}<span v-if="basicData.hasOwnProperty('userTargetName')">回复{{ basicData.userTargetName||'层主' }}</span></span>
       <span
         v-if="!basicData.hasOwnProperty('userTargetName')"
         title="码之气，三段！"
@@ -114,7 +114,7 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
 import { strHandler } from '@/utils/strHandler';
 import { levelNameHandler, levelClassHandler } from '@/utils/level';
@@ -169,6 +169,10 @@ const like = debounce(async () => {
         showMsg('失败了:-(');
     }
 }, 300);
+
+onMounted(()=>{
+    // console.log('basicData:',basicData.value);
+})
 
 defineExpose({
 	name: 'BasicCard',

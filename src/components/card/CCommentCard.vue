@@ -68,18 +68,17 @@ const props = defineProps({
 // 不能直接修改props，所以要用ref包装
 // 后端命名真该死啊
 const commentData = ref({
-	UserName: props.comment.Author,
-	UserAvatar: props.comment.AuthorAvatar,
-	UserIdentity: props.comment.AuthorIdentity,
-	UserScore: props.comment.AuthorScore,
-	IsLiked: props.comment.IsLiked,
-	Like: props.comment.LikeNum,
-	Content: props.comment.Content,
-	PcommentID: props.comment.PcommentID,
-	UserTelephone: props.comment.AuthorTelephone,
-	Comment: props.comment.SubComments.length,
+	UserName: props.comment.author,
+	UserAvatar: props.comment.authorAvatar,
+	UserIdentity: props.comment.authorIdentity,
+	UserScore: props.comment.authorScore,
+	IsLiked: props.comment.isLiked,
+	Like: props.comment.likeNum,
+	Content: props.comment.content,
+	PcommentID: props.comment.ccommentID,
+	UserTelephone: props.comment.authorTelephone,
+	userTargetName: props.comment.userTargetName,
 });
-
 const commentButtonIsShow = ref(false);
 const commentContent = ref('');
 
@@ -90,13 +89,13 @@ const userInfo = inject('userInfo');
  */
 const sendCommentFunc = async (phone, id) => {
 	try {
-		// 等待 props.comment 数据就绪
-		await Promise.resolve();
 		let sendingData = {
 			content: await commentContent.value,
 			userTelephone: phone,
 			postID: id,
-			pcommentID: commentData.value.PcommentID,
+			pcommentID: props.pCommentId,
+            userTargetName: props.comment.author,
+            ccommentID: props.comment.ccommentID,
 		};
 
 		const res = await sendPComment(sendingData);
@@ -123,15 +122,6 @@ const deleteFunc = async () => {
 			return false;
 		}
 	}
-	if (props.comment.hasOwnProperty('PcommentID')) {
-		id = props.comment.PcommentID;
-		const res = await delComment(id);
-		if (res) {
-			return true;
-		} else {
-			return false;
-		}
-	}
 };
 
 /**
@@ -139,47 +129,24 @@ const deleteFunc = async () => {
  */
 const like = async () => {
 	//后端没有返回数据，不要赋值后再更新
-	if (props.comment.hasOwnProperty('PcommentID')) {
-		try {
-			const res = await likePostComment(
-				props.comment.IsLiked,
-				props.comment.PcommentID,
-				userInfo.value.phone
-			);
-			if (res) {
-				return true;
-			} else {
-				return false;
-			}
-		} catch (e) {
-			console.error(e);
-			showMsg('失败了:-(');
+	try {
+		const res = await likeCommentComment(
+			commentData.value.IsLiked,
+			props.comment.ccommentID,
+			userInfo.value.phone
+		);
+		if (res) {
+			return true;
+		} else {
 			return false;
 		}
-	}
-	if (props.comment.hasOwnProperty('ccommentID')) {
-		try {
-			const res = await likeCommentComment(
-				commentData.value.IsLiked,
-				props.comment.ccommentID,
-				userInfo.value.phone
-			);
-			if (res) {
-				return true;
-			} else {
-				return false;
-			}
-		} catch (e) {
-			console.error(e);
-			showMsg('失败了:-(');
-			return false;
-		}
+	} catch (e) {
+		console.error(e);
+		showMsg('失败了:-(');
+		return false;
 	}
 };
 
-onMounted(async () => {
-	await Promise.resolve();
-});
 </script>
 <style scoped>
 .commentButton {
