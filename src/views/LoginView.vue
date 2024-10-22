@@ -303,6 +303,7 @@ const reg = async () => {
 			showMsg(res.msg);
 		} else {
 			showMsg('注册成功');
+      page.value = 0;
 		}
 	} else {
 		showMsg('请填写完整信息');
@@ -318,13 +319,18 @@ const resetPwd = async () => {
 		password2.value.value &&
 		code.value.value
 	) {
-		const res = await updatePassword(
-			email.value.value,
-			password1.value.value,
-			password2.value.value,
-			code.value.value
-		);
-		showMsg(res.msg);
+    try{
+      const res = await updatePassword(
+        email.value.value,
+        password1.value.value,
+        password2.value.value,
+        code.value.value
+      );
+      showMsg(res.msg);
+      page.value = 0;
+    }catch(e){
+      showMsg(e)
+    }
 	} else {
 		showMsg('不要输入空白信息');
 	}
