@@ -317,6 +317,9 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
+#root{
+  background-color: var(--color-bg);
+}
 header {
   position: sticky;
   top: 0;
@@ -500,6 +503,7 @@ main {
   width: 100%;
   padding: 0;
   margin-top: 1rem;
+  background-color: var(--color-bg);
 }
 
 @keyframes fadeIn {
