@@ -93,7 +93,7 @@ const commentHandler = async (callback)=>{
 
 const postCommentHandler = async (callback)=>{
 	try{
-		const res = await callback(userInfo.value.phone,post.value.ID);
+		const res = await callback(userInfo.value.phone,post.value.PostID);
 		if(res){
 			showMsg('成功')
 			await getCommentList();

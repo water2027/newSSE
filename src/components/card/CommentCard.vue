@@ -102,31 +102,42 @@ const userInfo = inject('userInfo');
 /**
  * @description 发送评论
  */
-const sendCommentFunc = async (phone, id) => {
-	let sendingData = {
-		content: commentContent.value,
-		userTelephone: phone,
-		postID: id,
-	};
-	if (props.comment.hasOwnProperty('userTargetName')) {
-		sendingData['userTargetName'] = props.comment.author;
-	}
-	if (props.comment.hasOwnProperty('PcommentID')) {
-		sendingData['PcommentID'] = props.comment.PcommentID;
-	} else {
-		sendingData['PcommentID'] = props.pCommentId;
-	}
-	if (props.comment.hasOwnProperty('ccommentID')) {
-		sendingData['ccommentID'] = props.comment.ccommentID;
-	}
-	const res = await sendPComment(sendingData);
-	if (res) {
-		commentContent.value = '';
-		commentButtonIsShow.value = false;
-		return true;
-	} else {
-		return false;
-	}
+ const sendCommentFunc = async (phone, id) => {
+    try {
+        let sendingData = {
+            content: await commentContent.value,
+            userTelephone: phone,
+            postID: id,
+        };
+
+        // 等待 props.comment 数据就绪
+        await Promise.resolve();
+
+        if (props.comment?.userTargetName) {
+            sendingData['userTargetName'] = props.comment.author;
+        }
+
+        if (props.comment?.PcommentID) {
+            sendingData['pcommentID'] = props.comment.PcommentID;
+        } else {
+            sendingData['pcommentID'] = props.pCommentId;
+        }
+
+        if (props.comment?.ccommentID) {
+            sendingData['ccommentID'] = props.comment.ccommentID;
+        }
+
+        const res = await sendPComment(sendingData);
+        if (res) {
+            commentContent.value = '';
+            commentButtonIsShow.value = false;
+            return true;
+        }
+        return false;
+    } catch (error) {
+        console.error('Error in sendCommentFunc:', error);
+        return false;
+    }
 };
 
 const deleteFunc = async () =>{
