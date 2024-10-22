@@ -190,7 +190,6 @@ import { getNoticesNum } from '@/api/notice/notice';
 import { Icon } from '@iconify/vue';
 
 import HeatList from '@/components/HeatList.vue';
-import LinkList from '@/components/LinkList.vue';
 import BottomNavbar from '@/components/BottomNavbar.vue';
 import SuspendedBall from '@/components/SuspendedBall.vue';
 
