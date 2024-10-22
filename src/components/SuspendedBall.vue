@@ -95,7 +95,7 @@ const OpenAndCloseBall = () => {
 <style scoped>
 .ball {
 	position: fixed;
-	bottom: 45px;
+	bottom: 80px;
 	left: 10px;
 	width: 50px;
 	height: 50px;
@@ -108,7 +108,7 @@ const OpenAndCloseBall = () => {
 	justify-content: center;
 	align-items: center;
 	box-shadow: var(--color-ball-box-shadow) 0px 1px 4px;
-	z-index: 4;
+	z-index: 10;
 }
 
 .ball > * {

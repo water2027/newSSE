@@ -37,15 +37,9 @@
         </div>
       </div>
       <div class="site-header">
-        <button
-          v-if="!isPC"
-          class="hamburgerMenu"
-          @click="toggleNav"
-        >
           <span />
           <span />
           <span />
-        </button>
         <div
           v-if="isPC"
           class="links"
@@ -147,8 +141,8 @@
       <button v-if="isPC" @click="returnToTop">&uarr;</button>
     </header> -->
     <main>
-      <link-list
-        v-if="!isPC && navIsOpen"
+      <BottomNavbar  
+        v-if="!isPC"
         @change-path="changePathHandler"
         @click="toggleNav"
       />
@@ -197,6 +191,7 @@ import { Icon } from '@iconify/vue';
 
 import HeatList from '@/components/HeatList.vue';
 import LinkList from '@/components/LinkList.vue';
+import BottomNavbar from '@/components/BottomNavbar.vue';
 import SuspendedBall from '@/components/SuspendedBall.vue';
 
 const route = useRoute();
