@@ -369,6 +369,11 @@ header {
   background-position: 0px 3px;
   display: inline-block;
 }
+
+body.dark-mode .icon {
+  filter: invert(1); 
+}
+
 .site-top {
   display: flex;
   background: #0f172a;

@@ -11,9 +11,13 @@
       <template
         #userButtons
       >
-        <button @click.stop.prevent="handleSave">
-          {{ postData.IsSaved ? '取消' : '收藏' }}
-        </button>
+		<button @click.stop.prevent="handleSave" style="background-color: transparent; border: none;">
+			<div class="icon" :style="{ 
+				'background-image': `url(${postData.IsSaved ? 'https://img.icons8.com/?size=100&id=103&format=png&color=FA5252' : 'https://img.icons8.com/?size=100&id=103&format=png&color=000000'})`,
+			}">
+			</div>
+		</button>
+		
         <button
           v-if="postData.UserTelephone === userInfo.phone"
           @click.stop.prevent="deleteHandler(deleteFunc)"
@@ -94,6 +98,16 @@ onMounted(()=>{
 button{
 	margin-left: 5px;
 	margin-right: 5px;
+}
+.icon {
+	width: 30px;
+	height: 30px;
+	background-size: 100%;
+	background-repeat: no-repeat;
+}
+
+body.dark-mode .icon  {
+	filter: invert(1);
 }
 @media screen and (min-width:768px) {
 	.card-root:hover {

@@ -391,7 +391,9 @@ b {
 	flex-direction: column;
 	margin-top: 10px;
 	margin-bottom: 10px;
+	padding: 15px;
 	border: 1px solid var(--color-border);
+	border-radius: 8px;
 	width: 100%;
 }
 
