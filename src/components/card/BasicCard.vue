@@ -43,7 +43,7 @@
     </div>
     <span>{{ strHandler('time', basicData.PostTime) }}</span>
     <div class="basicInfo">
-      <span v-if="basicData.Browse">
+      <span v-if="basicData.Browse&&basicData.Browse!=0">
         {{ basicData.Browse }}
         <svg
           viewBox="0 0 16 16"
@@ -89,7 +89,7 @@
         </svg>
       </span>
       <span 
-        v-if="basicData.Comment"
+        v-if="basicData.Comment&&basicData.Comment!=0"
       >
         {{ basicData.Comment }}
         <svg
