@@ -138,7 +138,11 @@ const password1 = ref(null);
 const password2 = ref(null);
 
 const codeHandler = async () => {
-  await sendCode(allInfo.value.email,1)
+  try{
+    await sendCode(allInfo.value.email,1)
+  }catch(e){
+    showMsg(e)
+  }
 }
 
 const updatePasswordFunc = async () => {
