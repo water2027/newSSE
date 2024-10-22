@@ -46,21 +46,23 @@
           v-if="isPC"
           class="links"
         >
-          <router-link
-            to="/post"
-          >
+          <router-link to="/post">
+            <div class="icon" style="background-image: url(https://img.icons8.com/?size=100&id=89802&format=png&color=000000); background-size: 90% 90%;"></div>
             发帖
           </router-link>
           <router-link to="/partitions">
+            <div class="icon" style="background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729566876258317319_icons8-top-wide-sidebar-followed-by-partition-at-bottom-24.png); background-size: 80% 80%; background-position: 0px 4px;"></div>
             分区
           </router-link>
           <router-link
             to="/course"
             @click="changeToCourse"
           >
+          <div class="icon" style="background-image: url(https://img.icons8.com/?size=100&id=85872&format=png&color=000000); background-size: 95% 95%; background-position: 0px 3px;"></div>
             课程专区
           </router-link>
           <router-link to="/feedback">
+            <div class="icon" style="background-image: url(https://img.icons8.com/?size=100&id=85500&format=png&color=000000); background-position: 0px 3px;"></div>
             反馈
           </router-link>
         </div>
@@ -83,15 +85,18 @@
             to="/save"
             @click="changeToSave"
           >
+            <div class="icon" style="background-image: url(https://img.icons8.com/?size=100&id=85185&format=png&color=000000);"></div>
             收藏
           </router-link>
           <router-link
             to="/history"
             @click="changeToHistory"
           >
+          <div class="icon" style="background-image: url(https://img.icons8.com/?size=100&id=83976&format=png&color=000000); background-size: 90% 90%;"></div>
             发帖历史
           </router-link>
           <router-link to="/notice">
+            <div class="icon" style="background-image: url(https://img.icons8.com/?size=100&id=32058&format=png&color=000000);"></div>
             通知
             <div
               v-if="noticeNum"
@@ -342,7 +347,16 @@ header {
   top: 0;
   width: 100%;
 }
-
+.icon {
+  width: 20px;
+  height: 20px;
+  background-size: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 0px 3px;
+  display: inline-block;
+}
 .site-top {
   display: flex;
   background: #0f172a;
@@ -379,7 +393,7 @@ header {
   display: flex;
   background: #ffffffa0;
   backdrop-filter: blur(2px);
-  height: 2.5em;
+  height: 3em;
   color: #444;
   align-items: center;
   padding: 0 1em;
@@ -451,7 +465,6 @@ header {
 .dark-mode .site-header {
   background: #000000a0;
   color: #ddd;
-
   .links {
     a:hover,
     .router-link-active {

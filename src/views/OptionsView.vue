@@ -7,11 +7,12 @@
       <img
         :src="allInfo.avatarURL"
         alt="头像"
+        style="margin: auto;"
       />
       <label
         for="fileInput"
-        class="custom-file-label fileInput"
-      >选择图片</label>
+        class="custom-file-label fileInput button"
+      >修改头像</label>
       <input
         id="fileInput"
         type="file"
@@ -21,63 +22,71 @@
       />
       <div>
         <div>
-          <span>ID {{ allInfo.phone }}</span>
-          <span>邮箱 {{ allInfo.email }}</span>
-          <span>经验 </span>
-          <div class="exp-container">
-            <span
-              class="level"
-              :class="levelClassHandler(allInfo.score)"
-              >{{ levelNameHandler(allInfo.score) }}
-            </span>
-            <div class="progress-container">
-              <div class="progress-bar" :style="{ 
-                width: (parseInt(allInfo.score) / parseInt(levelExpHandler(allInfo.score)) * 100) + '%',
-                background: 'linear-gradient(to right, #ff9999, #ff4d4d)'
-              }"></div>
+          <div class="user-basic-info info-form">
+            <div class="user-details">
+                <p><strong>ID：</strong>{{ allInfo.phone }}</p>
+                <p><strong>邮箱：</strong>{{ allInfo.email }}</p>
+                <p><strong>经验：</strong></p>
+                <div class="exp-container">
+                  <span
+                    class="level"
+                    :class="levelClassHandler(allInfo.score)"
+                    >{{ levelNameHandler(allInfo.score) }}
+                  </span>
+                  <div class="progress-container">
+                    <div class="progress-bar" :style="{ 
+                      width: (parseInt(allInfo.score) / parseInt(levelExpHandler(allInfo.score)) * 100) + '%',
+                      background: 'linear-gradient(to right, #ff9999, #ff4d4d)'
+                    }"></div>
+                  </div>
+                  {{allInfo.score }} /{{ levelExpHandler(allInfo.score) }}
+                  <span
+                    class="level level-next"
+                    >{{ levelNameHandler(levelExpHandler(allInfo.score)) }}
+                  </span>
+                </div>
             </div>
-            {{allInfo.score }} /{{ levelExpHandler(allInfo.score) }}
-            <span
-              class="level level-next"
-              >{{ levelNameHandler(levelExpHandler(allInfo.score)) }}
-            </span>
-          </div>
-          
-          
+          </div>       
         </div>
-        <span>用户名</span>
+        <div class="info-form">
+          <div class="form-group">
+            <span>用户名</span>
+            <input
+              v-model="allInfo.name"
+              type="text"
+            />
+          </div>
+          <div class="form-group">
+            <span>简介</span>
+            <input
+              v-model="allInfo.intro"
+              type="text"
+            />
+          </div>
+          <button class="button" @click="updateUserInfoFunc">
+            修改信息
+          </button>
+        </div>
+      </div>
+      <div class="data form-group info-form">
+        <h3>重置密码</h3>
         <input
-          v-model="allInfo.name"
-          type="text"
+          ref="password1"
+          type="password"
+          placeholder="密码"
         />
-        <span>简介</span>
         <input
-          v-model="allInfo.intro"
-          type="text"
+          ref="password2"
+          type="password"
+          placeholder="确认密码"
         />
-        <button @click="updateUserInfoFunc">
-          修改信息
+        <button class="button" @click="updatePasswordFunc">
+          重置
         </button>
       </div>
     </div>
     <div class="data">
-      <h3>重置密码</h3>
-      <input
-        ref="password1"
-        type="password"
-        placeholder="密码"
-      />
-      <input
-        ref="password2"
-        type="password"
-        placeholder="确认密码"
-      />
-      <button @click="updatePasswordFunc">
-        重置
-      </button>
-    </div>
-    <div class="data">
-      <button @click="logout">
+      <button class="button" @click="logout" style="background-color: #ff4d4d;">
         退出登录
       </button>
     </div>
@@ -100,18 +109,6 @@ const userInfo = inject('userInfo');
 const allInfo = ref({});
 const password1 = ref(null);
 const password2 = ref(null);
-
-const progressPercentage = () => {
-  const score = Number(allInfo.score);
-  const maxExp = Number(levelExpHandler(allInfo.score));
-  if (maxExp === 0) return 0;
-  console.log(score + " " + maxExp);
-  return ((score / maxExp) * 100).toFixed(2);
-};
-
-const progressBarColor = () => {
-  return `linear-gradient(to right, #24c6dc, #5433ff)`;
-};
 
 const updatePasswordFunc = async () => {
 	if (password1.value.value === '' || password2.value.value === '') {
@@ -221,7 +218,7 @@ input[type='file'] {
 }
 .progress-container {
   width: 60%;
-  background-color: #d9d2d2; 
+  background-color: #ede7e79a; 
   border-radius: 20px; 
   overflow: hidden;
   height: 20px;
@@ -253,34 +250,32 @@ input[type='file'] {
 		-0.2em -0.2em var(--color-level-undefined-box-shadow);
 }
 .level-0 {
-	background-color: #23a1b1de;
+	background-color: #36c7d9;
 }
 .level-1 {
-	background-color: #52b123;
+	background-color: #66d934;
 }
 .level-2 {
-	background-color: #b12323;
+	background-color: #d74a4a;
 }
 .level-3 {
-	background-color: rgb(197, 85, 29);
+	background-color: rgb(240, 133, 39);
 }
 .level-4 {
-	background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #845ef7);
+	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
 	background-size: 300% 300%;
 	animation: change-color 5s ease infinite;
 }
-
 .level-5 {
-	background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #845ef7);
+	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
 	background-size: 300% 300%;
 	color: transparent;
 	background-clip: text;
 	animation: change-color 5s ease infinite;
 }
-
-.level-6{
-  position: relative;
-  background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #845ef7);
+.level-6 {
+	position: relative;
+	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
 	background-size: 300% 300%;
 	color: transparent;
 	background-clip: text;
@@ -292,7 +287,7 @@ input[type='file'] {
 	transform: rotateX(180deg);
 	transform-origin: bottom;
 	line-height: 32px;
-	background: linear-gradient(0deg, var(--color-level-6-bg) 0, transparent 80%);
+	background: linear-gradient(0deg, #9a7ef8 0, transparent 80%);
 	background-clip: text;
 	-webkit-background-clip: text;
 	color: transparent;
@@ -301,47 +296,105 @@ input[type='file'] {
 .level-7 {
 	position: relative;
 	line-height: 32px;
-	background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #845ef7);
-  color: transparent;
+	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
+	color: transparent;
 	background-clip: text;
 	-webkit-background-clip: text;
-  animation: change-color 5s ease infinite;
-  background-size: 300% 300%;
-	color: transparent;
+	animation: change-color 5s ease infinite;
+	background-size: 300% 300%;
 }
-.level-7::before{
-  content: 'Lv7 大神';
-  transform: rotateX(180deg);
-  position: absolute;
-  transform-origin: bottom;
-  background: linear-gradient(45deg, #ff6b6b3e, #f065953e, #cc5de83e, #845ef73e,transparent,#845ef73e, #cc5de83e, #f065953e, #ff6b6b3e);
+.level-7::before {
+	content: 'Lv7 大神';
+	transform: rotateX(180deg);
+	position: absolute;
+	transform-origin: bottom;
+	background: linear-gradient(45deg, #ff7d7d3e, #ff5a993e, #e376e53e, #9a7ef83e, transparent, #9a7ef73e, #e376e53e, #ff5a993e, #ff7d7d3e);
 	background-size: 300% 300%;
 	color: transparent;
 	background-clip: text;
 	animation: change-color 5s ease infinite;
-  opacity: 0.5;
+	opacity: 0.5;
 }
 .level-8 {
 	position: relative;
 	line-height: 32px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), 
-  -2px -2px 4px rgba(255, 255, 255, 0.3);
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), 
+	-2px -2px 4px rgba(255, 255, 255, 0.3);
 }
 .level-8::before {
-    content: '祖师爷';
-    transform: rotateX(160deg) skew(10deg);
-    position: absolute;
-    transform-origin: bottom;
-    background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #845ef7, transparent, #845ef7, #cc5de8, #f06595, #ff6b6b);
-    background-size: 300% 300%;
-    color: transparent;
-    background-clip: text;
-    -webkit-background-clip: text;
-    animation: change-color 5s ease infinite;
-    opacity: 0.25;
+	content: '祖师爷';
+	transform: rotateX(160deg) skew(10deg);
+	position: absolute;
+	transform-origin: bottom;
+	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8, transparent, #9a7ef8, #e376e5, #ff5a99, #ff7d7d); 
+	background-size: 300% 300%;
+	color: transparent;
+	background-clip: text;
+	-webkit-background-clip: text;
+	animation: change-color 5s ease infinite;
+	opacity: 0.25;
 }
 .level-next {
 	background-color: #DDDDDD;
   color: #8E8E8E;
+}
+.user-info-container {
+  display: flex;
+  flex-direction: column;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  width: 400px;
+  margin: 20px auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.user-details {
+  margin-top: 10px;
+}
+.user-details p {
+  margin: 5px 0;
+}
+.info-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.form-group {
+  margin-bottom: 20px;
+  width: 100%;
+}
+.form-group span {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #333;
+}
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.button {
+  width: 100%;
+  padding: 10px;
+  background-color: #24c6dc;
+  color: #fff;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.button:hover {
+  background-color: #20a0b0;
 }
 </style>
