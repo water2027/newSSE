@@ -140,29 +140,35 @@ const props = defineProps({
 });
 const basicData = ref(props.cardData);
 
-/**
- * @description 点赞。
- */
-const like = async () => {
-	//后端没有返回数据，不要赋值后再更新
-	try {
-		const res = await props.likeHandler();
-		if(res){
-			basicData.value.IsLiked = !basicData.value.IsLiked;
-			if (basicData.value.IsLiked) {
-				basicData.value.Like++;
-				showMsg('点赞成功');
-			} else {
-				basicData.value.Like--;
-				showMsg('取消成功');
-			}
-		}else{
-			showMsg('失败了:-(');
-		}
-	} catch (e) {
-		showMsg('失败了:-(');
-	}
+const debounce = (fn, delay) => {
+    let timer = null;
+    return function (...args) {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(() => {
+            fn.apply(this, args);
+        }, delay);
+    };
 };
+
+const like = debounce(async () => {
+    try {
+        const res = await props.likeHandler();
+        if(res){
+            basicData.value.IsLiked = !basicData.value.IsLiked;
+            if (basicData.value.IsLiked) {
+                basicData.value.Like++;
+                showMsg('点赞成功');
+            } else {
+                basicData.value.Like--;
+                showMsg('取消成功');
+            }
+        }else{
+            showMsg('失败了:-(');
+        }
+    } catch (e) {
+        showMsg('失败了:-(');
+    }
+}, 300);
 
 defineExpose({
 	name: 'BasicCard',
