@@ -77,6 +77,17 @@
       <div class="data form-group info-form">
         <h3>重置密码</h3>
         <input
+          ref="VCode"
+          type="text"
+          placeholder="验证码"
+        >
+        <button
+          class="button"
+          @click="codeHandler"
+        >
+          发送验证码
+        </button>
+        <input
           ref="password1"
           type="password"
           placeholder="密码"
@@ -112,6 +123,8 @@ import { useRouter } from 'vue-router';
 
 import { showMsg } from '@/components/MessageBox';
 import { levelClassHandler, levelNameHandler, levelExpHandler } from '@/utils/level';
+
+import { sendCode } from '@/api/LoginAndRegister/utils';
 import { getAllInfo } from '@/api/info/getInfo';
 import { updateUserInfo,uploadAvatar } from '@/api/info/updateInfo';
 import { updatePassword } from '@/api/LoginAndRegister/forgetPwd';
@@ -120,8 +133,13 @@ const router = useRouter();
 
 const userInfo = inject('userInfo');
 const allInfo = ref({});
+const VCode = ref(null);
 const password1 = ref(null);
 const password2 = ref(null);
+
+const codeHandler = async () => {
+  await sendCode(allInfo.value.email,1)
+}
 
 const updatePasswordFunc = async () => {
 	if (password1.value.value === '' || password2.value.value === '') {
@@ -135,7 +153,8 @@ const updatePasswordFunc = async () => {
 	const res = await updatePassword(
 		userInfo.value.email,
 		password1.value.value,
-		password2.value.value
+		password2.value.value,
+    VCode.value.value
 	);
 	showMsg(res.msg);
 };
