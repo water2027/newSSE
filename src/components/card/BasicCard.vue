@@ -168,10 +168,12 @@ defineExpose({
 	min-height: 150px;
 	height: auto;
 	display: flex;
+	/*background-color: white;*/
 	flex-direction: column;
 	border: 1px solid var(--color-border);
+	border-radius: 8px;
 	margin: 10px 0;
-	padding: 10px;
+	padding: 15px;
 	box-shadow: var(--color-post-card-box-shadow) 0px 3px 8px;
 	transition: all 0.5s;
 }

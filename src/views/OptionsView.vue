@@ -415,4 +415,40 @@ input[type='file'] {
 .button:hover {
   background-color: #20a0b0;
 }
+
+
+/* 夜间模式配色方案 */
+body.dark-mode .user-info-container {
+  background-color: #2e2e2e; 
+  border: 1px solid #444; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
+}
+body.dark-mode .user-details p {
+  color: #f9f9f9; 
+}
+body.dark-mode .info-form {
+  background-color: #2e2e2e; 
+  border: 1px solid #444;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+body.dark-mode .form-group span {
+  color: #f9f9f9; 
+}
+body.dark-mode .form-group input {
+  background-color: #444;
+  color: #f9f9f9; 
+  border: 1px solid #666;
+}
+body.dark-mode .form-group input:focus {
+  border-color: #00bfff;
+  outline: none; 
+  box-shadow: 0 0 5px rgba(0, 191, 255, 0.5);
+}
+body.dark-mode .button {
+  background-color: #ff8c00;
+  color: #fff; 
+}
+body.dark-mode .button:hover {
+  background-color: #ffb74d;
+}
 </style>

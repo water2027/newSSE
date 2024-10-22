@@ -77,6 +77,14 @@ const sendPartition = (p) => {
 	color: var(--color-button);
 }
 
+/* 夜间模式 */
+body.dark-mode .card-body {
+	filter: invert(1);
+}
+body.dark-mode .card {
+	background-color: #000;
+}
+
 .partition:hover {
 	background-color: var(--color-button);
 	color: var(--color-button-bg);
