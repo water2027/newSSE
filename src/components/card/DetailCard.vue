@@ -103,11 +103,7 @@ const like = async () => {
 	//后端没有返回数据，不要赋值后再更新
 	try{
 		const res = await likePost(postData.value.IsLiked, postData.value.PostID,userInfo.value.phone);
-		if(res){
-			return true;
-		}else{
-			return false;
-		}
+		return res;
 	}catch(e){
 		return false;
 	}
