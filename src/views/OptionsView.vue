@@ -188,7 +188,7 @@ onMounted(async () => {
 <style scoped>
 .root{
 	color: var(--color-text);
-  width: 40vw;
+  width: 100%;
 }
 .data {
 	display: flex;
@@ -245,6 +245,9 @@ input[type='file'] {
   transition: width 0.5s ease-in-out;
 }
 @media screen and (min-width: 768px) {
+  .root{
+    width: 40%;
+  }
 	.exp-container {
     display: flex;
     flex-direction: row !important;
