@@ -22,6 +22,54 @@ async function likePost(isLiked,postID,userTelephone) {
     return data
 }
 
+async function likePostComment(isLiked,pcommentID,userTelephone){
+    const token = getTokenWithExpiry('token')
+    if(!token){
+        return null
+    }
+    try{
+        await fetch(`${apiUrl}/auth/updateLikeComment`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                isLiked:isLiked,
+                pcommentID:pcommentID,
+                userTelephone:userTelephone
+            })
+        })
+        return true;
+    }catch(e){
+        return false;
+    }
+}
+
+async function likeCommentComment(isLiked,ccommentID,userTelephone){
+    const token = getTokenWithExpiry('token')
+    if(!token){
+        return null
+    }
+    try{
+        await fetch(`${apiUrl}/auth/updateLikeCommentComment`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                isLiked:isLiked,
+                ccommentID:ccommentID,
+                userTelephone:userTelephone
+            })
+        })
+        return true;
+    }catch(e){
+        return false;
+    }
+}
+
 async function savePost(isSaved,postID,userTelephone){
     const token = getTokenWithExpiry('token')
     if(!token){
@@ -45,4 +93,4 @@ async function savePost(isSaved,postID,userTelephone){
 
 
 
-export { savePost, likePost }
+export { savePost, likePost, likePostComment, likeCommentComment };
