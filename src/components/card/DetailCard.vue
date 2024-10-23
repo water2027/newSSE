@@ -1,5 +1,8 @@
 <template>
-  <div class="postDetail root">
+  <div
+    ref="root"
+    class="postDetail root"
+  >
     <basic-card
       :card-data="postData"
       :like-handler="like"
@@ -26,14 +29,14 @@
         <MarkdownEditor
           v-if="commentButtonIsShow"
           v-model="commentContent"
-          @send="$emit('comment-handle',sendCommentFunc)"
+          @send="handler('comment')"
         />
       </template>
     </basic-card>
   </div>
 </template>
 <script setup>
-import { ref, inject, onMounted } from 'vue';
+import { ref, inject } from 'vue';
 
 import { showMsg } from '@/components/MessageBox';
 import BasicCard from './BasicCard.vue';
@@ -48,7 +51,6 @@ const props = defineProps({
 		required: true,
 	},
 });
-const emit = defineEmits(['comment-handle'])
 // 不能直接修改props，所以要用ref包装
 const postData = ref(props.post);
 
@@ -56,6 +58,7 @@ const commentButtonIsShow = ref(false);
 const commentContent = ref('');
 
 const userInfo = inject('userInfo');
+const root = ref(null);
 
 /**
  * @description 发送评论
@@ -74,6 +77,21 @@ const sendCommentFunc = async () => {
 		return false;
 	}
 };
+
+const handler = (type)=>{
+	let event;
+	switch(type){
+		case 'comment':
+			event = new CustomEvent('comment-handle',{
+				detail:sendCommentFunc,
+				bubbles:true
+			})
+			break;
+		default:
+			break;
+	}
+	root.value.dispatchEvent(event)
+}
 
 /**
  * @description 收藏。
@@ -106,7 +124,6 @@ const like = async () => {
 	}
 };
 
-onMounted(() => {});
 </script>
 
 <style scoped>

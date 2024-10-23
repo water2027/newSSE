@@ -77,7 +77,6 @@ const postCommentID = ref(0);
 
 const commentHandler = async (event)=>{
 	const func = event.detail;
-	console.log(func)
 	try{
 		const res = await func(userInfo.value.phone,post.value.PostID);
 		if(res){
