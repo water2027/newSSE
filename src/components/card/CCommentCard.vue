@@ -1,6 +1,9 @@
 <!-- eslint-disable vue/html-self-closing -->
 <template>
-  <div class="postDetail root">
+  <div
+    ref="root"
+    class="postDetail root"
+  >
     <basic-card
       :card-data="commentData"
       :like-handler="like"
@@ -8,7 +11,7 @@
       <template #userButtons>
         <button
           v-if="commentData.UserTelephone === userInfo.phone"
-          @click.stop.prevent="deleteHandler(deleteFunc)"
+          @click.stop.prevent="handler('delete')"
         >
           删除
         </button>
@@ -23,25 +26,23 @@
         <MarkdownEditor
           v-if="commentButtonIsShow"
           v-model="commentContent"
-          @send="commentHandler(sendCommentFunc)"
+          @send="handler('comment')"
         />
       </template>
     </basic-card>
   </div>
 </template>
 <script setup>
-import { ref, inject, onMounted } from 'vue';
+import { ref, inject } from 'vue';
 
 import BasicCard from './BasicCard.vue';
 import MarkdownEditor from '../MarkdownEditor.vue';
 
 import {
 	sendPComment,
-	delComment,
 	delCcomment,
 } from '@/api/editPostAndComment/editComment';
 import {
-	likePostComment,
 	likeCommentComment,
 } from '@/api/SaveAndLike.js/SaveAndLike';
 import { showMsg } from '../MessageBox';
@@ -49,14 +50,6 @@ import { showMsg } from '../MessageBox';
 const props = defineProps({
 	comment: {
 		type: Object,
-		required: true,
-	},
-	commentHandler: {
-		type: Function,
-		required: true,
-	},
-	deleteHandler: {
-		type: Function,
 		required: true,
 	},
 	pCommentId: {
@@ -83,6 +76,7 @@ const commentButtonIsShow = ref(false);
 const commentContent = ref('');
 
 const userInfo = inject('userInfo');
+const root = ref(null);
 
 /**
  * @description 发送评论
@@ -123,6 +117,27 @@ const deleteFunc = async () => {
 		}
 	}
 };
+
+const handler = (type)=>{
+	let event;
+	switch(type){
+		case 'delete':
+			event = new CustomEvent('comment-handle',{
+				detail:deleteFunc,
+				bubbles:true
+			})
+			break;
+		case 'comment':
+			event = new CustomEvent('comment-handle',{
+				detail:sendCommentFunc,
+				bubbles:true
+			})
+			break;
+		default:
+			break;
+	}
+	root.value.dispatchEvent(event)
+}
 
 /**
  * @description 点赞。

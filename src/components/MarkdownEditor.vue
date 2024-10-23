@@ -55,14 +55,14 @@
     </div>
     <div class="buttons">
       <div
-		class="button"
         v-if="route.path === '/post'"
+        class="button"
         @click="savePost"
       >
         暂存为草稿
       </div>
       <div
-	  	class="button"
+        class="button"
         @click="$emit('send')"
       >
         发送

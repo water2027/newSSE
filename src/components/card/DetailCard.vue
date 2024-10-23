@@ -26,7 +26,7 @@
         <MarkdownEditor
           v-if="commentButtonIsShow"
           v-model="commentContent"
-          @send="commentHandler(sendCommentFunc)"
+          @send="$emit('comment-handle',sendCommentFunc)"
         />
       </template>
     </basic-card>
@@ -47,11 +47,8 @@ const props = defineProps({
 		type: Object,
 		required: true,
 	},
-	commentHandler: {
-		type: Function,
-		required: true,
-	},
 });
+const emit = defineEmits(['comment-handle'])
 // 不能直接修改props，所以要用ref包装
 const postData = ref(props.post);
 

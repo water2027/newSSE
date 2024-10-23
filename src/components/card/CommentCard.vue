@@ -1,6 +1,9 @@
 <!-- eslint-disable vue/html-self-closing -->
 <template>
-  <div class="postDetail root">
+  <div
+    ref="root"
+    class="postDetail root"
+  >
     <basic-card
       :card-data="commentData"
       :like-handler="like"
@@ -8,7 +11,7 @@
       <template #userButtons>
         <button
           v-if="commentData.UserTelephone === userInfo.phone"
-          @click.stop.prevent="deleteHandler(deleteFunc)"
+          @click.stop.prevent="handler('delete')"
         >
           删除
         </button>
@@ -23,7 +26,7 @@
         <MarkdownEditor
           v-if="commentButtonIsShow"
           v-model="commentContent"
-          @send="commentHandler(sendCommentFunc)"
+          @send="handler('comment')"
         />
       </template>
     </basic-card>
@@ -51,20 +54,13 @@ const props = defineProps({
 		type: Object,
 		required: true,
 	},
-	commentHandler: {
-		type: Function,
-		required: true,
-	},
-	deleteHandler: {
-		type: Function,
-		required: true,
-	},
 	pCommentId: {
 		type: Number,
 		required: false,
 		default: 0,
 	},
 });
+const root = ref(null);
 // 不能直接修改props，所以要用ref包装
 // 后端命名真该死啊
 const commentData = ref({
@@ -133,6 +129,27 @@ const deleteFunc = async () => {
 		}
 	}
 };
+
+const handler = (type)=>{
+	let event;
+	switch(type){
+		case 'delete':
+			event = new CustomEvent('comment-handle',{
+				detail:deleteFunc,
+				bubbles:true
+			})
+			break;
+		case 'comment':
+			event = new CustomEvent('comment-handle',{
+				detail:sendCommentFunc,
+				bubbles:true
+			})
+			break;
+		default:
+			break;
+	}
+	root.value.dispatchEvent(event)
+}
 
 /**
  * @description 点赞。

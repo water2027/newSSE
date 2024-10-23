@@ -2,11 +2,11 @@
   <div
     class="root"
     @click="clickHandler"
+    @comment-handle="commentHandler"
   >
     <detail-card
       v-if="isPostLoaded"
       :post="post"
-      :comment-handler="commentHandler"
     />
     <div v-else>
       loading...
@@ -14,7 +14,9 @@
     <div class="comment">
       <h2>评论</h2>
       <!-- 这是评论区 -->
-      <div class="commentList">
+      <div
+        class="commentList"
+      >
         <div
           v-for="comment in comments"
           :key="comment.PcommentID"
@@ -22,8 +24,6 @@
         >	
           <comment-card
             :comment="comment"
-            :comment-handler="postCommentHandler"
-            :delete-handler="deleteHandler"
             :show-comment="postCommentID===comment.PcommentID"
           >
             <template #showComment>
@@ -36,7 +36,7 @@
             </template>
           </comment-card>
           <div
-            v-if="postCommentID===comment.PcommentID"
+            v-show="postCommentID===comment.PcommentID"
             class="subCommentList"
           >
             <c-comment-card
@@ -44,8 +44,6 @@
               :key="subComment.ccommentID"
               :p-comment-id="comment.PcommentID"
               :comment="subComment"
-              :comment-handler="postCommentHandler"
-              :delete-handler="deleteHandler"
             />
           </div>
         </div>
@@ -77,51 +75,11 @@ const isPostLoaded = computed(() => Object.keys(post.value).length !== 0)
 const comments = ref([]);
 const postCommentID = ref(0);
 
-/**
- * @description 对帖子进行评论
- * @param callback 在PostCard实现
- */
-const commentHandler = async (callback)=>{
+const commentHandler = async (event)=>{
+	const func = event.detail;
+	console.log(func)
 	try{
-		const res = await callback();
-		if(res){
-			showMsg('成功')
-			await getCommentList();
-		}else{
-			showMsg('失败')
-		}
-	}catch(e){
-		console.error(e)
-		showMsg('失败')
-	}
-}
-
-/**
- * @description 对评论评论和对评论的评论评论
- * @param callback 在CommentCard和CCommentCard实现
- */
-const postCommentHandler = async (callback)=>{
-	try{
-		const res = await callback(userInfo.value.phone,post.value.PostID);
-		if(res){
-			showMsg('成功')
-			await getCommentList();
-		}else{
-			showMsg('失败')
-		}
-	}catch(e){
-		console.error(e)
-		showMsg('失败')
-	}
-}
-
-/**
- * @description 删除评论
- * @param callback 在CommentCard和CCommentCard实现
- */
-const deleteHandler = async (callback)=>{
-	try{
-		const res = await callback();
+		const res = await func(userInfo.value.phone,post.value.PostID);
 		if(res){
 			showMsg('成功')
 			await getCommentList();
