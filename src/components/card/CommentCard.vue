@@ -33,7 +33,7 @@
   </div>
 </template>
 <script setup>
-import { ref, inject, onMounted } from 'vue';
+import { ref, inject } from 'vue';
 
 import BasicCard from './BasicCard.vue';
 import MarkdownEditor from '../MarkdownEditor.vue';
@@ -86,10 +86,8 @@ const userInfo = inject('userInfo');
  */
 const sendCommentFunc = async (phone, id) => {
 	try {
-		// 等待 props.comment 数据就绪
-		await Promise.resolve();
 		let sendingData = {
-			content: await commentContent.value,
+			content: commentContent.value,
 			userTelephone: phone,
 			postID: id,
 			pcommentID: commentData.value.PcommentID,
@@ -99,6 +97,7 @@ const sendCommentFunc = async (phone, id) => {
 		if (res) {
 			commentContent.value = '';
 			commentButtonIsShow.value = false;
+			++commentData.value.Comment;
 			return true;
 		}
 		return false;
@@ -193,10 +192,6 @@ const like = async () => {
 		}
 	}
 };
-
-onMounted(async () => {
-	await Promise.resolve();
-});
 </script>
 <style scoped>
 .commentButton {

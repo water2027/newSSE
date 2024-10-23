@@ -84,7 +84,7 @@ const root = ref(null);
 const sendCommentFunc = async (phone, id) => {
 	try {
 		let sendingData = {
-			content: await commentContent.value,
+			content: commentContent.value,
 			userTelephone: phone,
 			postID: id,
 			pcommentID: props.pCommentId,
@@ -161,7 +161,6 @@ const like = async () => {
 		return false;
 	}
 };
-
 </script>
 <style scoped>
 .commentButton {
