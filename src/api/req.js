@@ -28,7 +28,6 @@ async function requestFunc(url, object, tokenIsNeeded) {
 		});
 		return res;
 	} else {
-        console.log(url,object,tokenIsNeeded)
 		const res = await fetch(`${apiUrl}${url}`, {
 			method: object.method,
 			headers: object.headers,
