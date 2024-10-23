@@ -271,6 +271,7 @@ const getVCode = async (mode) => {
 		const res = await sendCode(email.value.value, mode);
 		if (res.code !== 200) {
 			showMsg(res.msg);
+      alert("邮箱错误");
 		} else {
 			showMsg('验证码已发送');
 		}
