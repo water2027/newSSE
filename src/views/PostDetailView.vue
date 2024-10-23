@@ -14,29 +14,37 @@
     <div class="comment">
       <h2>评论</h2>
       <!-- 这是评论区 -->
-      <div
-        class="commentList"
-      >
+      <div class="commentList">
+        <!-- 使用id-评论数作为key使每次评论重新渲染当前评论 -->
         <div
           v-for="comment in comments"
-          :key="comment.PcommentID"
+          :key="`${comment.PcommentID}-${comment.SubComments.length}`"
           class="comment"
-        >	
+        >
           <comment-card
             :comment="comment"
-            :show-comment="postCommentID===comment.PcommentID"
+            :show-comment="postCommentID === comment.PcommentID"
           >
             <template #showComment>
               <button
                 v-if="comment.SubComments.length"
-                @click="postCommentID = postCommentID===comment.PcommentID?-1:comment.PcommentID"
+                @click="
+                  postCommentID =
+                    postCommentID === comment.PcommentID
+                      ? -1
+                      : comment.PcommentID
+                "
               >
-                {{ postCommentID===comment.PcommentID?'不想看了':'让我看看' }}
+                {{
+                  postCommentID === comment.PcommentID
+                    ? '不想看了'
+                    : '让我看看'
+                }}
               </button>
             </template>
           </comment-card>
           <div
-            v-show="postCommentID===comment.PcommentID"
+            v-show="postCommentID === comment.PcommentID"
             class="subCommentList"
           >
             <c-comment-card
@@ -52,7 +60,7 @@
   </div>
 </template>
 <script setup>
-import { ref, inject, onMounted,computed } from 'vue';
+import { ref, inject, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 
 import { getPostByID } from '@/api/browse/getPost';
@@ -71,28 +79,28 @@ const route = useRoute();
 const userInfo = inject('userInfo');
 
 const post = ref({});
-const isPostLoaded = computed(() => Object.keys(post.value).length !== 0)
+const isPostLoaded = computed(() => Object.keys(post.value).length !== 0);
 const comments = ref([]);
 const postCommentID = ref(0);
 
-const commentHandler = async (event)=>{
+const commentHandler = async (event) => {
 	const func = event.detail;
-	try{
-		const res = await func(userInfo.value.phone,post.value.PostID);
-		if(res){
-			showMsg('成功')
+	try {
+		const res = await func(userInfo.value.phone, post.value.PostID);
+		if (res) {
+			showMsg('成功');
 			await getCommentList();
-		}else{
-			showMsg('失败')
+		} else {
+			showMsg('失败');
 		}
-	}catch(e){
-		console.error(e)
-		showMsg('失败')
+	} catch (e) {
+		console.error(e);
+		showMsg('失败');
 	}
-}
+};
 
-const getCommentList = async ()=>{
-	try{
+const getCommentList = async () => {
+	try {
 		const ID = Number(route.params.id);
 		const curComments = await getCommentsByPostID(ID, userInfo.value.phone);
 		if(curComments) curComments.reverse();
@@ -100,7 +108,7 @@ const getCommentList = async ()=>{
 	}catch(e){
 		showMsg(`获取评论失败: ${e}`);
 	}
-}
+};
 
 /**
  *
@@ -139,7 +147,7 @@ onMounted(async () => {
 });
 </script>
 <style scoped>
-.root{
+.root {
 	color: var(--color-text);
 	display: flex;
 	flex-direction: column;
@@ -153,7 +161,7 @@ onMounted(async () => {
 	height: auto;
 }
 
-.commentList{
+.commentList {
 	min-width: 100%;
 	width: 100%;
 }
@@ -161,5 +169,4 @@ onMounted(async () => {
 .subCommentList {
 	margin-left: 3%;
 }
-
 </style>

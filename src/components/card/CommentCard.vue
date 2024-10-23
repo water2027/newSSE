@@ -97,7 +97,6 @@ const sendCommentFunc = async (phone, id) => {
 		if (res) {
 			commentContent.value = '';
 			commentButtonIsShow.value = false;
-			++commentData.value.Comment;
 			return true;
 		}
 		return false;
@@ -109,15 +108,6 @@ const sendCommentFunc = async (phone, id) => {
 
 const deleteFunc = async () => {
 	let id;
-	if (props.comment.hasOwnProperty('ccommentID')) {
-		id = props.comment.ccommentID;
-		const res = await delCcomment(id);
-		if (res) {
-			return true;
-		} else {
-			return false;
-		}
-	}
 	if (props.comment.hasOwnProperty('PcommentID')) {
 		id = props.comment.PcommentID;
 		const res = await delComment(id);
