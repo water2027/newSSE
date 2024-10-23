@@ -39,10 +39,6 @@
         v-model="postContent"
         @send="submitPost"
       />
-      <!-- <NewEditor
-				v-model="postContent"
-				@send="submitPost"
-			/> -->
     </div>
   </div>
 </template>
@@ -56,7 +52,6 @@ import { sendPost } from '@/api/editPostAndComment/editPost';
 
 import { showMsg } from '@/components/MessageBox';
 import MarkdownEditor from '@/components/MarkdownEditor.vue';
-// import NewEditor from '@/components/NewEditor.vue';
 
 const router = useRouter();
 const userInfo = inject('userInfo');
