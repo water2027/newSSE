@@ -5,8 +5,8 @@ import { requestFunc } from "../req";
 /**
  * @description 
  * @param {string} email
- * @param {string} password1 未加密
- * @param {string} password2 未加密
+ * @param {string} password1 未加密的密码
+ * @param {string} password2 未加密的密码
  * @param {string} valiCode
  * @returns
  */
@@ -28,7 +28,7 @@ async function updatePassword(email, password1, password2, valiCode) {
 		return data;
 	}catch(e){
 		console.error(e);
-		showMsg('修改密码a失败');
+		showMsg('修改密码失败');
 	}
 }
 

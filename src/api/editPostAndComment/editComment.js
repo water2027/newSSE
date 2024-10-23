@@ -1,5 +1,12 @@
 import { requestFunc } from '../req';
 
+/**
+ * @description 给帖子发评论
+ * @param {string} content 
+ * @param {number} postID 
+ * @param {string} userTelephone 
+ * @returns 
+ */
 async function sendComment(content, postID, userTelephone) {
 	try {
 		const res = await requestFunc(
@@ -24,6 +31,11 @@ async function sendComment(content, postID, userTelephone) {
 	}
 }
 
+/**
+ * @description 给评论发评论
+ * @param {{content:string,userTelephone:string,postID:number,pcommentID:number}} object 如果是给评论的评论发评论，需要多一个ccommentID:number
+ * @returns 
+ */
 async function sendPComment(object) {
 	try {
 		const res = await requestFunc(
@@ -44,6 +56,11 @@ async function sendPComment(object) {
 	}
 }
 
+/**
+ * 
+ * @param {number} pcommentID 
+ * @returns 
+ */
 async function delComment(pcommentID) {
 	try {
 		const res = await requestFunc(
@@ -66,6 +83,11 @@ async function delComment(pcommentID) {
 	}
 }
 
+/**
+ * 
+ * @param {number} ccommentID 
+ * @returns 
+ */
 async function delCcomment(ccommentID) {
 	try {
 		const res = await requestFunc(

@@ -4,7 +4,7 @@ const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 /***
  * @param {string} url api地址，只需写https://ssemarket.cn/api 后的部分
- * @param {{method:string,headers:object,body:object||null}} object 请求体
+ * @param {{method:string,headers:object,body:object|null}} object 请求体
  * @param {boolean} tokenIsNeeded 是否需要token
  * @example requestFunc('/auth/deletePcomment',{
  *  headers:{'Content-Type': 'application/json'},

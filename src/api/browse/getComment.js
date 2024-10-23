@@ -1,5 +1,11 @@
 import { requestFunc } from "../req";
 
+/**
+ * 
+ * @param {number} PostID 
+ * @param {string} userTelephone 
+ * @returns 
+ */
 async function getCommentsByPostID(PostID, userTelephone) {
 	try{
 		const res = await requestFunc(`/auth/showPcomments`, {

@@ -1,3 +1,7 @@
+/**
+ * 
+ * @returns 带有过期时间的token
+ */
 function getTokenWithExpiry() {
     const itemStr = localStorage.getItem('token')
 

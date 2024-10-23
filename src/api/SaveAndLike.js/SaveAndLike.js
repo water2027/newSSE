@@ -1,5 +1,12 @@
 import { requestFunc } from "../req";
 
+/**
+ * @description 后端未返回数据，只能通过状态码判断是否成功
+ * @param {boolean} isLiked 目前是否喜欢
+ * @param {number} postID 
+ * @param {string} userTelephone 
+ * @returns 如果状态码2xx，返回true
+ */
 async function likePost(isLiked,postID,userTelephone) {
     try{
         // 没有返回数据，只能通过状态码判断
@@ -21,9 +28,14 @@ async function likePost(isLiked,postID,userTelephone) {
     }
 }
 
+/***
+ * @param {boolean} isLiked 目前是否喜欢
+ * @param {number} pcommentID 评论id
+ * @param {string} userTelephone 
+ * @returns 如果状态码2xx，返回true
+ */
 async function likePostComment(isLiked,pcommentID,userTelephone){
     try{
-        // 同上
         const res = await requestFunc(`/auth/updatePcommentLike`,{
             method: 'POST',
             headers: {
@@ -41,9 +53,14 @@ async function likePostComment(isLiked,pcommentID,userTelephone){
     }
 }
 
+/***
+ * @param {boolean} isLiked 目前是否喜欢
+ * @param {number} ccommentID 评论的评论id
+ * @param {string} userTelephone 
+ * @returns 如果状态码2xx，返回true
+ */
 async function likeCommentComment(isLiked,ccommentID,userTelephone){
     try{
-        // 同上
         const res = await requestFunc(`/auth/updateCcommentLike`,{
             method: 'POST',
             headers: {
@@ -61,9 +78,14 @@ async function likeCommentComment(isLiked,ccommentID,userTelephone){
     }
 }
 
+/***
+ * @param {boolean} isSaved 目前是否收藏
+ * @param {number} postID 要收藏的帖子id
+ * @param {string} userTelephone 
+ * @returns 如果状态码2xx，返回true
+ */
 async function savePost(isSaved,postID,userTelephone){
     try{
-        // 同上
         const res = await requestFunc(`/auth/updateSave`,{
             method: 'POST',
             headers: {
