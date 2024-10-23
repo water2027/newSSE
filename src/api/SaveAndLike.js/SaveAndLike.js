@@ -1,29 +1,20 @@
-import { getTokenWithExpiry } from "../auth";
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
+import { requestFunc } from "../req";
 
 async function likePost(isLiked,postID,userTelephone) {
-    const token = getTokenWithExpiry('token')
-    if(!token){
-        return null
-    }
     try{
-        const response = await fetch(`${apiUrl}/auth/updateLike`,{
+        // 没有返回数据，只能通过状态码判断
+        const res = await requestFunc(`/auth/updateLike`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({
+            body: {
                 isLiked:isLiked,
                 postID:postID,
                 userTelephone:userTelephone
-            })
-        })
-        if(response.status === 200){
-            return true;
-        }else{
-            return false;
-        }
+            }
+        },true)
+        return res.ok;
     }catch(e){
         console.error(e)
         return false;
@@ -31,72 +22,63 @@ async function likePost(isLiked,postID,userTelephone) {
 }
 
 async function likePostComment(isLiked,pcommentID,userTelephone){
-    const token = getTokenWithExpiry('token')
-    if(!token){
-        return null
-    }
     try{
-        await fetch(`${apiUrl}/auth/updatePcommentLike`,{
+        // 同上
+        const res = await requestFunc(`/auth/updatePcommentLike`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({
+            body: {
                 isLiked:isLiked,
                 pcommentID:pcommentID,
                 userTelephone:userTelephone
-            })
-        })
-        return true;
+            }
+        },true)
+        return res.ok;
     }catch(e){
         return false;
     }
 }
 
 async function likeCommentComment(isLiked,ccommentID,userTelephone){
-    const token = getTokenWithExpiry('token')
-    if(!token){
-        return null
-    }
     try{
-        await fetch(`${apiUrl}/auth/updateCcommentLike`,{
+        // 同上
+        const res = await requestFunc(`/auth/updateCcommentLike`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({
+            body: {
                 isLiked:isLiked,
                 ccommentID:ccommentID,
                 userTelephone:userTelephone
-            })
-        })
-        return true;
+            }
+        },true)
+        return res.ok;
     }catch(e){
         return false;
     }
 }
 
 async function savePost(isSaved,postID,userTelephone){
-    const token = getTokenWithExpiry('token')
-    if(!token){
-        return null
+    try{
+        // 同上
+        const res = await requestFunc(`/auth/updateSave`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: {
+                isSaved:isSaved,
+                postID:postID,
+                userTelephone:userTelephone
+            }
+        },true);
+        return res.ok;
+    }catch(e){
+        return false;
     }
-    const response = await fetch(`${apiUrl}/auth/updateSave`,{
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-            isSaved:isSaved,
-            postID:postID,
-            userTelephone:userTelephone
-        })
-    });
-    const data = await response.text();
-    return data
 }
 
 

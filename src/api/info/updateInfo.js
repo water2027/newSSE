@@ -1,27 +1,25 @@
-import { getTokenWithExpiry } from "../auth";
-
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
+import { requestFunc } from "../req";
 
 async function updateUserInfo(avatarURL, intro, name, userID) {
-	const token = getTokenWithExpiry('token');
-	if (!token) {
-		return null;
+	try{
+		const res = await requestFunc(`/auth/updateUserInfo`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: { 
+				avatarURL:avatarURL, 
+				intro:intro, 
+				name:name, 
+				userID:userID 
+			},
+		},true);
+		const data = await res.json();
+		return data;
+	}catch(e){
+		alert(e)
+		console.error(e);
 	}
-	const response = await fetch(`${apiUrl}/auth/updateUserInfo`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-		},
-		body: JSON.stringify({ 
-            avatarURL:avatarURL, 
-            intro:intro, 
-            name:name, 
-            userID:userID 
-        }),
-	});
-	const data = await response.json();
-	return data;
 }
 
 async function uploadAvatar(photo) {

@@ -1,5 +1,4 @@
-import { getTokenWithExpiry } from "../auth";
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
+import { requestFunc } from '../req';
 /**
  *
  * @param {number} limit 返回多少个帖子
@@ -12,20 +11,24 @@ const apiUrl = import.meta.env.VITE_API_BASE_URL;
  * @returns
  */
 async function getPosts(object) {
-	const token = getTokenWithExpiry('token');
-	if (!token) {
+	try {
+		const res = await requestFunc(
+			`/auth/browse`,
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: object,
+			},
+			true
+		);
+		const data = await res.json();
+		return data;
+	} catch (e) {
+		console.error(e);
 		return null;
 	}
-	const response = await fetch(`${apiUrl}/auth/browse`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-		},
-		body: JSON.stringify(object),
-	});
-	const data = await response.json();
-	return data;
 }
 
 /***
@@ -37,40 +40,48 @@ async function getPosts(object) {
  * @returns {number} 返回帖子数量
  */
 async function getPostsNum(object) {
-	const token = getTokenWithExpiry('token');
-	if (!token) {
+	try {
+		const res = await requestFunc(
+			`/auth/getPostNum`,
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: object,
+			},
+			true
+		);
+		const data = await res.json();
+		return data.Postcount;
+	} catch (e) {
+		console.error(e);
 		return null;
 	}
-	const response = await fetch(`${apiUrl}/auth/getPostNum`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-		},
-		body: JSON.stringify(object),
-	});
-	const data = await response.json();
-	return data.Postcount;
 }
 
 /**
- * @description 获取热门帖子，但长年失修
+ * @description 获取热门帖子
  * @returns 帖子数组
  */
 async function getHeatPosts() {
-	const token = getTokenWithExpiry('token');
-	if (!token) {
+	try {
+		const res = await requestFunc(
+			`/auth/calculateHeat`,
+			{
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			},
+			true
+		);
+		const data = await res.json();
+		return data;
+	} catch (e) {
+		console.error(e);
 		return null;
 	}
-	const response = await fetch(`${apiUrl}/auth/calculateHeat`, {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-		},
-	});
-	const data = await response.json();
-	return data;
 }
 
 /***
@@ -80,42 +91,54 @@ async function getHeatPosts() {
  * @returns {object} 返回帖子详情
  */
 async function getPostByID(PostID, userTelephone) {
-	const token = getTokenWithExpiry('token');
-	if (!token) {
+	const result = await updateBrowseNum(PostID, userTelephone);
+	if (!result) {
+		console.error('增加浏览量失败');
+	}
+	try {
+		const res = await requestFunc(
+			`/auth/showDetails`,
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: {
+					postID: PostID,
+					userTelephone: userTelephone,
+				},
+			},
+			true
+		);
+		const data = await res.json();
+		return data;
+	} catch (e) {
+		console.error(e);
 		return null;
 	}
-	await updateBrowseNum(PostID,userTelephone);
-	const response = await fetch(`${apiUrl}/auth/showDetails`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-		},
-		body: JSON.stringify({
-			postID: PostID,
-			userTelephone: userTelephone,
-		}),
-	});
-	const data = await response.json();
-	return data;
 }
 
-async function updateBrowseNum(PostID,userTelephone){
-	const token = getTokenWithExpiry('token');
-	if (!token) {
-		return null;
+async function updateBrowseNum(PostID, userTelephone) {
+	try {
+		const res = await requestFunc(
+			`/auth/updateBrowseNum`,
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: {
+					postID: PostID,
+					userTelephone: userTelephone,
+				},
+			},
+			true
+		);
+		return res.ok;
+	} catch (e) {
+		console.error(e);
+		return false;
 	}
-	await fetch(`${apiUrl}/auth/updateBrowseNum`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-		},
-		body: JSON.stringify({
-			postID: PostID,
-			userTelephone: userTelephone,
-		}),
-	});
 }
 
 export { getPosts, getPostsNum, getHeatPosts, getPostByID };

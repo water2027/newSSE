@@ -1,5 +1,4 @@
-import { getTokenWithExpiry } from "../auth";
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
+import { requestFunc } from "../req";
 
 async function sendPost(
 	content,
@@ -9,46 +8,46 @@ async function sendPost(
 	title,
 	userTelephone
 ) {
-	const token = getTokenWithExpiry('token');
-	if (!token) {
-		return;
+	try{
+		const res = await requestFunc(`/auth/post`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: {
+				content: content,
+				partition: partition,
+				photos: photos,
+				tagList: tagList,
+				title: title,
+				userTelephone: userTelephone,
+			},
+		},true);
+		const data = await res.json();
+		return data;
+	}catch(e){
+		console.error(e);
+		return null;
 	}
-	const response = await fetch(`${apiUrl}/auth/post`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-		},
-		body: JSON.stringify({
-			content: content,
-			partition: partition,
-			photos: photos,
-			tagList: tagList,
-			title: title,
-			userTelephone: userTelephone,
-		}),
-	});
-	const data = await response.json();
-	return data;
 }
 
 async function delPost(postID){
-    const token = getTokenWithExpiry('token')
-    if(!token){
-        return null
-    }
-    const response = await fetch(`${apiUrl}/auth/deletePost`,{
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-            postID:postID
-        })
-    });
-    const data = await response.text();
-    return data
+	try{
+		const res = await requestFunc(`/auth/deletePost`,{
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: {
+				postID:postID
+			}
+		},true);
+		const data = await res.json();
+		return data
+	}catch(e){
+		console.error(e);
+		return null;
+	}
 }
 
 export { sendPost, delPost }
