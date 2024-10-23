@@ -10,7 +10,7 @@
       <span class="user-name"><span
         v-if="basicData.UserIdentity==='teacher'"
         class="teacher_identity"
-      >老师</span>{{ basicData.UserName }}<span v-if="basicData.hasOwnProperty('userTargetName')">回复{{ basicData.userTargetName||'层主' }}</span></span>
+      >教师</span>{{ basicData.UserName }}<span v-if="basicData.hasOwnProperty('userTargetName')">回复{{ basicData.userTargetName||'层主' }}</span></span>
       <span
         v-if="!basicData.hasOwnProperty('userTargetName')"
         title="码之气，三段！"
@@ -276,10 +276,25 @@ a {
 	display: block;
 }
 .teacher_identity{
-	color: #7d6c02;
+	color: black;
 	margin-left: 8px;
 	margin-right: 10px;
-	background-color: #53a42180; 
+	background-color: #62ea1480; 
+  border-radius: 8px;
+  display: inline-block;
+  width: 50px;
+  text-align: center;
+  transition: all 0.5s;
+}
+body.dark-mode .teacher_identity{
+  color: #e2e6e7;
+  margin-left: 8px;
+	margin-right: 10px;
+	background-color: #e9e9f180; 
+  border-radius: 8px;
+  display: inline-block;
+  width: 50px;
+  text-align: center;
 }
 
 :deep(.level) {
