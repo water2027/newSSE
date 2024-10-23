@@ -22,7 +22,7 @@
         <slot name="userButtons"></slot>
       </div>
     </div>
-    <h2>{{ basicData.Title||'' }}</h2>
+    <h3>{{ basicData.Title||'' }}</h3>
     <p v-if="isPost">
       {{ basicData.Content||'loading' }}
     </p>
@@ -114,7 +114,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 
 import { strHandler } from '@/utils/strHandler';
 import { levelNameHandler, levelClassHandler } from '@/utils/level';
@@ -170,10 +170,6 @@ const like = debounce(async () => {
     }
 }, 300);
 
-onMounted(()=>{
-    // console.log('basicData:',basicData.value);
-})
-
 defineExpose({
 	name: 'BasicCard',
 });
@@ -222,6 +218,7 @@ defineExpose({
 .user .user-name {
 	color: var(--color-user-text);
   margin-left: 10px;
+  font-size: 18px
 }
 
 .user img {
@@ -297,8 +294,8 @@ body.dark-mode .teacher_identity{
   text-align: center;
 }
 
-:deep(.level) {
-  font-size: 1rem;
+.level {
+  font-size: 14px;
   margin-left: 10px;
   border-radius: 10%;
   padding-left: 10px;
@@ -306,36 +303,36 @@ body.dark-mode .teacher_identity{
   padding-top: 5px;
   padding-bottom: 5px;
 }
-:deep(.level-undefined) {
+.level-undefined {
   text-shadow:
     0.2em 0.2em var(--color-level-undefined-box-shadow),
     -0.2em -0.2em var(--color-level-undefined-box-shadow);
 }
-:deep(.level-0) {
+.level-0 {
   background-color: #36c7d9;
 }
-:deep(.level-1) {
+.level-1 {
   background-color: #66d934;
 }
-:deep(.level-2) {
+.level-2 {
   background-color: #d74a4a;
 }
-:deep(.level-3) {
+.level-3 {
   background-color: rgb(240, 133, 39);
 }
-:deep(.level-4) {
+.level-4 {
   background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
   background-size: 300% 300%;
   animation: change-color 5s ease infinite;
 }
-:deep(.level-5) {
+.level-5 {
   background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
   background-size: 300% 300%;
   color: transparent;
   background-clip: text;
   animation: change-color 5s ease infinite;
 }
-:deep(.level-6) {
+.level-6 {
   position: relative;
   background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
   background-size: 300% 300%;
@@ -343,7 +340,7 @@ body.dark-mode .teacher_identity{
   background-clip: text;
   animation: change-color 5s ease infinite;
 }
-:deep(.level-6)::before {
+.level-6::before {
   content: 'Lv6 专家';
   position: absolute;
   transform: rotateX(180deg);
@@ -355,7 +352,7 @@ body.dark-mode .teacher_identity{
   color: transparent;
   opacity: 0.5;
 }
-:deep(.level-7) {
+.level-7 {
   position: relative;
   line-height: 32px;
   background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
@@ -365,7 +362,7 @@ body.dark-mode .teacher_identity{
   animation: change-color 5s ease infinite;
   background-size: 300% 300%;
 }
-:deep(.level-7)::before {
+.level-7::before {
   content: 'Lv7 大神';
   transform: rotateX(180deg);
   position: absolute;
@@ -377,13 +374,13 @@ body.dark-mode .teacher_identity{
   animation: change-color 5s ease infinite;
   opacity: 0.5;
 }
-:deep(.level-8) {
+.level-8 {
   position: relative;
   line-height: 32px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3),
   -2px -2px 4px rgba(255, 255, 255, 0.3);
 }
-:deep(.level-8)::before {
+.level-8::before {
   content: '祖师爷';
   transform: rotateX(160deg) skew(10deg);
   position: absolute;

@@ -4,7 +4,7 @@
     @click="clickHandler"
   >
     <detail-card
-      v-if="Object.keys(post).length !== 0"
+      v-if="isPostLoaded"
       :post="post"
       :comment-handler="commentHandler"
     />
@@ -14,11 +14,10 @@
     <div class="comment">
       <h2>评论</h2>
       <!-- 这是评论区 -->
-      <!-- 考虑做成组件，但是貌似只有这一个地方用了，好像又没啥必要 -->
       <div class="commentList">
         <div
           v-for="comment in comments"
-          :key="comment.PcommentID+comment.SubComments.length"
+          :key="comment.PcommentID"
           class="comment"
         >	
           <comment-card
@@ -55,7 +54,7 @@
   </div>
 </template>
 <script setup>
-import { ref, inject, onMounted } from 'vue';
+import { ref, inject, onMounted,computed } from 'vue';
 import { useRoute } from 'vue-router';
 
 import { getPostByID } from '@/api/browse/getPost';
@@ -74,9 +73,14 @@ const route = useRoute();
 const userInfo = inject('userInfo');
 
 const post = ref({});
+const isPostLoaded = computed(() => Object.keys(post.value).length !== 0)
 const comments = ref([]);
 const postCommentID = ref(0);
 
+/**
+ * @description 对帖子进行评论
+ * @param callback 在PostCard实现
+ */
 const commentHandler = async (callback)=>{
 	try{
 		const res = await callback();
@@ -92,6 +96,10 @@ const commentHandler = async (callback)=>{
 	}
 }
 
+/**
+ * @description 对评论评论和对评论的评论评论
+ * @param callback 在CommentCard和CCommentCard实现
+ */
 const postCommentHandler = async (callback)=>{
 	try{
 		const res = await callback(userInfo.value.phone,post.value.PostID);
@@ -107,6 +115,10 @@ const postCommentHandler = async (callback)=>{
 	}
 }
 
+/**
+ * @description 删除评论
+ * @param callback 在CommentCard和CCommentCard实现
+ */
 const deleteHandler = async (callback)=>{
 	try{
 		const res = await callback();
