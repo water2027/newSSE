@@ -40,7 +40,7 @@
         class="LoginAndRegButton"
         @click="login"
       >
-        Login!
+        登录
       </button>
       <div class="regButtons">
         <div
@@ -441,6 +441,10 @@ const resetPwd = async () => {
 	cursor: pointer;
 	margin-top: 20px;
 	border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
 }
 
 .LoginAndRegButton:hover {
