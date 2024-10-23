@@ -54,20 +54,22 @@
       />
     </div>
     <div class="buttons">
-      <button
+      <div
+		class="button"
         v-if="route.path === '/post'"
         @click="savePost"
       >
         暂存为草稿
-      </button>
-      <button
+      </div>
+      <div
+	  	class="button"
         @click="$emit('send')"
       >
         发送
-      </button>
+      </div>
       <label
         for="fileInput"
-        class="fileInput"
+        class="button"
       >选择图片</label>
       <input
         id="fileInput"
@@ -254,6 +256,7 @@ defineExpose({
 	margin-right: 0;
 }
 .container {
+	margin-top: 20px;
 	display: flex;
 	flex-direction: row;
 	/* align-items: center; */
@@ -261,8 +264,27 @@ defineExpose({
 	width: 100%;
 	height: auto;
 }
+.editorButton {
+    margin-bottom: 15px; 
+}
 
-.container textarea,
+.editorButton button {
+    background-color: #66BB6A;
+    color: white; 
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    margin-right: 10px; 
+	margin-top: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.editorButton button:hover {
+    background-color: #4CAF50;
+    transform: translateY(-2px);
+}
+
 .container div {
 	width: 100%;
 	min-height: 100%;
@@ -274,6 +296,13 @@ defineExpose({
 
 .container textarea {
 	height: 450px;
+	border: 1px solid #d1d1d1;
+    border-radius: 5px;
+    padding: 10px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 16px;
+    resize: none; 
+    transition: border-color 0.3s;
 }
 
 .buttons {
@@ -286,6 +315,28 @@ defineExpose({
 	padding: 10px;
 	border-radius: 5px;
 }
+
+.button {
+    width: 20vw;
+    height: 50px;
+    max-width: 100px;
+    margin-right: 20px;
+	margin-top: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #42A5F5;
+    color: white;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.button:hover {
+    background-color: #2196F3;
+    transform: translateY(-2px);
+}
+
+
 
 @media screen and (min-width:768px) {
 	button{
@@ -301,9 +352,40 @@ defineExpose({
 		width: 100%;
 		gap: 10px;
 	}
-	.buttons button{
-		margin-left:5px;
-		margin-right: 5px; 
+	.buttons .button{
+		padding: 4px;
+		height: 4vh;
+		margin: 0 10px 80px 0 ;
 	}
 }
+
+/* 深色模式 */
+body.dark-mode .editorButton button {
+    background-color: darkorange;
+    color: #ffffff;
+}
+body.dark-mode .editorButton button:hover {
+    background-color: orange;
+    transform: translateY(-2px); 
+}
+
+
+body.dark-mode .container textarea {
+    background-color: #333333; 
+    color: #ffffff; 
+    border: 1px solid #555555;
+}
+body.dark-mode .container textarea:focus {
+	border-color: #00eeff; 
+	outline: none;
+}
+body.dark-mode .button {
+    background-color: #2196F3; 
+    color: #ffffff;
+}
+
+body.dark-mode .button:hover {
+    background-color: #1976D2;
+}
+
 </style>

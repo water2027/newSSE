@@ -76,6 +76,7 @@
             反馈
           </router-link>
         </div>
+        <div class="lesson" v-if="!isPC && isHomePage" @click="changeToCourse" style="background-image: url(https://img.icons8.com/?size=100&id=kmUrp7YjifpP&format=png&color=000000);"></div>
         <div class="search">
           <input
             ref="sinfo"
@@ -83,7 +84,7 @@
             @keydown.enter="search"
           />
           <button @click="search">
-            <Icon icon="material-symbols:search" />
+            <div class="icon" style="background-image: url(https://img.icons8.com/?size=100&id=131&format=png&color=000000); background-size: 75% 75%; background-position: 0px 0px;"></div>
           </button>
           <!-- 改成图标 -->
         </div>
@@ -368,19 +369,20 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-#root{
+#root {
   background-color: var(--color-bg);
 }
+
 header {
   position: sticky;
   top: 0;
   width: 100%;
   z-index: 5;
 }
+
 .icon {
   width: 20px;
   height: 20px;
-  background-size: 100%;
   background-size: cover;
   background-repeat: no-repeat;
   background-size: contain;
@@ -389,8 +391,24 @@ header {
 }
 
 body.dark-mode .icon {
-  filter: invert(1); 
+  filter: invert(1);
 }
+
+/* 课程专区（暂时） */
+.lesson {
+  width: 30px;
+  height: 30px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 0px 3px;
+  display: inline-block;
+}
+
+body.dark-mode .lesson {
+  filter: brightness(0.6) contrast(1.2);
+}
+/* */
 
 .site-top {
   display: flex;
@@ -433,7 +451,7 @@ body.dark-mode .icon {
   color: #444;
   align-items: center;
   padding: 0 1em;
-  box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
   transition: box-shadow 0.3s ease;
   margin-bottom: 0px;
 
@@ -504,6 +522,7 @@ body.dark-mode .icon {
 .dark-mode .site-header {
   background: #000000a0;
   color: #ddd;
+
   .links {
     a:hover,
     .router-link-active {
@@ -541,7 +560,6 @@ body.dark-mode .icon {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* justify-content: center; */
 }
 
 p {
@@ -601,16 +619,18 @@ body.dark-mode .partition:hover {
   transform: translateY(-2px);
 }
 
-
 body.dark-mode .partition-image {
   filter: invert(1);
 }
+
 .partition:hover {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
+
 .partition:last-child {
   margin-right: 0;        
 }
+
 .partition-image {
   display: block;
   width: 100%;
@@ -630,8 +650,6 @@ body.dark-mode .partition-image {
   font-weight: 800;
 }
 
-
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -644,16 +662,15 @@ body.dark-mode .partition-image {
 .bounce-enter-active {
   animation: bounce-in 0.5s;
 }
+
 .bounce-leave-active {
   animation: bounce-in 0.5s reverse;
 }
+
 @keyframes bounce-in {
   0% {
     transform: scale(0);
   }
-  /* 50% {
-		transform: scale(1.05);
-	} */
   100% {
     transform: scale(1);
   }
@@ -716,7 +733,7 @@ body.dark-mode .partition-image {
     height: 3px;
     background-color: #333;
     border-radius: 2px;
-    transition: all 0.3s;
+    transition: none; /* 取消过渡效果 */
     position: relative;
   }
 
@@ -755,6 +772,12 @@ body.dark-mode .partition-image {
       font-size: 24px;
       vertical-align: middle;
     }
+  }
+
+  /* 取消动画效果 */
+  .bounce-enter-active,
+  .bounce-leave-active {
+    animation: none; /* 不使用动画 */
   }
 }
 </style>
