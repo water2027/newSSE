@@ -147,6 +147,18 @@
         @click="toggleNav"
       />
       <div class="content">
+        
+        <div v-if="!isPC && isHomePage" class="partitions">
+          <div class="partition" @click="sendPartition(p.name)"  v-for="(p, index) in partitions" :key="index">
+            <div class="partition-image"
+              :style="{
+                backgroundImage: 'url(' + p.src + ')',
+              }">
+            </div>
+            <div class="partition-info">{{ p.name }}</div>
+          </div>
+        </div>
+
         <router-view v-slot="{ Component }">
           <transition
             name="bounce"
@@ -204,16 +216,28 @@ const changeMode = () => {
   mode.value = currentMode == 'light-mode' ? 'dark-mode' : 'light-mode';
   localStorage.setItem('mode', document.body.className);
 };
+const partitions = ref([
+    { name: '日常吐槽', src: 'https://img.icons8.com/?size=100&id=4KAh1KXI7nZv&format=png&color=000000'},
+    { name: '打听求助', src:'https://img.icons8.com/?size=100&id=59807&format=png&color=000000' },
+    { name: '学习交流', src: 'https://img.icons8.com/?size=100&id=59739&format=png&color=000000' },
+    { name: '院务', src:'https://img.icons8.com/?size=100&id=86322&format=png&color=000000' },
+    { name: '求职招募', src: 'https://img.icons8.com/?size=100&id=59720&format=png&color=000000' },
+    { name: '其他', src: 'https://img.icons8.com/?size=100&id=91&format=png&color=000000'},
+]);
+
 
 const returnToTop = () => {
   document.body.scrollTop = 0;
 };
 
 const router = useRouter();
-
 const isPC = computed(() => {
   return windowWidth.value > 768;
 });
+const isHomePage = computed(() => {
+  return route.path === '/';
+});
+
 provide('isPC', isPC);
 const windowWidth = ref(window.innerWidth);
 const updateWidth = () => {
@@ -411,6 +435,7 @@ body.dark-mode .icon {
   padding: 0 1em;
   box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
   transition: box-shadow 0.3s ease;
+  margin-bottom: 0px;
 
   .links {
     a {
@@ -534,9 +559,78 @@ p {
 main {
   width: 100%;
   padding: 0;
-  margin-top: 1rem;
+  margin-top: 10px;
   background-color: var(--color-bg);
 }
+
+.partitions {
+  display: flex;       
+  width: 100%;           
+  margin-bottom: 20px;
+  justify-content: space-between;
+}
+
+.partition {
+  flex: 1 1 16%;   
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(240, 240, 240, 0.8));
+  transition: box-shadow 0.3s ease, transform 0.3s ease; 
+  padding: 20px; 
+  cursor: pointer;
+}
+
+body.dark-mode .partition {
+  background: linear-gradient(to bottom, rgba(40, 40, 40, 0.9), rgba(30, 30, 30, 0.9));
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.partition:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+  background: linear-gradient(to bottom, rgba(255, 255, 200, 0.8), rgba(240, 240, 160, 0.8));
+}
+
+body.dark-mode .partition:hover {
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+
+body.dark-mode .partition-image {
+  filter: invert(1);
+}
+.partition:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+.partition:last-child {
+  margin-right: 0;        
+}
+.partition-image {
+  display: block;
+  width: 100%;
+  height: 30px;
+  width: 30px;
+  text-align: center;
+  margin: 5px;
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
+
+.partition-info {
+  user-select: none;
+  width: 100%;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+
 
 @keyframes fadeIn {
   from {
