@@ -1,8 +1,7 @@
-import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 import PostListView from '@/views/PostListView.vue';
 import PostView from '@/views/PostView.vue';
 import PostDetailView from '@/views/PostDetailView.vue';
-// import { getItemWithExpiry } from '@/api/LoginAndReg';
 
 const routes = [
 	{
@@ -74,18 +73,12 @@ const routes = [
 		component: () => import('@/views/OptionsView.vue'),
 	},
 	{
-		path: '/doc',
-		name: 'Doc',
-		component: () => import('@/views/DocView.vue'),
-	},
-	{
 		path:'/:catchAll(.*)',
 		component:() => import('@/views/NotFoundView.vue')
 	}
 ];
 
 const router = createRouter({
-	// history: createWebHashHistory(),
 	history: createWebHistory(import.meta.env.BASE_URL),
 	routes: routes,
 });

@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/no-v-html -->
 <!-- eslint-disable vue/html-self-closing -->
 <template>
   <div

@@ -37,9 +37,9 @@
         </div>
       </div>
       <div class="site-header">
-          <span />
-          <span />
-          <span />
+        <span />
+        <span />
+        <span />
         <div
           v-if="isPC"
           class="links"
@@ -76,7 +76,12 @@
             反馈
           </router-link>
         </div>
-        <div class="lesson" v-if="!isPC && isHomePage" @click="changeToCourse" style="background-image: url(https://img.icons8.com/?size=100&id=kmUrp7YjifpP&format=png&color=000000);"></div>
+        <div
+          v-if="!isPC && isHomePage"
+          class="lesson"
+          style="background-image: url(https://img.icons8.com/?size=100&id=kmUrp7YjifpP&format=png&color=000000);"
+          @click="changeToCourse"
+        ></div>
         <div class="search">
           <input
             ref="sinfo"
@@ -84,7 +89,10 @@
             @keydown.enter="search"
           />
           <button @click="search">
-            <div class="icon" style="background-image: url(https://img.icons8.com/?size=100&id=131&format=png&color=000000); background-size: 75% 75%; background-position: 0px 0px;"></div>
+            <div
+              class="icon"
+              style="background-image: url(https://img.icons8.com/?size=100&id=131&format=png&color=000000); background-size: 75% 75%; background-position: 0px 0px;"
+            ></div>
           </button>
           <!-- 改成图标 -->
         </div>
@@ -138,9 +146,6 @@
         </div>
       </div>
     </header>
-    <!-- <header>
-      <button v-if="isPC" @click="returnToTop">&uarr;</button>
-    </header> -->
     <main>
       <BottomNavbar  
         v-if="!isPC"
@@ -148,15 +153,26 @@
         @click="toggleNav"
       />
       <div class="content">
-        
-        <div v-if="!isPC && isHomePage" class="partitions">
-          <div class="partition" @click="sendPartition(p.name)"  v-for="(p, index) in partitions" :key="index">
-            <div class="partition-image"
+        <div
+          v-if="!isPC && isHomePage"
+          class="partitions"
+        >
+          <div
+            v-for="(p, index) in partitions"
+            :key="index"
+            class="partition"
+            @click="sendPartition(p.name)"
+          >
+            <div
+              class="partition-image"
               :style="{
                 backgroundImage: 'url(' + p.src + ')',
-              }">
+              }"
+            >
             </div>
-            <div class="partition-info">{{ p.name }}</div>
+            <div class="partition-info">
+              {{ p.name }}
+            </div>
           </div>
         </div>
 
@@ -315,6 +331,7 @@ const changePathHandler = path => {
  * 搜索功能，不使用v-model绑定，略微减小性能消耗。
 				它的值是目标元素而不是元素里的值
         （这点都省你怎么不直接从html写起？）
+        能省一点就省一点，今天还被指责性能差了:-(
  */
 const sinfo = ref(null);
 const search = () => {

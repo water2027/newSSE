@@ -1,4 +1,3 @@
-/* eslint-disable vue/multi-word-component-names */
 import { createApp } from "vue";
 
 const messageBox = {
