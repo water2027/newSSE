@@ -69,7 +69,7 @@
         :class="basicData.IsLiked ? 'like' : ''"
         @click.stop.prevent="like"
       >
-        {{ basicData.Like }}
+        {{ basicData.Like<0?0:basicData.Like }}
         <svg
           viewBox="0 0 16 16"
           width="1em"
@@ -91,7 +91,7 @@
       <span 
         v-if="basicData.Comment&&basicData.Comment!=0"
       >
-        {{ basicData.Comment }}
+        {{ basicData.Comment<0?0:basicData.Comment }}
         <svg
           viewBox="0 0 16 16"
           width="1em"
