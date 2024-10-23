@@ -252,6 +252,7 @@ defineExpose({
 	width: 100%;
 	margin-left: 0;
 	margin-right: 0;
+	margin-top: 10px;
 }
 .container {
 	display: flex;
@@ -285,6 +286,11 @@ defineExpose({
 	height: auto;
 	padding: 10px;
 	border-radius: 5px;
+}
+
+.editorButton button{
+	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 @media screen and (min-width:768px) {
