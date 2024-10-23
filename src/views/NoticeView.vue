@@ -7,6 +7,12 @@
       <button @click="readPage = true">
         未读通知
       </button>
+      <button
+        v-if="readPage === true"
+        @click="readAll"
+      >
+        一键已读
+      </button>
       <button @click="readPage = false">
         已读通知
       </button>
@@ -52,7 +58,7 @@
 </template>
 
 <script setup>
-import { ref, inject, onMounted } from 'vue';
+import { ref, inject, onMounted, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { getNotices, readNotice, getNoticesNum } from '@/api/notice/notice';
@@ -77,28 +83,50 @@ const noticesUnread = ref([]);
 const readComment = async (noticeID) => {
 	const res = await readNotice(noticeID);
 	if (res.status === 'success') {
-		const read = await getNotices(0, notices.value.readTotalNum, 1);
-		const unread = await getNotices(0, notices.value.unreadTotalNum, 0);
-		noticesRead.value = read.noticeList;
-		noticesUnread.value = unread.noticeList;
+    getNoticesFunc();
     reduceNoticeNum();
 		showMsg('success');
 	}
+};
+
+const readAll = async () => {
+  // 遍历未读通知，标记为已读
+  for (let i = 0; i < noticesUnread.value.length; i++) {
+    try{
+      await readNotice(noticesUnread.value[i].noticeID);
+      reduceNoticeNum();
+    }catch(e){
+      console.error(e);
+    }
+  }
+  nextTick(getNoticesFunc)
 };
 
 const changeToPost = (postID) => {
 	router.push(`/postdetail/${postID}`);
 };
 
+const getNoticesFunc = async ()=>{
+	const read = await getNotices(0, notices.value.readTotalNum, 1);
+	const unread = await getNotices(0, notices.value.unreadTotalNum, 0);
+  if(read.noticeList){
+    noticesRead.value = read.noticeList.filter((item) => item.postID !== 0);
+  }else{
+    noticesRead.value = []
+  }
+  if(unread.noticeList){
+    noticesUnread.value = unread.noticeList.filter((item) => item.postID !== 0);
+  }else{
+    noticesUnread.value = []
+  }
+}
+
 onMounted(async () => {
 	//处理在通知页面刷新/直接打开通知页面的情况
 	if (!notices.value.readTotalNum||!notices.value.unreadTotalNum) {
 		notices.value = await getNoticesNum();
 	}
-	const read = await getNotices(0, notices.value.readTotalNum, 1);
-	const unread = await getNotices(0, notices.value.unreadTotalNum, 0);
-	noticesRead.value = read.noticeList.filter((item) => item.pcommentID != 0);
-	noticesUnread.value = unread.noticeList.filter((item) => item.pcommentID != 0);
+  getNoticesFunc();
 });
 </script>
 <style scoped>
