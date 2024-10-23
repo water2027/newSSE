@@ -13,7 +13,6 @@ const apiUrl = import.meta.env.VITE_API_BASE_URL;
  *  true)
  */
 async function requestFunc(url, object, tokenIsNeeded) {
-    console.log(url,object,tokenIsNeeded)
 	if (tokenIsNeeded) {
 		const token = getTokenWithExpiry('token');
 		if (!token) {
