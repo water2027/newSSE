@@ -97,8 +97,8 @@ onMounted(async () => {
 	}
 	const read = await getNotices(0, notices.value.readTotalNum, 1);
 	const unread = await getNotices(0, notices.value.unreadTotalNum, 0);
-	noticesRead.value = read.noticeList;
-	noticesUnread.value = unread.noticeList;
+	noticesRead.value = read.noticeList.filter((item) => item.pcommentID != 0);
+	noticesUnread.value = unread.noticeList.filter((item) => item.pcommentID != 0);
 });
 </script>
 <style scoped>
