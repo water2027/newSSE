@@ -4,7 +4,7 @@
 
 /* 根元素，所有元素都能访问它的变量。但是has可能有些浏览器不兼容 */
 body.light-mode{
-    --color-bg:rgb(226, 226, 226);
+    --color-bg: #F0F0F0;
     background-color: var(--color-bg);
 
     --color-scroll:rgba(0, 0, 0, 0.1);
