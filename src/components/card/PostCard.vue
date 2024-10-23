@@ -106,7 +106,7 @@ const deleteFunc = async () => {
 	}
 };
 onMounted(()=>{
-	postData.value.Content = postData.value.Content.slice(0,50)
+	postData.value.Content = postData.value.Content.slice(0,20)
 })
 </script>
 <style scoped>
