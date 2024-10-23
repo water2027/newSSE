@@ -221,6 +221,7 @@ defineExpose({
 
 .user .user-name {
 	color: var(--color-user-text);
+  margin-left: 10px;
 }
 
 .user img {
