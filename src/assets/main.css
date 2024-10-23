@@ -1,4 +1,4 @@
-@import url('https://fonts.font.im/css?family=Ubuntu|Ubuntu+Mono');
+@import url('./font.css');
 
 * {
 	margin: 0;
