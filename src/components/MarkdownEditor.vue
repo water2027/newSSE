@@ -254,6 +254,7 @@ defineExpose({
 	width: 100%;
 	margin-left: 0;
 	margin-right: 0;
+	margin-top: 10px;
 }
 .container {
 	margin-top: 20px;
@@ -335,8 +336,6 @@ defineExpose({
     background-color: #2196F3;
     transform: translateY(-2px);
 }
-
-
 
 @media screen and (min-width:768px) {
 	button{

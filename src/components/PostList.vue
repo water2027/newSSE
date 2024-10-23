@@ -17,9 +17,7 @@
         </option>
       </select>
     </div>
-    <transition-group
-      name="list"
-    >
+    <transition-group name="list">
       <post-card
         v-for="post in posts"
         :key="post.PostID"
@@ -43,7 +41,16 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, inject, watch, onUnmounted, computed } from 'vue';
+import {
+	ref,
+	onMounted,
+	inject,
+	watch,
+	onUnmounted,
+	computed,
+	onActivated,
+	onDeactivated,
+} from 'vue';
 
 import { getTeachers } from '@/api/info/getTeacher';
 import { getPosts, getPostsNum } from '@/api/browse/getPost';
@@ -59,6 +66,8 @@ const totalNum = ref(0);
 const curPage = ref(0);
 const limit = ref(5);
 const isLoading = computed(() => curPage.value < totalNum.value);
+// 保存滚动位置
+const scrollTop = ref(0);
 
 const teachers = ref([]);
 const tag = ref('');
@@ -87,9 +96,9 @@ const addPosts = async () => {
 		userTelephone: userInfo.value.phone,
 		tag: tag.value,
 	});
-	if(res){
+	if (res) {
 		posts.value = [...posts.value, ...res];
-	}else{
+	} else {
 		totalNum.value = posts.value.length;
 	}
 };
@@ -108,7 +117,7 @@ const updatePosts = async (id) => {
 
 const deleteHandler = async (callback) => {
 	const res = await callback();
-	if(res){
+	if (res) {
 		await updateNum();
 		await updatePosts(res);
 	}
@@ -117,9 +126,9 @@ const deleteHandler = async (callback) => {
 const getMore = async () => {
 	if (isLoading.value) {
 		await addPosts();
-		try{
+		try {
 			curPage.value = posts.value.length;
-		}catch(e){
+		} catch (e) {
 			curPage.value = 0;
 		}
 	}
@@ -166,11 +175,47 @@ onUnmounted(() => {
 	endObserver();
 });
 
+// 组件被激活时（从缓存恢复）
+onActivated(async () => {
+	// 恢复滚动位置
+	document.body.scrollTop = scrollTop.value;
+	// 请求帖子数量
+	const id = await getPostsNum({
+		partition: partition.value,
+		searchsort: searchsort.value,
+		searchinfo: searchinfo.value,
+		userTelephone: userInfo.value.phone,
+		tag: tag.value,
+	});
+	if (id > totalNum.value) {
+		const res = await getPosts({
+			limit: id - totalNum.value,
+			offset: 0,
+			partition: partition.value,
+			searchsort: searchsort.value,
+			searchinfo: searchinfo.value,
+			userTelephone: userInfo.value.phone,
+			tag: tag.value,
+		});
+		if (res) {
+			posts.value = [...res, ...posts.value];
+		}
+		totalNum.value = id;
+	}
+});
+
+// 组件被停用时（进入缓存）
+onDeactivated(() => {
+	// 保存滚动位置
+	scrollTop.value = document.body.scrollTop;
+	document.body.scrollTop = 0;
+});
+
 /**
  * 这四个watch之后可以考虑改成watchEffect
  */
 watch(partition, async (newVal) => {
-	endObserver()
+	endObserver();
 	posts.value = [];
 	curPage.value = 0;
 	const arr = await getPosts({
@@ -183,7 +228,7 @@ watch(partition, async (newVal) => {
 		tag: tag.value,
 	});
 	posts.value = arr;
-	curPage.value = arr.length
+	curPage.value = arr.length;
 	const id = await getPostsNum({
 		partition: newVal,
 		searchsort: searchsort.value,
@@ -196,10 +241,10 @@ watch(partition, async (newVal) => {
 		const data = await getTeachers();
 		teachers.value = ['', ...data];
 	}
-	startObserver()
+	startObserver();
 });
 watch(searchinfo, async (newVal) => {
-	endObserver()
+	endObserver();
 	posts.value = [];
 	curPage.value = 0;
 	const arr = await getPosts({
@@ -212,7 +257,7 @@ watch(searchinfo, async (newVal) => {
 		tag: tag.value,
 	});
 	posts.value = arr;
-	curPage.value = arr.length
+	curPage.value = arr.length;
 	const id = await getPostsNum({
 		partition: partition.value,
 		searchsort: searchsort.value,
@@ -221,10 +266,10 @@ watch(searchinfo, async (newVal) => {
 		tag: tag.value,
 	});
 	totalNum.value = id;
-	startObserver()
+	startObserver();
 });
 watch(searchsort, async (newVal) => {
-	endObserver()
+	endObserver();
 	posts.value = [];
 	curPage.value = 0;
 	const arr = await getPosts({
@@ -237,7 +282,7 @@ watch(searchsort, async (newVal) => {
 		tag: tag.value,
 	});
 	posts.value = arr;
-	curPage.value = arr.length
+	curPage.value = arr.length;
 	const id = await getPostsNum({
 		partition: partition.value,
 		searchsort: newVal,
@@ -246,10 +291,10 @@ watch(searchsort, async (newVal) => {
 		tag: tag.value,
 	});
 	totalNum.value = id;
-	startObserver()
+	startObserver();
 });
 watch(tag, async (newVal) => {
-	endObserver()
+	endObserver();
 	posts.value = [];
 	curPage.value = 0;
 	const arr = await getPosts({
@@ -271,14 +316,14 @@ watch(tag, async (newVal) => {
 		tag: newVal,
 	});
 	totalNum.value = id;
-	if(!arr){
+	if (!arr) {
 		curPage.value = 0;
 		totalNum.value = 0;
-	}else{
-		curPage.value = arr.length
-		totalNum.value = arr.length<5?arr.length:id;
+	} else {
+		curPage.value = arr.length;
+		totalNum.value = arr.length < 5 ? arr.length : id;
 	}
-	startObserver()
+	startObserver();
 });
 defineExpose({
 	name: 'PostList',

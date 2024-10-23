@@ -1,24 +1,29 @@
-import { getTokenWithExpiry } from "../auth";
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
+import { requestFunc } from "../req";
 
+/**
+ * 
+ * @param {number} PostID 
+ * @param {string} userTelephone 
+ * @returns 
+ */
 async function getCommentsByPostID(PostID, userTelephone) {
-	const token = getTokenWithExpiry('token');
-	if (!token) {
+	try{
+		const res = await requestFunc(`/auth/showPcomments`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: {
+				postID: PostID,
+				userTelephone: userTelephone,
+			},
+		},true);
+		const data = await res.json();
+		return data;
+	}catch(e){
+		console.error(e);
 		return null;
 	}
-	const response = await fetch(`${apiUrl}/auth/showPcomments`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-		},
-		body: JSON.stringify({
-			postID: PostID,
-			userTelephone: userTelephone,
-		}),
-	});
-	const data = await response.json();
-	return data;
 }
 
 export {

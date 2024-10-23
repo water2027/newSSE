@@ -1,6 +1,15 @@
-import { getTokenWithExpiry } from "../auth";
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
+import { requestFunc } from "../req";
 
+/**
+ * 
+ * @param {string} content 内容
+ * @param {string} partition 分区
+ * @param {string} photos 只有旧前端需要，新前端已弃用。应该为空字符串
+ * @param {string} tagList 如果专区是课程专区，是一个老师；不是，为空
+ * @param {string} title 标题
+ * @param {string} userTelephone 
+ * @returns 
+ */
 async function sendPost(
 	content,
 	partition,
@@ -9,46 +18,51 @@ async function sendPost(
 	title,
 	userTelephone
 ) {
-	const token = getTokenWithExpiry('token');
-	if (!token) {
-		return;
+	try{
+		const res = await requestFunc(`/auth/post`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: {
+				content: content,
+				partition: partition,
+				photos: photos,
+				tagList: tagList,
+				title: title,
+				userTelephone: userTelephone,
+			},
+		},true);
+		const data = await res.json();
+		return data;
+	}catch(e){
+		console.error(e);
+		return null;
 	}
-	const response = await fetch(`${apiUrl}/auth/post`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-		},
-		body: JSON.stringify({
-			content: content,
-			partition: partition,
-			photos: photos,
-			tagList: tagList,
-			title: title,
-			userTelephone: userTelephone,
-		}),
-	});
-	const data = await response.json();
-	return data;
 }
 
+/**
+ * 
+ * @param {number} postID 
+ * @returns 
+ */
 async function delPost(postID){
-    const token = getTokenWithExpiry('token')
-    if(!token){
-        return null
-    }
-    const response = await fetch(`${apiUrl}/auth/deletePost`,{
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-            postID:postID
-        })
-    });
-    const data = await response.text();
-    return data
+	try{
+		const res = await requestFunc(`/auth/deletePost`,{
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: {
+				postID:postID
+			}
+		},true);
+		const data = await res.json();
+		return data
+	}catch(e){
+		console.error(e);
+		return null;
+	}
 }
 
 export { sendPost, delPost }

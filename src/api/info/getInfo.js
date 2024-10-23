@@ -1,6 +1,5 @@
 import { getTokenWithExpiry } from "../auth";
-
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
+import { requestFunc } from "../req";
 
 /**
  * @description 获取用户的邮箱、身份、用户名、手机
@@ -9,19 +8,19 @@ const apiUrl = import.meta.env.VITE_API_BASE_URL;
  * @returns {Promise}
  */
 async function getInfo() {
-	const token = getTokenWithExpiry('token');
-	if (!token) {
-		return null;
+	try{
+		const res = await requestFunc(`/auth/info`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		},true);
+		const data = await res.json();
+		return data.data.user;
+	}catch(e){
+		alert(e)
+		console.error(e);
 	}
-	const response = await fetch(`${apiUrl}/auth/info`, {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-		},
-	});
-	const data = await response.json();
-	return data.data.user;
 }
 
 /**
@@ -30,20 +29,20 @@ async function getInfo() {
  * @returns {Promise}
  */
 async function getAllInfo(userTelephone) {
-	const token = getTokenWithExpiry('token');
-	if (!token) {
-		return null;
+	try{
+		const res = await requestFunc(`/auth/getInfo`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: { phone: userTelephone },
+		},true);
+		const data = await res.json();
+		return data;
+	}catch(e){
+		alert(e)
+		console.error(e);
 	}
-	const response = await fetch(`${apiUrl}/auth/getInfo`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-		},
-		body: JSON.stringify({ phone: userTelephone }),
-	});
-	const data = await response.json();
-	return data;
 }
 
 export { getInfo, getAllInfo };
