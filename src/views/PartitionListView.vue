@@ -1,15 +1,36 @@
 <template>
   <div class="root">
     <h2>选择分区</h2>
-    <div class="partitions" style="margin: auto; margin-top: 10vh;">
-	  <div class="card" v-for="(p, index) in partitions" :key="index">
-		<img :src="p.src" class="card-img-top" style="height: 60%;">
-		<div class="card-body">
-		  <h5 class="card-title"> {{ p.name }}</h5>
-		  <p class="card-text" style="font-size: 0.8em; color: grey;">{{ p.description }}</p>
-		  <a class="btn btn-primary" @click="sendPartition(p.name)">跳转分区</a>
-		</div>
-	  </div>
+    <div
+      class="partitions"
+      style="margin: auto; margin-top: 10vh;"
+    >
+      <div
+        v-for="(p, index) in partitions"
+        :key="index"
+        class="card"
+      >
+        <img
+          :src="p.src"
+          class="card-img-top"
+          style="height: 60%;"
+        >
+        <div class="card-body">
+          <h5 class="card-title">
+            {{ p.name }}
+          </h5>
+          <p
+            class="card-text"
+            style="font-size: 0.8em; color: grey;"
+          >
+            {{ p.description }}
+          </p>
+          <a
+            class="btn btn-primary"
+            @click="sendPartition(p.name)"
+          >跳转分区</a>
+        </div>
+      </div>
     </div>
   </div>
 </template>
