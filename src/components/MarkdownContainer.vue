@@ -10,7 +10,7 @@
   ></div>
 </template>
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, nextTick } from 'vue';
 
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
@@ -81,7 +81,7 @@ const safeHTML = (str) => {
 	});
 	const target = marked(str);
 	const finalHTML = DOMPurify.sanitize(target);
-	setTimeout(() => {
+	nextTick(() => {
 		highlightCode();
 		const childElements = content.value.querySelectorAll('*');
 		childElements.forEach((child) => {

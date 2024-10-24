@@ -31,8 +31,11 @@
           <button @click="readComment(notice.noticeID)">
             标记为已读
           </button>
-          <button @click="changeToPost(notice.postID)">
-            查看原帖
+          <button
+            :disabled="notice.postID === 0"
+            @click="changeToPost(notice.postID)"
+          >
+            {{ notice.postID === 0 ? '该评论已被删除' : '查看原帖' }}
           </button>
         </div>
       </div>
@@ -48,7 +51,9 @@
         <p>{{ notice.content }}</p>
         <span>{{ strHandler('time', notice.time) }}</span>
         <div>
-          <button @click="changeToPost(notice.postID)">
+          <button
+            @click="changeToPost(notice.postID)"
+          >
             查看原帖
           </button>
         </div>
@@ -99,6 +104,7 @@ const readAll = async () => {
       console.error(e);
     }
   }
+  showMsg('一键已读');
   nextTick(getNoticesFunc)
 };
 
@@ -115,7 +121,7 @@ const getNoticesFunc = async ()=>{
     noticesRead.value = []
   }
   if(unread.noticeList){
-    noticesUnread.value = unread.noticeList.filter((item) => item.postID !== 0);
+    noticesUnread.value = unread.noticeList;
   }else{
     noticesUnread.value = []
   }
@@ -155,13 +161,20 @@ onMounted(async () => {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  /* margin-left: auto;
-	margin-right: auto; */
 }
 p {
 	text-indent: 2rem;
   word-break: break-all;
   white-space: pre-wrap;
-
+}
+button:disabled {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  cursor: not-allowed;
+  transition: none;
+}
+button:disabled:hover {
+  background-color: var(--color-bg);
+  color: var(--color-text);
 }
 </style>
