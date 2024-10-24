@@ -1,84 +1,66 @@
 <!-- eslint-disable vue/html-self-closing -->
 <template>
-  <div
-    id="mdRoot"
-    class="root"
-  >
-    <div class="editorButton">
-      <button @click="editContent('标题')">
-        标题
-      </button>
-      <button @click="editContent('粗体')">
-        粗体
-      </button>
-      <button @click="editContent('斜体')">
-        斜体
-      </button>
-      <button @click="editContent('删除线')">
-        删除线
-      </button>
-      <button @click="editContent('引用')">
-        引用
-      </button>
-      <button @click="editContent('无序列表')">
-        无序列表
-      </button>
-      <button @click="editContent('有序列表')">
-        有序列表
-      </button>
-      <button @click="editContent('表格')">
-        表格
-      </button>
-      <button @click="editContent('分割线')">
-        分割线
-      </button>
-      <button @click="editContent('代码块')">
-        代码块
-      </button>
-      <button @click="isPreview = !isPreview">
-        {{ isPreview?'不想看了':'看看效果' }}
-      </button>
-    </div>
-    <div class="container">
-      <textarea
-        :value="modelValue"
-        placeholder="请输入正文"
-        @input="handleInput"
-        @keydown="handleKeydown"
-      ></textarea>
-      <MarkdownContainer
-        v-if="isPreview"
-        ref="mdContainer"
-        :markdown-content="modelValue"
-      />
-    </div>
-    <div class="buttons">
-      <div
-        v-if="route.path === '/post'"
-        class="button"
-        @click="savePost"
-      >
-        暂存为草稿
-      </div>
-      <div
-        class="button"
-        @click="$emit('send')"
-      >
-        发送
-      </div>
-      <label
-        for="fileInput"
-        class="button"
-      >选择图片</label>
-      <input
-        id="fileInput"
-        type="file"
-        accept="image/*"
-        style="display: none;"
-        @input="upload"
-      />
-    </div>
-  </div>
+	<div
+		id="mdRoot"
+		class="root"
+	>
+		<div class="editorButton">
+			<button @click="editContent('标题')">标题</button>
+			<button @click="editContent('粗体')">粗体</button>
+			<button @click="editContent('斜体')">斜体</button>
+			<button @click="editContent('删除线')">删除线</button>
+			<button @click="editContent('引用')">引用</button>
+			<button @click="editContent('无序列表')">无序列表</button>
+			<button @click="editContent('有序列表')">有序列表</button>
+			<button @click="editContent('表格')">表格</button>
+			<button @click="editContent('分割线')">分割线</button>
+			<button @click="editContent('代码块')">代码块</button>
+			<button @click="isPreview = !isPreview">
+				{{ isPreview ? '不想看了' : '看看效果' }}
+			</button>
+		</div>
+		<div class="container">
+			<textarea
+				:value="modelValue"
+				placeholder="请输入正文"
+				@input="handleInput"
+				@keydown="handleKeydown"
+				@paste.prevent="handlePaste"
+			></textarea>
+			<MarkdownContainer
+				v-if="isPreview"
+				ref="mdContainer"
+				:markdown-content="modelValue"
+			/>
+		</div>
+		<div class="buttons">
+			<div
+				v-if="route.path === '/post'"
+				class="button"
+				@click="savePost"
+			>
+				暂存为草稿
+			</div>
+			<div
+				class="button"
+				@click="$emit('send')"
+			>
+				发送
+			</div>
+			<label
+				for="fileInput"
+				class="button"
+				>选择图片</label
+			>
+			<input
+				id="fileInput"
+				type="file"
+				accept="image/*"
+				style="display: none"
+				@input="upload"
+			/>
+		</div>
+	</div>
 </template>
 
 <script setup>
@@ -113,17 +95,18 @@ const handleInput = (event) => {
 };
 
 const handleKeydown = (event) => {
-    if (event.key === 'Tab') {
-        event.preventDefault();
-        // 在光标位置插入四个空格
-        const textarea = event.target;
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        const value = textarea.value;
-        const spaces = '    '; // 四个空格
-        textarea.value = value.substring(0, start) + spaces + value.substring(end);
-        textarea.selectionStart = textarea.selectionEnd = start + spaces.length;
-    }
+	if (event.key === 'Tab') {
+		event.preventDefault();
+		// 在光标位置插入四个空格
+		const textarea = event.target;
+		const start = textarea.selectionStart;
+		const end = textarea.selectionEnd;
+		const value = textarea.value;
+		const spaces = '    '; // 四个空格
+		textarea.value =
+			value.substring(0, start) + spaces + value.substring(end);
+		textarea.selectionStart = textarea.selectionEnd = start + spaces.length;
+	}
 };
 
 const upload = async (event) => {
@@ -147,6 +130,39 @@ const upload = async (event) => {
 	} else {
 		console.error('No file selected');
 		showMsg('请选择一个文件');
+	}
+};
+
+const handlePaste = async (event) => {
+	const items = event.clipboardData.items;
+	let hasImg = false;
+
+	for (let i = 0; i < items.length; ++i) {
+		const item = items[i];
+		if (item.kind === 'file') {
+			const file = item.getAsFile();
+			hasImg = true;
+			try {
+				const data = await uploadPhoto(file);
+				console.log(data);
+				showMsg(data.message);
+
+				// 使用 emit 来更新父组件的 modelValue
+				emit(
+					'update:modelValue',
+					props.modelValue +
+						`<img src="${data.fileURL}" alt="${file.name}" />`
+				);
+			} catch (error) {
+				console.error('Error uploading file:', error);
+				showMsg('上传失败，请重试');
+			}
+		}
+	}
+
+	if(!hasImg){
+		const text = event.clipboardData.getData('text/plain');
+		emit('update:modelValue', props.modelValue + text);
 	}
 };
 
@@ -249,7 +265,7 @@ defineExpose({
 </script>
 
 <style scoped>
-#mdRoot{
+#mdRoot {
 	width: 100%;
 	margin-left: 0;
 	margin-right: 0;
@@ -265,24 +281,26 @@ defineExpose({
 	height: auto;
 }
 .editorButton {
-    margin-bottom: 15px; 
+	margin-bottom: 15px;
 }
 
 .editorButton button {
-    background-color: #66BB6A;
-    color: white; 
-    border: none;
-    border-radius: 5px;
-    padding: 10px 15px;
-    margin-right: 10px; 
+	background-color: #66bb6a;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	padding: 10px 15px;
+	margin-right: 10px;
 	margin-top: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
+	cursor: pointer;
+	transition:
+		background-color 0.3s,
+		transform 0.2s;
 }
 
 .editorButton button:hover {
-    background-color: #4CAF50;
-    transform: translateY(-2px);
+	background-color: #4caf50;
+	transform: translateY(-2px);
 }
 
 .container div {
@@ -297,12 +315,12 @@ defineExpose({
 .container textarea {
 	height: 450px;
 	border: 1px solid #d1d1d1;
-    border-radius: 5px;
-    padding: 10px;
-    font-family: 'Consolas', 'Courier New', monospace;
-    font-size: 16px;
-    resize: none; 
-    transition: border-color 0.3s;
+	border-radius: 5px;
+	padding: 10px;
+	font-family: 'Consolas', 'Courier New', monospace;
+	font-size: 16px;
+	resize: none;
+	transition: border-color 0.3s;
 }
 
 .buttons {
@@ -317,27 +335,29 @@ defineExpose({
 }
 
 .button {
-    width: 20vw;
-    height: 50px;
-    max-width: 100px;
-    margin-right: 20px;
+	width: 20vw;
+	height: 50px;
+	max-width: 100px;
+	margin-right: 20px;
 	margin-top: 20px;
-    padding: 10px;
-    border-radius: 8px;
-    background-color: #42A5F5;
-    color: white;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
+	padding: 10px;
+	border-radius: 8px;
+	background-color: #42a5f5;
+	color: white;
+	text-align: center;
+	cursor: pointer;
+	transition:
+		background-color 0.3s,
+		transform 0.2s;
 }
 
 .button:hover {
-    background-color: #2196F3;
-    transform: translateY(-2px);
+	background-color: #2196f3;
+	transform: translateY(-2px);
 }
 
-@media screen and (min-width:768px) {
-	button{
+@media screen and (min-width: 768px) {
+	button {
 		margin-left: 5px;
 		margin-right: 5px;
 	}
@@ -350,40 +370,38 @@ defineExpose({
 		width: 100%;
 		gap: 10px;
 	}
-	.buttons .button{
+	.buttons .button {
 		padding: 4px;
 		height: 4vh;
-		margin: 0 10px 80px 0 ;
+		margin: 0 10px 80px 0;
 	}
 }
 
 /* 深色模式 */
 body.dark-mode .editorButton button {
-    background-color: darkorange;
-    color: #ffffff;
+	background-color: darkorange;
+	color: #ffffff;
 }
 body.dark-mode .editorButton button:hover {
-    background-color: orange;
-    transform: translateY(-2px); 
+	background-color: orange;
+	transform: translateY(-2px);
 }
-
 
 body.dark-mode .container textarea {
-    background-color: #333333; 
-    color: #ffffff; 
-    border: 1px solid #555555;
+	background-color: #333333;
+	color: #ffffff;
+	border: 1px solid #555555;
 }
 body.dark-mode .container textarea:focus {
-	border-color: #00eeff; 
+	border-color: #00eeff;
 	outline: none;
 }
 body.dark-mode .button {
-    background-color: #2196F3; 
-    color: #ffffff;
+	background-color: #2196f3;
+	color: #ffffff;
 }
 
 body.dark-mode .button:hover {
-    background-color: #1976D2;
+	background-color: #1976d2;
 }
-
 </style>

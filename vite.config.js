@@ -5,7 +5,7 @@ import vueJsxPlugin from '@vitejs/plugin-vue-jsx'
 import { VitePWA } from 'vite-plugin-pwa'
 // https://vitejs.dev/config/
 export default defineConfig({
-  base:process.env.CF_PAGES ? '/' : '/new/',
+  base:'/new/',
   plugins: [
     vue(),
     vueJsxPlugin(),
