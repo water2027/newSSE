@@ -1,8 +1,6 @@
 <!-- eslint-disable vue/html-self-closing -->
 <template>
-  <div
-    class="pageWithLoginButton root"
-  >
+  <div class="pageWithLoginButton root">
     <span class="title">{{ title }}</span>
     <!-- 登录 -->
     <div
@@ -271,7 +269,7 @@ const getVCode = async (mode) => {
 		const res = await sendCode(email.value.value, mode);
 		if (res.code !== 200) {
 			showMsg(res.msg);
-      alert("邮箱错误");
+			alert('邮箱错误');
 		} else {
 			showMsg('验证码已发送');
 		}
@@ -304,7 +302,7 @@ const reg = async () => {
 			showMsg(res.msg);
 		} else {
 			showMsg('注册成功');
-      page.value = 0;
+			page.value = 0;
 		}
 	} else {
 		showMsg('请填写完整信息');
@@ -320,18 +318,18 @@ const resetPwd = async () => {
 		password2.value.value &&
 		code.value.value
 	) {
-    try{
-      const res = await updatePassword(
-        email.value.value,
-        password1.value.value,
-        password2.value.value,
-        code.value.value
-      );
-      showMsg(res.msg);
-      page.value = 0;
-    }catch(e){
-      showMsg(e)
-    }
+		try {
+			const res = await updatePassword(
+				email.value.value,
+				password1.value.value,
+				password2.value.value,
+				code.value.value
+			);
+			showMsg(res.msg);
+			page.value = 0;
+		} catch (e) {
+			showMsg(e);
+		}
 	} else {
 		showMsg('不要输入空白信息');
 	}
@@ -384,11 +382,11 @@ const resetPwd = async () => {
 
 .inputData input:valid ~ label,
 .inputData input:focus ~ label {
-	transform: translateX(-48px) !important;
+	transform: translateX(-48px);
 	font-size: 16px;
 	color: #eb6b26;
 	font-weight: bold;
-	border: none !important;
+	border: none;
 }
 
 .inputData label {
@@ -441,10 +439,10 @@ const resetPwd = async () => {
 	cursor: pointer;
 	margin-top: 20px;
 	border-radius: 5px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 20px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 20px;
 }
 
 .LoginAndRegButton:hover {
@@ -481,6 +479,30 @@ const resetPwd = async () => {
 
 	.loginAndRegPage {
 		width: 100%;
+    align-items: center;
+	}
+
+	.loginAndRegPage .inputData {
+		width: 80%;
+	}
+
+	.loginAndRegPage .inputData input {
+		width: 100%;
+		height: 100%;
+		border: none;
+		font-size: 17px;
+		border-bottom: 2px solid #c0c0c0;
+		background-color: rgba(255, 255, 255, 0.472);
+	}
+
+	.regButtonDiv {
+		margin-left: 10px;
+    margin-right: 10px;
+	}
+
+	.inputData input:valid ~ label,
+	.inputData input:focus ~ label {
+		transform: translateX(-52px);
 	}
 }
 </style>
