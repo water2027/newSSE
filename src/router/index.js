@@ -16,25 +16,16 @@ const routes = [
 		path: '/course',
 		name: 'Course',
 		component: PostListView,
-		meta: {
-			keepAlive: true  // 标记需要缓存
-		}
 	},
 	{
 		path: '/save',
 		name: 'Save',
 		component: PostListView,
-		meta: {
-			keepAlive: true  // 标记需要缓存
-		}
 	},
 	{
 		path: '/history',
 		name: 'History',
 		component: PostListView,
-		meta: {
-			keepAlive: true  // 标记需要缓存
-		}
 	},
 	{
 		path: '/partitions',
