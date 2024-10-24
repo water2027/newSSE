@@ -227,14 +227,6 @@ defineExpose({
 	border-radius: 50%;
 }
 
-.user .b-avatar {
-	width: calc(var(--userImage) + 10px);
-	height: calc(var(--userImage) + 10px);
-	margin-right: 0.5rem;
-	background-color: #6c757d;
-	color: #fff;
-	border-radius: 50%;
-}
 @media screen and (min-width: 768px) {
 	.card-root {
 		display: block;
@@ -295,8 +287,8 @@ body.dark-mode .teacher_identity{
 }
 
 .level {
-  font-size: 14px;
-  margin-left: 10px;
+  font-size: 13px;
+  margin-left: 8px;
   border-radius: 10%;
   padding-left: 10px;
   padding-right: 10px;
