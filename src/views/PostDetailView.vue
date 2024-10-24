@@ -84,12 +84,22 @@ const comments = ref([]);
 const postCommentID = ref(0);
 
 const commentHandler = async (event) => {
-	const func = event.detail;
+	const data = event.detail;
 	try {
-		const res = await func(userInfo.value.phone, post.value.PostID);
+		const res = await data.func(userInfo.value.phone, post.value.PostID);
 		if (res) {
 			showMsg('成功');
 			await getCommentList();
+      switch(data.type){
+        case 'comment':
+          ++post.value.Comment;
+          break;
+        case 'delete':
+          --post.value.Comment;
+          break;
+        default:
+          break;
+      }
 		} else {
 			showMsg('失败');
 		}

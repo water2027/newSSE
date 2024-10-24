@@ -71,6 +71,7 @@ const commentData = ref({
 	PcommentID: props.comment.ccommentID,
 	UserTelephone: props.comment.authorTelephone,
 	userTargetName: props.comment.userTargetName,
+	PostTime: props.comment.commentTime,
 });
 const commentButtonIsShow = ref(false);
 const commentContent = ref('');
@@ -123,13 +124,13 @@ const handler = (type)=>{
 	switch(type){
 		case 'delete':
 			event = new CustomEvent('comment-handle',{
-				detail:deleteFunc,
+				detail:{func:deleteFunc,type:'delete'},
 				bubbles:true
 			})
 			break;
 		case 'comment':
 			event = new CustomEvent('comment-handle',{
-				detail:sendCommentFunc,
+				detail:{func:sendCommentFunc,type:'comment'},
 				bubbles:true
 			})
 			break;

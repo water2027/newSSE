@@ -66,9 +66,9 @@
         </svg>
       </span>
       <span 
-        v-if="basicData.Comment||basicData.Comment === 0"
+        v-if="cardData.Comment||cardData.Comment === 0"
       >
-        {{ basicData.Comment<0?0:basicData.Comment }}
+        {{ cardData.Comment<0?0:cardData.Comment }}
         <svg
           viewBox="0 0 16 16"
           width="1em"

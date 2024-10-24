@@ -4,7 +4,7 @@
     class="postDetail root"
   >
     <basic-card
-      :card-data="postData"
+      :card-data="post"
       :like-handler="like"
     >
       <template #userButtons>
