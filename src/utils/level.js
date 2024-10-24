@@ -5,7 +5,7 @@
  */
 function levelNameHandler(userScore) {
 	if (!userScore&&userScore!==0) {
-		return 'lV? 未定义之人';
+		return 'lV? undefined';
 	}
 	if (userScore < 100) {
 		return 'Lv0 菜鸟';
@@ -71,6 +71,9 @@ function levelClassHandler(userScore) {
 
 // 经验
 function levelExpHandler(userScore) {
+	if (!userScore&&userScore!==0) {
+		return '0';
+	}
 	if (userScore < 100) {
 		return '100';
 	}

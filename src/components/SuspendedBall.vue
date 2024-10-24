@@ -95,7 +95,7 @@ const OpenAndCloseBall = () => {
 <style scoped>
 .ball {
 	position: fixed;
-	bottom: 80px;
+	bottom: 90px;
 	left: 10px;
 	width: 50px;
 	height: 50px;

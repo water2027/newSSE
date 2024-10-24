@@ -1,8 +1,6 @@
 /* 存放明亮模式和黑暗模式的颜色 */
-/* 直接使用属性则改变根元素的css */
 /* 子元素使用css变量 */
 
-/* 根元素，所有元素都能访问它的变量。但是has可能有些浏览器不兼容 */
 body.light-mode{
     --color-bg: #F0F0F0;
     background-color: var(--color-bg);
@@ -51,7 +49,7 @@ body.light-mode{
 }
 
 body.dark-mode{
-    --color-bg:rgb(27, 27, 27);
+    --color-bg:rgb(35, 35, 35);
     background-color: var(--color-bg);
 
     --color-scroll:rgba(255, 255, 255, 0.1);

@@ -574,6 +574,7 @@ body.dark-mode .lesson {
 
 .content {
   width: 100%;
+  margin-bottom: 13vh !important;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -701,10 +702,6 @@ body.dark-mode .partition-image {
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
-
-  .none {
-    height: 15vh;
   }
 
   main {
