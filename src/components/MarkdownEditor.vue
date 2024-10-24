@@ -1,66 +1,85 @@
 <!-- eslint-disable vue/html-self-closing -->
 <template>
-	<div
-		id="mdRoot"
-		class="root"
-	>
-		<div class="editorButton">
-			<button @click="editContent('标题')">标题</button>
-			<button @click="editContent('粗体')">粗体</button>
-			<button @click="editContent('斜体')">斜体</button>
-			<button @click="editContent('删除线')">删除线</button>
-			<button @click="editContent('引用')">引用</button>
-			<button @click="editContent('无序列表')">无序列表</button>
-			<button @click="editContent('有序列表')">有序列表</button>
-			<button @click="editContent('表格')">表格</button>
-			<button @click="editContent('分割线')">分割线</button>
-			<button @click="editContent('代码块')">代码块</button>
-			<button @click="isPreview = !isPreview">
-				{{ isPreview ? '不想看了' : '看看效果' }}
-			</button>
-		</div>
-		<div class="container">
-			<textarea
-				:value="modelValue"
-				placeholder="请输入正文"
-				@input="handleInput"
-				@keydown="handleKeydown"
-				@paste.prevent="handlePaste"
-			></textarea>
-			<MarkdownContainer
-				v-if="isPreview"
-				ref="mdContainer"
-				:markdown-content="modelValue"
-			/>
-		</div>
-		<div class="buttons">
-			<div
-				v-if="route.path === '/post'"
-				class="button"
-				@click="savePost"
-			>
-				暂存为草稿
-			</div>
-			<div
-				class="button"
-				@click="$emit('send')"
-			>
-				发送
-			</div>
-			<label
-				for="fileInput"
-				class="button"
-				>选择图片</label
-			>
-			<input
-				id="fileInput"
-				type="file"
-				accept="image/*"
-				style="display: none"
-				@input="upload"
-			/>
-		</div>
-	</div>
+  <div
+    id="mdRoot"
+    class="root"
+  >
+    <div class="editorButton">
+      <button @click="editContent('标题')">
+        标题
+      </button>
+      <button @click="editContent('粗体')">
+        粗体
+      </button>
+      <button @click="editContent('斜体')">
+        斜体
+      </button>
+      <button @click="editContent('删除线')">
+        删除线
+      </button>
+      <button @click="editContent('引用')">
+        引用
+      </button>
+      <button @click="editContent('无序列表')">
+        无序列表
+      </button>
+      <button @click="editContent('有序列表')">
+        有序列表
+      </button>
+      <button @click="editContent('表格')">
+        表格
+      </button>
+      <button @click="editContent('分割线')">
+        分割线
+      </button>
+      <button @click="editContent('代码块')">
+        代码块
+      </button>
+      <button @click="isPreview = !isPreview">
+        {{ isPreview ? '不想看了' : '看看效果' }}
+      </button>
+    </div>
+    <div class="container">
+      <textarea
+        :value="modelValue"
+        placeholder="请输入正文"
+        @input="handleInput"
+        @keydown="handleKeydown"
+        @paste.prevent="handlePaste"
+      ></textarea>
+      <MarkdownContainer
+        v-if="isPreview"
+        ref="mdContainer"
+        :markdown-content="modelValue"
+      />
+    </div>
+    <div class="buttons">
+      <div
+        v-if="route.path === '/post'"
+        class="button"
+        @click="savePost"
+      >
+        暂存为草稿
+      </div>
+      <div
+        class="button"
+        @click="$emit('send')"
+      >
+        发送
+      </div>
+      <label
+        for="fileInput"
+        class="button"
+      >选择图片</label>
+      <input
+        id="fileInput"
+        type="file"
+        accept="image/*"
+        style="display: none"
+        @input="uploadFile"
+      />
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -109,12 +128,10 @@ const handleKeydown = (event) => {
 	}
 };
 
-const upload = async (event) => {
-	const file = event.target.files[0];
+const upload = async (file) => {
 	if (file) {
 		try {
 			const data = await uploadPhoto(file);
-			console.log(data);
 			showMsg(data.message);
 
 			// 使用 emit 来更新父组件的 modelValue
@@ -133,6 +150,11 @@ const upload = async (event) => {
 	}
 };
 
+const uploadFile = async (event) => {
+	const file = event.target.files[0];
+	await upload(file);
+}
+
 const handlePaste = async (event) => {
 	const items = event.clipboardData.items;
 	let hasImg = false;
@@ -142,21 +164,7 @@ const handlePaste = async (event) => {
 		if (item.kind === 'file') {
 			const file = item.getAsFile();
 			hasImg = true;
-			try {
-				const data = await uploadPhoto(file);
-				console.log(data);
-				showMsg(data.message);
-
-				// 使用 emit 来更新父组件的 modelValue
-				emit(
-					'update:modelValue',
-					props.modelValue +
-						`<img src="${data.fileURL}" alt="${file.name}" />`
-				);
-			} catch (error) {
-				console.error('Error uploading file:', error);
-				showMsg('上传失败，请重试');
-			}
+			await upload(file);
 		}
 	}
 
