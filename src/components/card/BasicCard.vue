@@ -3,6 +3,7 @@
   <div class="card-root root">
     <div class="user">
       <img
+        loading="lazy"
         class="user-avatar"
         :class="basicData.UserAvatar ? '' : 'default-avatar'"
         :src="basicData.UserAvatar||defaultAvatar"
@@ -26,7 +27,8 @@
     <p v-if="isPost">
       {{ basicData.Content||'loading' }}
     </p>
-    <MarkdownContainer
+    <component
+      :is="MarkdownContainer"
       v-else
       :markdown-content="basicData.Content || 'loading'"
     />
@@ -120,7 +122,8 @@ import { strHandler } from '@/utils/strHandler';
 import { levelNameHandler, levelClassHandler } from '@/utils/level';
 
 import { showMsg } from '@/components/MessageBox';
-import MarkdownContainer from '../MarkdownContainer.vue';
+
+const MarkdownContainer = ref(null);
 
 const props = defineProps({
 	cardData: {
@@ -139,7 +142,7 @@ const props = defineProps({
 	}
 });
 const basicData = ref(props.cardData);
-const defaultAvatar = `${window.location.href}defaultAvatar.png`;
+const defaultAvatar = `${window.location.href}defaultAvatar.webp`;
 
 const debounce = (fn, delay) => {
     let timer = null;
@@ -170,6 +173,12 @@ const like = debounce(async () => {
         showMsg('失败了:-(');
     }
 }, 300);
+
+onMounted(async()=>{
+  if(!props.isPost){
+    MarkdownContainer.value = defineAsyncComponent(() => import('../MarkdownContainer.vue'));
+  }
+})
 
 defineExpose({
 	name: 'BasicCard',

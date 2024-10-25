@@ -40,7 +40,7 @@ const routes = [
 	{
 		path: '/postdetail/:id',
 		name: 'Postdetail',
-		component: PostDetailView,
+		component: () => import('@/views/PostDetailView.vue'),
 		props: true,
 	},
 	{
