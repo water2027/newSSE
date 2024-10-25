@@ -4,7 +4,7 @@
   <div
     id="content"
     ref="content"
-    class="hasImgDiv root"
+    class="markdown-body"
     :style="mdContainerStyle"
     v-html="safeHTML(markdownContent)"
   ></div>
@@ -12,9 +12,12 @@
 <script setup>
 import { ref, computed, nextTick } from 'vue';
 
-import { marked } from 'marked';
+import MarkdownIt from 'markdown-it';
+import mk from 'markdown-it-katex';
 import DOMPurify from 'dompurify';
+import 'katex/dist/katex.min.css';
 import hljs from 'highlight.js/lib/core';
+
 import c from 'highlight.js/lib/languages/c';
 import cpp from 'highlight.js/lib/languages/cpp';
 import html from 'highlight.js/lib/languages/xml';
@@ -34,7 +37,6 @@ hljs.registerLanguage('python', python);
 hljs.registerLanguage('go', go);
 
 import('highlight.js/styles/atom-one-dark.css');
-
 
 const content = ref(null);
 
@@ -61,37 +63,62 @@ const mdContainerStyle = computed(() => {
 	};
 });
 
+const md = new MarkdownIt({
+  html: true,
+  breaks: true,
+  linkify: true,
+}).use(mk, {
+  throwOnError: false,
+  errorColor: '#cc0000',
+  strict: false,
+  macros: {},
+  // 块级公式的显示模式
+  displayMode: true,
+  // 行内公式的显示模式
+  inlineMode: false,
+  // 禁用错误处理
+  trust: true,
+  // 数学公式块的额外类名
+  blockClass: 'katex-block',
+  // 行内数学公式的额外类名
+  inlineClass: 'katex-inline'
+});
+
+md.set({
+  html: true,        // 启用 HTML 标签
+  xhtmlOut: false,   // 使用 '/' 关闭单标签
+  breaks: true,      // 转换段落里的 '\n' 到 <br>
+  linkify: true,     // 将类似 URL 的文本自动转换为链接
+  typographer: true, // 启用一些语言中立的替换 + 引号美化
+})
+
 /**
  * @description 安全的html，会自动去掉script和iframe之类的标签
  * @param str 待转换的字符串
  */
-const safeHTML = (str) => {
-	if (!str) {
-		return;
-	}
-	marked.setOptions({
-		renderer: new marked.Renderer(),
-		pedantic: false,
-		gfm: true,
-		breaks: true,
-		sanitize: false,
-		smartLists: true,
-		smartypants: false,
-		xhtml: false,
-	});
-	const target = marked(str);
-	const finalHTML = DOMPurify.sanitize(target);
-	nextTick(() => {
-		highlightCode();
-		const childElements = content.value.querySelectorAll('*');
-		childElements.forEach((child) => {
-			child.style.whiteSpace = 'pre-wrap';
-			child.style.wordWrap = 'break-word';
-			child.style.overflowWrap = 'break-word';
-			child.style.wordBreak = 'break-all';
-		});
-	}, 0);
-	return finalHTML;
+ const safeHTML = (str) => {
+  if (!str) {
+    return '';
+  }
+
+  // 配置 DOMPurify 以允许 KaTeX 相关标签和属性
+  DOMPurify.addHook('uponSanitizeElement', (node, data) => {
+    if (data.tagName === 'math' || data.tagName === 'annotation') {
+      return node;
+    }
+  });
+
+  const rendered = md.render(str);
+  const finalHTML = DOMPurify.sanitize(rendered, {
+    ADD_TAGS: ['math', 'mrow', 'mi', 'mo', 'mn', 'annotation', 'semantics', 'mspace', 'mfrac', 'msup', 'msub'],
+    ADD_ATTR: ['xmlns', 'display', 'class', 'style', 'width', 'height', 'href', 'target'],
+  });
+
+  nextTick(() => {
+    highlightCode()
+  });
+
+  return finalHTML;
 };
 
 const highlightCode = () => {
@@ -107,162 +134,55 @@ defineExpose({
 </script>
 <style scoped>
 @import url('@/assets/hl.css');
+@import url('@/assets/katex.css');	
+@import url('@/assets/github-markdown.css');
 
-#content {
-  max-width: 100%;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-all;
-  padding: 0 15px;
-}
-
-:deep(*) {
-  max-width: 100%;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-all;
-}
-
-:deep(pre) {
-	display: block;
-	background-color: #282c34;
-	border: 1px solid #ccc;
-	padding: 10px;
-	margin-bottom: 5px;
-	position: relative;
-	pointer-events: none;
-	font-size: 20px !important;
-	white-space: pre-wrap;
-	word-wrap: break-word;
-	overflow-x: auto;
-	z-index: 0;
-	max-width: 100%;
-}
-
-:deep(pre::before) {
-	content: '';
+#content{
 	color: var(--color-text);
+}
+
+:deep(li){
+	line-height: 1.1;
+	margin-top: 0.5em;
+}
+
+:deep(table){
+	border-collapse: collapse;
+	width: 100%;
+	border: white 1px solid;
+}
+
+:deep(th){
+	border: white 1px solid;
+}
+
+:deep(td){
+	border: white 1px solid;
+}
+
+:deep(p){
+	font-size: 20px;
+	text-indent: 2rem;
+}
+
+:deep(pre){
+	background-color: #282c34;
+	padding: 10px;
+	pointer-events: none;
+	z-index: 0;
+	position: relative;
+}
+:deep(pre)::before{
+	content: '';
 	background-image: url('/PhCopy.webp');
-	filter: invert(1);
 	background-size: cover;
 	display: block;
-	width: 20px;
-	height: 20px;
 	position: absolute;
+	filter: invert(1);
 	z-index: 1;
-	top: 3px;
-	right: 3px;
-	pointer-events: auto;
-	/* 确保伪元素可以接收鼠标事件 */
-}
-
-:deep(h1), :deep(h2), :deep(h3), :deep(h4), :deep(h5), :deep(h6) {
-  margin-top: 1.5em;
-  margin-bottom: 0.5em;
-  font-weight: bold;
-  line-height: 1.2;
-}
-
-:deep(h1) { font-size: 1.8em; }
-:deep(h2) { font-size: 1.6em; }
-:deep(h3) { font-size: 1.4em; }
-:deep(h4) { font-size: 1.2em; }
-:deep(h5) { font-size: 1.1em; }
-:deep(h6) { font-size: 1em; }
-
-:deep(ul), :deep(ol) {
-  padding-left: 1.5em;
-  margin-bottom: 1em;
-}
-
-:deep(li) {
-  margin-bottom: 0.5em;
-}
-
-:deep(blockquote) {
-  border-left: 4px solid #ccc;
-  padding-left: 1em;
-  margin-left: 0;
-  color: #666;
-  font-size: 0.95em;
-}
-
-:deep(hr) {
-  border: 0;
-  border-top: 1px solid #ccc;
-  margin: 1em 0;
-}
-
-:deep(table) {
-  border-collapse: collapse;
-  width: 100%;
-  margin-bottom: 1em;
-  font-size: 0.9em;
-}
-
-:deep(th), :deep(td) {
-  border: 1px solid #ccc;
-  padding: 0.5em;
-  text-align: left;
-}
-
-:deep(th) {
-  background-color: #f0f0f0;
-  font-weight: bold;
-}
-
-:deep(a){
-	text-decoration: none;
-	color: var(--color-a-in-post);
-	transition: all 0.3s ease;
-}
-
-:deep(a:hover){
-	color: var(--color-a-hover-in-post);
-	background: var(--color-a-hover-bg-in-post);
-}
-
-
-
-/* 移动端适配 */
-@media screen and (max-width: 768px) {
-  #content {
-    font-size: 16px;
-    padding: 0 10px;
-  }
-
-  :deep(h1) { font-size: 1.6em; }
-  :deep(h2) { font-size: 1.4em; }
-  :deep(h3) { font-size: 1.3em; }
-  :deep(h4) { font-size: 1.2em; }
-  :deep(h5) { font-size: 1.1em; }
-  :deep(h6) { font-size: 1em; }
-
-  :deep(pre) {
-    font-size: 14px !important;
-    padding: 8px;
-  }
-
-  :deep(ul), :deep(ol) {
-    padding-left: 1.2em;
-  }
-
-  :deep(.hasImgDiv img) {
-    width: 100%;
-    height: auto;
-    margin: 10px 0;
-  }
-
-  :deep(table) {
-    font-size: 0.8em;
-  }
-
-  :deep(th), :deep(td) {
-    padding: 0.3em;
-  }
-
-  :deep(p) {
-    text-indent: 1em;
-  }
+	width: 	20px;
+	height: 20px;
+	top: 5px;
+	right: 5px;
 }
 </style>
