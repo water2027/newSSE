@@ -174,6 +174,7 @@ defineExpose({
 }
 :deep(pre)::before{
 	content: '';
+	pointer-events: auto;
 	background-image: url('/PhCopy.webp');
 	background-size: cover;
 	display: block;
