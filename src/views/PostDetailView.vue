@@ -13,6 +13,16 @@
     </div>
     <div class="comment">
       <h2>评论</h2>
+      <div class="sort-comment">
+        <div class="sort-btn" @click="setSortType('time')">
+          <div class="icon" style="background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729845428749551312_icons8-sort-48.png);"></div>
+          时间
+        </div>
+        <div class="sort-btn" @click="setSortType('likes')">
+          <div class="icon" style="background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729845524483606271_icons8-sort-49.png);"></div>
+          热度
+        </div>
+      </div>
       <!-- 这是评论区 -->
       <div class="commentList">
         <!-- 使用id-评论数作为key使每次评论重新渲染当前评论 -->
@@ -82,6 +92,20 @@ const post = ref({});
 const isPostLoaded = computed(() => Object.keys(post.value).length !== 0);
 const comments = ref([]);
 const postCommentID = ref(0);
+
+const sortType = ref('time');
+const sortedComments = computed(() => {
+  if (sortType.value === 'likes') {
+    return [...comments.value].sort((a, b) => b.LikeNum - a.LikeNum);
+  } else {
+    return [...comments.value].sort((a, b) => new Date(b.CommentTime) - new Date(a.CommentTime));
+  }
+});
+const setSortType = (type) => {
+  sortType.value = type;
+  comments.value = sortedComments.value;
+};
+
 
 const commentHandler = async (event) => {
 	const data = event.detail;
@@ -178,5 +202,58 @@ onMounted(async () => {
 
 .subCommentList {
 	margin-left: 3%;
+}
+
+.sort-comment {
+  display: flex;
+  flex-direction: row;
+  float: right;
+  margin-right: 5vw;
+  gap: 10px;
+}
+
+.sort-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 20vw;
+  max-width: 120px;
+  min-width: 100px;
+  padding: 6px 14px;
+  background-color: #f5f5f5; 
+  font-weight: 550;
+  border-radius: 4px; 
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sort-btn:hover {
+  background-color: #e8d5c4; 
+}
+
+.sort-btn:active {
+  background-color: #d0b5a0; 
+  transform: scale(0.98);
+}
+body.dark-mode .sort-btn {
+  background-color: var(--color-bg);
+  border: 1px solid whitesmoke;
+  box-shadow: var(--color-post-card-hover-box-shadow) 0px 2px 7px;
+}
+body.dark-mode .sort-btn:hover {
+  background-color: #2c2c2c; 
+  
+  color: white;
+}
+body.dark-mode .sort-btn:active {
+  background-color: #444;
+}
+
+.icon {
+	width: 30px;
+	height: 30px; 
+	background-size: contain;
+	background-repeat: no-repeat;
+  margin-right: 5px;
 }
 </style>
