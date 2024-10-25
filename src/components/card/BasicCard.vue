@@ -3,9 +3,9 @@
   <div class="card-root root">
     <div class="user">
       <img
-        v-if="basicData.UserAvatar"
         class="user-avatar"
-        :src="basicData.UserAvatar"
+        :class="basicData.UserAvatar ? '' : 'default-avatar'"
+        :src="basicData.UserAvatar||defaultAvatar"
       />
       <span class="user-name"><span
         v-if="basicData.UserIdentity==='teacher'"
@@ -139,6 +139,7 @@ const props = defineProps({
 	}
 });
 const basicData = ref(props.cardData);
+const defaultAvatar = `${import.meta.env.BASE_URL}/defaultAvatar.png`;
 
 const debounce = (fn, delay) => {
     let timer = null;
@@ -193,6 +194,10 @@ defineExpose({
 
 .card-root .user {
 	height: auto;
+}
+
+body.dark-mode .default-avatar {
+  filter: invert(0.9);
 }
 
 .imgs img {
