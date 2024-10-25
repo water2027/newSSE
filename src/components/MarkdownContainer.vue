@@ -134,7 +134,7 @@ defineExpose({
 </script>
 <style scoped>
 @import url('@/assets/hl.css');
-@import url('@/assets/katex.css');	
+@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css');	
 @import url('@/assets/github-markdown.css');
 
 #content{
