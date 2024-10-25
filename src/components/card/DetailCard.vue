@@ -84,7 +84,7 @@ const handler = (type)=>{
 	switch(type){
 		case 'comment':
 			event = new CustomEvent('comment-handle',{
-				detail:sendCommentFunc,
+				detail:{func:sendCommentFunc,type:'comment'},
 				bubbles:true
 			})
 			break;

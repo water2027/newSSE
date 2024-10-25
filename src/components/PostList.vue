@@ -166,6 +166,9 @@ onMounted(async () => {
 	}
 	if (partition.value === '课程专区') {
 		const data = await getTeachers();
+		// 后端的事(X)
+		// 前端的事(O)
+		data.sort((a, b) => a.Name.localeCompare(b.Name));
 		teachers.value = ['', ...data];
 	}
 	startObserver();
