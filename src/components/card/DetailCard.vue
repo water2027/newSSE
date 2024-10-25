@@ -72,7 +72,6 @@ const sendCommentFunc = async () => {
 	if (res) {
 		commentContent.value = '';
 		commentButtonIsShow.value = false;
-		++postData.value.Comment
 		return true;
 	} else {
 		return false;
