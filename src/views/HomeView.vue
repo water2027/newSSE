@@ -139,10 +139,11 @@
         </div>
         <div
           v-if="!isPC"
-          class="post-button"
+          class="post-button icon bright-icon"
           @click="changeToPost"
+          style="background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/resized/1729866598925892895_icons8-add-48.png); width: 30px; height: 30px;background-position: 1px -1px;"
         >
-          <Icon icon="material-symbols:add" />
+          
         </div>
       </div>
     </header>
@@ -164,7 +165,7 @@
             @click="sendPartition(p.name)"
           >
             <div
-              class="partition-image"
+              class="bright-icon"
               :style="{
                 backgroundImage: 'url(' + p.src + ')',
               }"
@@ -234,12 +235,12 @@ const changeMode = () => {
   localStorage.setItem('mode', document.body.className);
 };
 const partitions = ref([
-    { name: '日常吐槽', src: 'https://img.icons8.com/?size=100&id=4KAh1KXI7nZv&format=png&color=000000'},
-    { name: '打听求助', src:'https://img.icons8.com/?size=100&id=59807&format=png&color=000000' },
-    { name: '学习交流', src: 'https://img.icons8.com/?size=100&id=59739&format=png&color=000000' },
-    { name: '院务', src:'https://img.icons8.com/?size=100&id=86322&format=png&color=000000' },
-    { name: '求职招募', src: 'https://img.icons8.com/?size=100&id=59720&format=png&color=000000' },
-    { name: '其他', src: 'https://img.icons8.com/?size=100&id=91&format=png&color=000000'},
+    { name: '日常吐槽', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865147020011731_icons8-chat-message-48.png'},
+    { name: '打听求助', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865259021372927_icons8-unverified-account-48.png' },
+    { name: '学习交流', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865462046077601_icons8-open-book-48.png' },
+    { name: '院务', src:'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865305634358796_icons8-graduation-cap-48.png' },
+    { name: '求职招募', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865327380329691_icons8-commercial-48.png' },
+    { name: '其他', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865345159097327_icons8-link-48.png'},
 ]);
 
 
@@ -411,6 +412,11 @@ body.dark-mode .icon {
   filter: invert(1);
 }
 
+body.dark-mode .content > .icon {
+  filter: brightness(1.5) saturate(1.3) contrast(1.2) drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+}
+
+
 /* 课程专区（暂时） */
 .lesson {
   width: 30px;
@@ -423,7 +429,7 @@ body.dark-mode .icon {
 }
 
 body.dark-mode .lesson {
-  filter: brightness(0.6) contrast(1.2);
+  filter:  brightness(1.1) saturate(1.2) drop-shadow(0 0 6px rgba(150, 200, 255, 0.4)) drop-shadow(0 0 10px rgba(150, 200, 255, 0.2));
 }
 /* */
 
@@ -611,12 +617,11 @@ main {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(240, 240, 240, 0.8));
   transition: box-shadow 0.3s ease, transform 0.3s ease; 
-  padding: 20px; 
+  padding: 10px; 
   cursor: pointer;
 }
 
@@ -637,8 +642,8 @@ body.dark-mode .partition:hover {
   transform: translateY(-2px);
 }
 
-body.dark-mode .partition-image {
-  filter: invert(1);
+body.dark-mode .bright-icon {
+  filter: invert(1) brightness(1.4) saturate(1.2) drop-shadow(0 0 6px rgba(150, 200, 255, 0.4)) drop-shadow(0 0 10px rgba(150, 200, 255, 0.2));
 }
 
 .partition:hover {
@@ -649,7 +654,7 @@ body.dark-mode .partition-image {
   margin-right: 0;        
 }
 
-.partition-image {
+.bright-icon {
   display: block;
   width: 100%;
   height: 30px;
