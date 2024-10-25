@@ -152,9 +152,9 @@ const debounce = (fn, delay) => {
 
 const like = debounce(async () => {
     try {
+        basicData.value.IsLiked = !basicData.value.IsLiked;
         const res = await props.likeHandler();
         if(res){
-            basicData.value.IsLiked = !basicData.value.IsLiked;
             if (basicData.value.IsLiked) {
                 basicData.value.Like++;
                 showMsg('点赞成功');
