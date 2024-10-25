@@ -114,7 +114,7 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 import { strHandler } from '@/utils/strHandler';
 import { levelNameHandler, levelClassHandler } from '@/utils/level';
@@ -139,7 +139,7 @@ const props = defineProps({
 	}
 });
 const basicData = ref(props.cardData);
-const defaultAvatar = `${import.meta.env.BASE_URL}/defaultAvatar.png`;
+const defaultAvatar = `${window.location.href}defaultAvatar.png`;
 
 const debounce = (fn, delay) => {
     let timer = null;
