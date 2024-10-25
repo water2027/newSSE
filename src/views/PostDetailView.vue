@@ -39,7 +39,7 @@
       <div class="commentList">
         <!-- 使用id-评论数作为key使每次评论重新渲染当前评论 -->
         <div
-          v-for="comment in comments"
+          v-for="comment in sortedComments"
           :key="`${comment.PcommentID}-${comment.SubComments.length}`"
           class="comment"
         >
@@ -107,15 +107,16 @@ const postCommentID = ref(0);
 
 const sortType = ref('time');
 const sortedComments = computed(() => {
-  if (sortType.value === 'likes') {
-    return [...comments.value].sort((a, b) => b.LikeNum - a.LikeNum);
-  } else {
-    return [...comments.value].sort((a, b) => new Date(b.CommentTime) - new Date(a.CommentTime));
+  // 如果是按时间排序，直接返回原数组
+  if (sortType.value === 'time') {
+    return comments.value;
   }
+  // 只有按点赞数排序时才创建新数组并排序
+  // .slice()是为了不改变原数组
+  return comments.value.slice().sort((a, b) => b.LikeNum - a.LikeNum);
 });
 const setSortType = (type) => {
   sortType.value = type;
-  comments.value = sortedComments.value;
 };
 
 
