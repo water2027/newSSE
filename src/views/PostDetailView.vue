@@ -14,12 +14,24 @@
     <div class="comment">
       <h2>评论</h2>
       <div class="sort-comment">
-        <div class="sort-btn" @click="setSortType('time')">
-          <div class="icon" style="background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729845428749551312_icons8-sort-48.png);"></div>
+        <div
+          class="sort-btn"
+          @click="setSortType('time')"
+        >
+          <div
+            class="icon"
+            style="background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729845428749551312_icons8-sort-48.png);"
+          />
           时间
         </div>
-        <div class="sort-btn" @click="setSortType('likes')">
-          <div class="icon" style="background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729845524483606271_icons8-sort-49.png);"></div>
+        <div
+          class="sort-btn"
+          @click="setSortType('likes')"
+        >
+          <div
+            class="icon"
+            style="background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729845524483606271_icons8-sort-49.png);"
+          />
           热度
         </div>
       </div>
