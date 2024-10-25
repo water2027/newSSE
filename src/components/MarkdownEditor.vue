@@ -41,11 +41,12 @@
     </div>
     <div class="container">
       <textarea
+        ref="textarea"
         :value="modelValue"
         placeholder="请输入正文"
         @input="handleInput"
         @keydown="handleKeydown"
-        @paste.prevent="handlePaste"
+        @paste="handlePaste"
       ></textarea>
       <MarkdownContainer
         v-if="isPreview"
@@ -94,6 +95,7 @@ import { uploadPhoto } from '@/api/editPostAndComment/utils';
 const route = useRoute();
 
 const isPreview = ref(false);
+const textarea = ref(null);
 
 const props = defineProps({
 	modelValue: {
@@ -103,9 +105,9 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:modelValue', 'send']);
-const autoResize = (event) => {
-	event.target.style.height = '450px';
-	event.target.style.height = event.target.scrollHeight + 'px';
+const autoResize = () => {
+	textarea.value.style.height = '450px';
+	textarea.value.style.height = textarea.value.scrollHeight + 'px';
 };
 
 const handleInput = (event) => {
@@ -117,14 +119,14 @@ const handleKeydown = (event) => {
 	if (event.key === 'Tab') {
 		event.preventDefault();
 		// 在光标位置插入四个空格
-		const textarea = event.target;
-		const start = textarea.selectionStart;
-		const end = textarea.selectionEnd;
+		const start = textarea.value.selectionStart;
+		const end = textarea.value.selectionEnd;
 		const value = textarea.value;
 		const spaces = '    '; // 四个空格
-		textarea.value =
+		textarea.value.value =
 			value.substring(0, start) + spaces + value.substring(end);
-		textarea.selectionStart = textarea.selectionEnd = start + spaces.length;
+		textarea.value.selectionStart = textarea.value.selectionEnd = start + spaces.length;
+		autoResize();
 	}
 };
 
@@ -140,6 +142,7 @@ const upload = async (file) => {
 				props.modelValue +
 					`<img src="${data.fileURL}" alt="${file.name}" />`
 			);
+			autoResize()
 		} catch (error) {
 			console.error('Error uploading file:', error);
 			showMsg('上传失败，请重试');
@@ -163,14 +166,9 @@ const handlePaste = async (event) => {
 		const item = items[i];
 		if (item.kind === 'file') {
 			const file = item.getAsFile();
-			hasImg = true;
+			event.preventDefault();
 			await upload(file);
 		}
-	}
-
-	if(!hasImg){
-		const text = event.clipboardData.getData('text/plain');
-		emit('update:modelValue', props.modelValue + text);
 	}
 };
 
