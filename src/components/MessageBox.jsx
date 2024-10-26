@@ -1,5 +1,7 @@
 import { createApp } from "vue";
 
+import '@/assets/MessageBox.css'
+
 const messageBox = {
     props: {
         msg: {

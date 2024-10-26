@@ -198,16 +198,16 @@
   </div>
 </template>
 <script setup>
-import { computed, onMounted, provide, inject, ref, shallowRef } from 'vue';
+import { computed, onMounted, provide, inject, ref, shallowRef, defineAsyncComponent } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { getNoticesNum } from '@/api/notice/notice';
 
 import { Icon } from '@iconify/vue';
 
-import HeatList from '@/components/HeatList.vue';
-import BottomNavbar from '@/components/BottomNavbar.vue';
-import SuspendedBall from '@/components/SuspendedBall.vue';
+const HeatList = defineAsyncComponent(() => import('@/components/HeatList.vue'));
+const SuspendedBall = defineAsyncComponent(() => import('@/components/SuspendedBall.vue'));
+const BottomNavbar = defineAsyncComponent(() => import('@/components/BottomNavbar.vue'));
 
 const router = useRouter();
 const route = useRoute();
@@ -689,28 +689,6 @@ body.dark-mode .bright-icon {
 
 /* 小屏幕样式 <768px */
 @media screen and (max-width: 768px) {
-  .hamburgerMenu {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    width: 24px;
-    height: 24px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    margin: 0;
-  }
-
-  .hamburgerMenu span {
-    width: 100%;
-    height: 3px;
-    background-color: #333;
-    border-radius: 2px;
-    transition: none; /* 取消过渡效果 */
-    position: relative;
-  }
-
   main {
     padding: 0;
   }
@@ -741,11 +719,6 @@ body.dark-mode .bright-icon {
   .post-button {
     color: #444;
     font-weight: bold;
-
-    svg {
-      font-size: 24px;
-      vertical-align: middle;
-    }
   }
 }
 </style>

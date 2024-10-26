@@ -162,7 +162,6 @@ const getCommentList = async () => {
  * @description 复制代码和展示图片。直接绑定根容器
  */
 const clickHandler = async (event) => {
-  console.log(event.target.tagName);
 	/**
 	 * 在css里已经去除了pre标签的点击，只保留了pre::before的点击
 	 */
@@ -174,7 +173,6 @@ const clickHandler = async (event) => {
 		//拿到图片的src
 		const src = event.target.src;
 		// 如果class名为user-avatar，直接展示
-    console.log(event.target.className);
 		if (event.target.className === 'user-avatar') {
       console.log('showImg');
 			showImg(src);

@@ -1,5 +1,7 @@
 import { createApp } from 'vue';
 
+import '@/assets/ImageShower.css'
+
 const imageShower = {
 	props: {
 		img: {

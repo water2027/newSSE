@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import PostListView from '@/views/PostListView.vue';
-import PostView from '@/views/PostView.vue';
-import PostDetailView from '@/views/PostDetailView.vue';
 
 const routes = [
 	{
@@ -35,7 +33,7 @@ const routes = [
 	{
 		path: '/post',
 		name: 'Post',
-		component: PostView,
+		component: () => import('@/views/PostView.vue'),
 	},
 	{
 		path: '/postdetail/:id',
