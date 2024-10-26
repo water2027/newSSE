@@ -51,6 +51,10 @@ const md = new MarkdownIt({
 	  try {
 		return `<pre class="hljs"><code>${hljs.highlight(str, {language:lang,ignoreIllegals:true}).value}</code></pre>`;
 	  } catch (__) {}
+	} else {
+		try {
+			return `<pre class="hljs"><code>${hljs.highlightAuto(str).value}</code></pre>`;
+		}catch (__) {}
 	}
 	return `<pre class="hljs"><code>${md.utils.escapeHtml(str)}</code></pre>`;
   },

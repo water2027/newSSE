@@ -5,57 +5,57 @@
       <img
         loading="lazy"
         class="user-avatar"
-        :class="basicData.UserAvatar ? '' : 'default-avatar'"
-        :src="basicData.UserAvatar||avatarUrl"
+        :class="cardData.UserAvatar ? '' : 'default-avatar'"
+        :src="cardData.UserAvatar||avatarUrl"
       />
       <span class="user-name"><span
-        v-if="basicData.UserIdentity==='teacher'"
+        v-if="cardData.UserIdentity==='teacher'"
         class="teacher_identity"
-      >教师</span>{{ basicData.UserName }}<span v-if="basicData.hasOwnProperty('userTargetName')">回复{{ basicData.userTargetName||'层主' }}</span></span>
+      >教师</span>{{ cardData.UserName }}<span v-if="cardData.hasOwnProperty('userTargetName')">回复{{ cardData.userTargetName||'层主' }}</span></span>
       <span
-        v-if="!basicData.hasOwnProperty('userTargetName')"
+        v-if="!cardData.hasOwnProperty('userTargetName')"
         title="码之气，三段！"
         class="level"
-        :class="levelClassHandler(basicData.UserScore)"
-      >{{ levelNameHandler(basicData.UserScore) }}
+        :class="levelClassHandler(cardData.UserScore)"
+      >{{ levelNameHandler(cardData.UserScore) }}
       </span>
       <div class="userButtons">
         <slot name="userButtons"></slot>
       </div>
     </div>
-    <div v-if="basicData.Title">
-      <h3 v-if="basicData.Title.length<=10">
-        {{ basicData.Title||'' }}
+    <div v-if="cardData.Title">
+      <h3 v-if="cardData.Title.length<=10">
+        {{ cardData.Title||'' }}
       </h3>
-      <h4 v-else-if="basicData.Title.length>10&&basicData.Title.length<=20">
-        {{ basicData.Title||'' }}
+      <h4 v-else-if="cardData.Title.length>10&&cardData.Title.length<=20">
+        {{ cardData.Title||'' }}
       </h4>
       <h5 v-else>
-        {{ basicData.Title||'' }}
+        {{ cardData.Title||'' }}
       </h5>
     </div>
     <p v-if="isPost">
-      {{ basicData.Content||'loading' }}
+      {{ cardData.Content||'loading' }}
     </p>
     <markdown-container
       v-else
-      :markdown-content="basicData.Content || 'loading'"
+      :markdown-content="cardData.Content || 'loading'"
     />
     <div
-      v-if="basicData.Photos"
+      v-if="cardData.Photos"
       class="imgs"
     >
       <!-- 图片路径由|分割 -->
       <img
-        v-for="img in strHandler('img', basicData.Photos)"
+        v-for="img in strHandler('img', cardData.Photos)"
         :key="img"
         :src="img"
       />
     </div>
-    <span>{{ strHandler('time', basicData.PostTime) }}</span>
+    <span>{{ strHandler('time', cardData.PostTime) }}</span>
     <div class="basicInfo">
-      <span v-if="basicData.Browse||basicData.Browse === 0">
-        {{ basicData.Browse }}
+      <span v-if="cardData.Browse||cardData.Browse === 0">
+        {{ cardData.Browse }}
         <svg
           viewBox="0 0 16 16"
           width="1em"
@@ -133,6 +133,7 @@ import { levelNameHandler, levelClassHandler } from '@/utils/level';
 import { showMsg } from '@/components/MessageBox';
 
 const MarkdownContainer = defineAsyncComponent(()=>{
+  console.log('MarkdownContainer');
   return import('@/components/MarkdownContainer.vue');
 })
 
@@ -154,7 +155,10 @@ const props = defineProps({
 		default:false
 	}
 });
-const basicData = ref(props.cardData);
+const basicData = ref({
+  Like: props.cardData.Like,
+  IsLiked: props.cardData.IsLiked,
+});
 
 const debounce = (fn, delay) => {
     let timer = null;
@@ -314,7 +318,7 @@ body.dark-mode .teacher_identity{
 
 .level {
   font-size: 13px;
-  margin-left: 8px;
+  margin-left: 6px;
   border-radius: 10%;
   padding-left: 10px;
   padding-right: 10px;
@@ -327,10 +331,10 @@ body.dark-mode .teacher_identity{
     -0.2em -0.2em var(--color-level-undefined-box-shadow);
 }
 .level-0 {
-  background-color: #36c7d9;
+  background-color: #1aa6b9;
 }
 .level-1 {
-  background-color: #66d934;
+  background-color: #378814;
 }
 .level-2 {
   background-color: #d74a4a;

@@ -9,10 +9,10 @@
 </template>
 
 <script setup>
-import { ref, provide, onUnmounted, onBeforeMount, shallowRef } from 'vue';
+import { ref, provide, onUnmounted, onBeforeMount, defineAsyncComponent} from 'vue';
 
 import HomeViewVue from './views/HomeView.vue';
-import LoginViewVue from './views/LoginView.vue';
+const LoginViewVue = defineAsyncComponent(() => import('./views/LoginView.vue'));
 
 import { userLogin } from './api/LoginAndRegister/login';
 import { getTokenWithExpiry } from './api/auth';
