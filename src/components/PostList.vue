@@ -192,7 +192,7 @@ onActivated(async () => {
 		userTelephone: userInfo.value.phone,
 		tag: tag.value,
 	});
-	if (id > totalNum.value) {
+	if (id > totalNum.value&&totalNum.value!==0) {
 		const res = await getPosts({
 			limit: id - totalNum.value,
 			offset: 0,
