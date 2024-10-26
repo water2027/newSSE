@@ -87,8 +87,6 @@ const updateNum = async () => {
 };
 
 const addPosts = async () => {
-	console.log(userInfo.value.value)
-	console.log(userInfo.value.phone)
 	const res = await getPosts({
 		limit: limit.value,
 		offset: curPage.value,

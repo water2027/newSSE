@@ -124,7 +124,7 @@ import { levelNameHandler, levelClassHandler } from '@/utils/level';
 import { showMsg } from '@/components/MessageBox';
 
 const MarkdownContainer = shallowRef(null);
-const avatarUrl = shallowRef(import.meta.env.BASE_URL+'defaultAvatar.webp')
+const avatarUrl = shallowRef(import.meta.env.BASE_URL+'default-avatar.svg')
 
 const props = defineProps({
 	cardData: {
@@ -176,7 +176,6 @@ const like = debounce(async () => {
 
 onBeforeMount(async()=>{
   if(!props.isPost){
-    console.log("MarkdownContainer", MarkdownContainer);
     MarkdownContainer.value = defineAsyncComponent(() => import('../MarkdownContainer.vue'));
   }
 })

@@ -79,8 +79,10 @@ async function cacheFirst(request) {
 self.addEventListener('fetch', (event) => {
 	const { request } = event;
 	if (request.url.startsWith('https://api.ssemarket.cn/api')) {
+		console.log('network first')
 		event.respondWith(networkFirst(request));
 	} else {
+		console.log('cache first')
 		event.respondWith(cacheFirst(request));
 	}
 });

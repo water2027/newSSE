@@ -24,7 +24,6 @@ async function getPosts(object) {
 			true
 		);
 		const data = await res.json();
-		console.log(data);
 		return data;
 	} catch (e) {
 		console.error(e);
