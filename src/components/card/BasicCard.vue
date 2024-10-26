@@ -37,8 +37,7 @@
     <p v-if="isPost">
       {{ basicData.Content||'loading' }}
     </p>
-    <component
-      :is="MarkdownContainer"
+    <markdown-container
       v-else
       :markdown-content="basicData.Content || 'loading'"
     />
@@ -126,14 +125,17 @@
   </div>
 </template>
 <script setup>
-import { onBeforeMount, ref, defineAsyncComponent, shallowRef } from 'vue';
+import { ref, defineAsyncComponent, shallowRef } from 'vue';
 
 import { strHandler } from '@/utils/strHandler';
 import { levelNameHandler, levelClassHandler } from '@/utils/level';
 
 import { showMsg } from '@/components/MessageBox';
 
-const MarkdownContainer = shallowRef(null);
+const MarkdownContainer = defineAsyncComponent(()=>{
+  return import('@/components/MarkdownContainer.vue');
+})
+
 const avatarUrl = shallowRef(import.meta.env.BASE_URL+'default-avatar.svg')
 
 const props = defineProps({
@@ -183,12 +185,6 @@ const like = debounce(async () => {
         showMsg('失败了:-(');
     }
 }, 300);
-
-onBeforeMount(async()=>{
-  if(!props.isPost){
-    MarkdownContainer.value = defineAsyncComponent(() => import('../MarkdownContainer.vue'));
-  }
-})
 
 defineExpose({
 	name: 'BasicCard',
