@@ -145,29 +145,6 @@ onMounted(async () => {
 	flex-shrink: 0;
 }
 
-.container {
-	display: flex;
-	flex-direction: row;
-	/* align-items: center; */
-	justify-content: center;
-	width: 100%;
-	height: auto;
-}
-
-.container textarea,
-.container div {
-	width: 100%;
-	min-height: 100%;
-	border-radius: 5px;
-	padding: 10px;
-	height: auto;
-	overflow-y: hidden;
-}
-
-.container textarea {
-	height: 100px;
-}
-
 option {
 	font-size: 1.2rem;
 }
@@ -188,12 +165,6 @@ select {
 @media screen and (max-width: 768px) {
 	.title {
 		margin-top: 10px;
-	}
-
-	.editorButton {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		width: 100%;
 	}
 }
 </style>

@@ -18,12 +18,12 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue';
+import { shallowRef, onMounted } from 'vue';
 
 import { getHeatPosts } from '@/api/browse/getPost';
 import { showMsg } from '@/components/MessageBox';
 
-const heatPosts = ref([]);
+const heatPosts = shallowRef([]);
 
 onMounted(async () => {
 	try {

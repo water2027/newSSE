@@ -5,11 +5,11 @@
     id="content"
     ref="content"
     class="markdown-body"
-    v-html="safeHTML(markdownContent)"
+    v-html="safeHTML"
   ></div>
 </template>
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 import MarkdownIt from 'markdown-it';
 import mk from 'markdown-it-katex';
@@ -40,7 +40,6 @@ const props = defineProps({
 		required: true,
 	},
 });
-
 
 const md = new MarkdownIt({
   html: true,
@@ -74,28 +73,27 @@ const md = new MarkdownIt({
 
 /**
  * @description 安全的html，会自动去掉script和iframe之类的标签
- * @param str 待转换的字符串
  */
-const safeHTML = (str) => {
-  if (!str) {
+const safeHTML = computed(() => {
+  if (!props.markdownContent) {
     return '';
   }
 
-  // 配置 DOMPurify 以允许 KaTeX 相关标签和属性 
+  // 配置 DOMPurify 以允许 KaTeX 相关标签和属性
   DOMPurify.addHook('uponSanitizeElement', (node, data) => {
     if (data.tagName === 'math' || data.tagName === 'annotation') {
       return node;
     }
   });
 
-  const rendered = md.render(str);
+  const rendered = md.render(props.markdownContent);
   const finalHTML = DOMPurify.sanitize(rendered, {
     ADD_TAGS: ['math', 'mrow', 'mi', 'mo', 'mn', 'annotation', 'semantics', 'mspace', 'mfrac', 'msup', 'msub', 'span'],
     ADD_ATTR: ['xmlns', 'display', 'class', 'style', 'width', 'height', 'href', 'target', 'aria-hidden'],
   });
 
   return finalHTML;
-};
+});
 
 defineExpose({
 	name: 'MarkdownContainer',

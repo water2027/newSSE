@@ -37,9 +37,6 @@
         </div>
       </div>
       <div class="site-header">
-        <span />
-        <span />
-        <span />
         <div
           v-if="isPC"
           class="links"
@@ -137,21 +134,19 @@
             {{ userInfo.name }}
           </router-link>
         </div>
-        <div
+        <router-link
           v-if="!isPC"
+          to="/post"
           class="post-button icon bright-icon"
-          @click="changeToPost"
           style="background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/resized/1729866598925892895_icons8-add-48.png); width: 30px; height: 30px;background-position: 1px -1px;"
         >
-          
-        </div>
+        </router-link>
       </div>
     </header>
     <main>
       <BottomNavbar  
         v-if="!isPC"
         @change-path="changePathHandler"
-        @click="toggleNav"
       />
       <div class="content">
         <div
@@ -178,27 +173,17 @@
         </div>
 
         <router-view v-slot="{ Component }">
-          <transition
-            name="bounce"
-            mode="out-in"
-          >
-            <KeepAlive>
-              <component
-                :is="Component"
-                v-if="route.meta.keepAlive"
-              />
-            </KeepAlive>
-          </transition>
-          <transition
-            name="bounce"
-            mode="out-in"
-          >
+          <KeepAlive>
             <component
               :is="Component"
-              v-if="!route.meta.keepAlive"
-              @send-partition="sendPartition"
+              v-if="route.meta.keepAlive"
             />
-          </transition>
+          </KeepAlive>
+          <component
+            :is="Component"
+            v-if="!route.meta.keepAlive"
+            @send-partition="sendPartition"
+          />
         </router-view>
       </div>
       <heat-list v-if="isPC && !heatPostsIsHidden" />
@@ -212,7 +197,7 @@
   </div>
 </template>
 <script setup>
-import { computed, onMounted, provide, inject, ref } from 'vue';
+import { computed, onMounted, provide, inject, ref, shallowRef } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { getNoticesNum } from '@/api/notice/notice';
@@ -223,6 +208,7 @@ import HeatList from '@/components/HeatList.vue';
 import BottomNavbar from '@/components/BottomNavbar.vue';
 import SuspendedBall from '@/components/SuspendedBall.vue';
 
+const router = useRouter();
 const route = useRoute();
 
 const userInfo = inject('userInfo');
@@ -234,7 +220,7 @@ const changeMode = () => {
   mode.value = currentMode == 'light-mode' ? 'dark-mode' : 'light-mode';
   localStorage.setItem('mode', document.body.className);
 };
-const partitions = ref([
+const partitions = shallowRef([
     { name: '日常吐槽', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865147020011731_icons8-chat-message-48.png'},
     { name: '打听求助', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865259021372927_icons8-unverified-account-48.png' },
     { name: '学习交流', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865462046077601_icons8-open-book-48.png' },
@@ -248,19 +234,18 @@ const returnToTop = () => {
   document.body.scrollTop = 0;
 };
 
-const router = useRouter();
 const isPC = computed(() => {
   return windowWidth.value > 768;
 });
-const isHomePage = computed(() => {
-  return route.path === '/';
-});
-
 provide('isPC', isPC);
 const windowWidth = ref(window.innerWidth);
 const updateWidth = () => {
   windowWidth.value = window.innerWidth;
 };
+
+const isHomePage = computed(() => {
+  return route.path === '/';
+});
 
 /**
  * @description 发帖和看帖的时候隐藏热榜
@@ -306,9 +291,6 @@ const changeToHistory = () => {
   searchinfo.value = '';
   searchsort.value = 'history';
 };
-const changeToPost = () => {
-  router.push('/post');
-};
 const changePathHandler = path => {
   switch (path) {
     case 'main':
@@ -341,16 +323,6 @@ const search = () => {
   router.push('/');
 };
 
-const navIsOpen = ref(true);
-/**
- * @description 移动端展开导航栏
- */
-const toggleNav = () => {
-  if (!isPC.value) {
-    navIsOpen.value = !navIsOpen.value;
-  }
-};
-
 /**
  * @description 这是分区页面的回调函数，分区页面选择分区后调用
  * @param p 分区名
@@ -373,10 +345,7 @@ const getNoticesNumFunc = async () => {
 onMounted(async () => {
   mode.value = localStorage.getItem('mode') || 'light-mode';
   document.body.className = mode.value;
-  if (!isPC.value) {
-    navIsOpen.value = false;
-  }
-  // 刷新时跳转到获取对应界面数据
+  // 刷新时获取对应界面数据
   // 之后考虑在组件加载时获取
   const baseUrl = import.meta.env.BASE_URL;
   const path = window.location.pathname.replace(baseUrl, '');
@@ -682,23 +651,6 @@ body.dark-mode .bright-icon {
   }
 }
 
-.bounce-enter-active {
-  animation: bounce-in 0.5s;
-}
-
-.bounce-leave-active {
-  animation: bounce-in 0.5s reverse;
-}
-
-@keyframes bounce-in {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
 /* 大屏幕样式 >768px */
 @media screen and (min-width: 768px) {
   #root {
@@ -791,12 +743,6 @@ body.dark-mode .bright-icon {
       font-size: 24px;
       vertical-align: middle;
     }
-  }
-
-  /* 取消动画效果 */
-  .bounce-enter-active,
-  .bounce-leave-active {
-    animation: none; /* 不使用动画 */
   }
 }
 </style>

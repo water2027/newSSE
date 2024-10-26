@@ -6,7 +6,7 @@
         loading="lazy"
         class="user-avatar"
         :class="basicData.UserAvatar ? '' : 'default-avatar'"
-        :src="basicData.UserAvatar||defaultAvatar"
+        :src="basicData.UserAvatar||'defaultAvatar.webp'"
       />
       <span class="user-name"><span
         v-if="basicData.UserIdentity==='teacher'"
@@ -142,7 +142,6 @@ const props = defineProps({
 	}
 });
 const basicData = ref(props.cardData);
-const defaultAvatar = `${window.location.href}defaultAvatar.webp`;
 
 const debounce = (fn, delay) => {
     let timer = null;

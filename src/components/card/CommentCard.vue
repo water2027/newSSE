@@ -41,7 +41,6 @@ import MarkdownEditor from '../MarkdownEditor.vue';
 import {
 	sendPComment,
 	delComment,
-	delCcomment,
 } from '@/api/editPostAndComment/editComment';
 import {
 	likePostComment,

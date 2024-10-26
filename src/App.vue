@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import { ref, provide, onUnmounted, onBeforeMount } from 'vue';
+import { ref, provide, onUnmounted, onBeforeMount, shallowRef } from 'vue';
 
 import HomeViewVue from './views/HomeView.vue';
 import LoginViewVue from './views/LoginView.vue';
@@ -79,12 +79,6 @@ const autoLogin = async () => {
 };
 
 onBeforeMount(async () => {
-	if (localStorage.mode) {
-		document.body.className = localStorage.mode;
-	}else{
-		document.body.className = 'light-mode'
-		localStorage.setItem('mode', document.body.className);
-	}
 	/**
 	 * @description 页面加载时，如果localStorage.rememberMe存在，自动登录
 	 */

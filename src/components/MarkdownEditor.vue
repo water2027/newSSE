@@ -45,7 +45,6 @@
         :value="modelValue"
         placeholder="请输入正文"
         @input="handleInput"
-        @keydown="handleKeydown"
         @paste="handlePaste"
       ></textarea>
       <MarkdownContainer
@@ -84,7 +83,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 
 import MarkdownContainer from './MarkdownContainer.vue';
@@ -97,37 +96,20 @@ const route = useRoute();
 const isPreview = ref(false);
 const textarea = ref(null);
 
-const props = defineProps({
-	modelValue: {
-		type: String,
-		required: true,
-	},
-});
+const modelValue = defineModel({
+	type:String,
+	required:true
+})
 
-const emit = defineEmits(['update:modelValue', 'send']);
+const emit = defineEmits(['send']);
 const autoResize = () => {
 	textarea.value.style.height = '450px';
 	textarea.value.style.height = textarea.value.scrollHeight + 'px';
 };
 
 const handleInput = (event) => {
-	emit('update:modelValue', event.target.value);
+	modelValue.value = event.target.value;
 	autoResize(event);
-};
-
-const handleKeydown = (event) => {
-	if (event.key === 'Tab') {
-		event.preventDefault();
-		// 在光标位置插入四个空格
-		const start = textarea.value.selectionStart;
-		const end = textarea.value.selectionEnd;
-		const value = textarea.value;
-		const spaces = '    '; // 四个空格
-		textarea.value.value =
-			value.substring(0, start) + spaces + value.substring(end);
-		textarea.value.selectionStart = textarea.value.selectionEnd = start + spaces.length;
-		autoResize();
-	}
 };
 
 const upload = async (file) => {
@@ -135,13 +117,7 @@ const upload = async (file) => {
 		try {
 			const data = await uploadPhoto(file);
 			showMsg(data.message);
-
-			// 使用 emit 来更新父组件的 modelValue
-			emit(
-				'update:modelValue',
-				props.modelValue +
-					`<img src="${data.fileURL}" alt="${file.name}" />`
-			);
+			modelValue.value += `<img src="${data.fileURL}" alt="${file.name}" />`
 			autoResize()
 		} catch (error) {
 			console.error('Error uploading file:', error);
@@ -160,7 +136,6 @@ const uploadFile = async (event) => {
 
 const handlePaste = async (event) => {
 	const items = event.clipboardData.items;
-	let hasImg = false;
 
 	for (let i = 0; i < items.length; ++i) {
 		const item = items[i];
@@ -230,10 +205,10 @@ const editContent = (type) => {
 		insertion +
 		props.modelValue.slice(end);
 
-	emit('update:modelValue', newValue);
+	modelValue.value = newValue
 
 	// 在下一个事件循环中设置光标位置
-	setTimeout(() => {
+	nextTick(() => {
 		textarea.focus();
 		textarea.setSelectionRange(
 			start + insertion.length + cursorOffset,
@@ -246,19 +221,15 @@ const editContent = (type) => {
  * @description 保存草稿
  */
 const savePost = () => {
-	const post = {
-		title: '草稿',
-		content: props.modelValue,
-	};
-	localStorage.setItem('draft', JSON.stringify(post));
+	localStorage.setItem('draft', modelValue.value);
 	showMsg('已暂存为草稿');
 };
 
 onMounted(() => {
 	if (route.path === '/post') {
-		const draft = JSON.parse(localStorage.getItem('draft'));
+		const draft = localStorage.getItem('draft');
 		if (draft) {
-			emit('update:modelValue', draft.content);
+			modelValue.value = draft
 			showMsg('读取草稿成功，已删除');
 			localStorage.removeItem('draft');
 		}
@@ -319,6 +290,7 @@ defineExpose({
 }
 
 .container textarea {
+	width: 100%;
 	height: 450px;
 	border: 1px solid #d1d1d1;
 	border-radius: 5px;
@@ -381,18 +353,6 @@ defineExpose({
 		height: 4vh;
 		margin: 0 10px 80px 0;
 	}
-}
-
-textarea {
-	width: 100%;
-	height: 100%;
-	padding: 10px;
-	font-size: 1rem;
-	font-family: 'Roboto', sans-serif;
-	font-weight: 500;
-	border: 1px solid #333;
-	border-radius: 5px;
-	margin: 10px 0;
 }
 
 /* 深色模式 */
