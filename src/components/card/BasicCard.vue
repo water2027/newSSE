@@ -116,14 +116,14 @@
   </div>
 </template>
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onBeforeMount, ref, defineAsyncComponent, shallowRef } from 'vue';
 
 import { strHandler } from '@/utils/strHandler';
 import { levelNameHandler, levelClassHandler } from '@/utils/level';
 
 import { showMsg } from '@/components/MessageBox';
 
-const MarkdownContainer = ref(null);
+const MarkdownContainer = shallowRef(null);
 
 const props = defineProps({
 	cardData: {
@@ -174,8 +174,9 @@ const like = debounce(async () => {
     }
 }, 300);
 
-onMounted(async()=>{
+onBeforeMount(async()=>{
   if(!props.isPost){
+    console.log("MarkdownContainer", MarkdownContainer);
     MarkdownContainer.value = defineAsyncComponent(() => import('../MarkdownContainer.vue'));
   }
 })
@@ -227,6 +228,12 @@ body.dark-mode .default-avatar {
 	align-items: center;
 	font-size: 1.2rem;
 	font-weight: bold;
+}
+
+.like {
+	color: #ff0000;
+	cursor: pointer;
+	transition: all 0.3s ease;
 }
 
 .user .user-name {

@@ -383,6 +383,18 @@ defineExpose({
 	}
 }
 
+textarea {
+	width: 100%;
+	height: 100%;
+	padding: 10px;
+	font-size: 1rem;
+	font-family: 'Roboto', sans-serif;
+	font-weight: 500;
+	border: 1px solid #333;
+	border-radius: 5px;
+	margin: 10px 0;
+}
+
 /* 深色模式 */
 body.dark-mode .editorButton button {
 	background-color: darkorange;
