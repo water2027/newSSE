@@ -138,7 +138,8 @@
           v-if="!isPC"
           to="/post"
           class="post-button icon bright-icon"
-          style="background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/resized/1729866598925892895_icons8-add-48.png); width: 30px; height: 30px;background-position: 1px -1px;"
+          style="width: 30px; height: 30px;background-position: 1px -1px;"
+          :style="{backgroundImage:`url(${imgs.sendPostButtonIcon})`}"
         >
         </router-link>
       </div>
@@ -220,6 +221,9 @@ const changeMode = () => {
   mode.value = currentMode == 'light-mode' ? 'dark-mode' : 'light-mode';
   localStorage.setItem('mode', document.body.className);
 };
+const imgs = {
+  sendPostButtonIcon:`${import.meta.env.BASE_URL}webp/sendPostButton.webp`,
+};
 const partitions = shallowRef([
     { name: '日常吐槽', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865147020011731_icons8-chat-message-48.png'},
     { name: '打听求助', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865259021372927_icons8-unverified-account-48.png' },
@@ -228,7 +232,6 @@ const partitions = shallowRef([
     { name: '求职招募', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865327380329691_icons8-commercial-48.png' },
     { name: '其他', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865345159097327_icons8-link-48.png'},
 ]);
-
 
 const returnToTop = () => {
   document.body.scrollTop = 0;

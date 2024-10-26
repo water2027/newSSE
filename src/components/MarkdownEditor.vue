@@ -48,7 +48,7 @@
         @paste="handlePaste"
       ></textarea>
       <MarkdownContainer
-        v-if="isPreview"
+        v-show="isPreview"
         ref="mdContainer"
         :markdown-content="modelValue"
       />

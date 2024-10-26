@@ -23,7 +23,17 @@
         <slot name="userButtons"></slot>
       </div>
     </div>
-    <h3>{{ basicData.Title||'' }}</h3>
+    <div v-if="basicData.Title">
+      <h3 v-if="basicData.Title.length<=10">
+        {{ basicData.Title||'' }}
+      </h3>
+      <h4 v-else-if="basicData.Title.length>10&&basicData.Title.length<=20">
+        {{ basicData.Title||'' }}
+      </h4>
+      <h5 v-else>
+        {{ basicData.Title||'' }}
+      </h5>
+    </div>
     <p v-if="isPost">
       {{ basicData.Content||'loading' }}
     </p>
