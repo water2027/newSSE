@@ -6,7 +6,7 @@
         loading="lazy"
         class="user-avatar"
         :class="basicData.UserAvatar ? '' : 'default-avatar'"
-        :src="basicData.UserAvatar||'defaultAvatar.webp'"
+        :src="basicData.UserAvatar||avatarUrl"
       />
       <span class="user-name"><span
         v-if="basicData.UserIdentity==='teacher'"
@@ -124,6 +124,7 @@ import { levelNameHandler, levelClassHandler } from '@/utils/level';
 import { showMsg } from '@/components/MessageBox';
 
 const MarkdownContainer = shallowRef(null);
+const avatarUrl = shallowRef(import.meta.env.BASE_URL+'defaultAvatar.webp')
 
 const props = defineProps({
 	cardData: {

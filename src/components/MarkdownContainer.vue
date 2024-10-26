@@ -144,6 +144,7 @@ defineExpose({
 
 :deep(pre){
 	background-color: #282c34;
+	color: rgb(180, 180, 180);
 	padding: 10px;
 	pointer-events: none;
 	z-index: 0;

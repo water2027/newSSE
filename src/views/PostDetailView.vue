@@ -162,6 +162,7 @@ const getCommentList = async () => {
  * @description 复制代码和展示图片。直接绑定根容器
  */
 const clickHandler = async (event) => {
+  console.log(event.target.tagName);
 	/**
 	 * 在css里已经去除了pre标签的点击，只保留了pre::before的点击
 	 */
@@ -173,7 +174,9 @@ const clickHandler = async (event) => {
 		//拿到图片的src
 		const src = event.target.src;
 		// 如果class名为user-avatar，直接展示
+    console.log(event.target.className);
 		if (event.target.className === 'user-avatar') {
+      console.log('showImg');
 			showImg(src);
 			return;
 		}
@@ -268,53 +271,5 @@ body.dark-mode .sort-btn:active {
 	background-size: contain;
 	background-repeat: no-repeat;
   margin-right: 5px;
-}
-
-#imgShower-root{
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
-    animation: fade-in 0.5s forwards;
-}
-#imgShower-root img{
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-#imgShower-root button{
-    cursor: pointer;
-    pointer-events: auto;
-    border: none;
-    outline: none;
-    background-color: var(--color-button-bg);
-    color: var(--color-button);
-    padding: 15px 25px;
-    border-radius: 5px;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    margin: 10px;
-    margin-bottom: 20px;
-    display: inline-block;
-    text-align: center;
-    text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 500;
-    z-index: 10;
-}
-#imgShower-root button:hover{
-    background-color: var(--color-button);
-    color: var(--color-button-bg);
 }
 </style>

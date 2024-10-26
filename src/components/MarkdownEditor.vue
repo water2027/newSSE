@@ -169,16 +169,16 @@ const editContent = (type) => {
 			cursorOffset = -2;
 			break;
 		case '引用':
-			insertion = '\n> 引用\n';
+			insertion = '> 引用\n';
 			cursorOffset = -1;
 			break;
 		case '无序列表':
-			insertion = '\n- 无序列表\n';
-			cursorOffset = -1;
+			insertion = '- 无序列表';
+			cursorOffset = 0;
 			break;
 		case '有序列表':
-			insertion = '\n1. 有序列表\n';
-			cursorOffset = -1;
+			insertion = '1. 有序列表';
+			cursorOffset = 0;
 			break;
 		case '表格':
 			insertion =
@@ -190,27 +190,26 @@ const editContent = (type) => {
 			cursorOffset = 0;
 			break;
 		case '代码块':
-			insertion = '\n```\n代码块\n```\n';
-			cursorOffset = -5;
+			insertion = '```\n代码块\n```';
+			cursorOffset = -4;
 			break;
 		default:
 			return;
 	}
 
-	const textarea = document.querySelector('textarea');
-	const start = textarea.selectionStart;
-	const end = textarea.selectionEnd;
+	const start = textarea.value.selectionStart;
+	const end = textarea.value.selectionEnd;
 	const newValue =
-		props.modelValue.slice(0, start) +
+		modelValue.value.slice(0, start) +
 		insertion +
-		props.modelValue.slice(end);
+		modelValue.value.slice(end);
 
 	modelValue.value = newValue
 
 	// 在下一个事件循环中设置光标位置
 	nextTick(() => {
-		textarea.focus();
-		textarea.setSelectionRange(
+		textarea.value.focus();
+		textarea.value.setSelectionRange(
 			start + insertion.length + cursorOffset,
 			start + insertion.length + cursorOffset
 		);
