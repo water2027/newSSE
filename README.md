@@ -18,13 +18,7 @@ npm run build
 试着用了pinia来管理用户信息和帖子，但是感觉性能太差了，使用pinia前lighthouse性能评分85，用了后37，于是舍弃了。      
 
 #### 未完成的功能 
-1. 忘记密码（后端）
-2. 课程专区的课件资料    
-
-#### 不太重要但是最好早点做的事情    
-- HomeView.vue,PostDetailView.vue,代码太长了，其中很多可以考虑做成组件。      
-对于PostDetailView.vue,可以将文章和评论做成一个组件，文章只比评论多一个浏览量。      
-对于HomeView.vue,可以考虑将Header,NavBar做成两个组件。    
+1. 课程专区的课件资料     
 
 ### 文件夹概要 
 #### `api`文件夹
@@ -48,10 +42,7 @@ npm run build
 6. `HeatList.vue`热榜     
 7. `NewEditor.vue`md编辑器的planB，如果`MarkdownEditor.vue`反响不好可考虑换成这个第三方的编辑器。      
 8. `PostList.vue`帖子列表      
-9. `card`文件夹，里面有封装好的卡片，`BasicCard.vue`是基础卡片，相当于父类，其他的都是子类。`CommentCard.vue`未完成      
-***
-#### docs文件夹 
-可有可无，相当于一个公告吧。 
+9. `card`文件夹，里面有封装好的卡片，`BasicCard.vue`是基础卡片，相当于父类，其他的都是子类。  
 ***
 #### utils文件夹 
 `expHandler.js`根据分数分配等级 
