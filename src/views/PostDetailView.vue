@@ -69,7 +69,7 @@
             </template>
           </comment-card>
           <div
-            v-if="comment.subComment&&comment.subComment.length>0"
+            v-if="comment.SubComments &&comment.SubComments.length>0"
             v-show="postCommentID === comment.PcommentID"
             class="subCommentList"
           >
