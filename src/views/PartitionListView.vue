@@ -83,7 +83,6 @@ const sendPartition = (p) => {
 	padding: 10px;
 	border: 1px solid var(--color-border);
 	border-radius: 5px;
-	cursor: pointer;
 	transition: all 0.3s;
 }
 
@@ -95,10 +94,7 @@ const sendPartition = (p) => {
   padding: 10px;
 	border: 1px solid #000;
 	border-radius: 5px;
-	cursor: pointer;
 	transition: all 0.3s;
-	background-color: var(--color-button-bg);
-	color: var(--color-button);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -144,11 +140,6 @@ const sendPartition = (p) => {
   cursor: pointer;
 }
 
-.btn-primary:hover {
-  background-color: #0056b3;
-  border-color: #004085;
-}
-
 .btn {
   display: inline-block;
   font-weight: 400;
@@ -164,12 +155,6 @@ const sendPartition = (p) => {
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.btn-primary {
-  color: #fff;
-  background-color: #007bff;
-  border-color: #007bff;
-}
-
 .btn-primary:hover {
   color: #fff;
   background-color: #0056b3;
@@ -182,10 +167,5 @@ body.dark-mode .card-body {
 }
 body.dark-mode .card {
 	background-color: #000;
-}
-
-.partition:hover {
-	background-color: var(--color-button);
-	color: var(--color-button-bg);
 }
 </style>
