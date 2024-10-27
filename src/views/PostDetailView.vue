@@ -36,7 +36,10 @@
         </div>
       </div>
       <!-- 这是评论区 -->
-      <div class="commentList">
+      <div
+        v-if="post.Comment"
+        class="commentList"
+      >
         <!-- 使用id-评论数作为key使每次评论重新渲染当前评论 -->
         <div
           v-for="comment in sortedComments"
@@ -66,6 +69,7 @@
             </template>
           </comment-card>
           <div
+            v-if="comment.subComment&&comment.subComment.length>0"
             v-show="postCommentID === comment.PcommentID"
             class="subCommentList"
           >
@@ -82,7 +86,7 @@
   </div>
 </template>
 <script setup>
-import { ref, inject, onMounted, computed } from 'vue';
+import { ref, inject, onMounted, computed, defineAsyncComponent } from 'vue';
 import { useRoute } from 'vue-router';
 
 import { getPostByID } from '@/api/browse/getPost';
@@ -93,8 +97,8 @@ import { strHandler } from '@/utils/strHandler';
 import { showImg } from '@/components/ImageShower';
 import { showMsg } from '@/components/MessageBox';
 import DetailCard from '@/components/card/DetailCard.vue';
-import CommentCard from '@/components/card/CommentCard.vue';
-import CCommentCard from '@/components/card/CCommentCard.vue';
+const CommentCard = defineAsyncComponent(()=>import('@/components/card/CommentCard.vue'))
+const CCommentCard = defineAsyncComponent(()=>import('@/components/card/CCommentCard.vue'))
 
 const route = useRoute();
 

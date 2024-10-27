@@ -33,10 +33,10 @@
   </div>
 </template>
 <script setup>
-import { ref, inject } from 'vue';
+import { ref, inject, defineAsyncComponent } from 'vue';
 
 import BasicCard from './BasicCard.vue';
-import MarkdownEditor from '../MarkdownEditor.vue';
+const MarkdownEditor = defineAsyncComponent(()=>import('../MarkdownEditor.vue'))
 
 import {
 	sendPComment,
