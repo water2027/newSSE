@@ -76,11 +76,10 @@ const sendPartition = (p) => {
 
 .partitions {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 	gap: 10px;
-	margin-top: 50px;
 	width: 100%;
-	max-width: 700px;
+	max-width: 100%;
 	padding: 10px;
 	border: 1px solid var(--color-border);
 	border-radius: 5px;
@@ -88,14 +87,93 @@ const sendPartition = (p) => {
 	transition: all 0.3s;
 }
 
-.partition {
-	padding: 10px;
+.card {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px;
 	border: 1px solid #000;
 	border-radius: 5px;
 	cursor: pointer;
 	transition: all 0.3s;
 	background-color: var(--color-button-bg);
 	color: var(--color-button);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+
+.card-img-top {
+  height: 60%;
+  width: 100%;
+  object-fit: cover;
+  border-bottom: 1px solid #ddd;
+}
+
+.card-body {
+  padding: 1rem;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.card-text {
+  font-size: 0.8em;
+  color: grey;
+  margin-bottom: 1rem;
+}
+
+.btn-primary {
+  display: inline-block;
+  font-weight: 400;
+  color: #fff;
+  text-align: center;
+  vertical-align: middle;
+  user-select: none;
+  background-color: #007bff;
+  border: 1px solid #007bff;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #004085;
+}
+
+.btn {
+  display: inline-block;
+  font-weight: 400;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-primary:hover {
+  color: #fff;
+  background-color: #0056b3;
+  border-color: #004085;
 }
 
 /* 夜间模式 */

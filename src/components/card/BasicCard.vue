@@ -23,16 +23,16 @@
         <slot name="userButtons"></slot>
       </div>
     </div>
-    <div v-if="cardData.Title">
-      <h3 v-if="cardData.Title.length<=10">
+    <div
+      v-if="cardData.Title"
+      class="card-title"
+    >
+      <h2 v-if="cardData.Title.length<=10">
+        {{ cardData.Title||'' }}
+      </h2>
+      <h3 v-else>
         {{ cardData.Title||'' }}
       </h3>
-      <h4 v-else-if="cardData.Title.length>10&&cardData.Title.length<=20">
-        {{ cardData.Title||'' }}
-      </h4>
-      <h5 v-else>
-        {{ cardData.Title||'' }}
-      </h5>
     </div>
     <p v-if="isPost">
       {{ cardData.Content||'loading' }}
@@ -52,7 +52,7 @@
         :src="img"
       />
     </div>
-    <span>{{ strHandler('time', cardData.PostTime) }}</span>
+    <span class="card-time">{{ strHandler('time', cardData.PostTime) }}</span>
     <div class="basicInfo">
       <span v-if="cardData.Browse||cardData.Browse === 0">
         {{ cardData.Browse }}
@@ -212,20 +212,6 @@ defineExpose({
 }
 
 .card-root .user {
-	height: auto;
-}
-
-body.dark-mode .default-avatar {
-  filter: invert(0.9);
-}
-
-.imgs img {
-	width: 100px;
-	height: 100px;
-	margin: 5px;
-}
-
-.user {
 	--userImage: 50px;
 	width: 100%;
 	height: 30px;
@@ -237,6 +223,27 @@ body.dark-mode .default-avatar {
 	align-items: center;
 	font-size: 1.2rem;
 	font-weight: bold;
+}
+
+.card-root .card-title{
+  margin-top: 10px;
+  margin-bottom: 8px;
+}
+
+.card-root .card-time {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+body.dark-mode .default-avatar {
+  filter: invert(0.9);
+}
+
+.imgs img {
+	width: 100px;
+	height: 100px;
+	margin: 5px;
 }
 
 .like {
