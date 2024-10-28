@@ -133,7 +133,6 @@ import { levelNameHandler, levelClassHandler } from '@/utils/level';
 import { showMsg } from '@/components/MessageBox';
 
 const MarkdownContainer = defineAsyncComponent(()=>{
-  console.log('MarkdownContainer');
   return import('@/components/MarkdownContainer.vue');
 })
 

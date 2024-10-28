@@ -49,8 +49,8 @@ import {
 	onUnmounted,
 	computed,
 	onActivated,
-	onDeactivated,
 } from 'vue';
+import { onBeforeRouteLeave } from 'vue-router';
 
 import { getTeachers } from '@/api/info/getTeacher';
 import { getPosts, getPostsNum } from '@/api/browse/getPost';
@@ -207,11 +207,9 @@ onActivated(async () => {
 	}
 });
 
-// 组件被停用时（进入缓存）
-onDeactivated(() => {
-	// 保存滚动位置
-	scrollTop.value = document.body.scrollTop;
-	document.body.scrollTop = 0;
+onBeforeRouteLeave((to, from, next) => {
+  scrollTop.value = document.body.scrollTop;
+  next();
 });
 
 /**
