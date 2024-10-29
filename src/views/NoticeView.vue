@@ -8,10 +8,10 @@
         未读通知
       </button>
       <button
-        v-if="readPage === true"
+        :disabled="noticesUnread.length === 0"
         @click="readAll"
       >
-        一键已读
+        {{ noticesUnread.length === 0 ? '全读完了' : '一键已读' }}
       </button>
       <button @click="readPage = false">
         已读通知
