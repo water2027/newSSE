@@ -154,8 +154,27 @@ defineExpose({
 	z-index: 0;
 	position: relative;
 }
-:deep(pre code){
-	white-space: pre-wrap;
+:deep(pre) > code {
+    display: block;
+    overflow-x: auto;
+    color: rgb(180, 180, 180);
+    width: 100%;
+	pointer-events: auto;
+}
+:deep(pre) > code::-webkit-scrollbar {
+    height: 8px;  
+}
+:deep(pre) > code::-webkit-scrollbar-track {
+    background: #1e2227;  
+    border-radius: 4px;
+}
+:deep(pre) > code::-webkit-scrollbar-thumb {
+    background: #454b55;  
+    border-radius: 4px;
+    cursor: pointer;
+}
+:deep(pre) > code::-webkit-scrollbar-thumb:hover {
+    background: #5a6069;
 }
 :deep(pre)::before{
 	content: '';
@@ -170,5 +189,7 @@ defineExpose({
 	height: 20px;
 	top: 5px;
 	right: 5px;
+	transform: translateZ(0);
+	background-attachment: local;
 }
 </style>
