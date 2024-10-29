@@ -154,6 +154,9 @@ defineExpose({
 	z-index: 0;
 	position: relative;
 }
+:deep(pre code){
+	white-space: pre-wrap;
+}
 :deep(pre)::before{
 	content: '';
 	pointer-events: auto;
