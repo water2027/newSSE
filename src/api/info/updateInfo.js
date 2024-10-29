@@ -1,4 +1,6 @@
 import { requestFunc } from "../req";
+import { getTokenWithExpiry } from "../auth";
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 async function updateUserInfo(avatarURL, intro, name, userID) {
 	try{

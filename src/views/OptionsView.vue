@@ -192,6 +192,7 @@ const uploadAvatarFunc = async (e) => {
 		allInfo.value.avatarURL = res.data.avatar_url;
 		showMsg(res.msg + '记得点击下面的修改信息~');
 	} catch (e) {
+		console.error(e);
 		showMsg('失败了:-(');
 	}
 };
