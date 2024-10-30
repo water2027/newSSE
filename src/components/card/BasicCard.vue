@@ -9,9 +9,9 @@
         :src="cardData.UserAvatar||avatarUrl"
       />
       <span class="user-name"><span
-        v-if="cardData.UserIdentity==='teacher'"
-        class="teacher_identity"
-      >教师</span>{{ cardData.UserName }}<span v-if="cardData.hasOwnProperty('userTargetName')">回复{{ cardData.userTargetName||'层主' }}</span></span>
+        v-if="identity==='teacher'||identity==='organization'"
+        class="identity"
+      >{{ identity==='teacher'?'老师':'组织' }}</span>{{ cardData.UserName }}<span v-if="cardData.hasOwnProperty('userTargetName')">回复{{ cardData.userTargetName||'层主' }}</span></span>
       <span
         v-if="!cardData.hasOwnProperty('userTargetName')"
         title="码之气，三段！"
@@ -125,7 +125,7 @@
   </div>
 </template>
 <script setup>
-import { ref, defineAsyncComponent, shallowRef } from 'vue';
+import { ref, defineAsyncComponent, shallowRef, computed } from 'vue';
 
 import { strHandler } from '@/utils/strHandler';
 import { levelNameHandler, levelClassHandler } from '@/utils/level';
@@ -157,6 +157,19 @@ const props = defineProps({
 const basicData = ref({
   Like: props.cardData.Like,
   IsLiked: props.cardData.IsLiked,
+});
+const identity = computed(() => {
+  const UserIdentity = props.cardData.UserIdentity;
+  switch(UserIdentity){
+    case 'student':
+      return 'student';
+    case 'teacher':
+      return 'teacher';
+    case 'organization':
+      return 'organization';
+    default:
+      return 'undefined';
+  }
 });
 
 const debounce = (fn, delay) => {
@@ -300,10 +313,10 @@ a {
 	color: black;
 	display: block;
 }
-.teacher_identity{
+.identity{
 	color: black;
 	margin-left: 8px;
-	margin-right: 10px;
+	margin-right: 8px;
 	background-color: #62ea1480; 
   border-radius: 8px;
   display: inline-block;
@@ -311,7 +324,7 @@ a {
   text-align: center;
   transition: all 0.5s;
 }
-body.dark-mode .teacher_identity{
+body.dark-mode .identity{
   color: #e2e6e7;
   margin-left: 8px;
 	margin-right: 10px;
