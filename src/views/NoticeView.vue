@@ -33,7 +33,7 @@
           </button>
           <button
             :disabled="notice.postID === 0"
-            @click="changeToPost(notice.postID)"
+            @click="changeToPost(notice.postID, notice.noticeID)"
           >
             {{ notice.postID === 0 ? '该评论已被删除' : '查看原帖' }}
           </button>
@@ -108,8 +108,11 @@ const readAll = async () => {
   nextTick(getNoticesFunc)
 };
 
-const changeToPost = (postID) => {
-	router.push(`/postdetail/${postID}`);
+const changeToPost = async (postID,noticeID) => {
+  await readComment(noticeID);
+  setTimeout(() => {
+    router.push(`/postdetail/${postID}`);
+  },500);
 };
 
 const getNoticesFunc = async ()=>{
