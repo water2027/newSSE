@@ -110,7 +110,7 @@ const autoResize = () => {
 const handleInput = (event) => {
 	const top = document.body.scrollTop;
 	modelValue.value = event.target.value;
-	autoResize(event);
+	autoResize();
 	nextTick(()=>{
 		document.body.scrollTop = top;
 	})
