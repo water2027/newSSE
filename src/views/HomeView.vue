@@ -188,12 +188,6 @@
         </router-view>
       </div>
       <heat-list v-if="isPC && !heatPostsIsHidden" />
-      <suspended-ball
-        v-if="!isPC"
-        :mode="mode"
-        :change-mode="changeMode"
-        :return-to-top="returnToTop"
-      />
     </main>
   </div>
 </template>
@@ -206,7 +200,6 @@ import { getNoticesNum } from '@/api/notice/notice';
 import { Icon } from '@iconify/vue';
 
 const HeatList = defineAsyncComponent(() => import('@/components/HeatList.vue'));
-const SuspendedBall = defineAsyncComponent(() => import('@/components/SuspendedBall.vue'));
 const BottomNavbar = defineAsyncComponent(() => import('@/components/BottomNavbar.vue'));
 
 const router = useRouter();
@@ -232,10 +225,6 @@ const partitions = shallowRef([
     { name: '求职招募', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865327380329691_icons8-commercial-48.png' },
     { name: '其他', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865345159097327_icons8-link-48.png'},
 ]);
-
-const returnToTop = () => {
-  document.body.scrollTop = 0;
-};
 
 const isPC = computed(() => {
   return windowWidth.value > 768;

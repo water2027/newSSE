@@ -108,8 +108,12 @@ const autoResize = () => {
 };
 
 const handleInput = (event) => {
+	const top = document.body.scrollTop;
 	modelValue.value = event.target.value;
 	autoResize(event);
+	nextTick(()=>{
+		document.body.scrollTop = top;
+	})
 };
 
 const upload = async (file) => {
@@ -213,7 +217,7 @@ const editContent = (type) => {
 			start + insertion.length + cursorOffset,
 			start + insertion.length + cursorOffset
 		);
-	}, 0);
+	});
 };
 
 /**
@@ -298,6 +302,7 @@ defineExpose({
 	font-size: 16px;
 	resize: none;
 	transition: border-color 0.3s;
+	overflow: hidden;
 }
 
 .buttons {

@@ -16,7 +16,6 @@ body {
 	overflow-x: hidden;
 	overflow: auto;
 	background-color: var(--color-bg);
-	scroll-behavior: smooth;
 }
 
 body {
