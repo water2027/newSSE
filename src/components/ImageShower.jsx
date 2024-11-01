@@ -1,6 +1,6 @@
 import { createApp } from 'vue';
 
-import '@/assets/ImageShower.css'
+import '@/assets/ImageShower.css';
 
 const imageShower = {
 	props: {
@@ -8,10 +8,10 @@ const imageShower = {
 			type: String,
 			required: true,
 		},
-        close: {
-            type: Function,
-            required: true,
-        }
+		close: {
+			type: Function,
+			required: true,
+		},
 	},
 	setup(props) {
 		return () => (
@@ -34,9 +34,20 @@ function showImg(img) {
 		close: () => {
 			app.unmount(div);
 			document.body.removeChild(div);
+			window.removeEventListener('popstate', handlePopState);
+			history.back();
 		},
 	});
 	app.mount(div);
+
+	function handlePopState() {
+		app.unmount(div);
+		document.body.removeChild(div);
+		window.removeEventListener('popstate', handlePopState);
+	}
+
+	window.addEventListener('popstate', handlePopState);
+	history.pushState(null, '', window.location.href);
 }
 
 export { showImg };
