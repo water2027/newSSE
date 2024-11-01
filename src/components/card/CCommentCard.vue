@@ -146,6 +146,7 @@ const handler = (type)=>{
 const like = async () => {
 	//后端没有返回数据，不要赋值后再更新
 	try {
+		commentData.value.IsLiked = !commentData.value.IsLiked
 		const res = await likeCommentComment(
 			commentData.value.IsLiked,
 			props.comment.ccommentID,
