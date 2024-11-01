@@ -143,13 +143,12 @@ const handler = (type)=>{
 /**
  * @description 点赞。
  */
-const like = async () => {
+const like = async (isLiked) => {
 	//后端没有返回数据，不要赋值后再更新
 	if (props.comment.hasOwnProperty('PcommentID')) {
 		try {
-			commentData.value.IsLiked = !commentData.value.IsLiked
 			const res = await likePostComment(
-				commentData.value.IsLiked,
+				isLiked,
 				commentData.value.PcommentID,
 				userInfo.value.phone
 			);

@@ -98,7 +98,6 @@
         </svg>
       </span>
       <span
-        :style="{pointerEvents: waitingLike?'none':'auto'}"
         :class="basicData.IsLiked ? 'like' : ''"
         @click.stop.prevent="like"
       >
@@ -138,7 +137,6 @@ const MarkdownContainer = defineAsyncComponent(()=>{
 })
 
 const avatarUrl = shallowRef(import.meta.env.BASE_URL+'default-avatar.svg')
-const waitingLike = ref(false);
 
 const props = defineProps({
 	cardData: {
@@ -175,10 +173,10 @@ const identity = computed(() => {
 });
 
 const like = async () => {
-    waitingLike.value = true;
     try {
+        const prev = basicData.value.IsLiked;
         basicData.value.IsLiked = !basicData.value.IsLiked;
-        const res = await props.likeHandler();
+        const res = await props.likeHandler(prev);
         if(res){
             if (basicData.value.IsLiked) {
                 basicData.value.Like++;
@@ -193,9 +191,6 @@ const like = async () => {
     } catch (e) {
         showMsg('失败了:-(');
     }
-    setTimeout(()=>{
-      waitingLike.value = false;
-    },1000)
   };
 
 defineExpose({

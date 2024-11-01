@@ -78,10 +78,10 @@ const handleSave = async () => {
 /**
  * @description 点赞。
  */
-const like = async () => {
+const like = async (isLiked) => {
 	//后端没有返回数据，不要赋值后再更新
 	try{
-		const res = await likePost(postData.value.IsLiked, postData.value.PostID,userInfo.value.phone);
+		const res = await likePost(isLiked, postData.value.PostID,userInfo.value.phone);
 		if(res){
 			return true;
 		}else{
