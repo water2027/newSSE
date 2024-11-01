@@ -178,7 +178,6 @@ const clickHandler = async (event) => {
 		const src = event.target.src;
 		// 如果class名为user-avatar，直接展示
 		if (event.target.className === 'user-avatar') {
-      console.log('showImg');
 			showImg(src);
 			return;
 		}
