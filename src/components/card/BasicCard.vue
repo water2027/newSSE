@@ -174,9 +174,8 @@ const identity = computed(() => {
 
 const like = async () => {
     try {
-        const prev = basicData.value.IsLiked;
         basicData.value.IsLiked = !basicData.value.IsLiked;
-        const res = await props.likeHandler(prev);
+        const res = await props.likeHandler();
         if(res){
             if (basicData.value.IsLiked) {
                 basicData.value.Like++;

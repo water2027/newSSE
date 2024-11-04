@@ -2,12 +2,11 @@ import { requestFunc } from "../req";
 
 /**
  * @description 后端未返回数据，只能通过状态码判断是否成功
- * @param {boolean} isLiked 目前是否喜欢
  * @param {number} postID 
  * @param {string} userTelephone 
  * @returns 如果状态码2xx，返回true
  */
-async function likePost(isLiked,postID,userTelephone) {
+async function likePost(postID,userTelephone) {
     try{
         // 没有返回数据，只能通过状态码判断
         const res = await requestFunc(`/auth/updateLike`,{
@@ -16,7 +15,6 @@ async function likePost(isLiked,postID,userTelephone) {
                 'Content-Type': 'application/json',
             },
             body: {
-                isLiked:isLiked,
                 postID:postID,
                 userTelephone:userTelephone
             }
@@ -29,12 +27,11 @@ async function likePost(isLiked,postID,userTelephone) {
 }
 
 /***
- * @param {boolean} isLiked 目前是否喜欢
  * @param {number} pcommentID 评论id
  * @param {string} userTelephone 
  * @returns 如果状态码2xx，返回true
  */
-async function likePostComment(isLiked,pcommentID,userTelephone){
+async function likePostComment(pcommentID,userTelephone){
     try{
         const res = await requestFunc(`/auth/updatePcommentLike`,{
             method: 'POST',
@@ -54,12 +51,11 @@ async function likePostComment(isLiked,pcommentID,userTelephone){
 }
 
 /***
- * @param {boolean} isLiked 目前是否喜欢
  * @param {number} ccommentID 评论的评论id
  * @param {string} userTelephone 
  * @returns 如果状态码2xx，返回true
  */
-async function likeCommentComment(isLiked,ccommentID,userTelephone){
+async function likeCommentComment(ccommentID,userTelephone){
     try{
         const res = await requestFunc(`/auth/updateCcommentLike`,{
             method: 'POST',
@@ -67,7 +63,6 @@ async function likeCommentComment(isLiked,ccommentID,userTelephone){
                 'Content-Type': 'application/json',
             },
             body: {
-                isLiked:isLiked,
                 ccommentID:ccommentID,
                 userTelephone:userTelephone
             }
@@ -84,7 +79,7 @@ async function likeCommentComment(isLiked,ccommentID,userTelephone){
  * @param {string} userTelephone 
  * @returns 如果状态码2xx，返回true
  */
-async function savePost(isSaved,postID,userTelephone){
+async function savePost(postID,userTelephone){
     try{
         const res = await requestFunc(`/auth/updateSave`,{
             method: 'POST',
@@ -92,7 +87,6 @@ async function savePost(isSaved,postID,userTelephone){
                 'Content-Type': 'application/json',
             },
             body: {
-                isSaved:isSaved,
                 postID:postID,
                 userTelephone:userTelephone
             }
