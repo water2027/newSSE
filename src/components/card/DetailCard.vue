@@ -18,8 +18,8 @@
               backgroundImage:
                 'url(\'https://img.icons8.com/?size=100&id=103&format=png&color=000000\')',
               filter: postData.IsSaved
-                ? filter
-                : 'brightness(0) saturate(100%) invert(22%) sepia(92%) saturate(7473%) hue-rotate(354deg) brightness(95%) contrast(104%)',
+                ? 'brightness(0) saturate(100%) invert(22%) sepia(92%) saturate(7473%) hue-rotate(354deg) brightness(95%) contrast(104%)'
+                : '',
             }"
           />
         </button>
