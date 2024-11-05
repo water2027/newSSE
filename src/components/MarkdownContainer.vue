@@ -42,61 +42,83 @@ const props = defineProps({
 });
 
 const md = new MarkdownIt({
-  html: true,
-  breaks: true,
-  linkify: true,
-  typographer: true,
-  highlight: (str, lang) => {
-	if (lang && hljs.getLanguage(lang)) {
-	  try {
-		return `<pre class="hljs"><code>${hljs.highlight(str, {language:lang,ignoreIllegals:true}).value}</code></pre>`;
-	  } catch (__) {}
-	} else {
-		try {
-			return `<pre class="hljs"><code>${hljs.highlightAuto(str).value}</code></pre>`;
-		}catch (__) {}
-	}
-	return `<pre class="hljs"><code>${md.utils.escapeHtml(str)}</code></pre>`;
-  },
-  breaks: true,
-  xhtmlOut: true,
-  langPrefix: 'language-',
-
+	html: true,
+	breaks: true,
+	linkify: true,
+	typographer: true,
+	highlight: (str, lang) => {
+		if (lang && hljs.getLanguage(lang)) {
+			try {
+				return `<pre class="hljs"><code>${hljs.highlight(str, { language: lang, ignoreIllegals: true }).value}</code></pre>`;
+			} catch (__) {}
+		} else {
+			try {
+				return `<pre class="hljs"><code>${hljs.highlightAuto(str).value}</code></pre>`;
+			} catch (__) {}
+		}
+		return `<pre class="hljs"><code>${md.utils.escapeHtml(str)}</code></pre>`;
+	},
+	breaks: true,
+	xhtmlOut: true,
+	langPrefix: 'language-',
 }).use(mk, {
-  throwOnError: false,
-  errorColor: '#cc0000',
-  strict: false,
-  macros: {},
-  // 块级公式的显示模式
-  displayMode: true,
-  // 行内公式的显示模式
-  inlineMode: false,
-  // 禁用错误处理
-  trust: true,
+	throwOnError: false,
+	errorColor: '#cc0000',
+	strict: false,
+	macros: {},
+	// 块级公式的显示模式
+	displayMode: true,
+	// 行内公式的显示模式
+	inlineMode: false,
+	// 禁用错误处理
+	trust: true,
 });
 
 /**
  * @description 安全的html，会自动去掉script和iframe之类的标签
  */
 const safeHTML = computed(() => {
-  if (!props.markdownContent) {
-    return '';
-  }
+	if (!props.markdownContent) {
+		return '';
+	}
 
-  // 配置 DOMPurify 以允许 KaTeX 相关标签和属性
-  DOMPurify.addHook('uponSanitizeElement', (node, data) => {
-    if (data.tagName === 'math' || data.tagName === 'annotation') {
-      return node;
-    }
-  });
+	// 配置 DOMPurify 以允许 KaTeX 相关标签和属性
+	DOMPurify.addHook('uponSanitizeElement', (node, data) => {
+		if (data.tagName === 'math' || data.tagName === 'annotation') {
+			return node;
+		}
+	});
 
-  const rendered = md.render(props.markdownContent);
-  const finalHTML = DOMPurify.sanitize(rendered, {
-    ADD_TAGS: ['math', 'mrow', 'mi', 'mo', 'mn', 'annotation', 'semantics', 'mspace', 'mfrac', 'msup', 'msub', 'span'],
-    ADD_ATTR: ['xmlns', 'display', 'class', 'style', 'width', 'height', 'href', 'target', 'aria-hidden'],
-  });
+	const rendered = md.render(props.markdownContent);
+	const finalHTML = DOMPurify.sanitize(rendered, {
+		ADD_TAGS: [
+			'math',
+			'mrow',
+			'mi',
+			'mo',
+			'mn',
+			'annotation',
+			'semantics',
+			'mspace',
+			'mfrac',
+			'msup',
+			'msub',
+			'span',
+		],
+		ADD_ATTR: [
+			'xmlns',
+			'display',
+			'class',
+			'width',
+			'height',
+			'href',
+			'target',
+			'aria-hidden',
+		],
+		FORBID_ATTR: ['style', 'onerror', 'onload', 'onmouseover', 'onmouseout'],
+	});
 
-  return finalHTML;
+	return finalHTML;
 });
 
 defineExpose({
@@ -107,46 +129,47 @@ defineExpose({
 @import url('@/assets/hl.css');
 @import url('@/assets/github-markdown.css');
 
-:deep(.katex-html){
+:deep(.katex-html) {
 	display: none;
 }
 
-#content{
+#content {
 	color: var(--color-text);
 	width: 100%;
 	max-width: 100%;
 	height: auto;
 	font-size: 23px;
+	overflow: hidden;
 	overflow-wrap: break-word;
 	word-wrap: break-word;
 	word-break: break-all;
 }
 
-:deep(li){
+:deep(li) {
 	line-height: 1.1;
 	margin-top: 0.5em;
 }
 
-:deep(table){
+:deep(table) {
 	border-collapse: collapse;
 	width: 100%;
 	border: white 1px solid;
 }
 
-:deep(th){
+:deep(th) {
 	border: white 1px solid;
 }
 
-:deep(td){
+:deep(td) {
 	border: white 1px solid;
 }
 
-:deep(p){
+:deep(p) {
 	font-size: 20px;
 	text-indent: 2rem;
 }
 
-:deep(pre){
+:deep(pre) {
 	background-color: #282c34;
 	color: rgb(180, 180, 180);
 	padding: 10px;
@@ -155,28 +178,28 @@ defineExpose({
 	position: relative;
 }
 :deep(pre) > code {
-    display: block;
-    overflow-x: auto;
-    color: rgb(180, 180, 180);
-    width: 100%;
+	display: block;
+	overflow-x: auto;
+	color: rgb(180, 180, 180);
+	width: 100%;
 	pointer-events: auto;
 }
 :deep(pre) > code::-webkit-scrollbar {
-    height: 8px;  
+	height: 8px;
 }
 :deep(pre) > code::-webkit-scrollbar-track {
-    background: #1e2227;  
-    border-radius: 4px;
+	background: #1e2227;
+	border-radius: 4px;
 }
 :deep(pre) > code::-webkit-scrollbar-thumb {
-    background: #454b55;  
-    border-radius: 4px;
-    cursor: pointer;
+	background: #454b55;
+	border-radius: 4px;
+	cursor: pointer;
 }
 :deep(pre) > code::-webkit-scrollbar-thumb:hover {
-    background: #5a6069;
+	background: #5a6069;
 }
-:deep(pre)::before{
+:deep(pre)::before {
 	content: '';
 	pointer-events: auto;
 	background-image: url('/PhCopy.webp');
@@ -185,7 +208,7 @@ defineExpose({
 	position: absolute;
 	filter: invert(1);
 	z-index: 1;
-	width: 	20px;
+	width: 20px;
 	height: 20px;
 	top: 5px;
 	right: 5px;
