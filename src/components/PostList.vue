@@ -326,9 +326,7 @@ watch(tag, async (newVal) => {
 	}
 	startObserver();
 });
-defineExpose({
-	name: 'PostList',
-});
+
 </script>
 
 <style scoped>

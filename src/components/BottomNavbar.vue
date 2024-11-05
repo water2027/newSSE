@@ -138,10 +138,6 @@ const toggleMyMenu = () => {
 const changeTo = (path) => {
 	emit('changePath', path);
 };
-
-defineExpose({
-	name: 'BottomNavbar',
-});
 </script>
 
 <style scoped>

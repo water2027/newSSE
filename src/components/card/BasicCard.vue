@@ -193,9 +193,6 @@ const like = async () => {
     }
   };
 
-defineExpose({
-	name: 'BasicCard',
-});
 </script>
 <style scoped>
 .card-root {
