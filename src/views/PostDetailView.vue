@@ -190,7 +190,7 @@ onMounted(async () => {
 	try {
 		const ID = Number(route.params.id);
 		const curPost = await getPostByID(ID, userInfo.value.phone);
-		post.value = curPost;
+    post.value = curPost;
 		await getCommentList();
 	} catch (e) {
 		showMsg(`获取帖子失败: ${e}`);
