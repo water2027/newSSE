@@ -1,4 +1,5 @@
 import { getTokenWithExpiry } from './auth';
+import { showMsg } from '@/components/MessageBox';
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -16,6 +17,8 @@ async function requestFunc(url, object, tokenIsNeeded) {
 	if (tokenIsNeeded) {
 		const token = getTokenWithExpiry('token');
 		if (!token) {
+			showMsg('登录过期，请重新登录');
+			window.location.reload();
 			return null;
 		}
 		const res = await fetch(`${apiUrl}${url}`, {

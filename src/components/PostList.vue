@@ -203,6 +203,7 @@ onActivated(async () => {
 		if (res) {
 			posts.value = [...res, ...posts.value];
 		}
+		curPage.value += id - totalNum.value
 		totalNum.value = id;
 	}
 });
