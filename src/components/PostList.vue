@@ -118,6 +118,7 @@ const updatePosts = async (id) => {
 const deleteHandler = async (callback) => {
 	const res = await callback();
 	if (res) {
+		--curPage.value;
 		await updateNum();
 		await updatePosts(res);
 	}
