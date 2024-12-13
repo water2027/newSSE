@@ -79,7 +79,7 @@ define(['./workbox-1195f403'], (function (workbox) { 'use strict';
    */
   workbox.precacheAndRoute([{
     "url": "index.html",
-    "revision": "0.poo13p5oe5g"
+    "revision": "0.trc9adsbab8"
   }], {});
   workbox.cleanupOutdatedCaches();
   workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("index.html"), {
@@ -92,21 +92,21 @@ define(['./workbox-1195f403'], (function (workbox) { 'use strict';
       maxAgeSeconds: 86400
     })]
   }), 'GET');
-  workbox.registerRoute(/^https:\/\/ssemarket\.cn\/new\/.*\.html$/, new workbox.StaleWhileRevalidate({
+  workbox.registerRoute(/^https:\/\/ssemarket.cn\/new\/.*.html$/, new workbox.StaleWhileRevalidate({
     "cacheName": "html-cache",
     plugins: [new workbox.ExpirationPlugin({
       maxEntries: 10,
       maxAgeSeconds: 604800
     })]
   }), 'GET');
-  workbox.registerRoute(/^https:\/\/ssemarket\.cn\/new\/.*\.js$/, new workbox.StaleWhileRevalidate({
+  workbox.registerRoute(/^https:\/\/ssemarket.cn\/new\/.*.js$/, new workbox.StaleWhileRevalidate({
     "cacheName": "js-cache",
     plugins: [new workbox.ExpirationPlugin({
       maxEntries: 30,
       maxAgeSeconds: 604800
     })]
   }), 'GET');
-  workbox.registerRoute(/^https:\/\/ssemarket\.cn\/new\/.*\.css$/, new workbox.CacheFirst({
+  workbox.registerRoute(/^https:\/\/ssemarket.cn\/new\/.*.css$/, new workbox.CacheFirst({
     "cacheName": "css-cache",
     plugins: [new workbox.ExpirationPlugin({
       maxEntries: 30,

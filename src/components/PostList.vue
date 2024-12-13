@@ -64,7 +64,7 @@ const searchsort = inject('searchsort');
 const posts = ref([]);
 const totalNum = ref(0);
 const curPage = ref(0);
-const limit = ref(5);
+const limit = ref(10);
 const isLoading = computed(() => curPage.value < totalNum.value);
 // 保存滚动位置
 const scrollTop = ref(0);
