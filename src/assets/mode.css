@@ -2,7 +2,7 @@
 /* 子元素使用css变量 */
 
 body.light-mode{
-    --color-bg: #F0F0F0;
+    --color-bg: #fafafa;
     background-color: var(--color-bg);
 
     --color-scroll:rgba(0, 0, 0, 0.1);

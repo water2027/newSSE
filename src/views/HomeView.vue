@@ -448,7 +448,7 @@ header {
 	position: sticky;
 	top: 0;
 	width: 100%;
-	z-index: 5;
+	z-index: 1999;
 }
 
 .icon {

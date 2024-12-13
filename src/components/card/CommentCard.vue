@@ -64,6 +64,7 @@ const root = ref(null);
 // 后端命名真该死啊
 const commentData = ref({
 	UserName: props.comment.Author,
+	UserID: props.comment.AuthorID,
 	UserAvatar: props.comment.AuthorAvatar,
 	UserIdentity: props.comment.AuthorIdentity,
 	UserScore: props.comment.AuthorScore,

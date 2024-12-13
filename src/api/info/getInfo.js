@@ -45,4 +45,21 @@ async function getAllInfo(userTelephone) {
 	}
 }
 
-export { getInfo, getAllInfo };
+async function getInfoById(userID) {
+	try{
+		const res = await requestFunc(`/auth/getInfo`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: { userID },
+		},true);
+		const data = await res.json();
+		return data;
+	}catch(e){
+		alert(e)
+		console.error(e);
+	}
+}
+
+export { getInfo, getAllInfo, getInfoById };
