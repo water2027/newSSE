@@ -9,13 +9,17 @@
     >
       <template #userButtons>
         <button
-          style="background-color: transparent; border: none;"
+          style="background-color: transparent; border: none"
           @click.stop.prevent="handleSave"
         >
           <div
             class="icon"
-            :style="{ 
-              'background-image': `url(${postData.IsSaved ? 'https://img.icons8.com/?size=100&id=103&format=png&color=FA5252' : 'https://img.icons8.com/?size=100&id=103&format=png&color=000000'})`,
+            :style="{
+              backgroundImage:
+                'url(\'https://img.icons8.com/?size=100&id=103&format=png&color=000000\')',
+              filter: postData.IsSaved
+                ? 'brightness(0) saturate(100%) invert(22%) sepia(92%) saturate(7473%) hue-rotate(354deg) brightness(95%) contrast(104%)'
+                : '',
             }"
           />
         </button>
@@ -40,7 +44,9 @@ import { ref, inject, defineAsyncComponent } from 'vue';
 
 import { showMsg } from '@/components/MessageBox';
 import BasicCard from './BasicCard.vue';
-const MarkdownEditor = defineAsyncComponent(()=>import('../MarkdownEditor.vue'))
+const MarkdownEditor = defineAsyncComponent(
+	() => import('../MarkdownEditor.vue')
+);
 
 import { savePost, likePost } from '@/api/SaveAndLike.js/SaveAndLike';
 import { sendComment } from '@/api/editPostAndComment/editComment';
@@ -78,20 +84,20 @@ const sendCommentFunc = async () => {
 	}
 };
 
-const handler = (type)=>{
+const handler = (type) => {
 	let event;
-	switch(type){
+	switch (type) {
 		case 'comment':
-			event = new CustomEvent('comment-handle',{
-				detail:{func:sendCommentFunc,type:'comment'},
-				bubbles:true
-			})
+			event = new CustomEvent('comment-handle', {
+				detail: { func: sendCommentFunc, type: 'comment' },
+				bubbles: true,
+			});
 			break;
 		default:
 			break;
 	}
-	root.value.dispatchEvent(event)
-}
+	root.value.dispatchEvent(event);
+};
 
 /**
  * @description 收藏。
@@ -115,14 +121,17 @@ const handleSave = async () => {
  */
 const like = async () => {
 	//后端没有返回数据，不要赋值后再更新
-	try{
-		const res = await likePost(postData.value.PostID,userInfo.value.phone);
+	try {
+		const res = await likePost(
+			isLiked,
+			postData.value.PostID,
+			userInfo.value.phone
+		);
 		return res;
-	}catch(e){
+	} catch (e) {
 		return false;
 	}
 };
-
 </script>
 
 <style scoped>
@@ -133,7 +142,7 @@ const like = async () => {
 	background-repeat: no-repeat;
 }
 
-body.dark-mode .icon  {
+body.dark-mode .icon {
 	filter: invert(1);
 }
 </style>

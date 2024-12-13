@@ -64,7 +64,7 @@ const searchsort = inject('searchsort');
 const posts = ref([]);
 const totalNum = ref(0);
 const curPage = ref(0);
-const limit = ref(5);
+const limit = ref(10);
 const isLoading = computed(() => curPage.value < totalNum.value);
 // 保存滚动位置
 const scrollTop = ref(0);
@@ -118,6 +118,7 @@ const updatePosts = async (id) => {
 const deleteHandler = async (callback) => {
 	const res = await callback();
 	if (res) {
+		--curPage.value;
 		await updateNum();
 		await updatePosts(res);
 	}
@@ -203,6 +204,7 @@ onActivated(async () => {
 		if (res) {
 			posts.value = [...res, ...posts.value];
 		}
+		curPage.value += id - totalNum.value
 		totalNum.value = id;
 	}
 });
@@ -326,9 +328,7 @@ watch(tag, async (newVal) => {
 	}
 	startObserver();
 });
-defineExpose({
-	name: 'PostList',
-});
+
 </script>
 
 <style scoped>

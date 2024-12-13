@@ -1,18 +1,24 @@
 <template>
-  <HomeViewVue
-    v-if="isLogin"
-  />
-  <LoginViewVue
-    v-else
-    @send-login-success="sendLoginSuccess"
-  />
+	<HomeViewVue v-if="isLogin" />
+	<LoginViewVue
+		v-else
+		@send-login-success="sendLoginSuccess"
+	/>
 </template>
 
 <script setup>
-import { ref, provide, onUnmounted, onBeforeMount, defineAsyncComponent} from 'vue';
+import {
+	ref,
+	provide,
+	onUnmounted,
+	onBeforeMount,
+	defineAsyncComponent,
+} from 'vue';
 
 import HomeViewVue from './views/HomeView.vue';
-const LoginViewVue = defineAsyncComponent(() => import('./views/LoginView.vue'));
+const LoginViewVue = defineAsyncComponent(
+	() => import('./views/LoginView.vue')
+);
 
 import { userLogin } from './api/LoginAndRegister/login';
 import { getTokenWithExpiry } from './api/auth';
@@ -46,35 +52,25 @@ const sendLoginSuccess = async (success) => {
  * @description 离开页面时，如果localStorage.rememberMe不存在，删除token
  */
 const handleBeforeUnload = () => {
-	//如果localStorage.rememberMe不存在，删除token
+	localStorage.removeItem('token');
 	if (!localStorage.rememberMe) {
-		localStorage.removeItem('token');
+		localStorage.removeItem('email');
+		localStorage.removeItem('password');
 	}
 };
 
 const autoLogin = async () => {
-	const token = getTokenWithExpiry('token');
-	const tempInfo = localStorage.getItem('userInfo');
-	/**
-	 * @description 如果token和tempInfo存在，直接进去首页
-	 */
-	if (token && tempInfo) {
-		isLogin.value = true;
-		userInfo.value = Object.freeze(JSON.parse(tempInfo));
-	} else {
-		const email = localStorage.email;
-		const password = localStorage.password;
-		try {
-			const loginSuccess = await userLogin(email, password);
-			if (loginSuccess) {
-				const info = await getInfo();
-				userInfo.value = Object.freeze(info);
-				localStorage.setItem('userInfo', JSON.stringify(info));
-				isLogin.value = true;
-			}
-		} catch (e) {
-			showMsg(`自动登录失败：${e}`);
+	const email = localStorage.email;
+	const password = localStorage.password;
+	try {
+		const loginSuccess = await userLogin(email, password);
+		if (loginSuccess) {
+			const info = await getInfo();
+			userInfo.value = Object.freeze(info);
+			isLogin.value = true;
 		}
+	} catch (e) {
+		showMsg(`自动登录失败：${e}`);
 	}
 };
 

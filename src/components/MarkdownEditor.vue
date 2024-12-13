@@ -239,9 +239,6 @@ onMounted(() => {
 	}
 });
 
-defineExpose({
-	name: 'MarkdownEditor',
-});
 </script>
 
 <style scoped>

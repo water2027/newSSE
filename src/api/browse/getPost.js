@@ -109,11 +109,22 @@ async function getPostByID(PostID, userTelephone) {
 			},
 			true
 		);
-		const data = await res.json();
-		return data;
+		try {
+			const data = await res.json();
+			return data;
+		} catch (e) {
+			console.error(e);
+			return {
+				Title: '帖子不存在',
+				Content: '帖子不存在',
+			};
+		}
 	} catch (e) {
 		console.error(e);
-		return null;
+		return {
+			Title: '网络错误',
+			Content: '网络错误',
+		};
 	}
 }
 

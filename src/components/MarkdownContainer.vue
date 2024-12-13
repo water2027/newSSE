@@ -120,10 +120,6 @@ const safeHTML = computed(() => {
 
 	return finalHTML;
 });
-
-defineExpose({
-	name: 'MarkdownContainer',
-});
 </script>
 <style scoped>
 @import url('@/assets/hl.css');
