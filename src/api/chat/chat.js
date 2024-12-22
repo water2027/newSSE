@@ -16,9 +16,28 @@ async function getChatHistory(senderUserID, targetUserID) {
     const data = await res.json();
     return data;
   } catch (e) {
-    alert(e);
     console.error(e);
   }
 }
 
-export { getChatHistory };
+async function getChatNotice(userID) {
+  try {
+    const res = await requestFunc(
+      `/auth/getChatNotice`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        query: { userID },
+      },
+      true
+    );
+    const data = await res.json();
+    return data;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+export { getChatHistory, getChatNotice };
