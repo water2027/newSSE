@@ -158,7 +158,7 @@ function handleDraftKeyDown(event) {
 }
 
 function selectContact(sel) {
-  if (!sel) return;
+  if (!sel || sel.userID == current.value.userID) return;
 
   draft.value = '';
   current.value = sel;
@@ -499,6 +499,7 @@ function checkSameDay(x, y) {
   background: #ddd;
   padding: 0.3rem 0.7rem;
   border-radius: 0 10px 10px 10px;
+  float: left;
 }
 
 .message-entry.reversed {
@@ -510,6 +511,7 @@ function checkSameDay(x, y) {
 
   .message-body {
     border-radius: 10px 0 10px 10px;
+    float: right;
   }
 }
 
