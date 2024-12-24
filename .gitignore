@@ -30,3 +30,6 @@ coverage
 *.tsbuildinfo         
 
 dev-dist
+dev-dist/*
+pnpm-lock.yaml
+package-lock.json
