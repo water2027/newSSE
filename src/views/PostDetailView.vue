@@ -176,9 +176,8 @@ const clickHandler = async (event) => {
 	} else if (event.target.tagName === 'IMG') {
 		//拿到图片的src
 		const src = event.target.src;
-		// 如果class名为user-avatar，直接展示
-		if (event.target.className === 'user-avatar') {
-			showImg(src);
+		// 如果class名为user-avatar，直接不展示
+		if (event.target.className === 'user-avatar-img') {
 			return;
 		}
 		const uploadImg = strHandler('postImg', src);

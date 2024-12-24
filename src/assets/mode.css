@@ -2,7 +2,7 @@
 /* 子元素使用css变量 */
 
 body.light-mode{
-    --color-bg: #F0F0F0;
+    --color-bg: #fafafa;
     background-color: var(--color-bg);
 
     --color-scroll:rgba(0, 0, 0, 0.1);
@@ -46,6 +46,11 @@ body.light-mode{
 
     --color-level-undefined-box-shadow:#1e1e1eae;
     --color-level-6-bg:#4545454e;
+
+    --chat-bg-main: #eee;
+    --chat-bg-highlight: #ddd;
+    --chat-text: #888;
+    --chat-text-tips: #383838;
 }
 
 body.dark-mode{
@@ -93,4 +98,9 @@ body.dark-mode{
 
     --color-level-undefined-box-shadow:#9d9d9dde;
     --color-level-6-bg:#a9a9a94e;
+    
+    --chat-bg-main: #444;
+    --chat-bg-highlight: #282828;
+    --chat-text: #ccc;
+    --chat-text-tips: #383838;
 }

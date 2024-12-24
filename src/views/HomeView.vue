@@ -153,6 +153,15 @@
               {{ noticeNum }}
             </div>
           </router-link>
+          <router-link to="/chat">
+            私信
+            <div
+              v-if="chatNum"
+              class="notice-num"
+            >
+              {{ chatNum }}
+            </div>
+          </router-link>
           <router-link to="/options">
             {{ userInfo.name }}
           </router-link>
@@ -233,6 +242,7 @@ import {
 import { useRoute, useRouter } from 'vue-router';
 
 import { getNoticesNum } from '@/api/notice/notice';
+import { getChatNotice } from '@/api/chat/chat';
 
 import { Icon } from '@iconify/vue';
 
@@ -305,6 +315,8 @@ const isHomePage = computed(() => {
 const heatPostsIsHidden = computed(() => {
 	return /^\/post/.test(route.fullPath);
 });
+
+const chatNum = ref(0);
 
 const noticeNum = ref('');
 const reduceNoticeNum = () => {
@@ -394,6 +406,18 @@ const getNoticesNumFunc = async () => {
 	noticeNum.value = temp.unreadTotalNum;
 };
 
+const updateChatNum = async (n) => {
+	if (n !== undefined) {
+		chatNum.value = n;
+	} else {
+		const temp = await getChatNotice(userInfo.value.userID);
+		chatNum.value = temp.data.noticeNum;
+	}
+	console.log(chatNum.value, n);
+};
+
+provide('updateChatNum', updateChatNum);
+
 const startY = ref(0);
 const endY = ref(0);
 const headerHeight = ref('3em');
@@ -424,6 +448,7 @@ onMounted(async () => {
 	const path = window.location.pathname.replace(baseUrl, '');
 	changePathHandler(path);
 	getNoticesNumFunc();
+	updateChatNum();
 	window.addEventListener('resize', updateWidth);
   if(!isPC.value) {
     window.addEventListener('touchstart', handleTouchStart);
@@ -448,7 +473,7 @@ header {
 	position: sticky;
 	top: 0;
 	width: 100%;
-	z-index: 5;
+	z-index: 1999;
 }
 
 .icon {

@@ -62,6 +62,16 @@ const routes = [
 		component: () => import('@/views/OptionsView.vue'),
 	},
 	{
+		path: '/user/:id',
+		name: 'UserProfile',
+		component: () => import('@/views/UserProfileView.vue'),
+	},
+	{
+		path: '/chat',
+		name: 'Chat',
+		component: () => import('@/views/ChatView.vue'),
+	},
+	{
 		path:'/:catchAll(.*)',
 		component:() => import('@/views/NotFoundView.vue')
 	}

@@ -2,16 +2,8 @@
 <template>
   <div class="card-root root">
     <div class="user">
-      <img
-        loading="lazy"
-        class="user-avatar"
-        :class="cardData.UserAvatar ? '' : 'default-avatar'"
-        :src="cardData.UserAvatar||avatarUrl"
-      />
-      <span class="user-name"><span
-        v-if="identity==='teacher'||identity==='organization'"
-        class="identity"
-      >{{ identity==='teacher'?'老师':'组织' }}</span>{{ cardData.UserName }}<span v-if="cardData.hasOwnProperty('userTargetName')">回复{{ cardData.userTargetName||'层主' }}</span></span>
+      <UserAvatar :src="cardData.UserAvatar" :user-id="cardData.UserID" :user-identity="cardData.UserIdentity" />
+      <span class="user-name">{{ cardData.UserName }}<span v-if="cardData.hasOwnProperty('userTargetName')">回复{{ cardData.userTargetName||'层主' }}</span></span>
       <span
         v-if="!cardData.hasOwnProperty('userTargetName')"
         title="码之气，三段！"
@@ -125,6 +117,7 @@
   </div>
 </template>
 <script setup>
+import UserAvatar from '../UserAvatar.vue';
 import { ref, defineAsyncComponent, shallowRef, computed } from 'vue';
 
 import { strHandler } from '@/utils/strHandler';
