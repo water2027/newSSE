@@ -36,16 +36,15 @@
 import { ref, inject, defineAsyncComponent } from 'vue';
 
 import BasicCard from './BasicCard.vue';
-const MarkdownEditor = defineAsyncComponent(()=>import('../MarkdownEditor.vue'))
+const MarkdownEditor = defineAsyncComponent(
+	() => import('../MarkdownEditor.vue')
+);
 
-import {
-	sendPComment,
-	delComment,
-} from '@/api/editPostAndComment/editComment';
+import { sendPComment, delComment } from '@/api/editPostAndComment/editComment';
 import {
 	likePostComment,
 	likeCommentComment,
-} from '@/api/SaveAndLike.js/SaveAndLike';
+} from '@/api/SaveAndLike/SaveAndLike';
 import { showMsg } from '../MessageBox';
 
 const props = defineProps({
@@ -120,26 +119,26 @@ const deleteFunc = async () => {
 	}
 };
 
-const handler = (type)=>{
+const handler = (type) => {
 	let event;
-	switch(type){
+	switch (type) {
 		case 'delete':
-			event = new CustomEvent('comment-handle',{
-				detail:{func:deleteFunc,type:'delete'},
-				bubbles:true
-			})
+			event = new CustomEvent('comment-handle', {
+				detail: { func: deleteFunc, type: 'delete' },
+				bubbles: true,
+			});
 			break;
 		case 'comment':
-			event = new CustomEvent('comment-handle',{
-				detail:{func:sendCommentFunc,type:'comment'},
-				bubbles:true
-			})
+			event = new CustomEvent('comment-handle', {
+				detail: { func: sendCommentFunc, type: 'comment' },
+				bubbles: true,
+			});
 			break;
 		default:
 			break;
 	}
-	root.value.dispatchEvent(event)
-}
+	root.value.dispatchEvent(event);
+};
 
 /**
  * @description 点赞。

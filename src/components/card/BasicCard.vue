@@ -2,8 +2,13 @@
 <template>
   <div class="card-root root">
     <div class="user">
-      <UserAvatar :src="cardData.UserAvatar" :user-id="cardData.UserID" :user-identity="cardData.UserIdentity" />
-      <span class="user-name">{{ cardData.UserName }}<span v-if="cardData.hasOwnProperty('userTargetName')">回复{{ cardData.userTargetName||'层主' }}</span></span>
+      <UserAvatar
+        :src="cardData.UserAvatar"
+        :user-id="cardData.UserID"
+        :user-identity="cardData.UserIdentity"
+      />
+      <span class="user-name">{{ cardData.UserName
+      }}<span v-if="cardData.hasOwnProperty('userTargetName')">回复{{ cardData.userTargetName || '层主' }}</span></span>
       <span
         v-if="!cardData.hasOwnProperty('userTargetName')"
         title="码之气，三段！"
@@ -19,15 +24,15 @@
       v-if="cardData.Title"
       class="card-title"
     >
-      <h2 v-if="cardData.Title.length<=10">
-        {{ cardData.Title||'' }}
+      <h2 v-if="cardData.Title.length <= 10">
+        {{ cardData.Title || '' }}
       </h2>
       <h3 v-else>
-        {{ cardData.Title||'' }}
+        {{ cardData.Title || '' }}
       </h3>
     </div>
     <p v-if="isPost">
-      {{ cardData.Content||'loading' }}
+      {{ cardData.Content || 'loading' }}
     </p>
     <markdown-container
       v-else
@@ -44,9 +49,11 @@
         :src="img"
       />
     </div>
-    <span class="card-time">{{ strHandler('time', cardData.PostTime) }}</span>
+    <span class="card-time">{{
+      strHandler('time', cardData.PostTime)
+    }}</span>
     <div class="basicInfo">
-      <span v-if="cardData.Browse||cardData.Browse === 0">
+      <span v-if="cardData.Browse || cardData.Browse === 0">
         {{ cardData.Browse }}
         <svg
           viewBox="0 0 16 16"
@@ -68,10 +75,8 @@
           </g>
         </svg>
       </span>
-      <span 
-        v-if="cardData.Comment||cardData.Comment === 0"
-      >
-        {{ cardData.Comment<0?0:cardData.Comment }}
+      <span v-if="cardData.Comment || cardData.Comment === 0">
+        {{ cardData.Comment < 0 ? 0 : cardData.Comment }}
         <svg
           viewBox="0 0 16 16"
           width="1em"
@@ -93,7 +98,7 @@
         :class="basicData.IsLiked ? 'like' : ''"
         @click.stop.prevent="like"
       >
-        {{ basicData.Like<0?0:basicData.Like }}
+        {{ basicData.Like < 0 ? 0 : basicData.Like }}
         <svg
           viewBox="0 0 16 16"
           width="1em"
@@ -125,11 +130,11 @@ import { levelNameHandler, levelClassHandler } from '@/utils/level';
 
 import { showMsg } from '@/components/MessageBox';
 
-const MarkdownContainer = defineAsyncComponent(()=>{
-  return import('@/components/MarkdownContainer.vue');
-})
+const MarkdownContainer = defineAsyncComponent(() => {
+	return import('@/components/MarkdownContainer.vue');
+});
 
-const avatarUrl = shallowRef(import.meta.env.BASE_URL+'default-avatar.svg')
+const avatarUrl = shallowRef(import.meta.env.BASE_URL + 'default-avatar.svg');
 
 const props = defineProps({
 	cardData: {
@@ -141,50 +146,49 @@ const props = defineProps({
 		required: true,
 	},
 	// 如果是帖子卡片
-	isPost:{
-		type:Boolean,
-		required:false,
-		default:false
-	}
+	isPost: {
+		type: Boolean,
+		required: false,
+		default: false,
+	},
 });
 const basicData = ref({
-  Like: props.cardData.Like,
-  IsLiked: props.cardData.IsLiked,
+	Like: props.cardData.Like,
+	IsLiked: props.cardData.IsLiked,
 });
 const identity = computed(() => {
-  const UserIdentity = props.cardData.UserIdentity;
-  switch(UserIdentity){
-    case 'student':
-      return 'student';
-    case 'teacher':
-      return 'teacher';
-    case 'organization':
-      return 'organization';
-    default:
-      return 'undefined';
-  }
+	const UserIdentity = props.cardData.UserIdentity;
+	switch (UserIdentity) {
+		case 'student':
+			return 'student';
+		case 'teacher':
+			return 'teacher';
+		case 'organization':
+			return 'organization';
+		default:
+			return 'undefined';
+	}
 });
 
 const like = async () => {
-    try {
-        basicData.value.IsLiked = !basicData.value.IsLiked;
-        const res = await props.likeHandler();
-        if(res){
-            if (basicData.value.IsLiked) {
-                basicData.value.Like++;
-                showMsg('点赞成功');
-            } else {
-                basicData.value.Like--;
-                showMsg('取消成功');
-            }
-        }else{
-            showMsg('失败了:-(');
-        }
-    } catch (e) {
-        showMsg('失败了:-(');
-    }
-  };
-
+	try {
+		basicData.value.IsLiked = !basicData.value.IsLiked;
+		const res = await props.likeHandler();
+		if (res) {
+			if (basicData.value.IsLiked) {
+				basicData.value.Like++;
+				showMsg('点赞成功');
+			} else {
+				basicData.value.Like--;
+				showMsg('取消成功');
+			}
+		} else {
+			showMsg('失败了:-(');
+		}
+	} catch (e) {
+		showMsg('失败了:-(');
+	}
+};
 </script>
 <style scoped>
 .card-root {
@@ -217,19 +221,19 @@ const like = async () => {
 	font-weight: bold;
 }
 
-.card-root .card-title{
-  margin-top: 10px;
-  margin-bottom: 8px;
+.card-root .card-title {
+	margin-top: 10px;
+	margin-bottom: 8px;
 }
 
 .card-root .card-time {
-  display: block;
-  margin-top: 10px;
-  margin-bottom: 10px;
+	display: block;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 body.dark-mode .default-avatar {
-  filter: invert(0.9);
+	filter: invert(0.9);
 }
 
 .imgs img {
@@ -246,8 +250,8 @@ body.dark-mode .default-avatar {
 
 .user .user-name {
 	color: var(--color-user-text);
-  margin-left: 10px;
-  font-size: 18px
+	margin-left: 10px;
+	font-size: 18px;
 }
 
 .user img {
@@ -293,126 +297,149 @@ a {
 	color: black;
 	display: block;
 }
-.identity{
+.identity {
 	color: black;
 	margin-left: 8px;
 	margin-right: 8px;
-	background-color: #62ea1480; 
-  border-radius: 8px;
-  display: inline-block;
-  width: 50px;
-  text-align: center;
-  transition: all 0.5s;
+	background-color: #62ea1480;
+	border-radius: 8px;
+	display: inline-block;
+	width: 50px;
+	text-align: center;
+	transition: all 0.5s;
 }
-body.dark-mode .identity{
-  color: #e2e6e7;
-  margin-left: 8px;
+body.dark-mode .identity {
+	color: #e2e6e7;
+	margin-left: 8px;
 	margin-right: 10px;
-	background-color: #e9e9f180; 
-  border-radius: 8px;
-  display: inline-block;
-  width: 50px;
-  text-align: center;
+	background-color: #e9e9f180;
+	border-radius: 8px;
+	display: inline-block;
+	width: 50px;
+	text-align: center;
 }
 
 .level {
-  font-size: 13px;
-  margin-left: 6px;
-  border-radius: 10%;
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-top: 5px;
-  padding-bottom: 5px;
+	font-size: 13px;
+	margin-left: 6px;
+	border-radius: 10%;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 .level-undefined {
-  text-shadow:
-    0.2em 0.2em var(--color-level-undefined-box-shadow),
-    -0.2em -0.2em var(--color-level-undefined-box-shadow);
+	text-shadow:
+		0.2em 0.2em var(--color-level-undefined-box-shadow),
+		-0.2em -0.2em var(--color-level-undefined-box-shadow);
 }
 .level-0 {
-  background-color: #1aa6b9;
+	background-color: #1aa6b9;
 }
 .level-1 {
-  background-color: #378814;
+	background-color: #378814;
 }
 .level-2 {
-  background-color: #d74a4a;
+	background-color: #d74a4a;
 }
 .level-3 {
-  background-color: rgb(240, 133, 39);
+	background-color: rgb(240, 133, 39);
 }
 .level-4 {
-  background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
-  background-size: 300% 300%;
-  animation: change-color 5s ease infinite;
+	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
+	background-size: 300% 300%;
+	animation: change-color 5s ease infinite;
 }
 .level-5 {
-  background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
-  background-size: 300% 300%;
-  color: transparent;
-  background-clip: text;
-  animation: change-color 5s ease infinite;
+	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
+	background-size: 300% 300%;
+	color: transparent;
+	background-clip: text;
+	animation: change-color 5s ease infinite;
 }
 .level-6 {
-  position: relative;
-  background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
-  background-size: 300% 300%;
-  color: transparent;
-  background-clip: text;
-  animation: change-color 5s ease infinite;
+	position: relative;
+	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
+	background-size: 300% 300%;
+	color: transparent;
+	background-clip: text;
+	animation: change-color 5s ease infinite;
 }
 .level-6::before {
-  content: 'Lv6 专家';
-  position: absolute;
-  transform: rotateX(180deg);
-  transform-origin: bottom;
-  line-height: 32px;
-  background: linear-gradient(0deg, #9a7ef8 0, transparent 80%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  opacity: 0.5;
+	content: 'Lv6 专家';
+	position: absolute;
+	transform: rotateX(180deg);
+	transform-origin: bottom;
+	line-height: 32px;
+	background: linear-gradient(0deg, #9a7ef8 0, transparent 80%);
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+	opacity: 0.5;
 }
 .level-7 {
-  position: relative;
-  line-height: 32px;
-  background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
-  color: transparent;
-  background-clip: text;
-  -webkit-background-clip: text;
-  animation: change-color 5s ease infinite;
-  background-size: 300% 300%;
+	position: relative;
+	line-height: 32px;
+	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
+	color: transparent;
+	background-clip: text;
+	-webkit-background-clip: text;
+	animation: change-color 5s ease infinite;
+	background-size: 300% 300%;
 }
 .level-7::before {
-  content: 'Lv7 大神';
-  transform: rotateX(180deg);
-  position: absolute;
-  transform-origin: bottom;
-  background: linear-gradient(45deg, #ff7d7d3e, #ff5a993e, #e376e53e, #9a7ef83e, transparent, #9a7ef73e, #e376e53e, #ff5a993e, #ff7d7d3e);
-  background-size: 300% 300%;
-  color: transparent;
-  background-clip: text;
-  animation: change-color 5s ease infinite;
-  opacity: 0.5;
+	content: 'Lv7 大神';
+	transform: rotateX(180deg);
+	position: absolute;
+	transform-origin: bottom;
+	background: linear-gradient(
+		45deg,
+		#ff7d7d3e,
+		#ff5a993e,
+		#e376e53e,
+		#9a7ef83e,
+		transparent,
+		#9a7ef73e,
+		#e376e53e,
+		#ff5a993e,
+		#ff7d7d3e
+	);
+	background-size: 300% 300%;
+	color: transparent;
+	background-clip: text;
+	animation: change-color 5s ease infinite;
+	opacity: 0.5;
 }
 .level-8 {
-  position: relative;
-  line-height: 32px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3),
-  -2px -2px 4px rgba(255, 255, 255, 0.3);
+	position: relative;
+	line-height: 32px;
+	text-shadow:
+		2px 2px 4px rgba(0, 0, 0, 0.3),
+		-2px -2px 4px rgba(255, 255, 255, 0.3);
 }
 .level-8::before {
-  content: '祖师爷';
-  transform: rotateX(160deg) skew(10deg);
-  position: absolute;
-  transform-origin: bottom;
-  background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8, transparent, #9a7ef8, #e376e5, #ff5a99, #ff7d7d);
-  background-size: 300% 300%;
-  color: transparent;
-  background-clip: text;
-  -webkit-background-clip: text;
-  animation: change-color 5s ease infinite;
-  opacity: 0.25;
+	content: '祖师爷';
+	transform: rotateX(160deg) skew(10deg);
+	position: absolute;
+	transform-origin: bottom;
+	background: linear-gradient(
+		45deg,
+		#ff7d7d,
+		#ff5a99,
+		#e376e5,
+		#9a7ef8,
+		transparent,
+		#9a7ef8,
+		#e376e5,
+		#ff5a99,
+		#ff7d7d
+	);
+	background-size: 300% 300%;
+	color: transparent;
+	background-clip: text;
+	-webkit-background-clip: text;
+	animation: change-color 5s ease infinite;
+	opacity: 0.25;
 }
 
 @keyframes change-color {

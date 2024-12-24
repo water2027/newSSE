@@ -39,7 +39,6 @@ async function likePostComment(pcommentID,userTelephone){
                 'Content-Type': 'application/json',
             },
             body: {
-                isLiked:isLiked,
                 pcommentID:pcommentID,
                 userTelephone:userTelephone
             }

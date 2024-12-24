@@ -44,7 +44,7 @@ import {
 } from '@/api/editPostAndComment/editComment';
 import {
 	likeCommentComment,
-} from '@/api/SaveAndLike.js/SaveAndLike';
+} from '@/api/SaveAndLike/SaveAndLike';
 import { showMsg } from '../MessageBox';
 
 const props = defineProps({

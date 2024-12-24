@@ -43,7 +43,7 @@ import { ref, inject, onMounted } from 'vue';
 import { showMsg } from '@/components/MessageBox';
 import BasicCard from './BasicCard.vue';
 
-import { savePost, likePost } from '@/api/SaveAndLike.js/SaveAndLike';
+import { savePost, likePost } from '@/api/SaveAndLike/SaveAndLike';
 import { delPost } from '@/api/editPostAndComment/editPost';
 
 const props = defineProps({

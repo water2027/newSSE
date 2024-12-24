@@ -38,7 +38,7 @@ export default defineConfig({
 			},
 			devOptions: {
 				// 开发环境是否开启 PWA
-				enabled: true,
+				enabled: false,
 				type: 'module',
 			},
 			workbox: {
