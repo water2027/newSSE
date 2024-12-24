@@ -407,12 +407,13 @@ const getNoticesNumFunc = async () => {
 };
 
 const updateChatNum = async (n) => {
-	if (n) {
+	if (n !== undefined) {
 		chatNum.value = n;
 	} else {
 		const temp = await getChatNotice(userInfo.value.userID);
 		chatNum.value = temp.data.noticeNum;
 	}
+	console.log(chatNum.value, n);
 };
 
 provide('updateChatNum', updateChatNum);

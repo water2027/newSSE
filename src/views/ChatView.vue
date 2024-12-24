@@ -236,7 +236,7 @@ function handleSocketMessage(event) {
       } else {
         const idx = contacts.value.findIndex((it) => it.userID === data.senderUserID);
         if (idx !== -1) {
-          const contact = contacts[idx];
+          const contact = contacts.value[idx];
           contact.unRead += 1;
           contacts.value.splice(idx, 1);
           contacts.value.splice(0, 0, contact);
