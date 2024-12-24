@@ -64,7 +64,7 @@
           <div class="message-footer">
             <textarea v-model="draft" placeholder="输入信息..." rows="4" class="message-input lite-scrollbar"
               @keydown="handleDraftKeyDown"></textarea>
-            <b-button class="message-send" @click="sendMessage">发送</b-button>
+            <div class="message-send" @click="sendMessage">发送</div>
           </div>
         </template>
       </div>
@@ -75,7 +75,7 @@
 <script setup>
 import UserAvatar from '@/components/UserAvatar.vue';
 import { Icon } from '@iconify/vue';
-import { ref, inject, onBeforeMount, onMounted, nextTick } from 'vue';
+import { ref, inject, onBeforeMount, onMounted, nextTick, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getInfoById } from '@/api/info/getInfo';
 import { getChatHistory } from '@/api/chat/chat';
@@ -91,6 +91,7 @@ const contacts = ref([]);
 const messages = ref([]);
 
 const historyDiv = ref(null);
+const updateChatNum = inject("updateChatNum");
 
 let ws = null;
 let preDataFetch = [];
@@ -99,7 +100,7 @@ let dummyID = 100000000;
 onBeforeMount(() => {
   const reqId = route.query.user;
   if (reqId) {
-    if (Number(reqId) !== user.userID) {
+    if (Number(reqId) !== user.value.userID) {
       preDataFetch.push(
         getInfoById(Number(reqId))
           .then((res) => {
@@ -125,7 +126,12 @@ onBeforeMount(() => {
 
 onMounted(() => {
   Promise.all(preDataFetch).then(() => selectContact(contacts.value[0]));
+  updateChatNum(0);
 });
+
+onUnmounted(() => {
+  updateChatNum();
+})
 
 function getDummyID() {
   dummyID += 1;
@@ -221,9 +227,12 @@ function handleSocketMessage(event) {
     contacts.value.push(...data.relevantUsers);
     dedupContacts();
   } else if (data.chatMsgID) {
-    if (data.targetUserID === user.userID) {
+    if (data.targetUserID === user.value.userID) {
       if (data.senderUserID === current.value.userID) {
         messages.value.push(data);
+        if (historyDiv.value.scrollTop + historyDiv.value.clientHeight - historyDiv.value.scrollHeight > -1) {
+          scrollHistory();
+        }
       } else {
         const idx = contacts.value.findIndex((it) => it.userID === data.senderUserID);
         if (idx !== -1) {
@@ -272,7 +281,7 @@ function connectWebSocket() {
 function keepConnection() {
   const state = ws ? ws.readyState : WebSocket.CLOSED;
   if (state === WebSocket.OPEN) {
-    ws.send(JSON.stringify({ userID: user.userID, beat: 1 }));
+    ws.send(JSON.stringify({ userID: user.value.userID, beat: 1 }));
   } else if (state === WebSocket.CLOSED) {
     connectWebSocket();
   }

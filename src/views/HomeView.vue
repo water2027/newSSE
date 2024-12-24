@@ -406,10 +406,16 @@ const getNoticesNumFunc = async () => {
 	noticeNum.value = temp.unreadTotalNum;
 };
 
-const getChatNumFunc = async () => {
-	const temp = await getChatNotice(userInfo.value.userID);
-	chatNum.value = temp.data.noticeNum;
+const updateChatNum = async (n) => {
+	if (n) {
+		chatNum.value = n;
+	} else {
+		const temp = await getChatNotice(userInfo.value.userID);
+		chatNum.value = temp.data.noticeNum;
+	}
 };
+
+provide('updateChatNum', updateChatNum);
 
 const startY = ref(0);
 const endY = ref(0);
@@ -441,7 +447,7 @@ onMounted(async () => {
 	const path = window.location.pathname.replace(baseUrl, '');
 	changePathHandler(path);
 	getNoticesNumFunc();
-	getChatNumFunc();
+	updateChatNum();
 	window.addEventListener('resize', updateWidth);
   if(!isPC.value) {
     window.addEventListener('touchstart', handleTouchStart);
