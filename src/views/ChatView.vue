@@ -360,7 +360,7 @@ function checkSameDay(x, y) {
   width: 25%;
   padding: 0;
   flex-direction: column;
-  background: #eee;
+  background: var(--chat-bg-main);
   border-radius: 5px;
   overflow: hidden;
 }
@@ -386,7 +386,7 @@ function checkSameDay(x, y) {
   cursor: pointer;
 
   &.selected {
-    background: #ddd;
+    background: var(--chat-bg-highlight);
     cursor: auto;
   }
 }
@@ -455,7 +455,7 @@ function checkSameDay(x, y) {
   display: flex;
   height: calc(90dvh - 100px);
   flex-direction: column;
-  background: #eee;
+  background: var(--chat-bg-main);
   border-radius: 5px;
   overflow: hidden;
 }
@@ -495,7 +495,7 @@ function checkSameDay(x, y) {
   border-radius: 15px;
   margin: 0.5rem 0;
   font-size: 12px;
-  color: #888;
+  color: var(--chat-text-tips);
 }
 
 .message-sender {
@@ -505,7 +505,7 @@ function checkSameDay(x, y) {
 }
 
 .message-body {
-  background: #ddd;
+  background: var(--chat-bg-highlight);
   padding: 0.3rem 0.7rem;
   border-radius: 0 10px 10px 10px;
   float: left;
@@ -525,7 +525,7 @@ function checkSameDay(x, y) {
 }
 
 .message-footer {
-  background: #ddd;
+  background: var(--chat-bg-highlight);
   box-shadow: 0 0 20px #00000080;
   padding: 0.5rem;
 }
@@ -539,6 +539,7 @@ function checkSameDay(x, y) {
   padding: 0.5em;
   border-radius: 4px;
   outline: none !important;
+  background: var(--chat-bg-main);
 
   &:hover,
   &:focus {
@@ -549,11 +550,11 @@ function checkSameDay(x, y) {
 
 .message-send {
   float: right;
-  color: #444;
+  color: var(--chat-text);
   padding: 0.3em 1em;
-  border: 1px solid #444;
+  border: 1px solid var(--chat-text);
   border-radius: 3px;
-  background: #fff;
+  background: var(--chat-bg-main);
   cursor: pointer;
 
   &:hover {
