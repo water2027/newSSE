@@ -1,9 +1,5 @@
 <template>
-	<router-view v-if="isLogin" />
-	<LoginViewVue
-		v-else
-		@send-login-success="sendLoginSuccess"
-	/>
+	<router-view />
 </template>
 
 <script setup>
@@ -14,6 +10,7 @@ import {
 	onBeforeMount,
 	defineAsyncComponent,
 } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 
 const LoginViewVue = defineAsyncComponent(
 	() => import('./views/LoginView.vue')
@@ -24,27 +21,14 @@ import { getInfo } from './api/info/getInfo';
 
 import { showMsg } from './components/MessageBox';
 
+const route = useRoute();
+const router = useRouter();
+
+const curPath = ref(route.path)
+provide(curPath)
+
 const userInfo = ref({});
 provide('userInfo', userInfo);
-const isLogin = ref(false);
-/***
- * @description 发送登录成功事件，成功了就获取用户信息，如果记住我就保存用户信息并刷新（移动端bug）
- * @param {Boolean} success 登录是否成功
- * @returns {void}
- */
-const sendLoginSuccess = async (success) => {
-	if (!success) return;
-	try {
-		const info = await getInfo();
-		userInfo.value = Object.freeze(info);
-		isLogin.value = success;
-		if (localStorage.rememberMe) {
-			localStorage.setItem('userInfo', JSON.stringify(info));
-		}
-	} catch (e) {
-		showMsg(`获取用户信息失败：${e}`);
-	}
-};
 
 const handleBeforeUnload = () => {
 	localStorage.removeItem('token');
@@ -62,10 +46,12 @@ const autoLogin = async () => {
 		if (loginSuccess) {
 			const info = await getInfo();
 			userInfo.value = Object.freeze(info);
-			isLogin.value = true;
+			return true;
 		}
+		return false;
 	} catch (e) {
 		showMsg(`自动登录失败：${e}`);
+		return false;
 	}
 };
 
@@ -74,7 +60,9 @@ onBeforeMount(async () => {
 	 * @description 页面加载时，如果localStorage.rememberMe存在，自动登录
 	 */
 	if (localStorage.rememberMe) {
-		await autoLogin();
+		if (await autoLogin()) {
+			router.push(curPath.value);
+		}
 	}
 	window.addEventListener('beforeunload', handleBeforeUnload);
 });
