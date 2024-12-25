@@ -1,5 +1,5 @@
 <template>
-	<HomeView v-if="isLogin" />
+	<router-view v-if="isLogin" />
 	<LoginViewVue
 		v-else
 		@send-login-success="sendLoginSuccess"
@@ -15,7 +15,6 @@ import {
 	defineAsyncComponent,
 } from 'vue';
 
-const HomeView = defineAsyncComponent(() => import('./views/HomeView.vue'));
 const LoginViewVue = defineAsyncComponent(
 	() => import('./views/LoginView.vue')
 );
