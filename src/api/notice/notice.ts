@@ -80,7 +80,7 @@ async function readNotice(id: number) {
 		},
 	});
 	if (res.err) {
-		showMsg(res.err, 'error');
+		showMsg(res.err + 'error');
 		return false;
 	}
 	return true;
