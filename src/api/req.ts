@@ -129,6 +129,7 @@ export interface temp {
 	method: string;
 	headers: Record<string, string>;
 	body: Record<string, string>;
+	query?:Record<string,string>
 }
 
 async function requestFunc(url: string, object: temp, tokenIsNeeded: boolean) {
