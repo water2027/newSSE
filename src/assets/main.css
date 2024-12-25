@@ -88,4 +88,25 @@ img {
 	color: var(--color-text);
 }
 
+.isLoading{
+    /* 添加卡片加载动画样式 */
+    background: linear-gradient(90deg, #f0f0f0, #e0e0e0, #f0f0f0);
+    background-size: 200% 100%;
+    animation: shimmer 0.75s infinite;
+    border: none;
+    border-radius: 8px;
+    width: var(--card-width, 175px);
+    height: var(--card-height, 100px);
+	margin: 20px;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
 

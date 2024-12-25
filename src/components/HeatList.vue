@@ -1,35 +1,37 @@
 <template>
-  <div
-    class="root nav-bar heat"
-  >
-    <h2 id="heat">
-      热榜
-    </h2>
-    <router-link
-      v-for="post in heatPosts"
-      :key="post.PostID"
-      class="nav"
-      :to="'/postdetail/' + post.PostID"
-    >
-      <span>
-        {{ post.Title }}
-      </span>
-    </router-link>
-  </div>
+	<div class="root nav-bar heat">
+		<h2 id="heat">热榜</h2>
+		<template v-if="isLoading">
+			<div
+				v-for="index in 10"
+				class="nav isLoading"
+				:key="index"
+			></div>
+		</template>
+		<template v-else>
+			<router-link
+				v-for="post in heatPosts"
+				:key="post.PostID"
+				class="nav"
+				:to="'/postdetail/' + post.PostID"
+			>
+				<span>
+					{{ post.Title }}
+				</span>
+			</router-link>
+		</template>
+	</div>
 </template>
-<script setup>
-import { shallowRef, onMounted } from 'vue';
-
+<script setup lang="ts">
 import { getHeatPosts } from '@/api/browse/getPost';
 import { showMsg } from '@/components/MessageBox';
+import { watch } from 'vue';
 
-const heatPosts = shallowRef([]);
+const { data: heatPosts, isLoading, err } = getHeatPosts();
 
-onMounted(async () => {
-	try {
-		heatPosts.value = await getHeatPosts();
-	} catch (e) {
-		showMsg(`获取热帖失败:${e}`);
+watch(isLoading, () => {
+	if (err.value) {
+		showMsg(err.value);
 	}
 });
 </script>
@@ -81,7 +83,7 @@ onMounted(async () => {
 		width: 25%;
 		margin-right: 20px;
 	}
-	.nav{
+	.nav {
 		margin: 0;
 	}
 }

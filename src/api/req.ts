@@ -6,9 +6,9 @@ import { showMsg } from '@/components/MessageBox';
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 export interface RequestResult<T> {
-	data: Ref<T | undefined> | (T | undefined);
-	isLoading?: Ref<boolean>;
-	err: Ref<string> | string;
+	data: Ref<T | undefined>;
+	isLoading: Ref<boolean>;
+	err: Ref<string>;
 }
 
 export interface ReturnData<T> {
@@ -17,18 +17,27 @@ export interface ReturnData<T> {
 	data: T;
 }
 
+function isReturnData<T>(data: any): data is ReturnData<T> {
+	return (
+		typeof data === 'object' &&
+		data !== null &&
+		typeof data.code === 'number' &&
+		'data' in data
+	);
+}
+
 function useRequest<T>(
-    url: string,
-    requestInit?: RequestInit,
-    tokenIsNeeded?: boolean,
-    asyncMode?: true
+	url: string,
+	requestInit?: RequestInit,
+	tokenIsNeeded?: boolean,
+	asyncMode?: true
 ): Promise<{ data: T | null; err: string }>;
 
 function useRequest<T>(
-    url: string,
-    requestInit?: RequestInit,
-    tokenIsNeeded?: boolean,
-    asyncMode?: false
+	url: string,
+	requestInit?: RequestInit,
+	tokenIsNeeded?: boolean,
+	asyncMode?: false
 ): RequestResult<T>;
 
 function useRequest<T>(
@@ -48,8 +57,9 @@ function useRequest<T>(
 			window.location.reload();
 			showMsg('token过期');
 			const result: RequestResult<T> = {
-				data: undefined,
-				err: '',
+				data: ref(undefined),
+				isLoading: ref(false),
+				err: ref('token过期'),
 			};
 			return result;
 		}
@@ -61,25 +71,22 @@ function useRequest<T>(
 		return (async () => {
 			let data: T | null = null;
 			let err = '';
-			if (tokenIsNeeded) {
-				const token = localStorage.getItem('token');
-				const headers = new Headers(requestInit.headers ?? {});
-				headers.set('Authorization', `Bearer ${token}`);
-				requestInit.headers = headers;
-			}
 			try {
-				const resp = await fetch(apiUrl + url, {
-					...requestInit,
-				});
+				const resp = await fetch(apiUrl + url, requestInit);
 				if (!resp.ok) {
 					throw new Error(`HTTP error! status: ${resp.status}`);
 				}
-				const jsonData = await resp.json();
-				if (jsonData.code >= 200 && jsonData.code < 300) {
-					data = jsonData.data;
-					return { data, err };
+				const jsonData = (await resp.json()) as ReturnData<T> | T;
+				if (isReturnData(jsonData)) {
+					if (jsonData.code >= 200 && jsonData.code < 300) {
+						data = jsonData.data;
+						return { data, err };
+					} else {
+						throw new Error(jsonData.msg);
+					}
 				} else {
-					throw new Error(jsonData.message);
+					data = jsonData;
+					return { data, err };
 				}
 			} catch (e) {
 				err = String(e);
@@ -90,19 +97,24 @@ function useRequest<T>(
 		const data: Ref<T | undefined> = ref<T>();
 		const isLoading = ref(true);
 		const err = ref('');
-		fetch('https://' + apiUrl + url, { ...requestInit })
+		fetch(apiUrl + url, { ...requestInit })
 			.then((response) => {
 				if (!response.ok) {
 					throw new Error(`HTTP error! status: ${response.status}`);
 				}
 				return response.json();
 			})
-			.then((jsonData: ReturnData<T>) => {
-				if (jsonData.code >= 200 && jsonData.code < 300) {
-					data.value = jsonData.data;
-					isLoading.value = false;
+			.then((jsonData: ReturnData<T> | T) => {
+				if (isReturnData(jsonData)) {
+					if (jsonData.code >= 200 && jsonData.code < 300) {
+						data.value = jsonData.data;
+						isLoading.value = false;
+					} else {
+						throw new Error(jsonData.msg);
+					}
 				} else {
-					throw new Error(jsonData.msg);
+					data.value = jsonData;
+					isLoading.value = false;
 				}
 			})
 			.catch((e) => {
@@ -113,4 +125,39 @@ function useRequest<T>(
 	}
 }
 
-export { useRequest };
+export interface temp {
+	method: string;
+	headers: Record<string, string>;
+	body: Record<string, string>;
+}
+
+async function requestFunc(url: string, object: temp, tokenIsNeeded: boolean) {
+	if (tokenIsNeeded) {
+		const token = getTokenWithExpiry();
+		if (!token) {
+			showMsg('登录过期，请重新登录');
+			window.location.reload();
+			return null;
+		}
+		const finalUrl =
+			`${apiUrl}${url}?` + new URLSearchParams(object.query).toString();
+		const res = await fetch(`${finalUrl}`, {
+			method: object.method,
+			headers: {
+				...object.headers,
+				Authorization: `Bearer ${token}`,
+			},
+			body: JSON.stringify(object.body),
+		});
+		return res;
+	} else {
+		const res = await fetch(`${apiUrl}${url}`, {
+			method: object.method,
+			headers: object.headers,
+			body: JSON.stringify(object.body),
+		});
+		return res;
+	}
+}
+
+export { useRequest, requestFunc };

@@ -8,7 +8,7 @@
       class="user-avatar-img"
       :src="src || defaultAvatar"
       loading="lazy"
-      :alt="userID"
+      :alt="userId"
     >
     <UserIdentityIcon :identity="userIdentity" />
   </div>

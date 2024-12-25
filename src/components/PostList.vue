@@ -1,44 +1,52 @@
 <template>
-  <div class="root">
-    <h2>当前分区：{{ partition }}</h2>
-    <div v-if="partition === '课程专区'">
-      <span class="gradientUnderline">请选择你的老师，不选也没关系 </span>
-      <select
-        v-if="partition === '课程专区'"
-        id="teacher"
-        v-model="tag"
-      >
-        <option
-          v-for="teacher in teachers"
-          :key="teacher.TagID"
-          :value="teacher.Name"
-        >
-          {{ teacher.Name }}
-        </option>
-      </select>
-    </div>
-    <transition-group name="list">
-      <post-card
-        v-for="post in posts"
-        :key="post.PostID"
-        :post="post"
-        :delete-handler="deleteHandler"
-      />
-    </transition-group>
-    <div
-      v-if="isLoading"
-      ref="bottom"
-      class="bottomDiv"
-    >
-      loading...
-    </div>
-    <div
-      v-else
-      class="bottomDiv"
-    >
-      noMore
-    </div>
-  </div>
+	<div class="root">
+		<h2>当前分区：{{ partition }}</h2>
+		<div v-if="partition === '课程专区'">
+			<span class="gradientUnderline">请选择你的老师，不选也没关系 </span>
+			<select
+				v-if="partition === '课程专区'"
+				id="teacher"
+				v-model="tag"
+			>
+				<option
+					v-for="teacher in teachers"
+					:key="teacher.TagID"
+					:value="teacher.Name"
+				>
+					{{ teacher.Name }}
+				</option>
+			</select>
+		</div>
+		<transition-group name="list">
+			<template v-if="postsIsLoading">
+				<div
+					v-for="item in 10"
+					:key="10"
+					class="isLoading"
+					style="--card-width: 700px; --card-height: 200px"
+				></div>
+			</template>
+			<post-card
+				v-for="post in posts"
+				:key="post.PostID"
+				:post="post"
+				:delete-handler="deleteHandler"
+			/>
+		</transition-group>
+		<div
+			v-if="isLoading"
+			ref="bottom"
+			class="bottomDiv"
+		>
+			loading...
+		</div>
+		<div
+			v-else
+			class="bottomDiv"
+		>
+			noMore
+		</div>
+	</div>
 </template>
 <script setup>
 import {
@@ -61,7 +69,7 @@ const userInfo = inject('userInfo');
 const partition = inject('partition');
 const searchinfo = inject('searchinfo');
 const searchsort = inject('searchsort');
-const posts = ref([]);
+// const posts = ref([]);
 const totalNum = ref(0);
 const curPage = ref(0);
 const limit = ref(10);
@@ -74,6 +82,42 @@ const tag = ref('');
 // 用于滚动加载
 const bottom = ref(null);
 let observer = null;
+
+const {
+	data: posts,
+	isLoading: postsIsLoading,
+	err,
+} = getPosts(
+	{
+		limit: limit.value,
+		offset: curPage.value,
+		partition: partition.value,
+		searchsort: searchsort.value,
+		searchinfo: searchinfo.value,
+		userTelephone: userInfo.value.phone,
+		tag: tag.value,
+	},
+	false
+);
+
+watch(postsIsLoading, async () => {
+	if (err.value) {
+		showMsg('err ' + err.value);
+	} else {
+		console.log('start');
+		if (userInfo && userInfo.value && curPage.value >= 0) {
+			await updateNum();
+		}
+		if (partition.value === '课程专区') {
+			const data = await getTeachers();
+			// 后端的事(X)
+			// 前端的事(O)
+			data.sort((a, b) => a.Name.localeCompare(b.Name));
+			teachers.value = ['', ...data];
+		}
+		startObserver();
+	}
+});
 
 const updateNum = async () => {
 	const id = await getPostsNum({
@@ -151,6 +195,7 @@ const startObserver = () => {
 		}
 	);
 	if (bottom.value) {
+		console.log('observe');
 		observer.observe(bottom.value);
 	}
 };
@@ -160,20 +205,6 @@ const endObserver = () => {
 		observer.disconnect();
 	}
 };
-
-onMounted(async () => {
-	if (userInfo && userInfo.value && curPage.value >= 0) {
-		await updateNum();
-	}
-	if (partition.value === '课程专区') {
-		const data = await getTeachers();
-		// 后端的事(X)
-		// 前端的事(O)
-		data.sort((a, b) => a.Name.localeCompare(b.Name));
-		teachers.value = ['', ...data];
-	}
-	startObserver();
-});
 
 onUnmounted(() => {
 	endObserver();
@@ -191,7 +222,7 @@ onActivated(async () => {
 		userTelephone: userInfo.value.phone,
 		tag: tag.value,
 	});
-	if (id > totalNum.value&&id-totalNum.value<=100) {
+	if (id > totalNum.value && id - totalNum.value <= 100) {
 		const res = await getPosts({
 			limit: id - totalNum.value,
 			offset: 0,
@@ -204,14 +235,14 @@ onActivated(async () => {
 		if (res) {
 			posts.value = [...res, ...posts.value];
 		}
-		curPage.value += id - totalNum.value
+		curPage.value += id - totalNum.value;
 		totalNum.value = id;
 	}
 });
 
 onBeforeRouteLeave((to, from, next) => {
-  scrollTop.value = document.body.scrollTop;
-  next();
+	scrollTop.value = document.body.scrollTop;
+	next();
 });
 
 /**
@@ -328,7 +359,6 @@ watch(tag, async (newVal) => {
 	}
 	startObserver();
 });
-
 </script>
 
 <style scoped>

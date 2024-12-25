@@ -15,6 +15,10 @@ export interface GetNoticesNumResponse {
 	readTotalNum: number;
 }
 
+/**
+ * 不是，哥们。一大堆都是返回{msg, code, data}的，这玩意直接返回数据？？？
+ * 
+ */
 async function getNoticesNum() {
 	const res = await useRequest<GetNoticesNumResponse>(
 		`/auth/getNoticeNum`,
@@ -23,8 +27,7 @@ async function getNoticesNum() {
 			headers: {
 				'Content-Type': 'application/json',
 			},
-		},
-		true
+		}
 	);
 	if (res.err) {
 		showMsg(res.err);

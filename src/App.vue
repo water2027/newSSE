@@ -48,9 +48,6 @@ const sendLoginSuccess = async (success) => {
 	}
 };
 
-/**
- * @description 离开页面时，如果localStorage.rememberMe不存在，删除token
- */
 const handleBeforeUnload = () => {
 	localStorage.removeItem('token');
 	if (!localStorage.rememberMe) {
