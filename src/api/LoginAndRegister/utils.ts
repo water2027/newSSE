@@ -36,9 +36,9 @@ async function sendCode(email: string, mode: number) {
 	);
 	if (res.err) {
 		showMsg('发送验证码失败 ' + res.err);
-		return null;
+		return false;
 	}
-	return res.data;
+	return true;
 }
 
 export { setPassword, sendCode };

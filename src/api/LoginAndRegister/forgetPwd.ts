@@ -32,11 +32,11 @@ async function updatePassword(
 		},
 		false
 	);
-	if(res.err) {
-		showMsg(res.err)
-		return { msg: 'error' };
+	if (res.err) {
+		showMsg(res.err);
+		return false;
 	}
-	return { msg: 'success' };
+	return true;
 }
 
 export { updatePassword };
