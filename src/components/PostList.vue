@@ -248,117 +248,38 @@ onBeforeRouteLeave((to, from, next) => {
 /**
  * 这四个watch之后可以考虑改成watchEffect
  */
-watch(partition, async (newVal) => {
-	endObserver();
-	posts.value = [];
-	curPage.value = 0;
-	const arr = await getPosts({
-		limit: limit.value,
-		offset: curPage.value,
-		partition: newVal,
-		searchsort: searchsort.value,
-		searchinfo: searchinfo.value,
-		userTelephone: userInfo.value.phone,
-		tag: tag.value,
-	});
-	posts.value = arr;
-	curPage.value = arr.length;
-	const id = await getPostsNum({
-		partition: newVal,
-		searchsort: searchsort.value,
-		searchinfo: searchinfo.value,
-		userTelephone: userInfo.value.phone,
-		tag: tag.value,
-	});
-	totalNum.value = id;
-	if (newVal === '课程专区') {
-		const data = await getTeachers();
-		teachers.value = ['', ...data];
-	}
-	startObserver();
-});
-watch(searchinfo, async (newVal) => {
-	endObserver();
-	posts.value = [];
-	curPage.value = 0;
-	const arr = await getPosts({
-		limit: limit.value,
-		offset: curPage.value,
-		partition: partition.value,
-		searchsort: searchsort.value,
-		searchinfo: newVal,
-		userTelephone: userInfo.value.phone,
-		tag: tag.value,
-	});
-	posts.value = arr;
-	curPage.value = arr.length;
-	const id = await getPostsNum({
-		partition: partition.value,
-		searchsort: searchsort.value,
-		searchinfo: newVal,
-		userTelephone: userInfo.value.phone,
-		tag: tag.value,
-	});
-	totalNum.value = id;
-	startObserver();
-});
-watch(searchsort, async (newVal) => {
-	endObserver();
-	posts.value = [];
-	curPage.value = 0;
-	const arr = await getPosts({
-		limit: limit.value,
-		offset: curPage.value,
-		partition: partition.value,
-		searchsort: newVal,
-		searchinfo: searchinfo.value,
-		userTelephone: userInfo.value.phone,
-		tag: tag.value,
-	});
-	posts.value = arr;
-	curPage.value = arr.length;
-	const id = await getPostsNum({
-		partition: partition.value,
-		searchsort: newVal,
-		searchinfo: searchinfo.value,
-		userTelephone: userInfo.value.phone,
-		tag: tag.value,
-	});
-	totalNum.value = id;
-	startObserver();
-});
-watch(tag, async (newVal) => {
-	endObserver();
-	posts.value = [];
-	curPage.value = 0;
-	const arr = await getPosts({
-		limit: limit.value,
-		offset: curPage.value,
-		partition: partition.value,
-		searchsort: searchsort.value,
-		searchinfo: searchinfo.value,
-		userTelephone: userInfo.value.phone,
-		tag: newVal,
-	});
-	posts.value = arr;
-	// 后端bug，不管有没有tag，都返回课程专区总帖子数量
-	const id = await getPostsNum({
-		partition: partition.value,
-		searchsort: searchsort.value,
-		searchinfo: searchinfo.value,
-		userTelephone: userInfo.value.phone,
-		tag: newVal,
-	});
-	totalNum.value = id;
-	if (!arr) {
+watch(
+	[partition, searchinfo, searchsort, tag],
+	async ([newPartition, newSearchinfo, newSearchsort, newTag]) => {
+		endObserver();
+		posts.value = [];
 		curPage.value = 0;
-		totalNum.value = 0;
-	} else {
+		const arr = await getPosts({
+			limit: limit.value,
+			offset: curPage.value,
+			userTelephone: userInfo.value.phone,
+			partition: newPartition,
+			searchinfo: newSearchinfo,
+			searchsort: newSearchsort,
+			tag: newTag,
+		});
+		posts.value = arr;
 		curPage.value = arr.length;
-		totalNum.value = arr.length < 5 ? arr.length : id;
+		const id = await getPostsNum({
+			userTelephone: userInfo.value.phone,
+			partition: newPartition,
+			searchsort: newSearchsort,
+			searchinfo: newSearchinfo,
+			tag: newTag,
+		});
+		totalNum.value = id;
+		if (newPartition === '课程专区') {
+			const data = await getTeachers();
+			teachers.value = ['', ...data];
+		}
+		startObserver();
 	}
-	startObserver();
-});
+);
 </script>
 
 <style scoped>
