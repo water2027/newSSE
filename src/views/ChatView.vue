@@ -82,7 +82,6 @@ import { getChatHistory } from '@/api/chat/chat';
 import { getTokenWithExpiry } from '@/api/auth'
 
 const route = useRoute();
-const router = useRouter();
 const user = inject('userInfo');
 
 const draft = ref('');

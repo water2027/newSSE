@@ -1,5 +1,5 @@
 <template>
-	<HomeViewVue v-if="isLogin" />
+	<HomeView v-if="isLogin" />
 	<LoginViewVue
 		v-else
 		@send-login-success="sendLoginSuccess"
@@ -15,13 +15,12 @@ import {
 	defineAsyncComponent,
 } from 'vue';
 
-import HomeViewVue from './views/HomeView.vue';
+const HomeView = defineAsyncComponent(() => import('./views/HomeView.vue'));
 const LoginViewVue = defineAsyncComponent(
 	() => import('./views/LoginView.vue')
 );
 
 import { userLogin } from './api/LoginAndRegister/login';
-import { getTokenWithExpiry } from './api/auth';
 import { getInfo } from './api/info/getInfo';
 
 import { showMsg } from './components/MessageBox';
