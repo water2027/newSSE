@@ -70,7 +70,7 @@ function useRequest<T>(
 	if (asyncMode) {
 		return (async () => {
 			let data: T | null = null;
-			let err = '';
+			let err = '';     
 			try {
 				const resp = await fetch(apiUrl + url, requestInit);
 				if (!resp.ok) {

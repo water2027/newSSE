@@ -18,10 +18,9 @@ async function likePost(postID: number, userTelephone: string) {
 				postID: postID,
 				userTelephone: userTelephone,
 			}),
-		},
-		true
+		}
 	);
-	return res.err === '';
+	return res.err === `SyntaxError: Failed to execute 'json' on 'Response': Unexpected end of JSON input`;
 }
 
 /***
@@ -40,7 +39,7 @@ async function likePostComment(pcommentID: number, userTelephone: string) {
 			userTelephone: userTelephone,
 		}),
 	});
-	return res.err === '';
+	return res.err === `SyntaxError: Failed to execute 'json' on 'Response': Unexpected end of JSON input`;
 }
 
 /***
@@ -59,7 +58,7 @@ async function likeCommentComment(ccommentID: number, userTelephone: string) {
 			userTelephone: userTelephone,
 		}),
 	});
-	return res.err === '';
+	return res.err === `SyntaxError: Failed to execute 'json' on 'Response': Unexpected end of JSON input`;
 }
 
 /***
@@ -78,7 +77,7 @@ async function savePost(postID: number, userTelephone: string) {
 			userTelephone: userTelephone,
 		}),
 	});
-	return res.err === '';
+	return res.err === `SyntaxError: Failed to execute 'json' on 'Response': Unexpected end of JSON input`;
 }
 
 export { savePost, likePost, likePostComment, likeCommentComment };
