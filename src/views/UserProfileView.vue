@@ -194,7 +194,7 @@ function getUserTitle(userScore) {
 }
 
 .profile-card {
-  background: #fff;
+  background: var(--chat-bg-main);
   border: 1px solid #ddd;
   margin: 0.5em 0;
   padding: 1em;

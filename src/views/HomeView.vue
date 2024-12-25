@@ -326,6 +326,7 @@ provide('noticeNum', {
 	noticeNum,
 	reduceNoticeNum,
 });
+provide('chatNum', chatNum);
 const notices = ref({});
 provide('notices', notices);
 
@@ -413,7 +414,6 @@ const updateChatNum = async (n) => {
 		const temp = await getChatNotice(userInfo.value.userID);
 		chatNum.value = temp.data.noticeNum;
 	}
-	console.log(chatNum.value, n);
 };
 
 provide('updateChatNum', updateChatNum);

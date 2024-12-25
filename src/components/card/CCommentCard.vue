@@ -62,6 +62,7 @@ const props = defineProps({
 // 后端命名真该死啊
 const commentData = ref({
 	UserName: props.comment.author,
+	UserID: props.comment.authorID,
 	UserAvatar: props.comment.authorAvatar,
 	UserIdentity: props.comment.authorIdentity,
 	UserScore: props.comment.authorScore,

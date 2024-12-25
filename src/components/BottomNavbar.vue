@@ -63,6 +63,22 @@
       />
       通知
     </router-link>
+    <router-link
+      id="chat"
+      :notice-num="chatNum"
+      :display-bool="chatNum === 0 ? 'none' : 'block'"
+      class="nav"
+      :class="{ selected: selected === '/chat' }"
+      to="/chat"
+    >
+      <div
+        class="icon"
+        style="
+					background-image: url(https://img.icons8.com/?size=100&id=83142&format=png&color=000000);
+				"
+      />
+      私信
+    </router-link>
     <!-- 新增 '我的' 下拉菜单 -->
     <div
       class="nav"
@@ -122,6 +138,7 @@ const emit = defineEmits(['changePath']);
 const route = useRoute();
 
 const { noticeNum } = inject('noticeNum');
+const chatNum = inject('chatNum');
 const displayBool = computed(() =>
 	noticeNum.value === '0' ? 'none' : 'block'
 );
@@ -227,11 +244,11 @@ body.dark-mode .my-dropdown {
 	background-color: var(--color-nav-hover);
 }
 
-#notice {
+#notice, #chat {
 	position: relative;
 }
 
-#notice::after {
+#notice::after, #chat::after {
 	content: attr(notice-num);
 	position: absolute;
 	top: 10%;
@@ -244,7 +261,7 @@ body.dark-mode .my-dropdown {
 	font-size: 0.8rem;
 }
 
-#notice[notice-num='0']::after {
+#notice[notice-num='0']::after, #chat[notice-num='0']::after {
 	display: none;
 }
 
