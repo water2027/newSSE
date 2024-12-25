@@ -34,7 +34,7 @@ import { getInfoById } from '@/api/info/getInfo';
 const router = useRouter();
 
 const user = ref();
-const userInfo = inject('userInfo');
+const {userInfo} = inject('userInfo');
 
 onBeforeMount(() => {
   const { id } = useRoute().params;

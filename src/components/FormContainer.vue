@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type CustomFormData } from '@/model/CustomFormData';
+import { type CustomFormData } from '@/composables/FormExam';
 
 import FormInput from '@/components/FormInput.vue';
 
@@ -26,7 +26,7 @@ defineProps({
 
 <template>
   <form
-    class="p-24 mx-auto bg-teal-100"
+    class="mt-12 sm:mt-0 sm:p-24 mx-auto w-9/10 sm:w-1/2"
     @submit.prevent="$emit('SubmitForm')"
   >
     <FormInput

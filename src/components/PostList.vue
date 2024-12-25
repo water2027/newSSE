@@ -57,7 +57,7 @@ import { getPosts, getPostsNum } from '@/api/browse/getPost';
 
 import PostCard from './card/PostCard.vue';
 
-const userInfo = inject('userInfo');
+const {userInfo} = inject('userInfo');
 const partition = inject('partition');
 const searchinfo = inject('searchinfo');
 const searchsort = inject('searchsort');

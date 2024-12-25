@@ -119,7 +119,7 @@ const CCommentCard = defineAsyncComponent(
 
 const route = useRoute();
 
-const userInfo = inject('userInfo');
+const {userInfo} = inject('userInfo');
 const ID = Number(route.params.id);
 const {
 	data: post,

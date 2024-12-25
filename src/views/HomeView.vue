@@ -256,7 +256,7 @@ const BottomNavbar = defineAsyncComponent(
 const router = useRouter();
 const route = useRoute();
 
-const userInfo = inject('userInfo');
+const {userInfo} = inject('userInfo');
 
 const mode = ref(document.body.className);
 const changeMode = () => {

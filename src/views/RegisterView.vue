@@ -9,8 +9,6 @@ import { showMsg } from '@/components/MessageBox';
 
 const router = useRouter();
 
-const realCode = ref<string>('');
-
 const form = ref<CustomFormData[]>([
   {
     id: 'username',
@@ -60,43 +58,18 @@ const emailCorrect = computed(() => {
 });
 
 const registerHandler = async () => {
-  if (form.value[4].value !== realCode.value) {
-    showMsg('验证码错误');
-    return;
-  }
-  const infoSend: RegisterSend = {
-    username: form.value[0].value,
-    password: form.value[1].value,
-    email: form.value[3].value,
-    role: '学生',
-  };
-  Register(infoSend).then(({ err }) => {
-    if (err) {
-      showMsg(err);
-    } else {
-      router.push('/auth/login');
-    }
-  });
+
 };
 
 const sendVerificationCode = async () => {
-  console.log('发送验证码');
-  const email = form.value[3].value;
-  // 随机生成验证码
-  const code = Math.floor(Math.random() * 1000000);
-  const { err } = await SendCode(email,'Java大学的注册验证码',`欢迎您来到Java大学——一个由软工学子自主开发的，基于Vue+SprintBoot的JavaWeb项目。\n您的验证码是 ${code}`);
-    if (err) {
-      showMsg(err);
-    }else{
-      realCode.value = code.toString();
-    }
-};
-</script>
 
+  showMsg('验证码已发送');
+};
+
+</script>
 
 <template>
   <FormContainer
-    class="w-1/2 mt-12"
     formName="注册"
     :formData="form"
     @submit-form="registerHandler"

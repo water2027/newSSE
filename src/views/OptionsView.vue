@@ -148,7 +148,7 @@ import { updatePassword } from '@/api/LoginAndRegister/forgetPwd';
 
 const router = useRouter();
 
-const userInfo = inject('userInfo');
+const {userInfo} = inject('userInfo');
 const allInfo = ref({});
 const VCode = ref(null);
 const password1 = ref(null);

@@ -8,13 +8,8 @@ import {
 	provide,
 	onUnmounted,
 	onBeforeMount,
-	defineAsyncComponent,
 } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-
-const LoginViewVue = defineAsyncComponent(
-	() => import('./views/LoginView.vue')
-);
 
 import { userLogin } from './api/LoginAndRegister/login';
 import { getInfo } from './api/info/getInfo';
@@ -24,11 +19,17 @@ import { showMsg } from './components/MessageBox';
 const route = useRoute();
 const router = useRouter();
 
-const curPath = ref(route.path)
-provide(curPath)
+const curPath = route.path
+provide('curPath', curPath)
 
 const userInfo = ref({});
-provide('userInfo', userInfo);
+const setUser = (info) => {
+	userInfo.value = Object.freeze(info);
+}
+provide('userInfo', {
+	userInfo,
+	setUser,
+});
 
 const handleBeforeUnload = () => {
 	localStorage.removeItem('token');
@@ -45,7 +46,7 @@ const autoLogin = async () => {
 		const loginSuccess = await userLogin(email, password);
 		if (loginSuccess) {
 			const info = await getInfo();
-			userInfo.value = Object.freeze(info);
+			setUser(info);
 			return true;
 		}
 		return false;
@@ -61,7 +62,11 @@ onBeforeMount(async () => {
 	 */
 	if (localStorage.rememberMe) {
 		if (await autoLogin()) {
-			router.push(curPath.value);
+			if(!curPath.startsWith('/auth')){
+				router.push(curPath);
+			}else{
+				router.push('/')
+			}
 		}
 	}
 	window.addEventListener('beforeunload', handleBeforeUnload);

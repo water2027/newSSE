@@ -48,7 +48,7 @@ const emailCorrect = computed(() => {
   return form.value[3].reg?.test(form.value[3].value);
 });
 
-const registerHandler = () => {};
+const resetHandler = () => {};
 
 const sendVerificationCode = () => {
   console.log('发送验证码');
@@ -56,10 +56,9 @@ const sendVerificationCode = () => {
 </script>
 <template>
   <FormContainer
-    class="w-1/2 mt-12"
     formName="注册"
     :formData="form"
-    @form-submit="registerHandler"
+    @form-submit="resetHandler"
     :disabled="!correct || !passwordCorrect"
   >
     <p class="mt-5 mb-5 text-center">

@@ -43,11 +43,11 @@
                   {{ getTimeShow(i) }}
                 </div>
               </div>
-              <div :class="['message-entry', entry.senderUserID === user.userID && 'reversed']">
-                <template v-if="entry.senderUserID === user.userID">
-                  <UserAvatar class="contact-icon" :src="user.avatarURL" :alt="user.name" />
+              <div :class="['message-entry', entry.senderUserID === userInfo.userID && 'reversed']">
+                <template v-if="entry.senderUserID === userInfo.userID">
+                  <UserAvatar class="contact-icon" :src="userInfo.avatarURL" :alt="userInfo.name" />
                   <div class="message-info">
-                    <div class="message-sender">{{ user.name }}</div>
+                    <div class="message-sender">{{ userInfo.name }}</div>
                     <div class="message-body">{{ entry.content }}</div>
                   </div>
                 </template>
@@ -82,7 +82,7 @@ import { getChatHistory } from '@/api/chat/chat';
 import { getTokenWithExpiry } from '@/api/auth'
 
 const route = useRoute();
-const user = inject('userInfo');
+const { userInfo } = inject('userInfo');
 
 const draft = ref('');
 const current = ref({});
@@ -99,7 +99,7 @@ let dummyID = 100000000;
 onBeforeMount(() => {
   const reqId = route.query.user;
   if (reqId) {
-    if (Number(reqId) !== user.value.userID) {
+    if (Number(reqId) !== userInfo.value.userID) {
       preDataFetch.push(
         getInfoById(Number(reqId))
           .then((res) => {
@@ -182,7 +182,7 @@ function scrollHistory() {
 function sendMessage() {
   if (draft.value !== '') {
     const message = {
-      senderUserID: user.value.userID,
+      senderUserID: userInfo.value.userID,
       targetUserID: current.value.userID,
       content: draft.value,
     };
@@ -226,7 +226,7 @@ function handleSocketMessage(event) {
     contacts.value.push(...data.relevantUsers);
     dedupContacts();
   } else if (data.chatMsgID) {
-    if (data.targetUserID === user.value.userID) {
+    if (data.targetUserID === userInfo.value.userID) {
       if (data.senderUserID === current.value.userID) {
         messages.value.push(data);
         if (historyDiv.value.scrollTop + historyDiv.value.clientHeight - historyDiv.value.scrollHeight > -1) {
@@ -257,7 +257,7 @@ function handleSocketMessage(event) {
 function convertChatUser(user, unRead) {
   return {
     ...user,
-    intro: user.intro || '未设置签名',
+    intro: userInfo.intro || '未设置签名',
     unRead: unRead || 0,
   };
 }
@@ -280,7 +280,7 @@ function connectWebSocket() {
 function keepConnection() {
   const state = ws ? ws.readyState : WebSocket.CLOSED;
   if (state === WebSocket.OPEN) {
-    ws.send(JSON.stringify({ userID: user.value.userID, beat: 1 }));
+    ws.send(JSON.stringify({ userID: userInfo.value.userID, beat: 1 }));
   } else if (state === WebSocket.CLOSED) {
     connectWebSocket();
   }
@@ -296,7 +296,7 @@ function sendWsMessage(message) {
 }
 
 function updateChatHistory(callback) {
-  getChatHistory(user.value.userID, current.value.userID)
+  getChatHistory(userInfo.value.userID, current.value.userID)
     .then((res) => {
       if (res.code === 200) {
         messages.value = [];
