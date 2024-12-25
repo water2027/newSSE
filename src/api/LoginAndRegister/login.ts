@@ -45,7 +45,7 @@ async function userLogin(userEmail: string, userPassword: string) {
 		setItemWithExpiry('token', res.data.token);
 		return true;
 	} else {
-		return false;
+		throw new Error('登录失败 ' + res.err);
 	}
 }
 

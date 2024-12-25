@@ -54,32 +54,36 @@ const { setUser } = inject('userInfo') as User;
 const curPath = inject('curPath', '/');
 
 const loginHandler = async () => {
-	if (correct.value) {
+	try{
 		const loginSuccess = await userLogin(
 			form.value[0].value,
 			form.value[1].value
 		);
-		if (loginSuccess) {
-			const info = await getInfo();
-			setUser(info);
-      if(!curPath.startsWith('/auth')){
-        router.push(curPath);
-      }else{
-        router.push('/')
-      }
+		if (!loginSuccess) {
+			throw new Error("登录失败");
 		}
-	} else {
-		showMsg('请输入邮箱和密码');
-		return;
-	}
-	if (rememberMe.value) {
-		localStorage.rememberMe = true;
-		localStorage.email = form.value[0].value;
-		localStorage.password = form.value[1].value;
-	} else {
-		localStorage.removeItem('rememberMe');
-		localStorage.removeItem('email');
-		localStorage.removeItem('password');
+		const info = await getInfo();
+		setUser(info);
+		if (rememberMe.value) {
+			localStorage.rememberMe = true;
+			localStorage.email = form.value[0].value;
+			localStorage.password = form.value[1].value;
+		} else {
+			localStorage.removeItem('rememberMe');
+			localStorage.removeItem('email');
+			localStorage.removeItem('password');
+		}
+		if (!curPath.startsWith('/auth')) {
+			router.push(curPath);
+		} else {
+			router.push('/');
+		}
+	}catch(e){
+		if(e instanceof Error){
+			showMsg(e.message);
+		}else{
+			showMsg("未知错误");
+		}
 	}
 };
 </script>

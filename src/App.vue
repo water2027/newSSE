@@ -44,14 +44,15 @@ const autoLogin = async () => {
 	const password = localStorage.password;
 	try {
 		const loginSuccess = await userLogin(email, password);
-		if (loginSuccess) {
-			const info = await getInfo();
-			setUser(info);
-			return true;
-		}
-		return false;
+		const info = await getInfo();
+		setUser(info);
+		return true;
 	} catch (e) {
-		showMsg(`自动登录失败：${e}`);
+		if(e instanceof Error){
+			showMsg(e.message);
+		}else{
+			showMsg('未知错误');
+		}
 		return false;
 	}
 };

@@ -69,9 +69,9 @@ const resetHandler = async () => {
 
 const sendVerificationCode = async () => {
 	const result = await sendCode(form.value[0].value, 1);
-  if(result){
-    showMsg('验证码发送成功')
-  }
+	if (result) {
+		showMsg('验证码发送成功');
+	}
 };
 </script>
 <template>
