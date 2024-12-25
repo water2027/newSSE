@@ -1,65 +1,59 @@
 <template>
-  <div class="root">
-    <h2 class="notice-title">
-      通知
-    </h2>
-    <div class="noticeButtons">
-      <button @click="readPage = true">
-        未读通知
-      </button>
-      <button
-        :disabled="noticesUnread.length === 0"
-        @click="readAll"
-      >
-        {{ noticesUnread.length === 0 ? '全读完了' : '一键已读' }}
-      </button>
-      <button @click="readPage = false">
-        已读通知
-      </button>
-    </div>
-    <!-- 未读界面 -->
-    <div v-if="readPage">
-      <div
-        v-for="notice in noticesUnread"
-        :key="notice.noticeID"
-        class="notice"
-      >
-        <span>{{ notice.senderName }}</span>
-        <p>{{ notice.content }}</p>
-        <span>{{ strHandler('time', notice.time) }}</span>
-        <div class="noticeButtons">
-          <button @click="readComment(notice.noticeID)">
-            标记为已读
-          </button>
-          <button
-            :disabled="notice.postID === 0"
-            @click="changeToPost(notice.postID, notice.noticeID)"
-          >
-            {{ notice.postID === 0 ? '该评论已被删除' : '查看原帖' }}
-          </button>
-        </div>
-      </div>
-    </div>
-    <!-- 已读界面 -->
-    <div v-else>
-      <div
-        v-for="notice in noticesRead"
-        :key="notice.noticeID"
-        class="notice"
-      >
-        <span>{{ notice.senderName }}</span>
-        <p>{{ notice.content }}</p>
-        <span>{{ strHandler('time', notice.time) }}</span>
-        <div>
-          <button
-            @click="changeToPost(notice.postID)"
-          >
-            查看原帖
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+	<div class="root">
+		<h2 class="notice-title">通知</h2>
+		<div class="noticeButtons">
+			<button @click="readPage = true">未读通知</button>
+			<button
+				:disabled="noticesUnread.length === 0"
+				@click="readAll"
+			>
+				{{ noticesUnread.length === 0 ? '全读完了' : '一键已读' }}
+			</button>
+			<button @click="readPage = false">已读通知</button>
+		</div>
+		<!-- 未读界面 -->
+		<div v-if="readPage">
+			<div
+				v-for="notice in noticesUnread"
+				:key="notice.noticeID"
+				class="notice"
+			>
+				<span>{{ notice.senderName }}</span>
+				<p>{{ notice.content }}</p>
+				<span>{{ strHandler('time', notice.time) }}</span>
+				<div class="noticeButtons">
+					<button @click="readComment(notice.noticeID)">
+						标记为已读
+					</button>
+					<button
+						:disabled="notice.postID === 0"
+						@click="changeToPost(notice.postID, notice.noticeID)"
+					>
+						{{
+							notice.postID === 0 ? '该评论已被删除' : '查看原帖'
+						}}
+					</button>
+				</div>
+			</div>
+		</div>
+		<!-- 已读界面 -->
+		<div v-else>
+			<div
+				v-for="notice in noticesRead"
+				:key="notice.noticeID"
+				class="notice"
+			>
+				<span>{{ notice.senderName }}</span>
+				<p>{{ notice.content }}</p>
+				<span>{{ strHandler('time', notice.time) }}</span>
+				<div>
+					<button @click="changeToPost(notice.postID)">
+						查看原帖
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script setup>
@@ -74,7 +68,7 @@ import { showMsg } from '@/components/MessageBox';
 
 const router = useRouter();
 
-const { reduceNoticeNum } = inject('noticeNum')
+const { reduceNoticeNum } = inject('noticeNum');
 const notices = inject('notices');
 const readPage = ref(true);
 const noticesRead = ref([]);
@@ -87,73 +81,77 @@ const noticesUnread = ref([]);
  */
 const readComment = async (noticeID) => {
 	const res = await readNotice(noticeID);
-	if (res.status === 'success') {
-    getNoticesFunc();
-    reduceNoticeNum();
+	if (res) {
+		getNoticesFunc();
+		reduceNoticeNum();
 		showMsg('success');
 	}
 };
 
 const readAll = async () => {
-  // 遍历未读通知，标记为已读
-  for (let i = 0; i < noticesUnread.value.length; i++) {
-    try{
-      await readNotice(noticesUnread.value[i].noticeID);
-      reduceNoticeNum();
-    }catch(e){
-      console.error(e);
-    }
-  }
-  showMsg('一键已读');
-  nextTick(getNoticesFunc)
+	// 遍历未读通知，标记为已读
+	for (let i = 0; i < noticesUnread.value.length; i++) {
+		try {
+			const res = await readNotice(noticesUnread.value[i].noticeID);
+			if (!res) {
+				throw new Error('失败');
+			}
+			reduceNoticeNum();
+		} catch (e) {
+			console.error(e);
+		}
+	}
+	showMsg('一键已读');
+	nextTick(getNoticesFunc);
 };
 
-const changeToPost = async (postID,noticeID) => {
-  await readComment(noticeID);
-  setTimeout(() => {
-    router.push(`/postdetail/${postID}`);
-  },500);
+const changeToPost = async (postID, noticeID) => {
+	await readComment(noticeID);
+	setTimeout(() => {
+		router.push(`/postdetail/${postID}`);
+	}, 500);
 };
 
-const getNoticesFunc = async ()=>{
+const getNoticesFunc = async () => {
 	const read = await getNotices(0, notices.value.readTotalNum, 1);
 	const unread = await getNotices(0, notices.value.unreadTotalNum, 0);
-  if(read.noticeList){
-    noticesRead.value = read.noticeList.filter((item) => item.postID !== 0);
-  }else{
-    noticesRead.value = []
-  }
-  if(unread.noticeList){
-    noticesUnread.value = unread.noticeList;
-  }else{
-    noticesUnread.value = []
-  }
-}
+	if (read.noticeList) {
+		noticesRead.value = read.noticeList.filter((item) => item.postID !== 0);
+	} else {
+		noticesRead.value = [];
+	}
+	if (unread.noticeList) {
+		noticesUnread.value = unread.noticeList;
+	} else {
+		noticesUnread.value = [];
+	}
+};
 
 onMounted(async () => {
 	//处理在通知页面刷新/直接打开通知页面的情况
-	if (!notices.value.readTotalNum||!notices.value.unreadTotalNum) {
+	if (!notices.value.readTotalNum || !notices.value.unreadTotalNum) {
 		notices.value = await getNoticesNum();
 	}
-  getNoticesFunc();
+	getNoticesFunc();
 });
 </script>
 <style scoped>
-.root{
-  width: 100%;
+.root {
+	width: 100%;
 	color: var(--color-text);
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
-.notice-title, .noticeButtons {
-  width: 100%;
+.notice-title,
+.noticeButtons {
+	width: 100%;
 }
 
 .notice-title {
 	color: var(--color-text);
-  margin-left: auto;
+	margin-left: auto;
 	margin-right: auto;
-  text-align: center;
+	text-align: center;
 }
 .notice {
 	border: 1px solid var(--color-border);
@@ -161,23 +159,23 @@ onMounted(async () => {
 	padding: 10px;
 }
 .noticeButtons {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
 }
 p {
 	text-indent: 2rem;
-  word-break: break-all;
-  white-space: pre-wrap;
+	word-break: break-all;
+	white-space: pre-wrap;
 }
 button:disabled {
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  cursor: not-allowed;
-  transition: none;
+	background-color: var(--color-bg);
+	color: var(--color-text);
+	cursor: not-allowed;
+	transition: none;
 }
 button:disabled:hover {
-  background-color: var(--color-bg);
-  color: var(--color-text);
+	background-color: var(--color-bg);
+	color: var(--color-text);
 }
 </style>
