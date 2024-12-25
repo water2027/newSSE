@@ -49,15 +49,7 @@
 	</div>
 </template>
 <script setup>
-import {
-	ref,
-	onMounted,
-	inject,
-	watch,
-	onUnmounted,
-	computed,
-	onActivated,
-} from 'vue';
+import { ref, inject, watch, onUnmounted, computed, onActivated } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
 
 import { getTeachers } from '@/api/info/getTeacher';
@@ -100,7 +92,7 @@ const {
 	false
 );
 
-watch(postsIsLoading, async () => {
+const postsWatcher = watch(postsIsLoading, async () => {
 	if (err.value) {
 		showMsg('err ' + err.value);
 	} else {
@@ -117,6 +109,7 @@ watch(postsIsLoading, async () => {
 		}
 		startObserver();
 	}
+	postsWatcher();
 });
 
 const updateNum = async () => {

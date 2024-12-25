@@ -4,7 +4,7 @@ import '@/assets/ImageShower.css';
 
 interface ImageShowerProps {
 	img: string;
-	close: (payload: MouseEvent) => void;
+	close: () => void;
 }
 
 const imageShower = defineComponent({
