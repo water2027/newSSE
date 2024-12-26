@@ -56,9 +56,10 @@ import { getTeachers } from '@/api/info/getTeacher';
 import { getPosts, getPostsNum } from '@/api/browse/getPost';
 
 import PostCard from './card/PostCard.vue';
-import { showMsg } from '@/components/MessageBox'
+import { showMsg } from '@/components/MessageBox';
 
-const {userInfo} = inject('userInfo');
+const { userInfo } = inject('userInfo');
+console.log(userInfo.value);
 const partition = inject('partition');
 const searchinfo = inject('searchinfo');
 const searchsort = inject('searchsort');
@@ -95,6 +96,7 @@ const {
 
 const postsWatcher = watch(postsIsLoading, async () => {
 	if (err.value) {
+		console.log(posts.value)
 		showMsg('err ' + err.value);
 	} else {
 		console.log('start');

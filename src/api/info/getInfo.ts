@@ -1,12 +1,16 @@
 import { useRequest } from '../req';
 
+interface GetInfoResponse {
+	user:userInfo
+}
+
 /**
  * @description 获取用户的邮箱、身份、用户名、手机
  *              只有登录的时候使用
  *
  */
 async function getInfo() {
-	const res = await useRequest<userInfo>(`/auth/info`, {
+	const res = await useRequest<GetInfoResponse>(`/auth/info`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',

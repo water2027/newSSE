@@ -2,6 +2,8 @@ import { useRequest } from '../req';
 
 import { showMsg } from '@/components/MessageBox';
 
+import { RequestResult } from '../req';
+
 export interface Post {
 	PostID: number;
 	UserName: string;
@@ -38,6 +40,9 @@ export interface GetPostsRequest {
 	userTelephone: string;
 	tag: string;
 }
+
+function getPosts(object: GetPostsRequest, asyncMode?: true): Promise<Post[]>;
+function getPosts(object: GetPostsRequest, asyncMode: false): RequestResult<Post[]>;
 
 /**
  *

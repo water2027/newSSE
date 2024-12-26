@@ -43,9 +43,9 @@ const autoLogin = async () => {
 	const email = localStorage.email;
 	const password = localStorage.password;
 	try {
-		const loginSuccess = await userLogin(email, password);
+		await userLogin(email, password);
 		const info = await getInfo();
-		setUser(info);
+		setUser(info.user);
 		return true;
 	} catch (e) {
 		if(e instanceof Error){
