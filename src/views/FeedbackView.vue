@@ -9,7 +9,7 @@
     />
     <button
       type="button"
-      class="btn btn-primary"
+      class="btn btn-primary mt-5"
       @click="submitFeedback"
     >
       提交
@@ -50,9 +50,6 @@ const submitFeedback = async () => {
 	border-radius: 5px;
 	transition: background-color 0.3s ease, border-color 0.3s ease;
   }
-button {
-	margin-top: 20px;
-}
 .btn-primary {
   display: inline-block;
   font-weight: 400;

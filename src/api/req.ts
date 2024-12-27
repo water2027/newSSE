@@ -102,11 +102,9 @@ function useRequest<T>(
 				if (!response.ok) {
 					throw new Error(`HTTP error! status: ${response.status}`);
 				}
-				return response.text();
+				return response.json();
 			})
-			.then((textData: string) => {
-				console.log(textData)
-				const jsonData = JSON.parse(textData) as ReturnData<T> | T;
+			.then((jsonData: ReturnData<T> | T) => {
 				if (isReturnData(jsonData)) {
 					if (jsonData.code >= 200 && jsonData.code < 300) {
 						data.value = jsonData.data;
@@ -117,11 +115,10 @@ function useRequest<T>(
 				} else {
 					data.value = jsonData;
 					isLoading.value = false;
-					console.log(data.value)
 				}
 			})
 			.catch((e) => {
-				console.log(e)
+				console.error(e)
 				err.value = String(e);
 				isLoading.value = false;
 			});

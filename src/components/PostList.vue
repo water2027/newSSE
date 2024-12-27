@@ -59,11 +59,9 @@ import PostCard from './card/PostCard.vue';
 import { showMsg } from '@/components/MessageBox';
 
 const { userInfo } = inject('userInfo');
-console.log(userInfo.value);
 const partition = inject('partition');
 const searchinfo = inject('searchinfo');
 const searchsort = inject('searchsort');
-// const posts = ref([]);
 const totalNum = ref(0);
 const curPage = ref(0);
 const limit = ref(10);
@@ -96,7 +94,6 @@ const {
 
 const postsWatcher = watch(postsIsLoading, async () => {
 	if (err.value) {
-		console.log(posts.value)
 		showMsg('err ' + err.value);
 	} else {
 		console.log('start');

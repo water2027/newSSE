@@ -54,16 +54,16 @@ const { setUser } = inject('userInfo') as User;
 const curPath = inject('curPath', '/');
 
 const loginHandler = async () => {
-	try{
+	try {
 		const loginSuccess = await userLogin(
 			form.value[0].value,
 			form.value[1].value
 		);
 		if (!loginSuccess) {
-			throw new Error("登录失败");
+			throw new Error('登录失败');
 		}
 		const info = await getInfo();
-		setUser(info);
+		setUser(info.user);
 		if (rememberMe.value) {
 			localStorage.rememberMe = true;
 			localStorage.email = form.value[0].value;
@@ -78,11 +78,11 @@ const loginHandler = async () => {
 		} else {
 			router.push('/');
 		}
-	}catch(e){
-		if(e instanceof Error){
+	} catch (e) {
+		if (e instanceof Error) {
 			showMsg(e.message);
-		}else{
-			showMsg("未知错误");
+		} else {
+			showMsg('未知错误');
 		}
 	}
 };

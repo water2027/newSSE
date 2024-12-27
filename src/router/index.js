@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-import { getTokenWithExpiry } from '@/api/auth'
+import { getTokenWithExpiry } from '@/api/auth';
 
 const routes = [
 	{
@@ -116,16 +116,16 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    if (to.meta.auth) {
-        const token = getTokenWithExpiry()
-        if (!token) {
-            next('/auth/login');
-        } else {
-            next();
-        }
-    } else {
-        next();
-    }
+	if (to.meta.auth) {
+		const token = getTokenWithExpiry();
+		if (!token) {
+			next('/auth/login');
+		} else {
+			next();
+		}
+	} else {
+		next();
+	}
 });
 
 export default router;

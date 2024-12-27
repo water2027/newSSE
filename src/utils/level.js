@@ -4,7 +4,7 @@
  * @returns
  */
 function levelNameHandler(userScore) {
-	if (!userScore&&userScore!==0) {
+	if (!userScore && userScore !== 0) {
 		return 'lV? undefined';
 	}
 	if (userScore < 100) {
@@ -37,7 +37,7 @@ function levelNameHandler(userScore) {
 }
 
 function levelClassHandler(userScore) {
-	if (!userScore&&userScore!==0) {
+	if (!userScore && userScore !== 0) {
 		return 'level-undefined';
 	}
 	if (userScore < 100) {
@@ -71,7 +71,7 @@ function levelClassHandler(userScore) {
 
 // 经验
 function levelExpHandler(userScore) {
-	if (!userScore&&userScore!==0) {
+	if (!userScore && userScore !== 0) {
 		return '0';
 	}
 	if (userScore < 100) {
@@ -98,6 +98,6 @@ function levelExpHandler(userScore) {
 	if (userScore >= 4000) {
 		return '5000'; // 满级就是5000
 	}
- }
+}
 
 export { levelNameHandler, levelClassHandler, levelExpHandler };

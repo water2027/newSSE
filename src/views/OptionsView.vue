@@ -1,133 +1,135 @@
 <!-- eslint-disable vue/html-self-closing -->
 <template>
-  <div class="root">
-    <h2>设置</h2>
-    <div class="data">
-      <h3>个人信息</h3>
-      <img
-        :src="allInfo.avatarURL"
-        alt="头像"
-        style="margin: auto"
-      />
-      <label
-        for="fileInput"
-        class="custom-file-label fileInput button"
-      >修改头像</label>
-      <input
-        id="fileInput"
-        type="file"
-        accept="image/*"
-        style="display: none"
-        @change="uploadAvatarFunc"
-      />
-      <div>
-        <div>
-          <div class="user-basic-info info-form">
-            <div class="user-details">
-              <p><strong>ID：</strong>{{ allInfo.phone }}</p>
-              <p><strong>邮箱：</strong>{{ allInfo.email }}</p>
-              <p><strong>经验：</strong></p>
-              <div class="exp-container">
-                <span
-                  class="level"
-                  :class="levelClassHandler(allInfo.score)"
-                >{{ levelNameHandler(allInfo.score) }}
-                </span>
-                <div class="progress-container">
-                  <div
-                    class="progress-bar"
-                    :style="{
-                      width:
-                        (parseInt(allInfo.score) /
-                          parseInt(
-                            levelExpHandler(
-                              allInfo.score
-                            )
-                          )) *
-                        100 +
-                        '%',
-                      background:
-                        'linear-gradient(to right, #ff9999, #ff4d4d)',
-                    }"
-                  ></div>
-                </div>
-                {{ allInfo.score }} /{{
-                  levelExpHandler(allInfo.score)
-                }}
-                <span class="level level-next">{{
-                  levelNameHandler(
-                    levelExpHandler(allInfo.score)
-                  )
-                }}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="info-form">
-          <div class="form-group">
-            <span>用户名</span>
-            <input
-              v-model="allInfo.name"
-              type="text"
-            />
-          </div>
-          <div class="form-group">
-            <span>简介</span>
-            <input
-              v-model="allInfo.intro"
-              type="text"
-            />
-          </div>
-          <button
-            class="button"
-            @click="updateUserInfoFunc"
-          >
-            修改信息
-          </button>
-        </div>
-      </div>
-      <div class="data form-group info-form">
-        <h3>重置密码</h3>
-        <input
-          ref="VCode"
-          type="text"
-          placeholder="验证码"
-        />
-        <button
-          class="button"
-          @click="codeHandler"
-        >
-          发送验证码
-        </button>
-        <input
-          ref="password1"
-          type="password"
-          placeholder="密码"
-        />
-        <input
-          ref="password2"
-          type="password"
-          placeholder="确认密码"
-        />
-        <button
-          class="button"
-          @click="updatePasswordFunc"
-        >
-          重置
-        </button>
-      </div>
-    </div>
-    <div class="data">
-      <button
-        class="button"
-        style="background-color: #ff4d4d"
-        @click="logout"
-      >
-        退出登录
-      </button>
-    </div>
-  </div>
+	<div class="root">
+		<h2>设置</h2>
+		<div class="data">
+			<h3>个人信息</h3>
+			<img
+				:src="allInfo.avatarURL"
+				alt="头像"
+				style="margin: auto"
+			/>
+			<label
+				for="fileInput"
+				class="custom-file-label fileInput button"
+				>修改头像</label
+			>
+			<input
+				id="fileInput"
+				type="file"
+				accept="image/*"
+				style="display: none"
+				@change="uploadAvatarFunc"
+			/>
+			<div>
+				<div>
+					<div class="user-basic-info info-form">
+						<div class="user-details">
+							<p><strong>ID：</strong>{{ allInfo.phone }}</p>
+							<p><strong>邮箱：</strong>{{ allInfo.email }}</p>
+							<p><strong>经验：</strong></p>
+							<div class="exp-container">
+								<span
+									class="level"
+									:class="levelClassHandler(allInfo.score)"
+									>{{ levelNameHandler(allInfo.score) }}
+								</span>
+								<div class="progress-container">
+									<div
+										class="progress-bar"
+										:style="{
+											width:
+												(parseInt(allInfo.score) /
+													parseInt(
+														levelExpHandler(
+															allInfo.score
+														)
+													)) *
+													100 +
+												'%',
+											background:
+												'linear-gradient(to right, #ff9999, #ff4d4d)',
+										}"
+									></div>
+								</div>
+								{{ allInfo.score }} /{{
+									levelExpHandler(allInfo.score)
+								}}
+								<span class="level level-next"
+									>{{
+										levelNameHandler(
+											levelExpHandler(allInfo.score)
+										)
+									}}
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="info-form">
+					<div class="form-group">
+						<span>用户名</span>
+						<input
+							v-model="allInfo.name"
+							type="text"
+						/>
+					</div>
+					<div class="form-group">
+						<span>简介</span>
+						<input
+							v-model="allInfo.intro"
+							type="text"
+						/>
+					</div>
+					<button
+						class="button"
+						@click="updateUserInfoFunc"
+					>
+						修改信息
+					</button>
+				</div>
+			</div>
+			<div class="data form-group info-form">
+				<h3>重置密码</h3>
+				<input
+					ref="VCode"
+					type="text"
+					placeholder="验证码"
+				/>
+				<button
+					class="button"
+					@click="codeHandler"
+				>
+					发送验证码
+				</button>
+				<input
+					ref="password1"
+					type="password"
+					placeholder="密码"
+				/>
+				<input
+					ref="password2"
+					type="password"
+					placeholder="确认密码"
+				/>
+				<button
+					class="button"
+					@click="updatePasswordFunc"
+				>
+					重置
+				</button>
+			</div>
+		</div>
+		<div class="data">
+			<button
+				class="button"
+				style="background-color: #ff4d4d"
+				@click="logout"
+			>
+				退出登录
+			</button>
+		</div>
+	</div>
 </template>
 
 <script setup>
@@ -148,7 +150,7 @@ import { updatePassword } from '@/api/LoginAndRegister/forgetPwd';
 
 const router = useRouter();
 
-const {userInfo} = inject('userInfo');
+const { userInfo } = inject('userInfo');
 const allInfo = ref({});
 const VCode = ref(null);
 const password1 = ref(null);

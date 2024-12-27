@@ -54,7 +54,7 @@ import { showMsg } from '@/components/MessageBox';
 import MarkdownEditor from '@/components/MarkdownEditor.vue';
 
 const router = useRouter();
-const {userInfo} = inject('userInfo');
+const { userInfo } = inject('userInfo');
 const partitions = ref([
 	'主页',
 	'日常吐槽',
