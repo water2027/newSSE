@@ -33,13 +33,17 @@ async function getNoticesNum() {
  * @returns {Promise<object>} 返回的数据有两种，一种没有通知的，一种有通知的
  */
 async function getNotices(requireID,pageSize,read) {
-    const params = `requireID=${requireID}&pageSize=${pageSize}&read=${read}`;
     try{
-        const res = await requestFunc(`/auth/getNotice?${params}`, {
+        const res = await requestFunc(`/auth/getNotice`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             },
+            query:{
+                requireID,
+                pageSize,
+                read
+            }
         },true);
         const data = await res.json();
         return data;
