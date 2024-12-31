@@ -1,5 +1,5 @@
 <template>
-	<router-view />
+  <router-view />
 </template>
 
 <script setup lang="ts">
@@ -17,6 +17,7 @@ const curPath =
 	'/' + window.location.pathname.replace(import.meta.env.BASE_URL, '');
 provide('curPath', curPath);
 
+/*global userInfo */
 const userInfo = ref<userInfo>();
 const setUser = (info:userInfo) => {
 	userInfo.value = Object.freeze(info);

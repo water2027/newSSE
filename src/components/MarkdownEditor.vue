@@ -101,7 +101,7 @@ const modelValue = defineModel({
 	required:true
 })
 
-const emit = defineEmits(['send']);
+defineEmits(['send']);
 const autoResize = () => {
 	textarea.value.style.height = '450px';
 	textarea.value.style.height = textarea.value.scrollHeight + 'px';

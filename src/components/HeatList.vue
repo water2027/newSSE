@@ -1,26 +1,28 @@
 <template>
-	<div class="root nav-bar heat">
-		<h2 id="heat">热榜</h2>
-		<template v-if="isLoading">
-			<div
-				v-for="index in 10"
-				class="nav isLoading"
-				:key="index"
-			></div>
-		</template>
-		<template v-else>
-			<router-link
-				v-for="post in heatPosts"
-				:key="post.PostID"
-				class="nav"
-				:to="'/postdetail/' + post.PostID"
-			>
-				<span>
-					{{ post.Title }}
-				</span>
-			</router-link>
-		</template>
-	</div>
+  <div class="root nav-bar heat">
+    <h2 id="heat">
+      热榜
+    </h2>
+    <template v-if="isLoading">
+      <div
+        v-for="index in 10"
+        class="nav isLoading"
+        :key="index"
+      />
+    </template>
+    <template v-else>
+      <router-link
+        v-for="post in heatPosts"
+        :key="post.PostID"
+        class="nav"
+        :to="'/postdetail/' + post.PostID"
+      >
+        <span>
+          {{ post.Title }}
+        </span>
+      </router-link>
+    </template>
+  </div>
 </template>
 <script setup lang="ts">
 import { getHeatPosts } from '@/api/browse/getPost';

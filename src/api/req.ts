@@ -17,11 +17,11 @@ export interface ReturnData<T> {
 	data: T;
 }
 
-function isReturnData<T>(data: any): data is ReturnData<T> {
+function isReturnData<T>(data: unknown): data is ReturnData<T> {
 	return (
 		typeof data === 'object' &&
 		data !== null &&
-		typeof data.code === 'number' &&
+		typeof (data as Record<string, unknown>).code === 'number' &&
 		'data' in data
 	);
 }

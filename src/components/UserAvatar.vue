@@ -39,7 +39,7 @@ const props = defineProps({
 function navigate() {
 	if (props.userId > 0) {
 		router.push({ name: 'UserProfile', params: { id: props.userId } });
-		stopPropagation();
+		// stopPropagation();
 	}
 }
 </script>

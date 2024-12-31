@@ -1,7 +1,16 @@
 <template>
-  <div v-if="identityIcon[identity]" :class="['user-identity', `identity-${identity}`]">
-    <Icon :icon="identityIcon[identity]" class="user-identity-icon" />
-    <div v-if="!noTip" class="user-identity-name">
+  <div
+    v-if="identityIcon[identity]"
+    :class="['user-identity', `identity-${identity}`]"
+  >
+    <Icon
+      :icon="identityIcon[identity]"
+      class="user-identity-icon"
+    />
+    <div
+      v-if="!noTip"
+      class="user-identity-name"
+    >
       {{ identityName[identity] }}
     </div>
   </div>
@@ -10,7 +19,7 @@
 <script setup>
 import { Icon } from '@iconify/vue';
 
-const props = defineProps({
+defineProps({
   identity: {
     type: String,
     default: ''

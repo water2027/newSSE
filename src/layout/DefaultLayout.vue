@@ -1,232 +1,232 @@
 <!-- eslint-disable vue/html-self-closing -->
 <template>
-	<div
-		id="root"
-		class="root"
-	>
-		<header>
-			<div class="site-top">
-				<div class="top-left"></div>
-				<div
-					class="title"
-					@click="
-						$router.push('/');
-						changeToMain();
-					"
-				>
-					SSE MARKET
-				</div>
-				<div class="top-right">
-					<div
-						class="mode-select"
-						@click="changeMode"
-					>
-						<Icon
-							v-if="mode === 'dark-mode'"
-							icon="material-symbols:dark-mode"
-						/>
-						<Icon
-							v-else
-							icon="material-symbols:light-mode"
-						/>
-					</div>
-				</div>
-			</div>
-			<div class="site-header">
-				<div
-					v-if="isPC"
-					class="links"
-				>
-					<router-link to="/post">
-						<div
-							class="icon"
-							style="
+  <div
+    id="root"
+    class="root"
+  >
+    <header>
+      <div class="site-top">
+        <div class="top-left"></div>
+        <div
+          class="title"
+          @click="
+            $router.push('/');
+            changeToMain();
+          "
+        >
+          SSE MARKET
+        </div>
+        <div class="top-right">
+          <div
+            class="mode-select"
+            @click="changeMode"
+          >
+            <Icon
+              v-if="mode === 'dark-mode'"
+              icon="material-symbols:dark-mode"
+            />
+            <Icon
+              v-else
+              icon="material-symbols:light-mode"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="site-header">
+        <div
+          v-if="isPC"
+          class="links"
+        >
+          <router-link to="/post">
+            <div
+              class="icon"
+              style="
 								background-image: url(https://img.icons8.com/?size=100&id=89802&format=png&color=000000);
 								background-size: 90% 90%;
 							"
-						></div>
-						发帖
-					</router-link>
-					<router-link to="/partitions">
-						<div
-							class="icon"
-							style="
+            ></div>
+            发帖
+          </router-link>
+          <router-link to="/partitions">
+            <div
+              class="icon"
+              style="
 								background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729566876258317319_icons8-top-wide-sidebar-followed-by-partition-at-bottom-24.png);
 								background-size: 80% 80%;
 								background-position: 0px 4px;
 							"
-						></div>
-						分区
-					</router-link>
-					<router-link
-						to="/course"
-						@click="changeToCourse"
-					>
-						<div
-							class="icon"
-							style="
+            ></div>
+            分区
+          </router-link>
+          <router-link
+            to="/course"
+            @click="changeToCourse"
+          >
+            <div
+              class="icon"
+              style="
 								background-image: url(https://img.icons8.com/?size=100&id=85872&format=png&color=000000);
 								background-size: 95% 95%;
 								background-position: 0px 3px;
 							"
-						></div>
-						课程专区
-					</router-link>
-					<router-link to="/feedback">
-						<div
-							class="icon"
-							style="
+            ></div>
+            课程专区
+          </router-link>
+          <router-link to="/feedback">
+            <div
+              class="icon"
+              style="
 								background-image: url(https://img.icons8.com/?size=100&id=85500&format=png&color=000000);
 								background-position: 0px 3px;
 							"
-						></div>
-						反馈
-					</router-link>
-				</div>
-				<div
-					v-if="!isPC && isHomePage"
-					class="lesson"
-					style="
+            ></div>
+            反馈
+          </router-link>
+        </div>
+        <div
+          v-if="!isPC && isHomePage"
+          class="lesson"
+          style="
 						background-image: url(https://img.icons8.com/?size=100&id=kmUrp7YjifpP&format=png&color=000000);
 					"
-					@click="changeToCourse"
-				></div>
-				<div class="search">
-					<input
-						ref="sinfo"
-						placeholder="在 当前分区 搜索..."
-						@keydown.enter="search"
-					/>
-					<button @click="search">
-						<div
-							class="icon"
-							style="
+          @click="changeToCourse"
+        ></div>
+        <div class="search">
+          <input
+            ref="sinfo"
+            placeholder="在 当前分区 搜索..."
+            @keydown.enter="search"
+          />
+          <button @click="search">
+            <div
+              class="icon"
+              style="
 								background-image: url(https://img.icons8.com/?size=100&id=131&format=png&color=000000);
 								background-size: 75% 75%;
 								background-position: 0px 0px;
 							"
-						></div>
-					</button>
-					<!-- 改成图标 -->
-				</div>
-				<div
-					v-if="isPC"
-					class="account links"
-				>
-					<router-link
-						to="/save"
-						@click="changeToSave"
-					>
-						<div
-							class="icon"
-							style="
+            ></div>
+          </button>
+          <!-- 改成图标 -->
+        </div>
+        <div
+          v-if="isPC"
+          class="account links"
+        >
+          <router-link
+            to="/save"
+            @click="changeToSave"
+          >
+            <div
+              class="icon"
+              style="
 								background-image: url(https://img.icons8.com/?size=100&id=85185&format=png&color=000000);
 							"
-						></div>
-						收藏
-					</router-link>
-					<router-link
-						to="/history"
-						@click="changeToHistory"
-					>
-						<div
-							class="icon"
-							style="
+            ></div>
+            收藏
+          </router-link>
+          <router-link
+            to="/history"
+            @click="changeToHistory"
+          >
+            <div
+              class="icon"
+              style="
 								background-image: url(https://img.icons8.com/?size=100&id=83976&format=png&color=000000);
 								background-size: 90% 90%;
 							"
-						></div>
-						发帖历史
-					</router-link>
-					<router-link to="/notice">
-						<div
-							class="icon"
-							style="
+            ></div>
+            发帖历史
+          </router-link>
+          <router-link to="/notice">
+            <div
+              class="icon"
+              style="
 								background-image: url(https://img.icons8.com/?size=100&id=32058&format=png&color=000000);
 							"
-						></div>
-						通知
-						<div
-							v-if="noticeNum"
-							class="notice-num"
-						>
-							{{ noticeNum }}
-						</div>
-					</router-link>
-					<router-link to="/chat">
-						私信
-						<div
-							v-if="chatNum"
-							class="notice-num"
-						>
-							{{ chatNum }}
-						</div>
-					</router-link>
-					<router-link to="/options">
-						{{ userInfo.name }}
-					</router-link>
-				</div>
-				<router-link
-					v-if="!isPC"
-					to="/post"
-					class="post-button icon bright-icon"
-					style="
+            ></div>
+            通知
+            <div
+              v-if="noticeNum"
+              class="notice-num"
+            >
+              {{ noticeNum }}
+            </div>
+          </router-link>
+          <router-link to="/chat">
+            私信
+            <div
+              v-if="chatNum"
+              class="notice-num"
+            >
+              {{ chatNum }}
+            </div>
+          </router-link>
+          <router-link to="/options">
+            {{ userInfo.name }}
+          </router-link>
+        </div>
+        <router-link
+          v-if="!isPC"
+          to="/post"
+          class="post-button icon bright-icon"
+          style="
 						width: 30px;
 						height: 30px;
 						background-position: 1px -1px;
 					"
-					:style="{
-						backgroundImage: `url(${imgs.sendPostButtonIcon})`,
-					}"
-				>
-				</router-link>
-			</div>
-		</header>
-		<main>
-			<BottomNavbar
-				v-if="!isPC"
-				@change-path="changePathHandler"
-			/>
-			<div class="content">
-				<div
-					v-if="!isPC && isHomePage"
-					class="partitions"
-				>
-					<div
-						v-for="(p, index) in partitions"
-						:key="index"
-						class="partition"
-						@click="sendPartition(p.name)"
-					>
-						<div
-							class="bright-icon"
-							:style="{
-								backgroundImage: 'url(' + p.src + ')',
-							}"
-						></div>
-						<div class="partition-info">
-							{{ p.name }}
-						</div>
-					</div>
-				</div>
+          :style="{
+            backgroundImage: `url(${imgs.sendPostButtonIcon})`,
+          }"
+        >
+        </router-link>
+      </div>
+    </header>
+    <main>
+      <BottomNavbar
+        v-if="!isPC"
+        @change-path="changePathHandler"
+      />
+      <div class="content">
+        <div
+          v-if="!isPC && isHomePage"
+          class="partitions"
+        >
+          <div
+            v-for="(p, index) in partitions"
+            :key="index"
+            class="partition"
+            @click="sendPartition(p.name)"
+          >
+            <div
+              class="bright-icon"
+              :style="{
+                backgroundImage: 'url(' + p.src + ')',
+              }"
+            ></div>
+            <div class="partition-info">
+              {{ p.name }}
+            </div>
+          </div>
+        </div>
 
-				<router-view v-slot="{ Component }">
-					<KeepAlive>
-						<component
-							:is="Component"
-							v-if="route.meta.keepAlive"
-						/>
-					</KeepAlive>
-					<component
-						:is="Component"
-						v-if="!route.meta.keepAlive"
-						@send-partition="sendPartition"
-					/>
-				</router-view>
-			</div>
-			<heat-list v-if="isPC && !heatPostsIsHidden" />
-		</main>
-	</div>
+        <router-view v-slot="{ Component }">
+          <KeepAlive>
+            <component
+              :is="Component"
+              v-if="route.meta.keepAlive"
+            />
+          </KeepAlive>
+          <component
+            :is="Component"
+            v-if="!route.meta.keepAlive"
+            @send-partition="sendPartition"
+          />
+        </router-view>
+      </div>
+      <heat-list v-if="isPC && !heatPostsIsHidden" />
+    </main>
+  </div>
 </template>
 <script setup>
 import {

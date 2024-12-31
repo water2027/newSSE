@@ -108,7 +108,7 @@ const sendCommentFunc = async (phone, id) => {
 
 const deleteFunc = async () => {
 	let id;
-	if (props.comment.hasOwnProperty('PcommentID')) {
+	if ('PcommentID' in props.comment) {
 		id = props.comment.PcommentID;
 		const res = await delComment(id);
 		if (res) {
@@ -145,7 +145,7 @@ const handler = (type) => {
  */
 const like = async () => {
 	//后端没有返回数据，不要赋值后再更新
-	if (props.comment.hasOwnProperty('PcommentID')) {
+	if ('PcommentID' in props.comment) {
 		try {
 			const res = await likePostComment(
 				commentData.value.PcommentID,
@@ -162,7 +162,7 @@ const like = async () => {
 			return false;
 		}
 	}
-	if (props.comment.hasOwnProperty('ccommentID')) {
+	if ('ccommentID' in props.comment) {
 		try {
 			const res = await likeCommentComment(
 				props.comment.ccommentID,

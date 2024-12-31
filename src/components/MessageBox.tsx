@@ -1,3 +1,4 @@
+/* eslint-disable vue/one-component-per-file */
 import { createApp, defineComponent } from 'vue';
 
 import '@/assets/MessageBox.css';
@@ -6,7 +7,7 @@ interface MessageBoxProps {
 	msg: string;
 }
 
-const messageBox = defineComponent({
+const MessageBox = defineComponent({
 	props: {
 		msg: {
 			type: String,
@@ -25,7 +26,7 @@ const messageBox = defineComponent({
 function showMsg(msg: string) {
 	const div = document.createElement('div');
 	document.body.appendChild(div);
-	const app = createApp(messageBox, {
+	const app = createApp(MessageBox, {
 		msg,
 	});
 	setTimeout(() => {

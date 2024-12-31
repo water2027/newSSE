@@ -6,14 +6,27 @@
         对话列表
       </div>
       <div class="lite-scrollbar">
-        <div v-for="entry in contacts" :key="entry.userID"
-          :class="['contact-entry', current.userID === entry.userID && 'selected']" @click="selectContact(entry)"
-          @keydown="handleKeyDown($event, () => selectContact(entry))">
-          <UserAvatar class="contact-icon" :src="entry.avatarURL" :alt="entry.name" />
+        <div
+          v-for="entry in contacts"
+          :key="entry.userID"
+          :class="['contact-entry', current.userID === entry.userID && 'selected']"
+          @click="selectContact(entry)"
+          @keydown="handleKeyDown($event, () => selectContact(entry))"
+        >
+          <UserAvatar
+            class="contact-icon"
+            :src="entry.avatarURL"
+            :alt="entry.name"
+          />
           <div class="contact-info">
-            <div class="contact-name">{{ entry.name }}</div>
+            <div class="contact-name">
+              {{ entry.name }}
+            </div>
             <div class="contact-intro">
-              <div v-if="entry.unRead" class="contact-unread">
+              <div
+                v-if="entry.unRead"
+                class="contact-unread"
+              >
                 {{ entry.unRead > 99 ? '99+' : entry.unRead }}
               </div>
               {{ entry.intro }}
@@ -27,44 +40,85 @@
         <template v-if="current.userID">
           <div class="message-header">
             <div class="contact-entry selected">
-              <UserAvatar class="contact-icon" :src="current.avatarURL" :alt="current.name" />
+              <UserAvatar
+                class="contact-icon"
+                :src="current.avatarURL"
+                :alt="current.name"
+              />
               <div class="contact-info">
-                <div class="contact-name">{{ current.name }}</div>
+                <div class="contact-name">
+                  {{ current.name }}
+                </div>
                 <div class="contact-intro">
                   {{ current.intro }}
                 </div>
               </div>
             </div>
           </div>
-          <div ref="historyDiv" class="message-history lite-scrollbar">
-            <div v-for="(entry, i) in messages" :key="entry.chatMsgID">
-              <div v-if="getTimeShow(i)" class="message-time">
+          <div
+            ref="historyDiv"
+            class="message-history lite-scrollbar"
+          >
+            <div
+              v-for="(entry, i) in messages"
+              :key="entry.chatMsgID"
+            >
+              <div
+                v-if="getTimeShow(i)"
+                class="message-time"
+              >
                 <div>
                   {{ getTimeShow(i) }}
                 </div>
               </div>
               <div :class="['message-entry', entry.senderUserID === userInfo.userID && 'reversed']">
                 <template v-if="entry.senderUserID === userInfo.userID">
-                  <UserAvatar class="contact-icon" :src="userInfo.avatarURL" :alt="userInfo.name" />
+                  <UserAvatar
+                    class="contact-icon"
+                    :src="userInfo.avatarURL"
+                    :alt="userInfo.name"
+                  />
                   <div class="message-info">
-                    <div class="message-sender">{{ userInfo.name }}</div>
-                    <div class="message-body">{{ entry.content }}</div>
+                    <div class="message-sender">
+                      {{ userInfo.name }}
+                    </div>
+                    <div class="message-body">
+                      {{ entry.content }}
+                    </div>
                   </div>
                 </template>
                 <template v-else>
-                  <UserAvatar class="contact-icon" :src="current.avatarURL" :alt="current.name" />
+                  <UserAvatar
+                    class="contact-icon"
+                    :src="current.avatarURL"
+                    :alt="current.name"
+                  />
                   <div class="message-info">
-                    <div class="message-sender">{{ current.name }}</div>
-                    <div class="message-body">{{ entry.content }}</div>
+                    <div class="message-sender">
+                      {{ current.name }}
+                    </div>
+                    <div class="message-body">
+                      {{ entry.content }}
+                    </div>
                   </div>
                 </template>
               </div>
             </div>
           </div>
           <div class="message-footer">
-            <textarea v-model="draft" placeholder="输入信息..." rows="4" class="message-input lite-scrollbar"
-              @keydown="handleDraftKeyDown"></textarea>
-            <div class="message-send" @click="sendMessage">发送</div>
+            <textarea
+              v-model="draft"
+              placeholder="输入信息..."
+              rows="4"
+              class="message-input lite-scrollbar"
+              @keydown="handleDraftKeyDown"
+            />
+            <div
+              class="message-send"
+              @click="sendMessage"
+            >
+              发送
+            </div>
           </div>
         </template>
       </div>
@@ -76,7 +130,7 @@
 import UserAvatar from '@/components/UserAvatar.vue';
 import { Icon } from '@iconify/vue';
 import { ref, inject, onBeforeMount, onMounted, nextTick, onUnmounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { getInfoById } from '@/api/info/getInfo';
 import { getChatHistory } from '@/api/chat/chat';
 import { getTokenWithExpiry } from '@/api/auth'

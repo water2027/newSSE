@@ -123,7 +123,7 @@
 </template>
 <script setup>
 import UserAvatar from '../UserAvatar.vue';
-import { ref, defineAsyncComponent, shallowRef, computed } from 'vue';
+import { ref, defineAsyncComponent } from 'vue';
 
 import { strHandler } from '@/utils/strHandler';
 import { levelNameHandler, levelClassHandler } from '@/utils/level';
@@ -133,8 +133,6 @@ import { showMsg } from '@/components/MessageBox';
 const MarkdownContainer = defineAsyncComponent(() => {
 	return import('@/components/MarkdownContainer.vue');
 });
-
-const avatarUrl = shallowRef(import.meta.env.BASE_URL + 'default-avatar.svg');
 
 const props = defineProps({
 	cardData: {
@@ -156,19 +154,19 @@ const basicData = ref({
 	Like: props.cardData.Like,
 	IsLiked: props.cardData.IsLiked,
 });
-const identity = computed(() => {
-	const UserIdentity = props.cardData.UserIdentity;
-	switch (UserIdentity) {
-		case 'student':
-			return 'student';
-		case 'teacher':
-			return 'teacher';
-		case 'organization':
-			return 'organization';
-		default:
-			return 'undefined';
-	}
-});
+// const identity = computed(() => {
+// 	const UserIdentity = props.cardData.UserIdentity;
+// 	switch (UserIdentity) {
+// 		case 'student':
+// 			return 'student';
+// 		case 'teacher':
+// 			return 'teacher';
+// 		case 'organization':
+// 			return 'organization';
+// 		default:
+// 			return 'undefined';
+// 	}
+// });
 
 const like = async () => {
 	try {
@@ -186,7 +184,7 @@ const like = async () => {
 			showMsg('失败了:-(');
 		}
 	} catch (e) {
-		showMsg('失败了:-(');
+		showMsg('失败了:-( ' + e);
 	}
 };
 </script>

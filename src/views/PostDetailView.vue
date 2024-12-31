@@ -1,100 +1,100 @@
 <template>
-	<div
-		class="root"
-		@click="clickHandler"
-		@comment-handle="commentHandler"
-	>
-		<template v-if="!postIsLoading">
-			<detail-card :post="post" />
-		</template>
-		<template v-else>
-			<div
-				class="isLoading"
-				style="--card-width: 100%; --card-height: 200px"
-			>
-				loading...
-			</div>
-		</template>
-		<div class="comment">
-			<h2>评论</h2>
-			<div class="sort-comment">
-				<div
-					class="sort-btn"
-					@click="setSortType('time')"
-				>
-					<div
-						class="icon"
-						style="
+  <div
+    class="root"
+    @click="clickHandler"
+    @comment-handle="commentHandler"
+  >
+    <template v-if="!postIsLoading">
+      <detail-card :post="post" />
+    </template>
+    <template v-else>
+      <div
+        class="isLoading"
+        style="--card-width: 100%; --card-height: 200px"
+      >
+        loading...
+      </div>
+    </template>
+    <div class="comment">
+      <h2>评论</h2>
+      <div class="sort-comment">
+        <div
+          class="sort-btn"
+          @click="setSortType('time')"
+        >
+          <div
+            class="icon"
+            style="
 							background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729845428749551312_icons8-sort-48.png);
 						"
-					/>
-					时间
-				</div>
-				<div
-					class="sort-btn"
-					@click="setSortType('likes')"
-				>
-					<div
-						class="icon"
-						style="
+          />
+          时间
+        </div>
+        <div
+          class="sort-btn"
+          @click="setSortType('likes')"
+        >
+          <div
+            class="icon"
+            style="
 							background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729845524483606271_icons8-sort-49.png);
 						"
-					/>
-					热度
-				</div>
-			</div>
-			<!-- 这是评论区 -->
-			<div
-				v-if="post?.Comment"
-				class="commentList"
-			>
-				<!-- 使用id-评论数作为key使每次评论重新渲染当前评论 -->
-				<div
-					v-for="comment in sortedComments"
-					:key="`${comment.PcommentID}-${comment.SubComments.length}`"
-					class="comment"
-				>
-					<comment-card
-						:comment="comment"
-						:show-comment="postCommentID === comment.PcommentID"
-					>
-						<template #showComment>
-							<button
-								v-if="comment.SubComments.length"
-								@click="
-									postCommentID =
-										postCommentID === comment.PcommentID
-											? -1
-											: comment.PcommentID
-								"
-							>
-								{{
-									postCommentID === comment.PcommentID
-										? '不想看了'
-										: '让我看看'
-								}}
-							</button>
-						</template>
-					</comment-card>
-					<div
-						v-if="
-							comment.SubComments &&
-							comment.SubComments.length > 0
-						"
-						v-show="postCommentID === comment.PcommentID"
-						class="subCommentList"
-					>
-						<c-comment-card
-							v-for="subComment in comment.SubComments"
-							:key="subComment.ccommentID"
-							:p-comment-id="comment.PcommentID"
-							:comment="subComment"
-						/>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+          />
+          热度
+        </div>
+      </div>
+      <!-- 这是评论区 -->
+      <div
+        v-if="post?.Comment"
+        class="commentList"
+      >
+        <!-- 使用id-评论数作为key使每次评论重新渲染当前评论 -->
+        <div
+          v-for="comment in sortedComments"
+          :key="`${comment.PcommentID}-${comment.SubComments.length}`"
+          class="comment"
+        >
+          <comment-card
+            :comment="comment"
+            :show-comment="postCommentID === comment.PcommentID"
+          >
+            <template #showComment>
+              <button
+                v-if="comment.SubComments.length"
+                @click="
+                  postCommentID =
+                    postCommentID === comment.PcommentID
+                      ? -1
+                      : comment.PcommentID
+                "
+              >
+                {{
+                  postCommentID === comment.PcommentID
+                    ? '不想看了'
+                    : '让我看看'
+                }}
+              </button>
+            </template>
+          </comment-card>
+          <div
+            v-if="
+              comment.SubComments &&
+                comment.SubComments.length > 0
+            "
+            v-show="postCommentID === comment.PcommentID"
+            class="subCommentList"
+          >
+            <c-comment-card
+              v-for="subComment in comment.SubComments"
+              :key="subComment.ccommentID"
+              :p-comment-id="comment.PcommentID"
+              :comment="subComment"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 <script setup>
 import { ref, inject, computed, defineAsyncComponent, watch } from 'vue';

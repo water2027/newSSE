@@ -1,20 +1,24 @@
 <!-- eslint-disable vue/html-self-closing -->
 <template>
-	<FormContainer
-		formName="登录"
-		:formData="form"
-		@submit-form="loginHandler"
-		:disabled="!correct"
-	>
-		<input
-			type="checkbox"
-			v-model="rememberMe"
-		/>记住我
-		<div class="flex flex-row justify-around">
-			<router-link to="/auth/register">还没账号？</router-link>
-			<router-link to="/auth/reset">忘记密码了？</router-link>
-		</div>
-	</FormContainer>
+  <FormContainer
+    form-name="登录"
+    :form-data="form"
+    @submit-form="loginHandler"
+    :disabled="!correct"
+  >
+    <input
+      type="checkbox"
+      v-model="rememberMe"
+    />记住我
+    <div class="flex flex-row justify-around">
+      <router-link to="/auth/register">
+        还没账号？
+      </router-link>
+      <router-link to="/auth/reset">
+        忘记密码了？
+      </router-link>
+    </div>
+  </FormContainer>
 </template>
 <script setup lang="ts">
 import { inject, ref } from 'vue';
@@ -50,6 +54,7 @@ const form = ref<CustomFormData[]>([
 
 const { correct } = useFormExam(form);
 
+/* global User */
 const { setUser } = inject('userInfo') as User;
 const curPath = inject('curPath', '/');
 

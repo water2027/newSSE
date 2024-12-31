@@ -74,6 +74,7 @@ const handleSave = async () => {
 		postData.value.IsSaved = !postData.value.IsSaved;
 		showMsg(postData.value.IsSaved ? '收藏成功' : '取消成功');
 	} catch (e) {
+		console.error(e);
 		showMsg('失败了:-(');
 	}
 };
@@ -105,6 +106,7 @@ const deleteFunc = async () => {
 		await delPost(postData.value.PostID);
 		return postData.value.PostID;
 	} catch (e) {
+		console.error(e);
 		return 0;
 	}
 };

@@ -108,7 +108,7 @@ const sendCommentFunc = async (phone, id) => {
 
 const deleteFunc = async () => {
 	let id;
-	if (props.comment.hasOwnProperty('ccommentID')) {
+	if ('ccommentID' in props.comment) {
 		id = props.comment.ccommentID;
 		const res = await delCcomment(id);
 		if (res) {

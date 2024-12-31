@@ -1,13 +1,24 @@
 <template>
-  <div class="user-profile-wrapper" v-if="user">
+  <div
+    v-if="user"
+    class="user-profile-wrapper"
+  >
     <div class="profile-card profile-header-wrapper">
       <div class="profile-header">
         <UserAvatar :src="user.avatarURL" />
         <div class="profile-header-info">
-          <div class="user-name">{{ user.name }}</div>
-          <div class="user-bio">{{ user.intro }}</div>
+          <div class="user-name">
+            {{ user.name }}
+          </div>
+          <div class="user-bio">
+            {{ user.intro }}
+          </div>
         </div>
-        <div @click="navigateChat" class="btn-chat" v-if="userInfo.userID != user.userID">
+        <div
+          @click="navigateChat"
+          class="btn-chat"
+          v-if="userInfo.userID != user.userID"
+        >
           <Icon icon="tabler:send" />
           私信
         </div>
@@ -15,10 +26,10 @@
     </div>
     <div class="profile-main">
       <div class="main-left">
-        <div class="profile-card profile-dynamic"></div>
+        <div class="profile-card profile-dynamic" />
       </div>
       <div class="main-right">
-        <div class="profile-card profile-info"></div>
+        <div class="profile-card profile-info" />
       </div>
     </div>
   </div>
@@ -70,7 +81,7 @@ onBeforeMount(() => {
 function navigateChat() {
   if (user.value.userID > 0) {
     router.push({ name: "Chat", query: { user: user.value.userID } });
-    stopPropagation();
+    // stopPropagation();
   }
 }
 

@@ -112,7 +112,7 @@ const handleSave = async () => {
 		postData.value.IsSaved = !postData.value.IsSaved;
 		showMsg(postData.value.IsSaved ? '收藏成功' : '取消成功');
 	} catch (e) {
-		showMsg('失败了:-(');
+		showMsg('失败了:-( ' + e);
 	}
 };
 
@@ -128,6 +128,7 @@ const like = async () => {
 		);
 		return res;
 	} catch (e) {
+		console.error(e);
 		return false;
 	}
 };
