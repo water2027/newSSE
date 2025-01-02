@@ -4,7 +4,7 @@
  * @param {string} str
  * @returns
  */
-function strHandler(type, str) {
+function strHandler(type:string, str:string) {
 	if (!str) return '';
 	switch (type) {
 		case 'img':

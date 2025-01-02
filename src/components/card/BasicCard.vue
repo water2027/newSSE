@@ -50,7 +50,7 @@
       />
     </div>
     <span class="card-time">{{
-      strHandler('time', cardData.PostTime)
+      new Date(cardData.PostTime).toLocaleString()
     }}</span>
     <div class="basicInfo">
       <span v-if="cardData.Browse || cardData.Browse === 0">

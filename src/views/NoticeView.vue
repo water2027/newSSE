@@ -26,7 +26,7 @@
       >
         <span>{{ notice.senderName }}</span>
         <p>{{ notice.content }}</p>
-        <span>{{ strHandler('time', notice.time) }}</span>
+        <span>{{ new Date(notice.time).toLocaleString() }}</span>
         <div class="noticeButtons">
           <button @click="readComment(notice.noticeID)">
             标记为已读
@@ -51,7 +51,7 @@
       >
         <span>{{ notice.senderName }}</span>
         <p>{{ notice.content }}</p>
-        <span>{{ strHandler('time', notice.time) }}</span>
+        <span>{{ new Date(notice.time).toLocaleString() }}</span>
         <div>
           <button @click="changeToPost(notice.postID)">
             查看原帖
@@ -67,8 +67,6 @@ import { ref, inject, onMounted, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { getNotices, readNotice, getNoticesNum } from '@/api/notice/notice';
-
-import { strHandler } from '@/utils/strHandler';
 
 import { showMsg } from '@/components/MessageBox';
 

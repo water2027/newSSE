@@ -17,15 +17,16 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 import { showMsg } from '@/components/MessageBox';
 import { feedback } from '@/api/feedback/feedback';
 
-const feedbackContent = ref(null);
+const feedbackContent = ref<HTMLTextAreaElement | null>(null);
 const submitFeedback = async () => {
+  if(!feedbackContent.value) return;
     //去除空格
-    feedbackContent.value.value = feedbackContent.value.value.trim();
+  feedbackContent.value.value = feedbackContent.value.value.trim();
 	if (feedbackContent.value.value) {
 		const res = await feedback(feedbackContent.value.value, '');
 		showMsg(res.msg);
