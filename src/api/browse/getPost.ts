@@ -2,7 +2,7 @@ import { useRequest } from '../req';
 
 import { showMsg } from '@/components/MessageBox';
 
-import { RequestResult } from '../req';
+import { type RequestResult } from '../req';
 
 export interface Post {
 	PostID: number;
