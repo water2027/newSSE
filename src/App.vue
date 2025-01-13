@@ -1,9 +1,9 @@
 <template>
-	<HomeViewVue v-if="isLogin" />
-	<LoginViewVue
-		v-else
-		@send-login-success="sendLoginSuccess"
-	/>
+  <HomeViewVue v-if="isLogin" />
+  <LoginViewVue
+    v-else
+    @send-login-success="sendLoginSuccess"
+  />
 </template>
 
 <script setup>
@@ -21,7 +21,6 @@ const LoginViewVue = defineAsyncComponent(
 );
 
 import { userLogin } from './api/LoginAndRegister/login';
-import { getTokenWithExpiry } from './api/auth';
 import { getInfo } from './api/info/getInfo';
 
 import { showMsg } from './components/MessageBox';

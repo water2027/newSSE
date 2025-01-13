@@ -1,0 +1,25 @@
+{
+	"extends": "@tsconfig/node22/tsconfig.json",
+	"include": [
+		"src/**/*",
+		"vite.config.*",
+		"vitest.config.*",
+		"cypress.config.*",
+		"nightwatch.conf.*",
+		"playwright.config.*"
+	],
+	"exclude": ["node_modules", "dist", "coverage", "test", "tests"],
+	"compilerOptions": {
+		"jsx": "preserve",
+		"jsxImportSource": "vue",
+		"types": ["@vue/runtime-dom","node"],
+		"baseUrl": ".",
+		"paths": {
+		  "@/*": ["src/*"]
+		},
+		"noEmit": true,
+		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+	}
+}
