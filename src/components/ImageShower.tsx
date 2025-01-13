@@ -1,8 +1,6 @@
 /* eslint-disable vue/one-component-per-file */
 import { createApp, defineComponent } from 'vue';
 
-// import '@/assets/ImageShower.css';
-
 interface ImageShowerProps {
 	img: string;
 	close: () => void;

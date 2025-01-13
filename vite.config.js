@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
@@ -5,6 +6,7 @@ import vueJsxPlugin from '@vitejs/plugin-vue-jsx';
 import { VitePWA } from 'vite-plugin-pwa';
 import UnoCSS from 'unocss/vite'
 // https://vitejs.dev/config/
+/* eslint-disable no-undef */
 const base = process.env.CF_PAGES ? '/' : '/new/';
 export default defineConfig({
 	base,

@@ -4,13 +4,13 @@
  * @param {string} str 
  * @returns 
  */
-function strHandler(type,str) {
+function strHandler(type:string,str:string) {
 	if (!str) return '';
 	switch (type) {
 		case 'img':
 			return str.split('|');
 		case 'time':
-			return str.replace('T', ' ').split('+')[0];
+			return new Date(str).toLocaleString();
 		case 'postImg':
 			return str.replace('resized', 'uploads');
 		default:

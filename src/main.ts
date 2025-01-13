@@ -1,3 +1,4 @@
+import 'virtual:uno.css'
 import './assets/main.css'
 import './assets/mode.css'
 

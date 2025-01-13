@@ -1,3 +1,9 @@
+
+interface Token {
+    value: string,
+    expiry: number
+}
+
 /**
  * 
  * @returns 带有过期时间的token
@@ -9,7 +15,7 @@ function getTokenWithExpiry() {
         return null
     }
 
-    const item = JSON.parse(itemStr)
+    const item = JSON.parse(itemStr) as Token
     const now = new Date()
 
     if (now.getTime() > item.expiry) {
