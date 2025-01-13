@@ -5,7 +5,7 @@ import { requestFunc } from "../req";
  * 
  * @returns {Promise<number>} 通知数量
  */
-async function getNoticesNum() {
+async function getNoticesNum():Promise<number|null> {
     try{
         const res = await requestFunc(`/auth/getNoticeNum`, {
             method: 'GET',
@@ -13,15 +13,16 @@ async function getNoticesNum() {
                 'Content-Type': 'application/json',
             },
         },true);
-        if(!res.ok){
+        if(!res!.ok){
             showMsg('获取通知数量失败');
             return null;
         }
-        const data = await res.json();
+        const data = await res!.json();
         return data;
     }catch(e){
         showMsg('获取通知数量失败');
         console.error(e);
+        return null;
     }
 }
 
@@ -32,20 +33,25 @@ async function getNoticesNum() {
  * @param {number} read 1为已读，0为未读
  * @returns {Promise<object>} 返回的数据有两种，一种没有通知的，一种有通知的
  */
-async function getNotices(requireID,pageSize,read) {
+async function getNotices(requireID:number,pageSize:number,read:number) {
     try{
         const res = await requestFunc(`/auth/getNotice`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             },
+            // query:{
+            //     requireID,
+            //     pageSize,
+            //     read
+            // }
             query:{
-                requireID,
-                pageSize,
-                read
+                requireID:requireID.toString(),
+                pageSize:pageSize.toString(),
+                read:read.toString()
             }
         },true);
-        const data = await res.json();
+        const data = await res!.json();
         return data;
     }catch(e){
         showMsg('获取通知失败')
@@ -58,7 +64,7 @@ async function getNotices(requireID,pageSize,read) {
  * @param {number} id 要读的通知id
  * @returns {Promise<{status:string}>}
  */
-async function readNotice(id) {
+async function readNotice(id:number) {
     try{
         const res = await requestFunc(`/auth/readNotice/${id}`, {
             method: 'PATCH',
@@ -66,7 +72,7 @@ async function readNotice(id) {
                 'Content-Type': 'application/json',
             },
         },true);
-        const data = await res.json();
+        const data = await res!.json();
         return data;
     }catch(e){
         console.error(e)

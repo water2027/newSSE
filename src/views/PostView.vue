@@ -43,8 +43,8 @@
   </div>
 </template>
 
-<script setup>
-import { ref, inject, onMounted } from 'vue';
+<script setup lang="ts">
+import { ref, inject, onMounted, useTemplateRef } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { getTeachers } from '@/api/info/getTeacher';
@@ -66,7 +66,7 @@ const partitions = ref([
 	'其他',
 ]);
 const postContent = ref('');
-const title = ref(null);
+const title = useTemplateRef('title');
 const partition = ref('主页');
 
 const teachers = ref([]);
@@ -74,6 +74,10 @@ const teachers = ref([]);
 const teacher = ref('');
 
 const submitPost = async () => {
+	if(!title.value){
+		showMsg('未知错误');
+		return;
+	}
 	let postTitle = title.value.value;
 	const content = postContent.value;
 	const postPartition = partition.value;
@@ -81,7 +85,7 @@ const submitPost = async () => {
 	postTitle = postTitle.replace(/(^\s*)|(\s*$)/g, '');
 
 	if (!postTitle || !content) {
-		alert('请填写完整信息');
+		showMsg('请填写完整信息');
 		return;
 	}
 	const res = await sendPost(

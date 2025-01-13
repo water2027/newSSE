@@ -85,7 +85,7 @@
     </div>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { ref, inject, onMounted, computed, defineAsyncComponent } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -119,7 +119,7 @@ const sortedComments = computed(() => {
   // .slice()是为了不改变原数组
   return comments.value.slice().sort((a, b) => b.LikeNum - a.LikeNum);
 });
-const setSortType = (type) => {
+const setSortType = (type:string) => {
   sortType.value = type;
 };
 

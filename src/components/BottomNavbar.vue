@@ -130,7 +130,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, inject, computed } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -152,7 +152,7 @@ const toggleMyMenu = () => {
 	myMenuVisible.value = !myMenuVisible.value;
 };
 
-const changeTo = (path) => {
+const changeTo = (path:string) => {
 	emit('changePath', path);
 };
 </script>

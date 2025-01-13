@@ -6,7 +6,7 @@
   />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
 	ref,
 	provide,
@@ -33,7 +33,7 @@ const isLogin = ref(false);
  * @param {Boolean} success 登录是否成功
  * @returns {void}
  */
-const sendLoginSuccess = async (success) => {
+const sendLoginSuccess = async (success:boolean) => {
 	if (!success) return;
 	try {
 		const info = await getInfo();

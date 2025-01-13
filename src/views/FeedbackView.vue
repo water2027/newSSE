@@ -17,25 +17,29 @@
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue';
+<script setup lang="ts">
+import { useTemplateRef } from 'vue';
 import { showMsg } from '@/components/MessageBox';
 import { feedback } from '@/api/feedback/feedback';
 
-const feedbackContent = ref(null);
+const feedbackContent = useTemplateRef('feedbackContent');
 const submitFeedback = async () => {
-    //去除空格
-    feedbackContent.value.value = feedbackContent.value.value.trim();
-	if (feedbackContent.value.value) {
-		const res = await feedback(feedbackContent.value.value, '');
-		showMsg(res.msg);
-	} else {
+	//去除空格
+	if (!feedbackContent.value) {
+		// ref找不到
+		showMsg('错误，这不是你的问题');
+		return;
+	}
+	feedbackContent.value.value = feedbackContent.value.value.trim();
+	if (!feedbackContent.value.value) {
 		showMsg('请输入反馈内容');
 	}
+	const res = await feedback(feedbackContent.value.value, '');
+	showMsg(res.msg);
 };
 </script>
 <style scoped>
-.root{
+.root {
 	color: var(--color-text);
 }
 
@@ -48,58 +52,64 @@ const submitFeedback = async () => {
 	font-size: 16px;
 	border: 1px solid #ccc; /* 日间模式的边框颜色 */
 	border-radius: 5px;
-	transition: background-color 0.3s ease, border-color 0.3s ease;
-  }
+	transition:
+		background-color 0.3s ease,
+		border-color 0.3s ease;
+}
 button {
 	margin-top: 20px;
 }
 .btn-primary {
-  display: inline-block;
-  font-weight: 400;
-  color: #fff;
-  text-align: center;
-  vertical-align: middle;
-  user-select: none;
-  background-color: #007bff;
-  border: 1px solid #007bff;
-  padding: 0.375rem 0.75rem;
-  font-size: 1rem;
-  line-height: 1.5;
-  border-radius: 0.25rem;
-  text-decoration: none;
-  cursor: pointer;
+	display: inline-block;
+	font-weight: 400;
+	color: #fff;
+	text-align: center;
+	vertical-align: middle;
+	user-select: none;
+	background-color: #007bff;
+	border: 1px solid #007bff;
+	padding: 0.375rem 0.75rem;
+	font-size: 1rem;
+	line-height: 1.5;
+	border-radius: 0.25rem;
+	text-decoration: none;
+	cursor: pointer;
 }
 
 .btn {
-  display: inline-block;
-  font-weight: 400;
-  text-align: center;
-  white-space: nowrap;
-  vertical-align: middle;
-  user-select: none;
-  border: 1px solid transparent;
-  padding: 0.375rem 0.75rem;
-  font-size: 1rem;
-  line-height: 1.5;
-  border-radius: 0.25rem;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+	display: inline-block;
+	font-weight: 400;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	user-select: none;
+	border: 1px solid transparent;
+	padding: 0.375rem 0.75rem;
+	font-size: 1rem;
+	line-height: 1.5;
+	border-radius: 0.25rem;
+	transition:
+		color 0.15s ease-in-out,
+		background-color 0.15s ease-in-out,
+		border-color 0.15s ease-in-out,
+		box-shadow 0.15s ease-in-out;
 }
 
 .btn-primary:hover {
-  color: #fff;
-  background-color: #0056b3;
-  border-color: #004085;
+	color: #fff;
+	background-color: #0056b3;
+	border-color: #004085;
 }
 
 /* 夜间模式 */
 body.dark-mode .feedback-textarea {
-  background-color: #2a2a2a; 
-  color: #f9f9f9; 
-  border: 1px solid #444;
+	background-color: #2a2a2a;
+	color: #f9f9f9;
+	border: 1px solid #444;
 }
 body.dark-mode .feedback-textarea:focus {
-  border-color: #00eeff; 
-  outline: none;
+	border-color: #00eeff;
+	outline: none;
 }
 body.dark-mode button {
 	filter: invert(1);

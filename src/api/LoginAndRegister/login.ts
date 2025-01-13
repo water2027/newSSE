@@ -3,7 +3,7 @@ import { requestFunc } from "../req";
 
 //后端那边是七天过期，以防万一7天减去1小时
 const SEVEN_DAYS_IN_MS = 7 * 24 * 60 * 60 * 1000 - 1000 * 60 * 60
-function setItemWithExpiry(key, value, ttl) {
+function setItemWithExpiry(key:string, value:string, ttl:number) {
     const now = new Date()
     const item = {
         value: value,
@@ -18,7 +18,7 @@ function setItemWithExpiry(key, value, ttl) {
  * @param {string} userPassword 未加密的密码
  * @returns
  */
-async function userLogin(userEmail, userPassword) {
+async function userLogin(userEmail:string, userPassword:string) {
     try{
         const res = await requestFunc(`/auth/login`, {
             method: 'POST',
@@ -30,7 +30,7 @@ async function userLogin(userEmail, userPassword) {
                 password: setPassword(userPassword, '16bit secret key')
             }
         },false)
-        const data = await res.json()
+        const data = await res!.json()
         if (data.data?.token) {
             setItemWithExpiry('token', data.data.token, SEVEN_DAYS_IN_MS)
             return true

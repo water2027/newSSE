@@ -2,7 +2,7 @@ import { requestFunc } from "../req";
 import { getTokenWithExpiry } from "../auth";
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
-async function updateUserInfo(avatarURL, intro, name, userID) {
+async function updateUserInfo(avatarURL:string, intro:string, name:string, userID:number) {
 	try{
 		const res = await requestFunc(`/auth/updateUserInfo`, {
 			method: 'POST',
@@ -16,7 +16,7 @@ async function updateUserInfo(avatarURL, intro, name, userID) {
 				userID:userID 
 			},
 		},true);
-		const data = await res.json();
+		const data = await res!.json();
 		return data;
 	}catch(e){
 		alert(e)
@@ -24,8 +24,8 @@ async function updateUserInfo(avatarURL, intro, name, userID) {
 	}
 }
 
-async function uploadAvatar(photo) {
-	const token = getTokenWithExpiry('token');
+async function uploadAvatar(photo:File) {
+	const token = getTokenWithExpiry();
 	if (!token) {
 		return;
 	}

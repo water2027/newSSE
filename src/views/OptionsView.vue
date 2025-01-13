@@ -130,8 +130,8 @@
   </div>
 </template>
 
-<script setup>
-import { ref, inject, onMounted } from 'vue';
+<script setup lang="ts">
+import { ref, inject, onMounted, useTemplateRef } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { showMsg } from '@/components/MessageBox';
@@ -150,9 +150,9 @@ const router = useRouter();
 
 const userInfo = inject('userInfo');
 const allInfo = ref({});
-const VCode = ref(null);
-const password1 = ref(null);
-const password2 = ref(null);
+const VCode = useTemplateRef('VCode');
+const password1 = useTemplateRef('password1');
+const password2 = useTemplateRef('password2');
 
 const codeHandler = async () => {
 	try {
@@ -164,11 +164,11 @@ const codeHandler = async () => {
 };
 
 const updatePasswordFunc = async () => {
-	if (password1.value.value === '' || password2.value.value === '') {
+	if (password1.value?.value === '' || password2.value?.value === '') {
 		showMsg('密码不能为空');
 		return;
 	}
-	if (password1.value.value !== password2.value.value) {
+	if (password1.value?.value !== password2.value?.value) {
 		showMsg('两次密码不一致');
 		return;
 	}

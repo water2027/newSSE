@@ -49,7 +49,6 @@
       ></textarea>
       <MarkdownContainer
         v-show="isPreview"
-        ref="mdContainer"
         :markdown-content="modelValue"
       />
     </div>
@@ -82,8 +81,8 @@
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted, nextTick } from 'vue';
+<script setup lang="ts">
+import { ref, onMounted, nextTick, useTemplateRef } from 'vue';
 import { useRoute } from 'vue-router';
 
 import MarkdownContainer from './MarkdownContainer.vue';
@@ -94,15 +93,16 @@ import { uploadPhoto } from '@/api/editPostAndComment/utils';
 const route = useRoute();
 
 const isPreview = ref(false);
-const textarea = ref(null);
+const textarea = useTemplateRef('textarea');
 
 const modelValue = defineModel({
 	type:String,
 	required:true
 })
 
-const emit = defineEmits(['send']);
+defineEmits(['send']);
 const autoResize = () => {
+	if(!textarea.value) return;
 	textarea.value.style.height = '450px';
 	textarea.value.style.height = textarea.value.scrollHeight + 'px';
 };
@@ -151,7 +151,8 @@ const handlePaste = async (event) => {
 	}
 };
 
-const editContent = (type) => {
+const editContent = (type:string) => {
+	if(!textarea.value) return;
 	let insertion = '';
 	let cursorOffset = 0;
 
@@ -212,6 +213,7 @@ const editContent = (type) => {
 
 	// 在下一个事件循环中设置光标位置
 	nextTick(() => {
+		if(!textarea.value) return;
 		textarea.value.focus();
 		textarea.value.setSelectionRange(
 			start + insertion.length + cursorOffset,

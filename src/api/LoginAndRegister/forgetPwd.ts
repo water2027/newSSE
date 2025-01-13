@@ -10,7 +10,7 @@ import { requestFunc } from "../req";
  * @param {string} valiCode
  * @returns
  */
-async function updatePassword(email, password1, password2, valiCode) {
+async function updatePassword(email:string, password1:string, password2:string, valiCode:string) {
 	try{
 		const res = await requestFunc(`/auth/modifyPassword`, {
 			method: 'POST',
@@ -24,7 +24,7 @@ async function updatePassword(email, password1, password2, valiCode) {
 				valiCode,
 			},
 		},false);
-		const data = await res.json();
+		const data = await res!.json();
 		return data;
 	}catch(e){
 		console.error(e);

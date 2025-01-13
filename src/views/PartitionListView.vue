@@ -34,7 +34,7 @@
     </div>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 const router = useRouter();
@@ -51,7 +51,7 @@ const partitions = ref([
  * @description 告诉HomeView.vue分区改了
  * @param p 分区
  */
-const sendPartition = (p) => {
+const sendPartition = (p:string) => {
 	emit('send-partition', p);
 	router.push('/');
 };

@@ -1,4 +1,3 @@
-import { getTokenWithExpiry } from "../auth";
 import { requestFunc } from "../req";
 
 /**
@@ -15,7 +14,7 @@ async function getInfo() {
 				'Content-Type': 'application/json',
 			},
 		},true);
-		const data = await res.json();
+		const data = await res!.json();
 		return data.data.user;
 	}catch(e){
 		alert(e)
@@ -28,7 +27,7 @@ async function getInfo() {
  * @param {String} userTelephone
  * @returns {Promise}
  */
-async function getAllInfo(userTelephone) {
+async function getAllInfo(userTelephone:string) {
 	try{
 		const res = await requestFunc(`/auth/getInfo`, {
 			method: 'POST',
@@ -37,7 +36,7 @@ async function getAllInfo(userTelephone) {
 			},
 			body: { phone: userTelephone },
 		},true);
-		const data = await res.json();
+		const data = await res!.json();
 		return data;
 	}catch(e){
 		alert(e)
@@ -45,7 +44,7 @@ async function getAllInfo(userTelephone) {
 	}
 }
 
-async function getInfoById(userID) {
+async function getInfoById(userID:number) {
 	try{
 		const res = await requestFunc(`/auth/getInfo`, {
 			method: 'POST',
@@ -54,7 +53,7 @@ async function getInfoById(userID) {
 			},
 			body: { userID },
 		},true);
-		const data = await res.json();
+		const data = await res!.json();
 		return data;
 	}catch(e){
 		alert(e)

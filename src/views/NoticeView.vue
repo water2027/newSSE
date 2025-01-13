@@ -62,7 +62,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, inject, onMounted, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -85,7 +85,7 @@ const noticesUnread = ref([]);
  * @param noticeID 通知ID
  * @returns void
  */
-const readComment = async (noticeID) => {
+const readComment = async (noticeID:number) => {
 	const res = await readNotice(noticeID);
 	if (res.status === 'success') {
     getNoticesFunc();
@@ -108,7 +108,7 @@ const readAll = async () => {
   nextTick(getNoticesFunc)
 };
 
-const changeToPost = async (postID,noticeID) => {
+const changeToPost = async (postID:number,noticeID:number) => {
   await readComment(noticeID);
   setTimeout(() => {
     router.push(`/postdetail/${postID}`);

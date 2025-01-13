@@ -6,7 +6,7 @@ import { requestFunc } from "../req";
  * @param {string} userTelephone 
  * @returns 
  */
-async function getCommentsByPostID(PostID, userTelephone) {
+async function getCommentsByPostID(PostID:number, userTelephone:string) {
 	try{
 		const res = await requestFunc(`/auth/showPcomments`, {
 			method: 'POST',
@@ -18,7 +18,7 @@ async function getCommentsByPostID(PostID, userTelephone) {
 				userTelephone: userTelephone,
 			},
 		},true);
-		const data = await res.json();
+		const data = await res!.json();
 		return data;
 	}catch(e){
 		console.error(e);

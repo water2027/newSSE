@@ -1,4 +1,15 @@
 import { requestFunc } from '../req';
+
+export interface getPostsObject {
+	limit: number;
+	offset: number;
+	partition: string;
+	searchsort: string;
+	searchinfo: string;
+	userTelephone: string;
+	tag: string;
+}
+
 /**
  *
  * @param {number} limit 返回多少个帖子
@@ -10,7 +21,7 @@ import { requestFunc } from '../req';
  * @param {string} tag 老师名字
  * @returns
  */
-async function getPosts(object) {
+async function getPosts(object: getPostsObject) {
 	try {
 		const res = await requestFunc(
 			`/auth/browse`,
@@ -23,12 +34,20 @@ async function getPosts(object) {
 			},
 			true
 		);
-		const data = await res.json();
+		const data = await res!.json();
 		return data;
 	} catch (e) {
 		console.error(e);
 		return null;
 	}
+}
+
+export interface getPostsNumObject {
+	partition: string;
+	searchsort: string;
+	searchinfo: string;
+	tag: string;
+	userTelephone: string;
 }
 
 /***
@@ -38,7 +57,7 @@ async function getPosts(object) {
  * @param {string} userTelephone
  * @returns {number} 返回帖子数量
  */
-async function getPostsNum(object) {
+async function getPostsNum(object: getPostsNumObject) {
 	try {
 		const res = await requestFunc(
 			`/auth/getPostNum`,
@@ -51,7 +70,7 @@ async function getPostsNum(object) {
 			},
 			true
 		);
-		const data = await res.json();
+		const data = await res!.json();
 		return data.Postcount;
 	} catch (e) {
 		console.error(e);
@@ -75,7 +94,7 @@ async function getHeatPosts() {
 			},
 			true
 		);
-		const data = await res.json();
+		const data = await res!.json();
 		return data;
 	} catch (e) {
 		console.error(e);
@@ -89,7 +108,7 @@ async function getHeatPosts() {
  * @param {string} userTelephone
  * @returns {object} 返回帖子详情
  */
-async function getPostByID(PostID, userTelephone) {
+async function getPostByID(PostID: number, userTelephone: string) {
 	const result = await updateBrowseNum(PostID, userTelephone);
 	if (!result) {
 		console.error('增加浏览量失败');
@@ -110,7 +129,7 @@ async function getPostByID(PostID, userTelephone) {
 			true
 		);
 		try {
-			const data = await res.json();
+			const data = await res!.json();
 			return data;
 		} catch (e) {
 			console.error(e);
@@ -128,7 +147,7 @@ async function getPostByID(PostID, userTelephone) {
 	}
 }
 
-async function updateBrowseNum(PostID, userTelephone) {
+async function updateBrowseNum(PostID: number, userTelephone: string) {
 	try {
 		const res = await requestFunc(
 			`/auth/updateBrowseNum`,
@@ -144,7 +163,7 @@ async function updateBrowseNum(PostID, userTelephone) {
 			},
 			true
 		);
-		return res.ok;
+		return res!.ok;
 	} catch (e) {
 		console.error(e);
 		return false;

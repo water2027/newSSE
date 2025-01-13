@@ -2,12 +2,12 @@ import { setPassword } from './utils';
 import { requestFunc } from '../req';
 
 async function userRegister(
-	CDKey,
-	email,
-	name,
-	password1,
-	password2,
-	valiCode
+	CDKey: string,
+	email:string,
+	name:string,
+	password1:string,
+	password2:string,
+	valiCode:string
 ) {
 	try {
 		const res = await requestFunc(
@@ -29,7 +29,7 @@ async function userRegister(
 			},
 			false
 		);
-		const data = await res.json();
+		const data = await res!.json();
 		return data;
 	} catch (e) {
 		alert(e);

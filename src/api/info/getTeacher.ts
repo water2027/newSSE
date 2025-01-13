@@ -10,7 +10,7 @@ async function getTeachers() {
 			method: 'GET',
 			headers: {},
 		},true);
-		const data = await res.json();
+		const data = await res!.json();
 		return data.data.tags;
 	}catch(e){
 		alert(e)

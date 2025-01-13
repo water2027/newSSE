@@ -228,7 +228,7 @@
     </main>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import {
 	computed,
 	onMounted,
@@ -238,6 +238,7 @@ import {
 	shallowRef,
 	defineAsyncComponent,
 	onUnmounted,
+	useTemplateRef
 } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -245,6 +246,7 @@ import { getNoticesNum } from '@/api/notice/notice';
 import { getChatNotice } from '@/api/chat/chat';
 
 import { Icon } from '@iconify/vue';
+import { showMsg } from '@/components/MessageBox';
 
 const HeatList = defineAsyncComponent(
 	() => import('@/components/HeatList.vue')
@@ -318,7 +320,7 @@ const heatPostsIsHidden = computed(() => {
 
 const chatNum = ref(0);
 
-const noticeNum = ref('');
+const noticeNum = ref(0);
 const reduceNoticeNum = () => {
 	noticeNum.value--;
 };
@@ -356,7 +358,7 @@ const changeToHistory = () => {
 	searchinfo.value = '';
 	searchsort.value = 'history';
 };
-const changePathHandler = (path) => {
+const changePathHandler = (path:string) => {
 	switch (path) {
 		case 'main':
 			changeToMain();
@@ -381,8 +383,12 @@ const changePathHandler = (path) => {
         （这点都省你怎么不直接从html写起？）
         能省一点就省一点，今天还被指责性能差了:-(
  */
-const sinfo = ref(null);
+const sinfo = useTemplateRef('sinfo');
 const search = () => {
+	if(!sinfo.value){
+		showMsg('意外错误，不是你的问题')
+		return;
+	}
 	searchinfo.value = sinfo.value.value;
 	sinfo.value.value = '';
 	router.push('/');
@@ -392,7 +398,7 @@ const search = () => {
  * @description 这是分区页面的回调函数，分区页面选择分区后调用
  * @param p 分区名
  */
-const sendPartition = (p) => {
+const sendPartition = (p:string) => {
 	partition.value = p;
 	searchinfo.value = '';
 	searchsort.value = 'home';
@@ -422,11 +428,11 @@ const startY = ref(0);
 const endY = ref(0);
 const headerHeight = ref('3em');
 
-const handleTouchStart = (event) => {
+const handleTouchStart = (event:TouchEvent) => {
 	startY.value = event.touches[0].clientY;
 };
 
-const handleTouchEnd = (event) => {
+const handleTouchEnd = (event:TouchEvent) => {
 	endY.value = event.changedTouches[0].clientY;
 	// 如果两者相差不大，不触发
 	if (Math.abs(startY.value - endY.value) < 10) {
@@ -448,7 +454,7 @@ onMounted(async () => {
 	const path = window.location.pathname.replace(baseUrl, '');
 	changePathHandler(path);
 	getNoticesNumFunc();
-	updateChatNum();
+	updateChatNum(undefined);
 	window.addEventListener('resize', updateWidth);
   if(!isPC.value) {
     window.addEventListener('touchstart', handleTouchStart);

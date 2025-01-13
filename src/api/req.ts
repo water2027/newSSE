@@ -3,6 +3,13 @@ import { showMsg } from '@/components/MessageBox';
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
+export interface ReqObject {
+	method: string;
+	headers?: HeadersInit;
+	body?: object | null;
+	query?: Record<string, string>;
+}
+
 /***
  * @param {string} url api地址，只需写https://ssemarket.cn/api 后的部分
  * @param {{method:string,headers:object,body:object|null}} object 请求体
@@ -13,15 +20,20 @@ const apiUrl = import.meta.env.VITE_API_BASE_URL;
  * },
  *  true)
  */
-async function requestFunc(url, object, tokenIsNeeded) {
+async function requestFunc(
+	url: string,
+	object: ReqObject,
+	tokenIsNeeded: boolean = true
+) {
 	if (tokenIsNeeded) {
-		const token = getTokenWithExpiry('token');
+		const token = getTokenWithExpiry();
 		if (!token) {
 			showMsg('登录过期，请重新登录');
 			window.location.reload();
 			return null;
 		}
-		const finalUrl = `${apiUrl}${url}?` + new URLSearchParams(object.query).toString();
+		const finalUrl =
+			`${apiUrl}${url}?` + new URLSearchParams(object.query).toString();
 		const res = await fetch(`${finalUrl}`, {
 			method: object.method,
 			headers: {

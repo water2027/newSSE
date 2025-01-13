@@ -11,12 +11,12 @@ import { requestFunc } from "../req";
  * @returns 
  */
 async function sendPost(
-	content,
-	partition,
-	photos,
-	tagList,
-	title,
-	userTelephone
+	content:string,
+	partition:string,
+	photos:string,
+	tagList:string,
+	title:string,
+	userTelephone:string
 ) {
 	try{
 		const res = await requestFunc(`/auth/post`, {
@@ -33,7 +33,7 @@ async function sendPost(
 				userTelephone: userTelephone,
 			},
 		},true);
-		const data = await res.json();
+		const data = await res!.json();
 		return data;
 	}catch(e){
 		console.error(e);
@@ -46,7 +46,7 @@ async function sendPost(
  * @param {number} postID 
  * @returns 
  */
-async function delPost(postID){
+async function delPost(postID:number){
 	try{
 		const res = await requestFunc(`/auth/deletePost`,{
 			method: 'POST',
@@ -57,7 +57,7 @@ async function delPost(postID){
 				postID:postID
 			}
 		},true);
-		const data = await res.json();
+		const data = await res!.json();
 		return data
 	}catch(e){
 		console.error(e);

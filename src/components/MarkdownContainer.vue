@@ -8,7 +8,7 @@
     v-html="safeHTML"
   ></div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue';
 
 import MarkdownIt from 'markdown-it';
@@ -58,7 +58,6 @@ const md = new MarkdownIt({
 		}
 		return `<pre class="hljs"><code>${md.utils.escapeHtml(str)}</code></pre>`;
 	},
-	breaks: true,
 	xhtmlOut: true,
 	langPrefix: 'language-',
 }).use(mk, {

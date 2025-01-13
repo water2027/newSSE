@@ -1,6 +1,6 @@
 import { requestFunc } from '../req';
 
-async function getChatHistory(senderUserID, targetUserID) {
+async function getChatHistory(senderUserID:number, targetUserID:number) {
   try {
     const res = await requestFunc(
       `/auth/getChatHistory`,
@@ -9,18 +9,21 @@ async function getChatHistory(senderUserID, targetUserID) {
         headers: {
           'Content-Type': 'application/json',
         },
-        query: { senderUserID, targetUserID },
-      },
-      true
+        // query: { senderUserID, targetUserID },
+        query:{
+          senderUserID:senderUserID.toString(),
+          targetUserID:targetUserID.toString()
+        }
+      }
     );
-    const data = await res.json();
+    const data = await res!.json();
     return data;
   } catch (e) {
     console.error(e);
   }
 }
 
-async function getChatNotice(userID) {
+async function getChatNotice(userID:number) {
   try {
     const res = await requestFunc(
       `/auth/getChatNotice`,
@@ -29,11 +32,14 @@ async function getChatNotice(userID) {
         headers: {
           'Content-Type': 'application/json',
         },
-        query: { userID },
+        // query: { userID },
+        query:{
+          userID:userID.toString()
+        }
       },
       true
     );
-    const data = await res.json();
+    const data = await res!.json();
     return data;
   } catch (e) {
     console.error(e);

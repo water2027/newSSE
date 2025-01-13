@@ -17,7 +17,7 @@
     </router-link>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { shallowRef, onMounted } from 'vue';
 
 import { getHeatPosts } from '@/api/browse/getPost';

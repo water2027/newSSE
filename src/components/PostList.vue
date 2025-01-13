@@ -1,46 +1,46 @@
 <template>
-  <div class="root">
-    <h2>当前分区：{{ partition }}</h2>
-    <div v-if="partition === '课程专区'">
-      <span class="gradientUnderline">请选择你的老师，不选也没关系 </span>
-      <select
-        v-if="partition === '课程专区'"
-        id="teacher"
-        v-model="tag"
-      >
-        <option
-          v-for="teacher in teachers"
-          :key="teacher.TagID"
-          :value="teacher.Name"
-        >
-          {{ teacher.Name }}
-        </option>
-      </select>
-    </div>
-    <transition-group name="list">
-      <post-card
-        v-for="post in posts"
-        :key="post.PostID"
-        :post="post"
-        :delete-handler="deleteHandler"
-      />
-    </transition-group>
-    <div
-      v-if="isLoading"
-      ref="bottom"
-      class="bottomDiv"
-    >
-      loading...
-    </div>
-    <div
-      v-else
-      class="bottomDiv"
-    >
-      noMore
-    </div>
-  </div>
+	<div class="root">
+		<h2>当前分区：{{ partition }}</h2>
+		<div v-if="partition === '课程专区'">
+			<span class="gradientUnderline">请选择你的老师，不选也没关系 </span>
+			<select
+				v-if="partition === '课程专区'"
+				id="teacher"
+				v-model="tag"
+			>
+				<option
+					v-for="teacher in teachers"
+					:key="teacher.TagID"
+					:value="teacher.Name"
+				>
+					{{ teacher.Name }}
+				</option>
+			</select>
+		</div>
+		<transition-group name="list">
+			<post-card
+				v-for="post in posts"
+				:key="post.PostID"
+				:post="post"
+				:delete-handler="deleteHandler"
+			/>
+		</transition-group>
+		<div
+			v-if="isLoading"
+			ref="bottom"
+			class="bottomDiv"
+		>
+			loading...
+		</div>
+		<div
+			v-else
+			class="bottomDiv"
+		>
+			noMore
+		</div>
+	</div>
 </template>
-<script setup>
+<script setup lang="ts">
 import {
 	ref,
 	onMounted,
@@ -73,7 +73,7 @@ const teachers = ref([]);
 const tag = ref('');
 // 用于滚动加载
 const bottom = ref(null);
-let observer = null;
+let observer: IntersectionObserver;
 
 const updateNum = async () => {
 	const id = await getPostsNum({
@@ -103,7 +103,7 @@ const addPosts = async () => {
 	}
 };
 
-const updatePosts = async (id) => {
+const updatePosts = async (id: number) => {
 	// 从posts中删除PostID为id的post
 	try {
 		const index = posts.value.findIndex((post) => post.PostID === id);
@@ -191,7 +191,7 @@ onActivated(async () => {
 		userTelephone: userInfo.value.phone,
 		tag: tag.value,
 	});
-	if (id > totalNum.value&&id-totalNum.value<=100) {
+	if (id > totalNum.value && id - totalNum.value <= 100) {
 		const res = await getPosts({
 			limit: id - totalNum.value,
 			offset: 0,
@@ -204,131 +204,44 @@ onActivated(async () => {
 		if (res) {
 			posts.value = [...res, ...posts.value];
 		}
-		curPage.value += id - totalNum.value
+		curPage.value += id - totalNum.value;
 		totalNum.value = id;
 	}
 });
 
 onBeforeRouteLeave((to, from, next) => {
-  scrollTop.value = document.body.scrollTop;
-  next();
+	scrollTop.value = document.body.scrollTop;
+	next();
 });
 
-/**
- * 这四个watch之后可以考虑改成watchEffect
- */
-watch(partition, async (newVal) => {
-	endObserver();
-	posts.value = [];
-	curPage.value = 0;
-	const arr = await getPosts({
-		limit: limit.value,
-		offset: curPage.value,
-		partition: newVal,
-		searchsort: searchsort.value,
-		searchinfo: searchinfo.value,
-		userTelephone: userInfo.value.phone,
-		tag: tag.value,
-	});
-	posts.value = arr;
-	curPage.value = arr.length;
-	const id = await getPostsNum({
-		partition: newVal,
-		searchsort: searchsort.value,
-		searchinfo: searchinfo.value,
-		userTelephone: userInfo.value.phone,
-		tag: tag.value,
-	});
-	totalNum.value = id;
-	if (newVal === '课程专区') {
-		const data = await getTeachers();
-		teachers.value = ['', ...data];
-	}
-	startObserver();
-});
-watch(searchinfo, async (newVal) => {
-	endObserver();
-	posts.value = [];
-	curPage.value = 0;
-	const arr = await getPosts({
-		limit: limit.value,
-		offset: curPage.value,
-		partition: partition.value,
-		searchsort: searchsort.value,
-		searchinfo: newVal,
-		userTelephone: userInfo.value.phone,
-		tag: tag.value,
-	});
-	posts.value = arr;
-	curPage.value = arr.length;
-	const id = await getPostsNum({
-		partition: partition.value,
-		searchsort: searchsort.value,
-		searchinfo: newVal,
-		userTelephone: userInfo.value.phone,
-		tag: tag.value,
-	});
-	totalNum.value = id;
-	startObserver();
-});
-watch(searchsort, async (newVal) => {
-	endObserver();
-	posts.value = [];
-	curPage.value = 0;
-	const arr = await getPosts({
-		limit: limit.value,
-		offset: curPage.value,
-		partition: partition.value,
-		searchsort: newVal,
-		searchinfo: searchinfo.value,
-		userTelephone: userInfo.value.phone,
-		tag: tag.value,
-	});
-	posts.value = arr;
-	curPage.value = arr.length;
-	const id = await getPostsNum({
-		partition: partition.value,
-		searchsort: newVal,
-		searchinfo: searchinfo.value,
-		userTelephone: userInfo.value.phone,
-		tag: tag.value,
-	});
-	totalNum.value = id;
-	startObserver();
-});
-watch(tag, async (newVal) => {
-	endObserver();
-	posts.value = [];
-	curPage.value = 0;
-	const arr = await getPosts({
-		limit: limit.value,
-		offset: curPage.value,
-		partition: partition.value,
-		searchsort: searchsort.value,
-		searchinfo: searchinfo.value,
-		userTelephone: userInfo.value.phone,
-		tag: newVal,
-	});
-	posts.value = arr;
-	// 后端bug，不管有没有tag，都返回课程专区总帖子数量
-	const id = await getPostsNum({
-		partition: partition.value,
-		searchsort: searchsort.value,
-		searchinfo: searchinfo.value,
-		userTelephone: userInfo.value.phone,
-		tag: newVal,
-	});
-	totalNum.value = id;
-	if (!arr) {
+watch(
+	[partition, searchinfo, searchsort, tag],
+	async ([newPartition, newSearchinfo, newSearchsort, newTag]) => {
+		endObserver();
+		posts.value = [];
 		curPage.value = 0;
-		totalNum.value = 0;
-	} else {
+		const arr = await getPosts({
+			limit: limit.value,
+			offset: curPage.value,
+			partition: newPartition,
+			searchsort: newSearchsort,
+			searchinfo: newSearchinfo,
+			userTelephone: userInfo.value.phone,
+			tag: newTag,
+		});
+		posts.value = arr;
 		curPage.value = arr.length;
-		totalNum.value = arr.length < 5 ? arr.length : id;
+		const id = await getPostsNum({
+			partition: newPartition,
+			searchsort: newSearchsort,
+			searchinfo: newSearchinfo,
+			userTelephone: userInfo.value.phone,
+			tag: newTag,
+		});
+		totalNum.value = id;
+		startObserver();
 	}
-	startObserver();
-});
-
+);
 </script>
 
 <style scoped>
