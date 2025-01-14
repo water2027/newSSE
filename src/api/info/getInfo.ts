@@ -1,4 +1,20 @@
-import { requestFunc } from "../req";
+import { requestFunc } from '../req';
+
+export interface getInfoResponse {
+	code: number;
+	data: {
+		user: UserInfo;
+	} | null;
+}
+
+export interface UserInfo {
+	userID: number;
+	name: string;
+	avatarURL: string;
+	phone: string;
+	email: string;
+	identity: string;
+}
 
 /**
  * @description 获取用户的邮箱、身份、用户名、手机
@@ -6,20 +22,44 @@ import { requestFunc } from "../req";
  *
  * @returns {Promise}
  */
-async function getInfo() {
-	try{
-		const res = await requestFunc(`/auth/info`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
+async function getInfo(): Promise<UserInfo> {
+	try {
+		const res = await requestFunc(
+			`/auth/info`,
+			{
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+				},
 			},
-		},true);
+			true
+		);
 		const data = await res!.json();
 		return data.data.user;
-	}catch(e){
-		alert(e)
+	} catch (e) {
+		alert(e);
 		console.error(e);
+		return {
+			userID: 0,
+			name: '',
+			avatarURL: '',
+			phone: '',
+			email: '',
+			identity: '',
+		};
 	}
+}
+
+export interface AllInfo {
+	avatarURL: string;
+	ban: string;
+	email: string;
+	intro: string;
+	name: string;
+	phone: string;
+	punishnum: number;
+	score: number;
+	userID: number;
 }
 
 /**
@@ -27,36 +67,55 @@ async function getInfo() {
  * @param {String} userTelephone
  * @returns {Promise}
  */
-async function getAllInfo(userTelephone:string) {
-	try{
-		const res = await requestFunc(`/auth/getInfo`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
+async function getAllInfo(userTelephone: string): Promise<AllInfo> {
+	try {
+		const res = await requestFunc(
+			`/auth/getInfo`,
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: { phone: userTelephone },
 			},
-			body: { phone: userTelephone },
-		},true);
+			true
+		);
 		const data = await res!.json();
 		return data;
-	}catch(e){
-		alert(e)
+	} catch (e) {
+		alert(e);
 		console.error(e);
+		return {
+			avatarURL: '',
+			ban: '',
+			email: '',
+			intro: '',
+			name: '',
+			phone: '',
+			punishnum: 0,
+			score: 0,
+			userID: 0,
+		};
 	}
 }
 
-async function getInfoById(userID:number) {
-	try{
-		const res = await requestFunc(`/auth/getInfo`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
+async function getInfoById(userID: number) {
+	try {
+		const res = await requestFunc(
+			`/auth/getInfo`,
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: { userID },
 			},
-			body: { userID },
-		},true);
+			true
+		);
 		const data = await res!.json();
 		return data;
-	}catch(e){
-		alert(e)
+	} catch (e) {
+		alert(e);
 		console.error(e);
 	}
 }

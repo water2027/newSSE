@@ -2,12 +2,16 @@ import { requestFunc } from '../req';
 
 /**
  * @description 给帖子发评论
- * @param {string} content 
- * @param {number} postID 
- * @param {string} userTelephone 
- * @returns 
+ * @param {string} content
+ * @param {number} postID
+ * @param {string} userTelephone
+ * @returns
  */
-async function sendComment(content:string, postID:number, userTelephone:string) {
+async function sendComment(
+	content: string,
+	postID: number,
+	userTelephone: string
+) {
 	try {
 		const res = await requestFunc(
 			`/auth/postPcomment`,
@@ -32,19 +36,19 @@ async function sendComment(content:string, postID:number, userTelephone:string) 
 }
 
 export interface sendPCommentObject {
-	content:string;
-	userTelephone:string;
-	postID:number;
-	pcommentID:number;
-	ccommentID?:number;
+	content: string;
+	userTelephone: string;
+	postID: number;
+	pcommentID: number;
+	ccommentID?: number;
 }
 
 /**
  * @description 给评论发评论
  * @param {{content:string,userTelephone:string,postID:number,pcommentID:number}} object 如果是给评论的评论发评论，需要多一个ccommentID:number
- * @returns 
+ * @returns
  */
-async function sendPComment(object:sendPCommentObject) {
+async function sendPComment(object: sendPCommentObject) {
 	try {
 		const res = await requestFunc(
 			`/auth/postCcomment`,
@@ -65,11 +69,11 @@ async function sendPComment(object:sendPCommentObject) {
 }
 
 /**
- * 
- * @param {number} pcommentID 
- * @returns 
+ *
+ * @param {number} pcommentID
+ * @returns
  */
-async function delComment(pcommentID:number) {
+async function delComment(pcommentID: number) {
 	try {
 		const res = await requestFunc(
 			`/auth/deletePcomment`,
@@ -92,11 +96,11 @@ async function delComment(pcommentID:number) {
 }
 
 /**
- * 
- * @param {number} ccommentID 
- * @returns 
+ *
+ * @param {number} ccommentID
+ * @returns
  */
-async function delCcomment(ccommentID:number) {
+async function delCcomment(ccommentID: number) {
 	try {
 		const res = await requestFunc(
 			`/auth/deleteCcomment`,
