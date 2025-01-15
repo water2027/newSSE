@@ -37,7 +37,7 @@
     </basic-card>
   </router-link>
 </template>
-<script setup>
+<script setup lang="ts">
 import { ref, inject, onMounted } from 'vue';
 
 import { showMsg } from '@/components/MessageBox';
@@ -75,6 +75,7 @@ const handleSave = async () => {
 		showMsg(postData.value.IsSaved ? '收藏成功' : '取消成功');
 	} catch (e) {
 		showMsg('失败了:-(');
+		console.error(e)
 	}
 };
 
@@ -84,7 +85,7 @@ const handleSave = async () => {
 const like = async () => {
 	//后端没有返回数据，不要赋值后再更新
 	try{
-		const res = await likePost(postData.value.PostID,userInfo.value.phone);
+		const res = await likePost(postData.value.PostID, userInfo.value.phone);
 		if(res){
 			return true;
 		}else{
@@ -105,6 +106,7 @@ const deleteFunc = async () => {
 		await delPost(postData.value.PostID);
 		return postData.value.PostID;
 	} catch (e) {
+		console.error(e)
 		return 0;
 	}
 };

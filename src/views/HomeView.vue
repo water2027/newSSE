@@ -238,7 +238,7 @@ import {
 	shallowRef,
 	defineAsyncComponent,
 	onUnmounted,
-	useTemplateRef
+	useTemplateRef,
 } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -358,7 +358,7 @@ const changeToHistory = () => {
 	searchinfo.value = '';
 	searchsort.value = 'history';
 };
-const changePathHandler = (path:string) => {
+const changePathHandler = (path: string) => {
 	switch (path) {
 		case 'main':
 			changeToMain();
@@ -385,8 +385,8 @@ const changePathHandler = (path:string) => {
  */
 const sinfo = useTemplateRef('sinfo');
 const search = () => {
-	if(!sinfo.value){
-		showMsg('意外错误，不是你的问题')
+	if (!sinfo.value) {
+		showMsg('意外错误，不是你的问题');
 		return;
 	}
 	searchinfo.value = sinfo.value.value;
@@ -398,7 +398,7 @@ const search = () => {
  * @description 这是分区页面的回调函数，分区页面选择分区后调用
  * @param p 分区名
  */
-const sendPartition = (p:string) => {
+const sendPartition = (p: string) => {
 	partition.value = p;
 	searchinfo.value = '';
 	searchsort.value = 'home';
@@ -409,11 +409,15 @@ const sendPartition = (p:string) => {
  */
 const getNoticesNumFunc = async () => {
 	const temp = await getNoticesNum();
+	if (!temp) {
+		showMsg('获取通知数量失败');
+		return;
+	}
 	notices.value = temp;
 	noticeNum.value = temp.unreadTotalNum;
 };
 
-const updateChatNum = async (n) => {
+const updateChatNum = async (n: number | undefined) => {
 	if (n !== undefined) {
 		chatNum.value = n;
 	} else {
@@ -428,11 +432,11 @@ const startY = ref(0);
 const endY = ref(0);
 const headerHeight = ref('3em');
 
-const handleTouchStart = (event:TouchEvent) => {
+const handleTouchStart = (event: TouchEvent) => {
 	startY.value = event.touches[0].clientY;
 };
 
-const handleTouchEnd = (event:TouchEvent) => {
+const handleTouchEnd = (event: TouchEvent) => {
 	endY.value = event.changedTouches[0].clientY;
 	// 如果两者相差不大，不触发
 	if (Math.abs(startY.value - endY.value) < 10) {
@@ -456,17 +460,17 @@ onMounted(async () => {
 	getNoticesNumFunc();
 	updateChatNum(undefined);
 	window.addEventListener('resize', updateWidth);
-  if(!isPC.value) {
-    window.addEventListener('touchstart', handleTouchStart);
-    window.addEventListener('touchend', handleTouchEnd);
-  }
+	if (!isPC.value) {
+		window.addEventListener('touchstart', handleTouchStart);
+		window.addEventListener('touchend', handleTouchEnd);
+	}
 });
 onUnmounted(() => {
-  window.removeEventListener('resize', updateWidth);
-  if(!isPC.value) {
-    window.removeEventListener('touchstart', handleTouchStart);
-    window.removeEventListener('touchend', handleTouchEnd);
-  }
+	window.removeEventListener('resize', updateWidth);
+	if (!isPC.value) {
+		window.removeEventListener('touchstart', handleTouchStart);
+		window.removeEventListener('touchend', handleTouchEnd);
+	}
 });
 </script>
 

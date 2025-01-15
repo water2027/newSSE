@@ -143,13 +143,24 @@ import {
 
 import { sendCode } from '@/api/LoginAndRegister/utils';
 import { getAllInfo } from '@/api/info/getInfo';
+import type { AllInfo } from '@/api/info/getInfo';
 import { updateUserInfo, uploadAvatar } from '@/api/info/updateInfo';
 import { updatePassword } from '@/api/LoginAndRegister/forgetPwd';
 
 const router = useRouter();
 
 const userInfo = inject('userInfo');
-const allInfo = ref({});
+const allInfo = ref<AllInfo>({
+	avatarURL: '',
+	email: '',
+	intro: '',
+	name: '',
+	phone: '',
+	score: -1,
+	userID: -1,
+	ban:'',
+	punishnum:0,
+});
 const VCode = useTemplateRef('VCode');
 const password1 = useTemplateRef('password1');
 const password2 = useTemplateRef('password2');
@@ -158,13 +169,17 @@ const codeHandler = async () => {
 	try {
 		await sendCode(allInfo.value.email, 1);
 		showMsg('验证码发过去啦');
-	} catch (e) {
-		showMsg(e);
+	} catch (e:unknown) {
+		showMsg(e as string);
 	}
 };
 
 const updatePasswordFunc = async () => {
-	if (password1.value?.value === '' || password2.value?.value === '') {
+	if(!password1.value||!password2.value||!VCode.value){
+		showMsg('未知错误');
+		return;
+	}
+	if (password1.value.value === '' || password2.value.value === '') {
 		showMsg('密码不能为空');
 		return;
 	}
@@ -180,8 +195,8 @@ const updatePasswordFunc = async () => {
 			VCode.value.value
 		);
 		showMsg(res.msg);
-	} catch (e) {
-		showMsg(e);
+	} catch (e:unknown) {
+		showMsg(e as string);
 	}
 };
 

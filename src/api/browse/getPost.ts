@@ -84,7 +84,7 @@ export interface getPostsNumResponse {
  */
 async function getPostsNum(
 	object: getPostsNumObject
-): Promise<getPostsNumResponse> {
+): Promise<number> {
 	try {
 		const res = await requestFunc(
 			`/auth/getPostNum`,
@@ -101,11 +101,11 @@ async function getPostsNum(
 		return data.Postcount;
 	} catch (e) {
 		console.error(e);
-		return { Postcount: -1 };
+		return -1;
 	}
 }
 
-export interface getHeatPostsResponse {
+export interface HeatPost {
 	PostID: number;
 	Title: string;
 	Heat: number;
@@ -115,7 +115,7 @@ export interface getHeatPostsResponse {
  * @description 获取热门帖子
  * @returns 帖子数组
  */
-async function getHeatPosts(): Promise<getHeatPostsResponse[]> {
+async function getHeatPosts(): Promise<HeatPost[]> {
 	try {
 		const res = await requestFunc(
 			`/auth/calculateHeat`,

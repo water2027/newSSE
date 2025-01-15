@@ -10,7 +10,7 @@
     >
       <template #userButtons>
         <button
-          v-if="commentData.UserTelephone === userInfo.phone"
+          v-if="comment.authorTelephone === userInfo.phone"
           @click.stop.prevent="handler('delete')"
         >
           删除
@@ -32,8 +32,8 @@
     </basic-card>
   </div>
 </template>
-<script setup>
-import { ref, inject, defineAsyncComponent } from 'vue';
+<script setup lang="ts">
+import { ref, inject, defineAsyncComponent, useTemplateRef } from 'vue';
 
 import BasicCard from './BasicCard.vue';
 const MarkdownEditor = defineAsyncComponent(()=>import('../MarkdownEditor.vue'))
@@ -42,22 +42,18 @@ import {
 	sendPComment,
 	delCcomment,
 } from '@/api/editPostAndComment/editComment';
+import type { SubComment } from '@/api/browse/getComment';
 import {
 	likeCommentComment,
 } from '@/api/SaveAndLike/SaveAndLike';
 import { showMsg } from '../MessageBox';
 
-const props = defineProps({
-	comment: {
-		type: Object,
-		required: true,
-	},
-	pCommentId: {
-		type: Number,
-		required: false,
-		default: 0,
-	},
-});
+interface myProps {
+	comment: SubComment,
+	pCommentId:number
+}
+
+const props = defineProps<myProps>();
 // 不能直接修改props，所以要用ref包装
 // 后端命名真该死啊
 const commentData = ref({
@@ -78,14 +74,14 @@ const commentButtonIsShow = ref(false);
 const commentContent = ref('');
 
 const userInfo = inject('userInfo');
-const root = ref(null);
+const root = useTemplateRef('root');
 
 /**
  * @description 发送评论
  */
-const sendCommentFunc = async (phone, id) => {
+const sendCommentFunc = async (phone:string, id:number) => {
 	try {
-		let sendingData = {
+		const sendingData = {
 			content: commentContent.value,
 			userTelephone: phone,
 			postID: id,
@@ -109,7 +105,7 @@ const sendCommentFunc = async (phone, id) => {
 
 const deleteFunc = async () => {
 	let id;
-	if (props.comment.hasOwnProperty('ccommentID')) {
+	if ('ccommentID' in props.comment) {
 		id = props.comment.ccommentID;
 		const res = await delCcomment(id);
 		if (res) {
@@ -120,7 +116,7 @@ const deleteFunc = async () => {
 	}
 };
 
-const handler = (type)=>{
+const handler = (type:'delete'|'comment')=>{
 	let event;
 	switch(type){
 		case 'delete':
@@ -138,7 +134,7 @@ const handler = (type)=>{
 		default:
 			break;
 	}
-	root.value.dispatchEvent(event)
+	root.value?.dispatchEvent(event)
 }
 
 /**

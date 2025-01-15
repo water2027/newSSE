@@ -39,8 +39,8 @@
     </basic-card>
   </div>
 </template>
-<script setup>
-import { ref, inject, defineAsyncComponent } from 'vue';
+<script setup lang="ts">
+import { ref, inject, defineAsyncComponent, useTemplateRef } from 'vue';
 
 import { showMsg } from '@/components/MessageBox';
 import BasicCard from './BasicCard.vue';
@@ -64,7 +64,7 @@ const commentButtonIsShow = ref(false);
 const commentContent = ref('');
 
 const userInfo = inject('userInfo');
-const root = ref(null);
+const root = useTemplateRef('root');
 
 /**
  * @description 发送评论
@@ -84,7 +84,7 @@ const sendCommentFunc = async () => {
 	}
 };
 
-const handler = (type) => {
+const handler = (type:'comment') => {
 	let event;
 	switch (type) {
 		case 'comment':
@@ -96,7 +96,7 @@ const handler = (type) => {
 		default:
 			break;
 	}
-	root.value.dispatchEvent(event);
+	root.value?.dispatchEvent(event);
 };
 
 /**
@@ -105,14 +105,12 @@ const handler = (type) => {
 const handleSave = async () => {
 	//后端没有返回数据，不要赋值后再更新
 	try {
-		await savePost(
-			postData.value.PostID,
-			userInfo.value.phone
-		);
+		await savePost(postData.value.PostID, userInfo.value.phone);
 		postData.value.IsSaved = !postData.value.IsSaved;
 		showMsg(postData.value.IsSaved ? '收藏成功' : '取消成功');
 	} catch (e) {
 		showMsg('失败了:-(');
+		console.error(e);
 	}
 };
 
@@ -122,12 +120,10 @@ const handleSave = async () => {
 const like = async () => {
 	//后端没有返回数据，不要赋值后再更新
 	try {
-		const res = await likePost(
-			postData.value.PostID,
-			userInfo.value.phone
-		);
+		const res = await likePost(postData.value.PostID, userInfo.value.phone);
 		return res;
 	} catch (e) {
+		console.error(e);
 		return false;
 	}
 };

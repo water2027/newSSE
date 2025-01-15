@@ -21,9 +21,10 @@
 import { shallowRef, onMounted } from 'vue';
 
 import { getHeatPosts } from '@/api/browse/getPost';
+import type { HeatPost } from '@/api/browse/getPost';
 import { showMsg } from '@/components/MessageBox';
 
-const heatPosts = shallowRef([]);
+const heatPosts = shallowRef<HeatPost[]>([]);
 
 onMounted(async () => {
 	try {

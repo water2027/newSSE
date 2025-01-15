@@ -52,7 +52,7 @@
         <span>{{ strHandler('time', notice.time) }}</span>
         <div>
           <button
-            @click="changeToPost(notice.postID)"
+            @click="changeToPost(notice.postID, notice.noticeID)"
           >
             查看原帖
           </button>
@@ -63,10 +63,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject, onMounted, nextTick } from 'vue';
+import { ref, inject, onMounted, nextTick, Ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { getNotices, readNotice, getNoticesNum } from '@/api/notice/notice';
+import type { Notice, NoticeNum } from '@/api/notice/notice';
 
 import { strHandler } from '@/utils/strHandler';
 
@@ -74,11 +75,11 @@ import { showMsg } from '@/components/MessageBox';
 
 const router = useRouter();
 
-const { reduceNoticeNum } = inject('noticeNum')
-const notices = inject('notices');
+const { reduceNoticeNum } = inject('noticeNum') as { reduceNoticeNum: () => void };
+const notices = inject('notices') as Ref<NoticeNum>;
 const readPage = ref(true);
-const noticesRead = ref([]);
-const noticesUnread = ref([]);
+const noticesRead = ref<Notice[]>([]);
+const noticesUnread = ref<Notice[]>([]);
 
 /**
  * @description 标记通知为已读
@@ -118,12 +119,13 @@ const changeToPost = async (postID:number,noticeID:number) => {
 const getNoticesFunc = async ()=>{
 	const read = await getNotices(0, notices.value.readTotalNum, 1);
 	const unread = await getNotices(0, notices.value.unreadTotalNum, 0);
-  if(read.noticeList){
+  // 如果read有noticeList
+  if('noticeList' in read){
     noticesRead.value = read.noticeList.filter((item) => item.postID !== 0);
   }else{
     noticesRead.value = []
   }
-  if(unread.noticeList){
+  if('noticeList' in unread){
     noticesUnread.value = unread.noticeList;
   }else{
     noticesUnread.value = []
@@ -133,7 +135,11 @@ const getNoticesFunc = async ()=>{
 onMounted(async () => {
 	//处理在通知页面刷新/直接打开通知页面的情况
 	if (!notices.value.readTotalNum||!notices.value.unreadTotalNum) {
-		notices.value = await getNoticesNum();
+		const res = await getNoticesNum();
+    if(!res){
+      return;
+    }
+    notices.value = res;
 	}
   getNoticesFunc();
 });

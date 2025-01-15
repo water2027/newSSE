@@ -1,44 +1,44 @@
 <template>
-	<div class="root">
-		<h2>当前分区：{{ partition }}</h2>
-		<div v-if="partition === '课程专区'">
-			<span class="gradientUnderline">请选择你的老师，不选也没关系 </span>
-			<select
-				v-if="partition === '课程专区'"
-				id="teacher"
-				v-model="tag"
-			>
-				<option
-					v-for="teacher in teachers"
-					:key="teacher.TagID"
-					:value="teacher.Name"
-				>
-					{{ teacher.Name }}
-				</option>
-			</select>
-		</div>
-		<transition-group name="list">
-			<post-card
-				v-for="post in posts"
-				:key="post.PostID"
-				:post="post"
-				:delete-handler="deleteHandler"
-			/>
-		</transition-group>
-		<div
-			v-if="isLoading"
-			ref="bottom"
-			class="bottomDiv"
-		>
-			loading...
-		</div>
-		<div
-			v-else
-			class="bottomDiv"
-		>
-			noMore
-		</div>
-	</div>
+  <div class="root">
+    <h2>当前分区：{{ partition }}</h2>
+    <div v-if="partition === '课程专区'">
+      <span class="gradientUnderline">请选择你的老师，不选也没关系 </span>
+      <select
+        v-if="partition === '课程专区'"
+        id="teacher"
+        v-model="tag"
+      >
+        <option
+          v-for="teacher in teachers"
+          :key="teacher.TagID"
+          :value="teacher.Name"
+        >
+          {{ teacher.Name }}
+        </option>
+      </select>
+    </div>
+    <transition-group name="list">
+      <post-card
+        v-for="post in posts"
+        :key="post.PostID"
+        :post="post"
+        :delete-handler="deleteHandler"
+      />
+    </transition-group>
+    <div
+      v-if="isLoading"
+      ref="bottom"
+      class="bottomDiv"
+    >
+      loading...
+    </div>
+    <div
+      v-else
+      class="bottomDiv"
+    >
+      noMore
+    </div>
+  </div>
 </template>
 <script setup lang="ts">
 import {
@@ -49,19 +49,21 @@ import {
 	onUnmounted,
 	computed,
 	onActivated,
+	Ref,
 } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
 
-import { getTeachers } from '@/api/info/getTeacher';
+import { getTeachers, Tag } from '@/api/info/getTeacher';
 import { getPosts, getPostsNum } from '@/api/browse/getPost';
+import type { Post } from '@/api/browse/getPost';
 
 import PostCard from './card/PostCard.vue';
 
 const userInfo = inject('userInfo');
-const partition = inject('partition');
-const searchinfo = inject('searchinfo');
-const searchsort = inject('searchsort');
-const posts = ref([]);
+const partition = inject('partition') as Ref<string>;
+const searchinfo = inject('searchinfo') as Ref<string>;
+const searchsort = inject('searchsort') as Ref<string>;
+const posts = ref<Post[]>([]);
 const totalNum = ref(0);
 const curPage = ref(0);
 const limit = ref(10);
@@ -69,7 +71,7 @@ const isLoading = computed(() => curPage.value < totalNum.value);
 // 保存滚动位置
 const scrollTop = ref(0);
 
-const teachers = ref([]);
+const teachers = ref<Tag[]>([]);
 const tag = ref('');
 // 用于滚动加载
 const bottom = ref(null);
@@ -170,7 +172,16 @@ onMounted(async () => {
 		// 后端的事(X)
 		// 前端的事(O)
 		data.sort((a, b) => a.Name.localeCompare(b.Name));
-		teachers.value = ['', ...data];
+		teachers.value = [
+			{
+				TagID: -1,
+				Name: '',
+				Value: '',
+				Type: '',
+				Num: -1,
+			},
+			...data,
+		];
 	}
 	startObserver();
 });

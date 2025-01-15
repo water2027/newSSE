@@ -1,10 +1,17 @@
+
+type StrHandlerType = 'img' | 'time' | 'postImg';
+
+function strHandler(type: 'img', str: string): string[];
+function strHandler(type: 'time', str: string): string;
+function strHandler(type: 'postImg', str: string): string;
+
 /**
  * @description 处理字符串
  * @param {string} type img，time，postImg中的一个。img为预览图，time为时间。postImg是原图 
  * @param {string} str 
  * @returns 
  */
-function strHandler(type:string,str:string) {
+function strHandler(type:StrHandlerType,str:string) {
 	if (!str) return '';
 	switch (type) {
 		case 'img':
