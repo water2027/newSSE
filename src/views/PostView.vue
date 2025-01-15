@@ -48,7 +48,7 @@ import { ref, inject, onMounted, useTemplateRef } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { getTeachers } from '@/api/info/getTeacher';
-import type { Teacher } from '@/api/info/getTeacher';
+import type { Tag } from '@/api/info/getTeacher';
 import { sendPost } from '@/api/editPostAndComment/editPost';
 
 import { showMsg } from '@/components/MessageBox';
@@ -70,7 +70,7 @@ const postContent = ref('');
 const title = useTemplateRef('title');
 const partition = ref('主页');
 
-const teachers = ref<Teacher[]>([]);
+const teachers = ref<Tag[]>([]);
 //好抽象的命名，完全想不到老师居然是作为tagList传过去的
 const teacher = ref('');
 
