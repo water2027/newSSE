@@ -132,7 +132,7 @@ const safeHTML = computed(() => {
 #content {
 	color: var(--color-text);
 	width: 100%;
-	max-width: 100%;
+	max-width: 90vw;
 	height: auto;
 	font-size: 23px;
 	overflow: hidden;
