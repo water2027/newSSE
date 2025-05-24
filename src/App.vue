@@ -21,7 +21,6 @@ const LoginViewVue = defineAsyncComponent(
 );
 
 import { userLogin } from './api/LoginAndRegister/login';
-import { getTokenWithExpiry } from './api/auth';
 import { getInfo } from './api/info/getInfo';
 
 import { showMsg } from './components/MessageBox';

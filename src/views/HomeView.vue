@@ -269,7 +269,7 @@ const changeMode = () => {
 const imgs = {
 	sendPostButtonIcon: `${import.meta.env.BASE_URL}webp/sendPostButton.webp`,
 };
-const partitions = shallowRef([
+const partitions = [
 	{
 		name: '日常吐槽',
 		src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865147020011731_icons8-chat-message-48.png',
@@ -294,7 +294,7 @@ const partitions = shallowRef([
 		name: '其他',
 		src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865345159097327_icons8-link-48.png',
 	},
-]);
+];
 
 const isPC = computed(() => {
 	return windowWidth.value > 768;
@@ -356,6 +356,11 @@ const changeToHistory = () => {
 	searchinfo.value = '';
 	searchsort.value = 'history';
 };
+const changeToHighQuality = () => {
+	partition.value = '优质贴',
+	searchinfo.value = ''
+	searchsort.value = 'home'
+}
 const changePathHandler = (path) => {
 	switch (path) {
 		case 'main':
@@ -370,6 +375,8 @@ const changePathHandler = (path) => {
 		case 'course':
 			changeToCourse();
 			break;
+		case 'high-quality':
+			changeToHighQuality();
 		default:
 			break;
 	}

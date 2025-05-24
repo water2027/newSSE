@@ -38,14 +38,26 @@
       />
       热榜
     </router-link>
-    <!-- <router-link
-        to="/course"
-        class="nav"
-        :class="{ selected: selected === '/course' }"
-        @click="changeTo('course')"
+    <!-- 这里显示有问题, 但是实在不想改了. 还是改日吧 -->
+    <router-link
+      to="/"
+      class="nav"
+      :class="{ selected: selected === '/high' }"
+      @click="changeTo('high-quality')"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="3em"
+        height="3em"
+        viewBox="0 0 24 24"
       >
-        课程专区
-      </router-link> -->
+        <path
+          fill="currentColor"
+          d="m5.825 21l1.625-7.025L2 9.25l7.2-.625L12 2l2.8 6.625l7.2.625l-5.45 4.725L18.175 21L12 17.275z"
+        />
+      </svg>
+      优质贴
+    </router-link>
 
     <router-link
       id="notice"
@@ -244,11 +256,13 @@ body.dark-mode .my-dropdown {
 	background-color: var(--color-nav-hover);
 }
 
-#notice, #chat {
+#notice,
+#chat {
 	position: relative;
 }
 
-#notice::after, #chat::after {
+#notice::after,
+#chat::after {
 	content: attr(notice-num);
 	position: absolute;
 	top: 10%;
@@ -261,7 +275,8 @@ body.dark-mode .my-dropdown {
 	font-size: 0.8rem;
 }
 
-#notice[notice-num='0']::after, #chat[notice-num='0']::after {
+#notice[notice-num='0']::after,
+#chat[notice-num='0']::after {
 	display: none;
 }
 
