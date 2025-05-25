@@ -37,7 +37,7 @@ async function submitPost() {
   postTitle = postTitle.replace(/(^\s*)|(\s*$)/g, '')
 
   if (!postTitle || !content) {
-    alert('请填写完整信息')
+    showMsg('请填写完整信息')
     return
   }
   const res = await sendPost(

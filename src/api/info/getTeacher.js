@@ -1,3 +1,4 @@
+import { showMsg } from '@/components/MessageBox'
 import { requestFunc } from '../req'
 
 /**
@@ -14,7 +15,7 @@ async function getTeachers() {
     return data.data.tags
   }
   catch (e) {
-    alert(e)
+    showMsg(e)
     console.error(e)
   }
 }

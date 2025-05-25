@@ -33,7 +33,7 @@ importers:
         specifier: 'file:'
         version: file:(typescript@5.8.3)(vite@5.4.14(sass@1.86.0)(terser@5.39.2))
       vue:
-        specifier: ^3.4.29
+        specifier: ^3.5
         version: 3.5.13(typescript@5.8.3)
       vue-router:
         specifier: ^4.3.3
@@ -5634,7 +5634,7 @@ snapshots:
 
   '@vue/compiler-core@3.5.13':
     dependencies:
-      '@babel/parser': 7.26.10
+      '@babel/parser': 7.27.2
       '@vue/shared': 3.5.13
       entities: 4.5.0
       estree-walker: 2.0.2
@@ -5647,7 +5647,7 @@ snapshots:
 
   '@vue/compiler-sfc@3.5.13':
     dependencies:
-      '@babel/parser': 7.26.10
+      '@babel/parser': 7.27.2
       '@vue/compiler-core': 3.5.13
       '@vue/compiler-dom': 3.5.13
       '@vue/compiler-ssr': 3.5.13

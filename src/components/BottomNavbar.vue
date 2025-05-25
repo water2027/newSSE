@@ -1,17 +1,19 @@
 <script setup>
 import { computed, inject, ref } from 'vue'
-import { useRoute } from 'vue-router'
 
+const { selected } = defineProps({
+  selected: {
+    type: String,
+    default: 'main',
+  },
+})
 const emit = defineEmits(['changePath'])
-const route = useRoute()
-
 const { noticeNum } = inject('noticeNum')
 const chatNum = inject('chatNum')
 const displayBool = computed(() =>
   noticeNum.value === '0' ? 'none' : 'block',
 )
 
-const selected = computed(() => route.fullPath)
 const isPC = inject('isPC')
 
 // 控制 "我的" 菜单的显示与隐藏
@@ -32,7 +34,7 @@ function changeTo(path) {
   >
     <router-link
       class="nav"
-      :class="{ selected: selected === '/' }"
+      :class="{ selected: selected === 'main' }"
       to="/"
       @click="changeTo('main')"
     >
@@ -44,13 +46,6 @@ function changeTo(path) {
       />
       主页
     </router-link>
-    <!-- <router-link
-        class="nav"
-        :class="{ selected: selected === '/partitions' }"
-        to="/partitions"
-      >
-        分区
-      </router-link> -->
     <router-link
       v-if="!isPC"
       class="nav"

@@ -1,3 +1,4 @@
+import { showMsg } from '@/components/MessageBox'
 import { requestFunc } from '../req'
 import { setPassword } from './utils'
 
@@ -33,7 +34,7 @@ async function userRegister(
     return data
   }
   catch (e) {
-    alert(e)
+    showMsg(e)
     return null
   }
 }

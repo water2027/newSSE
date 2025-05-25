@@ -1,3 +1,4 @@
+import { showMsg } from '@/components/MessageBox'
 import { requestFunc } from '../req'
 
 /**
@@ -18,7 +19,7 @@ async function getInfo() {
     return data.data.user
   }
   catch (e) {
-    alert(e)
+    showMsg(e)
     console.error(e)
   }
 }
@@ -41,7 +42,7 @@ async function getAllInfo(userTelephone) {
     return data
   }
   catch (e) {
-    alert(e)
+    showMsg(e)
     console.error(e)
   }
 }
@@ -59,7 +60,7 @@ async function getInfoById(userID) {
     return data
   }
   catch (e) {
-    alert(e)
+    showMsg(e)
     console.error(e)
   }
 }

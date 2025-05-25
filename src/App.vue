@@ -1,6 +1,5 @@
 <script setup>
 import {
-  defineAsyncComponent,
   onBeforeMount,
   onUnmounted,
   provide,
@@ -11,12 +10,6 @@ import { getInfo } from './api/info/getInfo'
 
 import { userLogin } from './api/LoginAndRegister/login'
 import { showMsg } from './components/MessageBox'
-
-import HomeViewVue from './views/HomeView.vue'
-
-const LoginViewVue = defineAsyncComponent(
-  () => import('./views/LoginView.vue'),
-)
 
 const userInfo = ref({})
 provide('userInfo', userInfo)
@@ -85,9 +78,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <HomeViewVue v-if="isLogin" />
+  <!-- <HomeViewVue v-if="isLogin" />
   <LoginViewVue
     v-else
     @send-login-success="sendLoginSuccess"
-  />
+  /> -->
+  <router-view />
 </template>

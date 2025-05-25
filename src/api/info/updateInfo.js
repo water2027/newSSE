@@ -1,3 +1,4 @@
+import { showMsg } from '@/components/MessageBox'
 import { getTokenWithExpiry } from '../auth'
 import { requestFunc } from '../req'
 
@@ -21,7 +22,7 @@ async function updateUserInfo(avatarURL, intro, name, userID) {
     return data
   }
   catch (e) {
-    alert(e)
+    showMsg(e)
     console.error(e)
   }
 }
