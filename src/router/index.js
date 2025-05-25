@@ -1,11 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import PostListView from '@/views/PostListView.vue';
 
 const routes = [
 	{
 		path: '/',
 		name: 'Home',
-		component: PostListView,
+		component: () => import('@/views/PostListView.vue'),
 		meta: {
 			keepAlive: true  // 标记需要缓存
 		}
@@ -13,17 +12,17 @@ const routes = [
 	{
 		path: '/course',
 		name: 'Course',
-		component: PostListView,
+		component: () => import('@/views/PostListView.vue'),
 	},
 	{
 		path: '/save',
 		name: 'Save',
-		component: PostListView,
+		component: () => import('@/views/PostListView.vue'),
 	},
 	{
 		path: '/history',
 		name: 'History',
-		component: PostListView,
+		component: () => import('@/views/PostListView.vue'),
 	},
 	{
 		path: '/partitions',
