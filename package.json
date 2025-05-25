@@ -23,14 +23,17 @@
     "workbox-window": "^7.1.0"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^4.13.2",
     "@iconify/vue": "^4.1.2",
     "@rushstack/eslint-patch": "^1.8.0",
     "@types/dompurify": "^3.0.5",
+    "@unocss/eslint-plugin": "^66.1.2",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vue/babel-plugin-jsx": "^1.2.5",
     "@vue/babel-preset-jsx": "^1.4.0",
     "@vue/eslint-config-prettier": "^9.0.0",
-    "eslint": "^8.57.0",
+    "eslint": "^9.0.0",
+    "eslint-plugin-format": "^1.0.1",
     "eslint-plugin-jsx-a11y": "^6.10.0",
     "eslint-plugin-vue": "^9.23.0",
     "prettier": "^3.2.5",
