@@ -1,3 +1,83 @@
+<script setup>
+import { inject, nextTick, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+import { getNotices, getNoticesNum, readNotice } from '@/api/notice/notice'
+
+import { showMsg } from '@/components/MessageBox'
+
+import { strHandler } from '@/utils/strHandler'
+
+const router = useRouter()
+
+const { reduceNoticeNum } = inject('noticeNum')
+const notices = inject('notices')
+const readPage = ref(true)
+const noticesRead = ref([])
+const noticesUnread = ref([])
+
+/**
+ * @description 标记通知为已读
+ * @param noticeID 通知ID
+ * @returns void
+ */
+async function readComment(noticeID) {
+  const res = await readNotice(noticeID)
+  if (res.status === 'success') {
+    getNoticesFunc()
+    reduceNoticeNum()
+    showMsg('success')
+  }
+}
+
+async function readAll() {
+  // 遍历未读通知，标记为已读
+  for (let i = 0; i < noticesUnread.value.length; i++) {
+    try {
+      await readNotice(noticesUnread.value[i].noticeID)
+      reduceNoticeNum()
+    }
+    catch (e) {
+      console.error(e)
+    }
+  }
+  showMsg('一键已读')
+  nextTick(getNoticesFunc)
+}
+
+async function changeToPost(postID, noticeID) {
+  await readComment(noticeID)
+  setTimeout(() => {
+    router.push(`/postdetail/${postID}`)
+  }, 500)
+}
+
+async function getNoticesFunc() {
+  const read = await getNotices(0, notices.value.readTotalNum, 1)
+  const unread = await getNotices(0, notices.value.unreadTotalNum, 0)
+  if (read.noticeList) {
+    noticesRead.value = read.noticeList.filter(item => item.postID !== 0)
+  }
+  else {
+    noticesRead.value = []
+  }
+  if (unread.noticeList) {
+    noticesUnread.value = unread.noticeList
+  }
+  else {
+    noticesUnread.value = []
+  }
+}
+
+onMounted(async () => {
+  // 处理在通知页面刷新/直接打开通知页面的情况
+  if (!notices.value.readTotalNum || !notices.value.unreadTotalNum) {
+    notices.value = await getNoticesNum()
+  }
+  getNoticesFunc()
+})
+</script>
+
 <template>
   <div class="root">
     <h2 class="notice-title">
@@ -62,103 +142,28 @@
   </div>
 </template>
 
-<script setup>
-import { ref, inject, onMounted, nextTick } from 'vue';
-import { useRouter } from 'vue-router';
-
-import { getNotices, readNotice, getNoticesNum } from '@/api/notice/notice';
-
-import { strHandler } from '@/utils/strHandler';
-
-import { showMsg } from '@/components/MessageBox';
-
-const router = useRouter();
-
-const { reduceNoticeNum } = inject('noticeNum')
-const notices = inject('notices');
-const readPage = ref(true);
-const noticesRead = ref([]);
-const noticesUnread = ref([]);
-
-/**
- * @description 标记通知为已读
- * @param noticeID 通知ID
- * @returns void
- */
-const readComment = async (noticeID) => {
-	const res = await readNotice(noticeID);
-	if (res.status === 'success') {
-    getNoticesFunc();
-    reduceNoticeNum();
-		showMsg('success');
-	}
-};
-
-const readAll = async () => {
-  // 遍历未读通知，标记为已读
-  for (let i = 0; i < noticesUnread.value.length; i++) {
-    try{
-      await readNotice(noticesUnread.value[i].noticeID);
-      reduceNoticeNum();
-    }catch(e){
-      console.error(e);
-    }
-  }
-  showMsg('一键已读');
-  nextTick(getNoticesFunc)
-};
-
-const changeToPost = async (postID,noticeID) => {
-  await readComment(noticeID);
-  setTimeout(() => {
-    router.push(`/postdetail/${postID}`);
-  },500);
-};
-
-const getNoticesFunc = async ()=>{
-	const read = await getNotices(0, notices.value.readTotalNum, 1);
-	const unread = await getNotices(0, notices.value.unreadTotalNum, 0);
-  if(read.noticeList){
-    noticesRead.value = read.noticeList.filter((item) => item.postID !== 0);
-  }else{
-    noticesRead.value = []
-  }
-  if(unread.noticeList){
-    noticesUnread.value = unread.noticeList;
-  }else{
-    noticesUnread.value = []
-  }
-}
-
-onMounted(async () => {
-	//处理在通知页面刷新/直接打开通知页面的情况
-	if (!notices.value.readTotalNum||!notices.value.unreadTotalNum) {
-		notices.value = await getNoticesNum();
-	}
-  getNoticesFunc();
-});
-</script>
 <style scoped>
-.root{
+.root {
   width: 100%;
-	color: var(--color-text);
+  color: var(--color-text);
   display: flex;
   flex-direction: column;
 }
-.notice-title, .noticeButtons {
+.notice-title,
+.noticeButtons {
   width: 100%;
 }
 
 .notice-title {
-	color: var(--color-text);
+  color: var(--color-text);
   margin-left: auto;
-	margin-right: auto;
+  margin-right: auto;
   text-align: center;
 }
 .notice {
-	border: 1px solid var(--color-border);
-	margin: 10px;
-	padding: 10px;
+  border: 1px solid var(--color-border);
+  margin: 10px;
+  padding: 10px;
 }
 .noticeButtons {
   display: flex;
@@ -166,7 +171,7 @@ onMounted(async () => {
   justify-content: space-around;
 }
 p {
-	text-indent: 2rem;
+  text-indent: 2rem;
   word-break: break-all;
   white-space: pre-wrap;
 }

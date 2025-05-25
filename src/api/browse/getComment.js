@@ -1,31 +1,32 @@
-import { requestFunc } from "../req";
+import { requestFunc } from '../req'
 
 /**
- * 
- * @param {number} PostID 
- * @param {string} userTelephone 
- * @returns 
+ *
+ * @param {number} PostID
+ * @param {string} userTelephone
+ * @returns
  */
 async function getCommentsByPostID(PostID, userTelephone) {
-	try{
-		const res = await requestFunc(`/auth/showPcomments`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: {
-				postID: PostID,
-				userTelephone: userTelephone,
-			},
-		},true);
-		const data = await res.json();
-		return data;
-	}catch(e){
-		console.error(e);
-		return null;
-	}
+  try {
+    const res = await requestFunc(`/auth/showPcomments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: {
+        postID: PostID,
+        userTelephone,
+      },
+    }, true)
+    const data = await res.json()
+    return data
+  }
+  catch (e) {
+    console.error(e)
+    return null
+  }
 }
 
 export {
-	getCommentsByPostID,
-};
+  getCommentsByPostID,
+}

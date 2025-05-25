@@ -1,7 +1,7 @@
 <script setup>
 // import { type CustomFormData } from '@/composables/FormExam';
 
-import FormInput from '@/components/FormInput.vue';
+import FormInput from '@/components/FormInput.vue'
 
 defineProps({
   formName: {
@@ -15,18 +15,18 @@ defineProps({
     default: false,
   },
   formData: {
-    //要传递数组
+    // 要传递数组
     type: Array,
     required: true,
   },
-});
+})
 
-defineEmits(['SubmitForm']);
+defineEmits(['SubmitForm'])
 </script>
 
 <template>
   <form
-    class="mt-12 sm:mt-0 sm:p-24 mx-auto w-9/10 sm:w-1/2"
+    class="mx-auto mt-12 w-9/10 sm:mt-0 sm:w-1/2 sm:p-24"
     @submit.prevent="$emit('SubmitForm')"
   >
     <FormInput
@@ -41,7 +41,7 @@ defineEmits(['SubmitForm']);
     <slot />
     <button
       :disabled="disabled"
-      class="w-full h-10 bg-[#eb6b26] text-white border-0 text-lg cursor-pointer mt-5 rounded-[20px] flex justify-center items-center hover:bg-[#ff7e3b] disabled:bg-zinc-600"
+      class="mt-5 h-10 w-full flex cursor-pointer items-center justify-center border-0 rounded-[20px] bg-[#eb6b26] text-lg text-white disabled:bg-zinc-600 hover:bg-[#ff7e3b]"
       type="submit"
     >
       {{ disabled ? '请填写完整信息' : formName }}

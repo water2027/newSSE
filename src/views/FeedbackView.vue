@@ -1,3 +1,22 @@
+<script setup>
+import { ref } from 'vue'
+import { feedback } from '@/api/feedback/feedback'
+import { showMsg } from '@/components/MessageBox'
+
+const feedbackContent = ref(null)
+async function submitFeedback() {
+  // 去除空格
+  feedbackContent.value.value = feedbackContent.value.value.trim()
+  if (feedbackContent.value.value) {
+    const res = await feedback(feedbackContent.value.value, '')
+    showMsg(res.msg)
+  }
+  else {
+    showMsg('请输入反馈内容')
+  }
+}
+</script>
+
 <template>
   <div class="root">
     <h1>反馈</h1>
@@ -17,41 +36,26 @@
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue';
-import { showMsg } from '@/components/MessageBox';
-import { feedback } from '@/api/feedback/feedback';
-
-const feedbackContent = ref(null);
-const submitFeedback = async () => {
-    //去除空格
-    feedbackContent.value.value = feedbackContent.value.value.trim();
-	if (feedbackContent.value.value) {
-		const res = await feedback(feedbackContent.value.value, '');
-		showMsg(res.msg);
-	} else {
-		showMsg('请输入反馈内容');
-	}
-};
-</script>
 <style scoped>
-.root{
-	color: var(--color-text);
+.root {
+  color: var(--color-text);
 }
 
 .feedback-textarea {
-	min-width: 300px;
-	max-width: 700px;
-	width: 40vw;
-	display: block;
-	padding: 10px;
-	font-size: 16px;
-	border: 1px solid #ccc; /* 日间模式的边框颜色 */
-	border-radius: 5px;
-	transition: background-color 0.3s ease, border-color 0.3s ease;
-  }
+  min-width: 300px;
+  max-width: 700px;
+  width: 40vw;
+  display: block;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc; /* 日间模式的边框颜色 */
+  border-radius: 5px;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
 button {
-	margin-top: 20px;
+  margin-top: 20px;
 }
 .btn-primary {
   display: inline-block;
@@ -82,7 +86,11 @@ button {
   font-size: 1rem;
   line-height: 1.5;
   border-radius: 0.25rem;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition:
+    color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
 }
 
 .btn-primary:hover {
@@ -93,15 +101,15 @@ button {
 
 /* 夜间模式 */
 body.dark-mode .feedback-textarea {
-  background-color: #2a2a2a; 
-  color: #f9f9f9; 
+  background-color: #2a2a2a;
+  color: #f9f9f9;
   border: 1px solid #444;
 }
 body.dark-mode .feedback-textarea:focus {
-  border-color: #00eeff; 
+  border-color: #00eeff;
   outline: none;
 }
 body.dark-mode button {
-	filter: invert(1);
+  filter: invert(1);
 }
 </style>

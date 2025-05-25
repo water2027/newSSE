@@ -1,3 +1,32 @@
+<script setup>
+import { useRouter } from 'vue-router'
+import UserIdentityIcon from './UserIdentityIcon.vue'
+
+const props = defineProps({
+  src: {
+    type: String,
+    required: true,
+  },
+  userId: {
+    type: Number,
+    default: 0,
+  },
+  userIdentity: {
+    type: String,
+    default: '',
+  },
+})
+const router = useRouter()
+const defaultAvatar = `${import.meta.env.BASE_URL}default-avatar.svg`
+
+function navigate() {
+  if (props.userId > 0) {
+    router.push({ name: 'UserProfile', params: { id: props.userId } })
+    stopPropagation()
+  }
+}
+</script>
+
 <template>
   <div
     class="user-avatar"
@@ -14,47 +43,17 @@
   </div>
 </template>
 
-<script setup>
-import { useRouter } from 'vue-router';
-import UserIdentityIcon from './UserIdentityIcon.vue';
-
-const router = useRouter();
-const defaultAvatar = import.meta.env.BASE_URL + 'default-avatar.svg';
-
-const props = defineProps({
-	src: {
-		type: String,
-		required: true,
-	},
-	userId: {
-		type: Number,
-		default: 0,
-	},
-	userIdentity: {
-		type: String,
-		default: '',
-	},
-});
-
-function navigate() {
-	if (props.userId > 0) {
-		router.push({ name: 'UserProfile', params: { id: props.userId } });
-		stopPropagation();
-	}
-}
-</script>
-
 <style lang="scss" scoped>
 .user-avatar {
-	position: relative;
-	width: 3.4rem;
-	height: 3.4rem;
+  position: relative;
+  width: 3.4rem;
+  height: 3.4rem;
 
-	.user-avatar-img {
-		width: 100%;
-		height: 100%;
-		border-radius: 50%;
-		background: #fff;
-	}
+  .user-avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #fff;
+  }
 }
 </style>

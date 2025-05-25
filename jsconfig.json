@@ -7,5 +7,5 @@
     "jsxImportSource": "vue"
   },
   "exclude": ["node_modules", "dist"]
-  
+
 }

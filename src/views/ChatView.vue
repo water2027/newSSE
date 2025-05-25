@@ -1,3 +1,285 @@
+<script setup>
+import { Icon } from '@iconify/vue'
+import { inject, nextTick, onBeforeMount, onMounted, onUnmounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { getTokenWithExpiry } from '@/api/auth'
+import { getChatHistory } from '@/api/chat/chat'
+import { getInfoById } from '@/api/info/getInfo'
+import UserAvatar from '@/components/UserAvatar.vue'
+
+const route = useRoute()
+const router = useRouter()
+const user = inject('userInfo')
+
+const draft = ref('')
+const current = ref({})
+const contacts = ref([])
+const messages = ref([])
+
+const historyDiv = ref(null)
+const updateChatNum = inject('updateChatNum')
+
+let ws = null
+const preDataFetch = []
+let dummyID = 100000000
+
+onBeforeMount(() => {
+  const reqId = route.query.user
+  if (reqId) {
+    if (Number(reqId) !== user.value.userID) {
+      preDataFetch.push(
+        getInfoById(Number(reqId))
+          .then((res) => {
+            contacts.value.splice(0, 0, convertChatUser(res))
+            dedupContacts()
+          })
+          .catch((error) => {
+            if (error.response) {
+              const res = error.response
+              toastError(`请求无效：${res.msg} (${res.code})`)
+              console.error(res)
+            }
+          }),
+      )
+    }
+    else {
+      toastError('不能给自己发消息哦！')
+    }
+  }
+
+  keepConnection()
+  setInterval(keepConnection, 30000)
+})
+
+onMounted(() => {
+  Promise.all(preDataFetch).then(() => selectContact(contacts.value[0]))
+  updateChatNum(0)
+})
+
+onUnmounted(() => {
+  updateChatNum()
+})
+
+function getDummyID() {
+  dummyID += 1
+  return dummyID
+}
+
+function toastError(content) {
+  // $bvToast.toast(content, {
+  //   title: '内部错误',
+  //   variant: 'danger',
+  //   solid: true,
+  // });
+  console.log(`内部错误：${content}`)
+}
+
+function toastInfo(content) {
+  // $bvToast.toast(content, {
+  //   title: '私信系统',
+  //   variant: 'primary',
+  //   solid: true,
+  // });
+  console.log(`私信系统：${content}`)
+}
+
+function handleDraftKeyDown(event) {
+  if (event.key === 'Enter' && event.ctrlKey) {
+    sendMessage()
+    event.stopPropagation()
+  }
+}
+
+function selectContact(sel) {
+  if (!sel || sel.userID == current.value.userID)
+    return
+
+  draft.value = ''
+  current.value = sel
+  current.value.unRead = 0
+  messages.value = []
+
+  updateChatHistory(() => scrollHistory())
+}
+
+function scrollHistory() {
+  nextTick(() => {
+    historyDiv.value.scrollTop = historyDiv.value.scrollHeight
+  })
+}
+
+function sendMessage() {
+  if (draft.value !== '') {
+    const message = {
+      senderUserID: user.value.userID,
+      targetUserID: current.value.userID,
+      content: draft.value,
+    }
+
+    if (sendWsMessage(JSON.stringify(message))) {
+      draft.value = ''
+
+      message.chatMsgID = getDummyID()
+      message.createdAt = Date.now()
+      messages.value.push(message)
+
+      scrollHistory()
+    }
+    else {
+      toastError('消息发送失败（服务器未连接）')
+    }
+  }
+}
+
+function dedupContacts() {
+  const seen = new Set()
+  contacts.value = contacts.value.reduce((acc, current) => {
+    const keyValue = current.userID
+    if (!seen.has(keyValue)) {
+      seen.add(keyValue)
+      acc.push(current)
+    }
+    return acc
+  }, [])
+}
+
+function handleSocketMessage(event) {
+  let data
+  try {
+    data = JSON.parse(event.data)
+  }
+  catch (e) {
+    toastError('服务器响应无效')
+    console.error(e)
+    return
+  }
+  if (data.relevantUsers) {
+    contacts.value.push(...data.relevantUsers)
+    dedupContacts()
+  }
+  else if (data.chatMsgID) {
+    if (data.targetUserID === user.value.userID) {
+      if (data.senderUserID === current.value.userID) {
+        messages.value.push(data)
+        if (historyDiv.value.scrollTop + historyDiv.value.clientHeight - historyDiv.value.scrollHeight > -1) {
+          scrollHistory()
+        }
+      }
+      else {
+        const idx = contacts.value.findIndex(it => it.userID === data.senderUserID)
+        if (idx !== -1) {
+          const contact = contacts.value[idx]
+          contact.unRead += 1
+          contacts.value.splice(idx, 1)
+          contacts.value.splice(0, 0, contact)
+        }
+        else {
+          getInfoById(data.senderUserID).then((res) => {
+            contacts.value.splice(0, 0, convertChatUser(res, 1))
+          })
+        }
+      }
+    }
+  }
+  else if (data.code) {
+    if (data.code === 0) {
+      toastError(`请求失败：${data.msg} (${data.code})`)
+      console.error(data)
+    }
+  }
+}
+
+function convertChatUser(user, unRead) {
+  return {
+    ...user,
+    intro: user.intro || '未设置签名',
+    unRead: unRead || 0,
+  }
+}
+
+function connectWebSocket() {
+  // connect websocket
+  const wsURL = new URL('/websocket/auth/chat', import.meta.env.VITE_API_BASE_URL)
+  wsURL.searchParams.append('token', getTokenWithExpiry())
+  ws = new WebSocket(wsURL)
+  ws.addEventListener('close', () => {
+    setTimeout(() => {
+      keepConnection()
+    }, 5000)
+    toastError('服务器断开连接')
+  })
+  ws.addEventListener('open', () => toastInfo('已连接到服务器'))
+  ws.addEventListener('message', handleSocketMessage)
+}
+
+function keepConnection() {
+  const state = ws ? ws.readyState : WebSocket.CLOSED
+  if (state === WebSocket.OPEN) {
+    ws.send(JSON.stringify({ userID: user.value.userID, beat: 1 }))
+  }
+  else if (state === WebSocket.CLOSED) {
+    connectWebSocket()
+  }
+}
+
+function sendWsMessage(message) {
+  const state = ws ? ws.readyState : WebSocket.CLOSED
+  if (state === WebSocket.OPEN) {
+    ws.send(message)
+    return true
+  }
+  return false
+}
+
+function updateChatHistory(callback) {
+  getChatHistory(user.value.userID, current.value.userID)
+    .then((res) => {
+      if (res.code === 200) {
+        messages.value = []
+        messages.value.push(...res.data.chatHistoryList)
+        callback()
+      }
+    })
+    .catch((error) => {
+      if (error.response) {
+        const res = error.response
+        toastError(`聊天记录获取失败：${res.msg} (${res.code})`)
+        console.error(res)
+      }
+    })
+}
+
+function getTimeShow(idx) {
+  if (idx === 0) {
+    const date = new Date(messages.value[0].createdAt)
+    const str = date.toLocaleString()
+    return str.substring(0, str.length - 3) // yyyy-MM-dd HH:mm
+  }
+
+  const prev = new Date(messages.value[idx - 1].createdAt)
+  const date = new Date(messages.value[idx].createdAt)
+  if (!checkSameDay(prev, date)) {
+    if (prev.getYear() === date.getYear()) {
+      const str = date.toLocaleString()
+      return str.substring(5, str.length - 3) // MM-dd HH:mm
+    }
+    const str = date.toLocaleString()
+    return str.substring(0, str.length - 3) // yyyy-MM-dd HH:mm
+  }
+  if (date.getTime() - prev.getTime() > 300000) {
+    const str = date.toLocaleTimeString()
+    return str.substring(0, str.length - 3) // HH:mm
+  }
+  return null
+}
+
+function checkSameDay(x, y) {
+  return (
+    x.getYear() === y.getYear() && x.getMonth() === y.getMonth() && x.getDay() === y.getDay()
+  )
+}
+</script>
+
 <template>
   <div class="chat-wrapper">
     <div class="contact-list">
@@ -6,12 +288,16 @@
         对话列表
       </div>
       <div class="lite-scrollbar">
-        <div v-for="entry in contacts" :key="entry.userID"
-          :class="['contact-entry', current.userID === entry.userID && 'selected']" @click="selectContact(entry)"
-          @keydown="handleKeyDown($event, () => selectContact(entry))">
+        <div
+          v-for="entry in contacts" :key="entry.userID"
+          class="contact-entry" :class="[current.userID === entry.userID && 'selected']" @click="selectContact(entry)"
+          @keydown="handleKeyDown($event, () => selectContact(entry))"
+        >
           <UserAvatar class="contact-icon" :src="entry.avatarURL" :alt="entry.name" />
           <div class="contact-info">
-            <div class="contact-name">{{ entry.name }}</div>
+            <div class="contact-name">
+              {{ entry.name }}
+            </div>
             <div class="contact-intro">
               <div v-if="entry.unRead" class="contact-unread">
                 {{ entry.unRead > 99 ? '99+' : entry.unRead }}
@@ -29,321 +315,62 @@
             <div class="contact-entry selected">
               <UserAvatar class="contact-icon" :src="current.avatarURL" :alt="current.name" />
               <div class="contact-info">
-                <div class="contact-name">{{ current.name }}</div>
+                <div class="contact-name">
+                  {{ current.name }}
+                </div>
                 <div class="contact-intro">
                   {{ current.intro }}
                 </div>
               </div>
             </div>
           </div>
-          <div ref="historyDiv" class="message-history lite-scrollbar">
+          <div ref="historyDiv" class="lite-scrollbar message-history">
             <div v-for="(entry, i) in messages" :key="entry.chatMsgID">
               <div v-if="getTimeShow(i)" class="message-time">
                 <div>
                   {{ getTimeShow(i) }}
                 </div>
               </div>
-              <div :class="['message-entry', entry.senderUserID === user.userID && 'reversed']">
+              <div class="message-entry" :class="[entry.senderUserID === user.userID && 'reversed']">
                 <template v-if="entry.senderUserID === user.userID">
                   <UserAvatar class="contact-icon" :src="user.avatarURL" :alt="user.name" />
                   <div class="message-info">
-                    <div class="message-sender">{{ user.name }}</div>
-                    <div class="message-body">{{ entry.content }}</div>
+                    <div class="message-sender">
+                      {{ user.name }}
+                    </div>
+                    <div class="message-body">
+                      {{ entry.content }}
+                    </div>
                   </div>
                 </template>
                 <template v-else>
                   <UserAvatar class="contact-icon" :src="current.avatarURL" :alt="current.name" />
                   <div class="message-info">
-                    <div class="message-sender">{{ current.name }}</div>
-                    <div class="message-body">{{ entry.content }}</div>
+                    <div class="message-sender">
+                      {{ current.name }}
+                    </div>
+                    <div class="message-body">
+                      {{ entry.content }}
+                    </div>
                   </div>
                 </template>
               </div>
             </div>
           </div>
           <div class="message-footer">
-            <textarea v-model="draft" placeholder="输入信息..." rows="4" class="message-input lite-scrollbar"
-              @keydown="handleDraftKeyDown"></textarea>
-            <div class="message-send" @click="sendMessage">发送</div>
+            <textarea
+              v-model="draft" placeholder="输入信息..." rows="4" class="lite-scrollbar message-input"
+              @keydown="handleDraftKeyDown"
+            />
+            <div class="message-send" @click="sendMessage">
+              发送
+            </div>
           </div>
         </template>
       </div>
     </div>
   </div>
 </template>
-
-<script setup>
-import UserAvatar from '@/components/UserAvatar.vue';
-import { Icon } from '@iconify/vue';
-import { ref, inject, onBeforeMount, onMounted, nextTick, onUnmounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { getInfoById } from '@/api/info/getInfo';
-import { getChatHistory } from '@/api/chat/chat';
-import { getTokenWithExpiry } from '@/api/auth'
-
-const route = useRoute();
-const router = useRouter();
-const user = inject('userInfo');
-
-const draft = ref('');
-const current = ref({});
-const contacts = ref([]);
-const messages = ref([]);
-
-const historyDiv = ref(null);
-const updateChatNum = inject("updateChatNum");
-
-let ws = null;
-let preDataFetch = [];
-let dummyID = 100000000;
-
-onBeforeMount(() => {
-  const reqId = route.query.user;
-  if (reqId) {
-    if (Number(reqId) !== user.value.userID) {
-      preDataFetch.push(
-        getInfoById(Number(reqId))
-          .then((res) => {
-            contacts.value.splice(0, 0, convertChatUser(res));
-            dedupContacts();
-          })
-          .catch((error) => {
-            if (error.response) {
-              const res = error.response;
-              toastError(`请求无效：${res.msg} (${res.code})`);
-              console.error(res);
-            }
-          }),
-      );
-    } else {
-      toastError('不能给自己发消息哦！');
-    }
-  }
-
-  keepConnection();
-  setInterval(keepConnection, 30000);
-});
-
-onMounted(() => {
-  Promise.all(preDataFetch).then(() => selectContact(contacts.value[0]));
-  updateChatNum(0);
-});
-
-onUnmounted(() => {
-  updateChatNum();
-})
-
-function getDummyID() {
-  dummyID += 1;
-  return dummyID;
-}
-
-function toastError(content) {
-  // $bvToast.toast(content, {
-  //   title: '内部错误',
-  //   variant: 'danger',
-  //   solid: true,
-  // });
-  console.log(`内部错误：${content}`);
-}
-
-function toastInfo(content) {
-  // $bvToast.toast(content, {
-  //   title: '私信系统',
-  //   variant: 'primary',
-  //   solid: true,
-  // });
-  console.log(`私信系统：${content}`);
-}
-
-function handleDraftKeyDown(event) {
-  if (event.key === 'Enter' && event.ctrlKey) {
-    sendMessage();
-    event.stopPropagation();
-  }
-}
-
-function selectContact(sel) {
-  if (!sel || sel.userID == current.value.userID) return;
-
-  draft.value = '';
-  current.value = sel;
-  current.value.unRead = 0;
-  messages.value = [];
-
-  updateChatHistory(() => scrollHistory());
-}
-
-function scrollHistory() {
-  nextTick(() => {
-    historyDiv.value.scrollTop = historyDiv.value.scrollHeight;
-  });
-}
-
-function sendMessage() {
-  if (draft.value !== '') {
-    const message = {
-      senderUserID: user.value.userID,
-      targetUserID: current.value.userID,
-      content: draft.value,
-    };
-
-    if (sendWsMessage(JSON.stringify(message))) {
-      draft.value = '';
-
-      message.chatMsgID = getDummyID();
-      message.createdAt = Date.now();
-      messages.value.push(message);
-
-      scrollHistory();
-    } else {
-      toastError("消息发送失败（服务器未连接）")
-    }
-  }
-}
-
-function dedupContacts() {
-  const seen = new Set();
-  contacts.value = contacts.value.reduce((acc, current) => {
-    const keyValue = current.userID;
-    if (!seen.has(keyValue)) {
-      seen.add(keyValue);
-      acc.push(current);
-    }
-    return acc;
-  }, []);
-}
-
-function handleSocketMessage(event) {
-  let data;
-  try {
-    data = JSON.parse(event.data);
-  } catch (e) {
-    toastError('服务器响应无效');
-    console.error(e);
-    return;
-  }
-  if (data.relevantUsers) {
-    contacts.value.push(...data.relevantUsers);
-    dedupContacts();
-  } else if (data.chatMsgID) {
-    if (data.targetUserID === user.value.userID) {
-      if (data.senderUserID === current.value.userID) {
-        messages.value.push(data);
-        if (historyDiv.value.scrollTop + historyDiv.value.clientHeight - historyDiv.value.scrollHeight > -1) {
-          scrollHistory();
-        }
-      } else {
-        const idx = contacts.value.findIndex((it) => it.userID === data.senderUserID);
-        if (idx !== -1) {
-          const contact = contacts.value[idx];
-          contact.unRead += 1;
-          contacts.value.splice(idx, 1);
-          contacts.value.splice(0, 0, contact);
-        } else {
-          getInfoById(data.senderUserID).then((res) => {
-            contacts.value.splice(0, 0, convertChatUser(res, 1));
-          });
-        }
-      }
-    }
-  } else if (data.code) {
-    if (data.code === 0) {
-      toastError(`请求失败：${data.msg} (${data.code})`);
-      console.error(data);
-    }
-  }
-}
-
-function convertChatUser(user, unRead) {
-  return {
-    ...user,
-    intro: user.intro || '未设置签名',
-    unRead: unRead || 0,
-  };
-}
-
-function connectWebSocket() {
-  // connect websocket
-  const wsURL = new URL('/websocket/auth/chat', import.meta.env.VITE_API_BASE_URL);
-  wsURL.searchParams.append('token', getTokenWithExpiry());
-  ws = new WebSocket(wsURL);
-  ws.addEventListener('close', () => {
-    setTimeout(() => {
-      keepConnection();
-    }, 5000);
-    toastError('服务器断开连接');
-  });
-  ws.addEventListener('open', () => toastInfo('已连接到服务器'));
-  ws.addEventListener('message', handleSocketMessage);
-}
-
-function keepConnection() {
-  const state = ws ? ws.readyState : WebSocket.CLOSED;
-  if (state === WebSocket.OPEN) {
-    ws.send(JSON.stringify({ userID: user.value.userID, beat: 1 }));
-  } else if (state === WebSocket.CLOSED) {
-    connectWebSocket();
-  }
-}
-
-function sendWsMessage(message) {
-  const state = ws ? ws.readyState : WebSocket.CLOSED;
-  if (state === WebSocket.OPEN) {
-    ws.send(message);
-    return true;
-  }
-  return false;
-}
-
-function updateChatHistory(callback) {
-  getChatHistory(user.value.userID, current.value.userID)
-    .then((res) => {
-      if (res.code === 200) {
-        messages.value = [];
-        messages.value.push(...res.data.chatHistoryList);
-        callback();
-      }
-    })
-    .catch((error) => {
-      if (error.response) {
-        const res = error.response;
-        toastError(`聊天记录获取失败：${res.msg} (${res.code})`);
-        console.error(res);
-      }
-    });
-}
-
-function getTimeShow(idx) {
-  if (idx === 0) {
-    const date = new Date(messages.value[0].createdAt);
-    const str = date.toLocaleString();
-    return str.substring(0, str.length - 3); // yyyy-MM-dd HH:mm
-  }
-
-  const prev = new Date(messages.value[idx - 1].createdAt);
-  const date = new Date(messages.value[idx].createdAt);
-  if (!checkSameDay(prev, date)) {
-    if (prev.getYear() === date.getYear()) {
-      const str = date.toLocaleString();
-      return str.substring(5, str.length - 3); // MM-dd HH:mm
-    }
-    const str = date.toLocaleString();
-    return str.substring(0, str.length - 3); // yyyy-MM-dd HH:mm
-  }
-  if (date.getTime() - prev.getTime() > 300000) {
-    const str = date.toLocaleTimeString();
-    return str.substring(0, str.length - 3); // HH:mm
-  }
-  return null;
-}
-
-function checkSameDay(x, y) {
-  return (
-    x.getYear() === y.getYear() && x.getMonth() === y.getMonth() && x.getDay() === y.getDay()
-  );
-}
-</script>
 
 <style scoped lang="scss">
 .chat-wrapper {
@@ -489,7 +516,7 @@ function checkSameDay(x, y) {
   justify-content: space-around;
 }
 
-.message-time>div {
+.message-time > div {
   padding: 0.1rem 0.75rem;
   background: #cccccc80;
   border-radius: 15px;

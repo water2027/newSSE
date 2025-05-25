@@ -1,106 +1,106 @@
 /* 存放明亮模式和黑暗模式的颜色 */
 /* 子元素使用css变量 */
 
-body.light-mode{
-    --color-bg: #fafafa;
-    background-color: var(--color-bg);
+body.light-mode {
+  --color-bg: #fafafa;
+  background-color: var(--color-bg);
 
-    --color-scroll:rgba(0, 0, 0, 0.1);
-    --color-scroll-thumb:rgba(0, 0, 0, 0.5);
+  --color-scroll: rgba(0, 0, 0, 0.1);
+  --color-scroll-thumb: rgba(0, 0, 0, 0.5);
 
-    --color-button-bg: #a8b4b08f;
-    --color-button:#333;
+  --color-button-bg: #a8b4b08f;
+  --color-button: #333;
 
-    --color-text: #181818;
-    --color-hr:#3333339d;
+  --color-text: #181818;
+  --color-hr: #3333339d;
 
-    --color-border:rgba(0, 0, 0, 0.1);
+  --color-border: rgba(0, 0, 0, 0.1);
 
-    --color-nav-bg:#f0f0f0;
-    --color-nav-hover:rgba(241, 236, 226, 0.901);
+  --color-nav-bg: #f0f0f0;
+  --color-nav-hover: rgba(241, 236, 226, 0.901);
 
-    --color-ball-bg:#fffdfd;
-    --color-ball-text:#181818;
-    --color-ball-box-shadow:rgba(0, 0, 0, 0.35);
+  --color-ball-bg: #fffdfd;
+  --color-ball-text: #181818;
+  --color-ball-box-shadow: rgba(0, 0, 0, 0.35);
 
-    --color-selected-shadow-first:rgba(70, 70, 94, 0.25);
-    --color-selected-shadow-second:rgba(0, 0, 0, 0.3);
+  --color-selected-shadow-first: rgba(70, 70, 94, 0.25);
+  --color-selected-shadow-second: rgba(0, 0, 0, 0.3);
 
-    --color-title-selected:#00a4af;
-    --color-title-bg:rgba(136, 243, 255, 0.683);
+  --color-title-selected: #00a4af;
+  --color-title-bg: rgba(136, 243, 255, 0.683);
 
-    --color-to-post:white;
-    --color-to-post-bg:#a1a1a1e1;
-    --color-to-post-border:#333;
+  --color-to-post: white;
+  --color-to-post-bg: #a1a1a1e1;
+  --color-to-post-border: #333;
 
-    --color-a-in-post:#00d9ff;
-    --color-a-hover-in-post:#ffd900;
-    --color-a-hover-bg-in-post:#9cff817e;
+  --color-a-in-post: #00d9ff;
+  --color-a-hover-in-post: #ffd900;
+  --color-a-hover-bg-in-post: #9cff817e;
 
-    --color-user-text:#333;
-    --color-user-avatar-bg:#6c757d;
-    --color-user-avatar:#fff;
+  --color-user-text: #333;
+  --color-user-avatar-bg: #6c757d;
+  --color-user-avatar: #fff;
 
-    --color-post-card-box-shadow:rgba(0, 0, 0, 0.24);
-    --color-post-card-hover-box-shadow:rgba(0, 0, 0, 0.35);
+  --color-post-card-box-shadow: rgba(0, 0, 0, 0.24);
+  --color-post-card-hover-box-shadow: rgba(0, 0, 0, 0.35);
 
-    --color-level-undefined-box-shadow:#1e1e1eae;
-    --color-level-6-bg:#4545454e;
+  --color-level-undefined-box-shadow: #1e1e1eae;
+  --color-level-6-bg: #4545454e;
 
-    --chat-bg-main: #eee;
-    --chat-bg-highlight: #ddd;
-    --chat-text: #888;
-    --chat-text-tips: #383838;
+  --chat-bg-main: #eee;
+  --chat-bg-highlight: #ddd;
+  --chat-text: #888;
+  --chat-text-tips: #383838;
 }
 
-body.dark-mode{
-    --color-bg:rgb(35, 35, 35);
-    background-color: var(--color-bg);
+body.dark-mode {
+  --color-bg: rgb(35, 35, 35);
+  background-color: var(--color-bg);
 
-    --color-scroll:rgba(255, 255, 255, 0.1);
-    --color-scroll-thumb:rgba(255, 255, 255, 0.5);
+  --color-scroll: rgba(255, 255, 255, 0.1);
+  --color-scroll-thumb: rgba(255, 255, 255, 0.5);
 
-    --color-button-bg:#333 ;
-    --color-button:#f1f1f18f;
+  --color-button-bg: #333;
+  --color-button: #f1f1f18f;
 
-    --color-text: rgb(218, 211, 197);
-    --color-hr:#f1f1f18f;
+  --color-text: rgb(218, 211, 197);
+  --color-hr: #f1f1f18f;
 
-    --color-border:rgba(214, 214, 214, 0.8);
+  --color-border: rgba(214, 214, 214, 0.8);
 
-    --color-nav-bg:#383737;
-    --color-nav-hover:rgba(68, 68, 68, 0.901);
+  --color-nav-bg: #383737;
+  --color-nav-hover: rgba(68, 68, 68, 0.901);
 
-    --color-ball-bg:#3d3d3d;
-    --color-ball-text:#bababa;
-    --color-ball-box-shadow:rgba(255, 255, 255, 0.35);
+  --color-ball-bg: #3d3d3d;
+  --color-ball-text: #bababa;
+  --color-ball-box-shadow: rgba(255, 255, 255, 0.35);
 
-    --color-selected-shadow-first: rgba(255, 255, 255, 0.1);
-    --color-selected-shadow-second: rgba(255, 255, 255, 0.2);
+  --color-selected-shadow-first: rgba(255, 255, 255, 0.1);
+  --color-selected-shadow-second: rgba(255, 255, 255, 0.2);
 
-    --color-title-selected:#B8860B;
-    --color-title-bg:#ffb700cd;
+  --color-title-selected: #b8860b;
+  --color-title-bg: #ffb700cd;
 
-    --color-to-post:white;
-    --color-to-post-bg:#a1a1a1e1;
-    --color-to-post-border:#333;
+  --color-to-post: white;
+  --color-to-post-bg: #a1a1a1e1;
+  --color-to-post-border: #333;
 
-    --color-level:#c79900;
+  --color-level: #c79900;
 
-    --color-a-in-post:#00d9ff;
-    --color-a-hover-in-post:#ffd900;
-    --color-a-hover-bg-in-post:#9cff817e;
+  --color-a-in-post: #00d9ff;
+  --color-a-hover-in-post: #ffd900;
+  --color-a-hover-bg-in-post: #9cff817e;
 
-    --color-user-text:#cbb745;
+  --color-user-text: #cbb745;
 
-    --color-post-card-box-shadow:rgba(255, 255, 255, 0.24);
-    --color-post-card-hover-box-shadow:rgba(255, 255, 255, 0.35);
+  --color-post-card-box-shadow: rgba(255, 255, 255, 0.24);
+  --color-post-card-hover-box-shadow: rgba(255, 255, 255, 0.35);
 
-    --color-level-undefined-box-shadow:#9d9d9dde;
-    --color-level-6-bg:#a9a9a94e;
-    
-    --chat-bg-main: #444;
-    --chat-bg-highlight: #282828;
-    --chat-text: #ccc;
-    --chat-text-tips: #383838;
+  --color-level-undefined-box-shadow: #9d9d9dde;
+  --color-level-6-bg: #a9a9a94e;
+
+  --chat-bg-main: #444;
+  --chat-bg-highlight: #282828;
+  --chat-text: #ccc;
+  --chat-text-tips: #383838;
 }

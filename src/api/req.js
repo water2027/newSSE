@@ -1,7 +1,7 @@
-import { getTokenWithExpiry } from './auth';
-import { showMsg } from '@/components/MessageBox';
+import { showMsg } from '@/components/MessageBox'
+import { getTokenWithExpiry } from './auth'
 
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
+const apiUrl = import.meta.env.VITE_API_BASE_URL
 
 /***
  * @param {string} url api地址，只需写https://ssemarket.cn/api 后的部分
@@ -14,31 +14,32 @@ const apiUrl = import.meta.env.VITE_API_BASE_URL;
  *  true)
  */
 async function requestFunc(url, object, tokenIsNeeded) {
-	if (tokenIsNeeded) {
-		const token = getTokenWithExpiry('token');
-		if (!token) {
-			showMsg('登录过期，请重新登录');
-			window.location.reload();
-			return null;
-		}
-		const finalUrl = `${apiUrl}${url}?` + new URLSearchParams(object.query).toString();
-		const res = await fetch(`${finalUrl}`, {
-			method: object.method,
-			headers: {
-				...object.headers,
-				Authorization: `Bearer ${token}`,
-			},
-			body: JSON.stringify(object.body),
-		});
-		return res;
-	} else {
-		const res = await fetch(`${apiUrl}${url}`, {
-			method: object.method,
-			headers: object.headers,
-			body: JSON.stringify(object.body),
-		});
-		return res;
-	}
+  if (tokenIsNeeded) {
+    const token = getTokenWithExpiry('token')
+    if (!token) {
+      showMsg('登录过期，请重新登录')
+      window.location.reload()
+      return null
+    }
+    const finalUrl = `${apiUrl}${url}?${new URLSearchParams(object.query).toString()}`
+    const res = await fetch(`${finalUrl}`, {
+      method: object.method,
+      headers: {
+        ...object.headers,
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(object.body),
+    })
+    return res
+  }
+  else {
+    const res = await fetch(`${apiUrl}${url}`, {
+      method: object.method,
+      headers: object.headers,
+      body: JSON.stringify(object.body),
+    })
+    return res
+  }
 }
 
-export { requestFunc };
+export { requestFunc }

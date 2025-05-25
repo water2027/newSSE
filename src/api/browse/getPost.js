@@ -1,4 +1,4 @@
-import { requestFunc } from '../req';
+import { requestFunc } from '../req'
 /**
  *
  * @param {number} limit 返回多少个帖子
@@ -11,24 +11,25 @@ import { requestFunc } from '../req';
  * @returns
  */
 async function getPosts(object) {
-	try {
-		const res = await requestFunc(
-			`/auth/browse`,
-			{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: object,
-			},
-			true
-		);
-		const data = await res.json();
-		return data;
-	} catch (e) {
-		console.error(e);
-		return null;
-	}
+  try {
+    const res = await requestFunc(
+      `/auth/browse`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: object,
+      },
+      true,
+    )
+    const data = await res.json()
+    return data
+  }
+  catch (e) {
+    console.error(e)
+    return null
+  }
 }
 
 /***
@@ -39,24 +40,25 @@ async function getPosts(object) {
  * @returns {number} 返回帖子数量
  */
 async function getPostsNum(object) {
-	try {
-		const res = await requestFunc(
-			`/auth/getPostNum`,
-			{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: object,
-			},
-			true
-		);
-		const data = await res.json();
-		return data.Postcount;
-	} catch (e) {
-		console.error(e);
-		return null;
-	}
+  try {
+    const res = await requestFunc(
+      `/auth/getPostNum`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: object,
+      },
+      true,
+    )
+    const data = await res.json()
+    return data.Postcount
+  }
+  catch (e) {
+    console.error(e)
+    return null
+  }
 }
 
 /**
@@ -64,23 +66,24 @@ async function getPostsNum(object) {
  * @returns 帖子数组
  */
 async function getHeatPosts() {
-	try {
-		const res = await requestFunc(
-			`/auth/calculateHeat`,
-			{
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			},
-			true
-		);
-		const data = await res.json();
-		return data;
-	} catch (e) {
-		console.error(e);
-		return null;
-	}
+  try {
+    const res = await requestFunc(
+      `/auth/calculateHeat`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+      true,
+    )
+    const data = await res.json()
+    return data
+  }
+  catch (e) {
+    console.error(e)
+    return null
+  }
 }
 
 /***
@@ -90,65 +93,68 @@ async function getHeatPosts() {
  * @returns {object} 返回帖子详情
  */
 async function getPostByID(PostID, userTelephone) {
-	const result = await updateBrowseNum(PostID, userTelephone);
-	if (!result) {
-		console.error('增加浏览量失败');
-	}
-	try {
-		const res = await requestFunc(
-			`/auth/showDetails`,
-			{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: {
-					postID: PostID,
-					userTelephone: userTelephone,
-				},
-			},
-			true
-		);
-		try {
-			const data = await res.json();
-			return data;
-		} catch (e) {
-			console.error(e);
-			return {
-				Title: '帖子不存在',
-				Content: '帖子不存在',
-			};
-		}
-	} catch (e) {
-		console.error(e);
-		return {
-			Title: '网络错误',
-			Content: '网络错误',
-		};
-	}
+  const result = await updateBrowseNum(PostID, userTelephone)
+  if (!result) {
+    console.error('增加浏览量失败')
+  }
+  try {
+    const res = await requestFunc(
+      `/auth/showDetails`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: {
+          postID: PostID,
+          userTelephone,
+        },
+      },
+      true,
+    )
+    try {
+      const data = await res.json()
+      return data
+    }
+    catch (e) {
+      console.error(e)
+      return {
+        Title: '帖子不存在',
+        Content: '帖子不存在',
+      }
+    }
+  }
+  catch (e) {
+    console.error(e)
+    return {
+      Title: '网络错误',
+      Content: '网络错误',
+    }
+  }
 }
 
 async function updateBrowseNum(PostID, userTelephone) {
-	try {
-		const res = await requestFunc(
-			`/auth/updateBrowseNum`,
-			{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: {
-					postID: PostID,
-					userTelephone: userTelephone,
-				},
-			},
-			true
-		);
-		return res.ok;
-	} catch (e) {
-		console.error(e);
-		return false;
-	}
+  try {
+    const res = await requestFunc(
+      `/auth/updateBrowseNum`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: {
+          postID: PostID,
+          userTelephone,
+        },
+      },
+      true,
+    )
+    return res.ok
+  }
+  catch (e) {
+    console.error(e)
+    return false
+  }
 }
 
-export { getPosts, getPostsNum, getHeatPosts, getPostByID };
+export { getHeatPosts, getPostByID, getPosts, getPostsNum }

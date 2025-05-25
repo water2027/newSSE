@@ -1,4 +1,78 @@
 <!-- eslint-disable vue/html-self-closing -->
+<script setup>
+import { computed, defineAsyncComponent, ref, shallowRef } from 'vue'
+import { showMsg } from '@/components/MessageBox'
+
+import { levelClassHandler, levelNameHandler } from '@/utils/level'
+import { strHandler } from '@/utils/strHandler'
+
+import UserAvatar from '../UserAvatar.vue'
+
+const props = defineProps({
+  cardData: {
+    type: Object,
+    required: true,
+  },
+  likeHandler: {
+    type: Function,
+    required: true,
+  },
+  // 如果是帖子卡片
+  isPost: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+})
+
+const MarkdownContainer = defineAsyncComponent(() => {
+  return import('@/components/MarkdownContainer.vue')
+})
+
+const avatarUrl = shallowRef(`${import.meta.env.BASE_URL}default-avatar.svg`)
+
+const basicData = ref({
+  Like: props.cardData.Like,
+  IsLiked: props.cardData.IsLiked,
+})
+const identity = computed(() => {
+  const UserIdentity = props.cardData.UserIdentity
+  switch (UserIdentity) {
+    case 'student':
+      return 'student'
+    case 'teacher':
+      return 'teacher'
+    case 'organization':
+      return 'organization'
+    default:
+      return 'undefined'
+  }
+})
+
+async function like() {
+  try {
+    basicData.value.IsLiked = !basicData.value.IsLiked
+    const res = await props.likeHandler()
+    if (res) {
+      if (basicData.value.IsLiked) {
+        basicData.value.Like++
+        showMsg('点赞成功')
+      }
+      else {
+        basicData.value.Like--
+        showMsg('取消成功')
+      }
+    }
+    else {
+      showMsg('失败了:-(')
+    }
+  }
+  catch (e) {
+    showMsg('失败了:-(')
+  }
+}
+</script>
+
 <template>
   <div class="card-root root">
     <div class="user">
@@ -17,7 +91,7 @@
       >{{ levelNameHandler(cardData.UserScore) }}
       </span>
       <div class="userButtons">
-        <slot name="userButtons"></slot>
+        <slot name="userButtons" />
       </div>
     </div>
     <div
@@ -34,7 +108,7 @@
     <p v-if="isPost">
       {{ cardData.Content || 'loading' }}
     </p>
-    <markdown-container
+    <MarkdownContainer
       v-else
       :markdown-content="cardData.Content || 'loading'"
     />
@@ -47,7 +121,7 @@
         v-for="img in strHandler('img', cardData.Photos)"
         :key="img"
         :src="img"
-      />
+      >
     </div>
     <span class="card-time">{{
       strHandler('time', cardData.PostTime)
@@ -118,339 +192,271 @@
         </svg>
       </span>
     </div>
-    <slot name="comment"></slot>
+    <slot name="comment" />
   </div>
 </template>
-<script setup>
-import UserAvatar from '../UserAvatar.vue';
-import { ref, defineAsyncComponent, shallowRef, computed } from 'vue';
 
-import { strHandler } from '@/utils/strHandler';
-import { levelNameHandler, levelClassHandler } from '@/utils/level';
-
-import { showMsg } from '@/components/MessageBox';
-
-const MarkdownContainer = defineAsyncComponent(() => {
-	return import('@/components/MarkdownContainer.vue');
-});
-
-const avatarUrl = shallowRef(import.meta.env.BASE_URL + 'default-avatar.svg');
-
-const props = defineProps({
-	cardData: {
-		type: Object,
-		required: true,
-	},
-	likeHandler: {
-		type: Function,
-		required: true,
-	},
-	// 如果是帖子卡片
-	isPost: {
-		type: Boolean,
-		required: false,
-		default: false,
-	},
-});
-const basicData = ref({
-	Like: props.cardData.Like,
-	IsLiked: props.cardData.IsLiked,
-});
-const identity = computed(() => {
-	const UserIdentity = props.cardData.UserIdentity;
-	switch (UserIdentity) {
-		case 'student':
-			return 'student';
-		case 'teacher':
-			return 'teacher';
-		case 'organization':
-			return 'organization';
-		default:
-			return 'undefined';
-	}
-});
-
-const like = async () => {
-	try {
-		basicData.value.IsLiked = !basicData.value.IsLiked;
-		const res = await props.likeHandler();
-		if (res) {
-			if (basicData.value.IsLiked) {
-				basicData.value.Like++;
-				showMsg('点赞成功');
-			} else {
-				basicData.value.Like--;
-				showMsg('取消成功');
-			}
-		} else {
-			showMsg('失败了:-(');
-		}
-	} catch (e) {
-		showMsg('失败了:-(');
-	}
-};
-</script>
 <style scoped>
 .card-root {
-	width: 100%;
-	min-width: 100%;
-	min-height: 150px;
-	height: auto;
-	display: flex;
-	/*background-color: white;*/
-	flex-direction: column;
-	border: 1px solid var(--color-border);
-	border-radius: 8px;
-	margin: 10px 0;
-	padding: 15px;
-	box-shadow: var(--color-post-card-box-shadow) 0px 3px 8px;
-	transition: all 0.5s;
+  width: 100%;
+  min-width: 100%;
+  min-height: 150px;
+  height: auto;
+  display: flex;
+  /*background-color: white;*/
+  flex-direction: column;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  margin: 10px 0;
+  padding: 15px;
+  box-shadow: var(--color-post-card-box-shadow) 0px 3px 8px;
+  transition: all 0.5s;
 }
 
 .card-root .user {
-	--userImage: 50px;
-	width: 100%;
-	height: 30px;
-	/* 靠左 */
-	margin-right: auto;
-	margin-top: 15px;
-	margin-bottom: 15px;
-	display: flex;
-	align-items: center;
-	font-size: 1.2rem;
-	font-weight: bold;
+  --userImage: 50px;
+  width: 100%;
+  height: 30px;
+  /* 靠左 */
+  margin-right: auto;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: bold;
 }
 
 .card-root .card-title {
-	margin-top: 10px;
-	margin-bottom: 8px;
+  margin-top: 10px;
+  margin-bottom: 8px;
 }
 
 .card-root .card-time {
-	display: block;
-	margin-top: 10px;
-	margin-bottom: 10px;
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 body.dark-mode .default-avatar {
-	filter: invert(0.9);
+  filter: invert(0.9);
 }
 
 .imgs img {
-	width: 100px;
-	height: 100px;
-	margin: 5px;
+  width: 100px;
+  height: 100px;
+  margin: 5px;
 }
 
 .like {
-	color: #ff0000;
-	cursor: pointer;
-	transition: all 0.3s ease;
+  color: #ff0000;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .user .user-name {
-	color: var(--color-user-text);
-	margin-left: 10px;
-	font-size: 18px;
+  color: var(--color-user-text);
+  margin-left: 10px;
+  font-size: 18px;
 }
 
 .user img {
-	width: var(--userImage);
-	height: var(--userImage);
-	border-radius: 50%;
+  width: var(--userImage);
+  height: var(--userImage);
+  border-radius: 50%;
 }
 
 @media screen and (min-width: 768px) {
-	.card-root {
-		display: block;
-	}
+  .card-root {
+    display: block;
+  }
 
-	.imgs {
-		display: flex;
-		flex-wrap: wrap;
-	}
+  .imgs {
+    display: flex;
+    flex-wrap: wrap;
+  }
 
-	p {
-		text-indent: 2rem;
-	}
+  p {
+    text-indent: 2rem;
+  }
 }
 
 .userButtons {
-	margin-top: 0;
-	margin-left: auto;
-	display: flex;
-	flex-direction: row;
+  margin-top: 0;
+  margin-left: auto;
+  display: flex;
+  flex-direction: row;
 }
 
 p::after {
-	content: '...';
+  content: '...';
 }
 
 .basicInfo {
-	display: flex;
-	justify-content: space-around;
-	margin-top: 10px;
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
 }
 
 a {
-	text-decoration: none;
-	color: black;
-	display: block;
+  text-decoration: none;
+  color: black;
+  display: block;
 }
 .identity {
-	color: black;
-	margin-left: 8px;
-	margin-right: 8px;
-	background-color: #62ea1480;
-	border-radius: 8px;
-	display: inline-block;
-	width: 50px;
-	text-align: center;
-	transition: all 0.5s;
+  color: black;
+  margin-left: 8px;
+  margin-right: 8px;
+  background-color: #62ea1480;
+  border-radius: 8px;
+  display: inline-block;
+  width: 50px;
+  text-align: center;
+  transition: all 0.5s;
 }
 body.dark-mode .identity {
-	color: #e2e6e7;
-	margin-left: 8px;
-	margin-right: 10px;
-	background-color: #e9e9f180;
-	border-radius: 8px;
-	display: inline-block;
-	width: 50px;
-	text-align: center;
+  color: #e2e6e7;
+  margin-left: 8px;
+  margin-right: 10px;
+  background-color: #e9e9f180;
+  border-radius: 8px;
+  display: inline-block;
+  width: 50px;
+  text-align: center;
 }
 
 .level {
-	font-size: 13px;
-	margin-left: 6px;
-	border-radius: 10%;
-	padding-left: 10px;
-	padding-right: 10px;
-	padding-top: 5px;
-	padding-bottom: 5px;
+  font-size: 13px;
+  margin-left: 6px;
+  border-radius: 10%;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 .level-undefined {
-	text-shadow:
-		0.2em 0.2em var(--color-level-undefined-box-shadow),
-		-0.2em -0.2em var(--color-level-undefined-box-shadow);
+  text-shadow:
+    0.2em 0.2em var(--color-level-undefined-box-shadow),
+    -0.2em -0.2em var(--color-level-undefined-box-shadow);
 }
 .level-0 {
-	background-color: #1aa6b9;
+  background-color: #1aa6b9;
 }
 .level-1 {
-	background-color: #378814;
+  background-color: #378814;
 }
 .level-2 {
-	background-color: #d74a4a;
+  background-color: #d74a4a;
 }
 .level-3 {
-	background-color: rgb(240, 133, 39);
+  background-color: rgb(240, 133, 39);
 }
 .level-4 {
-	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
-	background-size: 300% 300%;
-	animation: change-color 5s ease infinite;
+  background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
+  background-size: 300% 300%;
+  animation: change-color 5s ease infinite;
 }
 .level-5 {
-	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
-	background-size: 300% 300%;
-	color: transparent;
-	background-clip: text;
-	animation: change-color 5s ease infinite;
+  background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
+  background-size: 300% 300%;
+  color: transparent;
+  background-clip: text;
+  animation: change-color 5s ease infinite;
 }
 .level-6 {
-	position: relative;
-	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
-	background-size: 300% 300%;
-	color: transparent;
-	background-clip: text;
-	animation: change-color 5s ease infinite;
+  position: relative;
+  background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
+  background-size: 300% 300%;
+  color: transparent;
+  background-clip: text;
+  animation: change-color 5s ease infinite;
 }
 .level-6::before {
-	content: 'Lv6 专家';
-	position: absolute;
-	transform: rotateX(180deg);
-	transform-origin: bottom;
-	line-height: 32px;
-	background: linear-gradient(0deg, #9a7ef8 0, transparent 80%);
-	background-clip: text;
-	-webkit-background-clip: text;
-	color: transparent;
-	opacity: 0.5;
+  content: 'Lv6 专家';
+  position: absolute;
+  transform: rotateX(180deg);
+  transform-origin: bottom;
+  line-height: 32px;
+  background: linear-gradient(0deg, #9a7ef8 0, transparent 80%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  opacity: 0.5;
 }
 .level-7 {
-	position: relative;
-	line-height: 32px;
-	background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
-	color: transparent;
-	background-clip: text;
-	-webkit-background-clip: text;
-	animation: change-color 5s ease infinite;
-	background-size: 300% 300%;
+  position: relative;
+  line-height: 32px;
+  background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: change-color 5s ease infinite;
+  background-size: 300% 300%;
 }
 .level-7::before {
-	content: 'Lv7 大神';
-	transform: rotateX(180deg);
-	position: absolute;
-	transform-origin: bottom;
-	background: linear-gradient(
-		45deg,
-		#ff7d7d3e,
-		#ff5a993e,
-		#e376e53e,
-		#9a7ef83e,
-		transparent,
-		#9a7ef73e,
-		#e376e53e,
-		#ff5a993e,
-		#ff7d7d3e
-	);
-	background-size: 300% 300%;
-	color: transparent;
-	background-clip: text;
-	animation: change-color 5s ease infinite;
-	opacity: 0.5;
+  content: 'Lv7 大神';
+  transform: rotateX(180deg);
+  position: absolute;
+  transform-origin: bottom;
+  background: linear-gradient(
+    45deg,
+    #ff7d7d3e,
+    #ff5a993e,
+    #e376e53e,
+    #9a7ef83e,
+    transparent,
+    #9a7ef73e,
+    #e376e53e,
+    #ff5a993e,
+    #ff7d7d3e
+  );
+  background-size: 300% 300%;
+  color: transparent;
+  background-clip: text;
+  animation: change-color 5s ease infinite;
+  opacity: 0.5;
 }
 .level-8 {
-	position: relative;
-	line-height: 32px;
-	text-shadow:
-		2px 2px 4px rgba(0, 0, 0, 0.3),
-		-2px -2px 4px rgba(255, 255, 255, 0.3);
+  position: relative;
+  line-height: 32px;
+  text-shadow:
+    2px 2px 4px rgba(0, 0, 0, 0.3),
+    -2px -2px 4px rgba(255, 255, 255, 0.3);
 }
 .level-8::before {
-	content: '祖师爷';
-	transform: rotateX(160deg) skew(10deg);
-	position: absolute;
-	transform-origin: bottom;
-	background: linear-gradient(
-		45deg,
-		#ff7d7d,
-		#ff5a99,
-		#e376e5,
-		#9a7ef8,
-		transparent,
-		#9a7ef8,
-		#e376e5,
-		#ff5a99,
-		#ff7d7d
-	);
-	background-size: 300% 300%;
-	color: transparent;
-	background-clip: text;
-	-webkit-background-clip: text;
-	animation: change-color 5s ease infinite;
-	opacity: 0.25;
+  content: '祖师爷';
+  transform: rotateX(160deg) skew(10deg);
+  position: absolute;
+  transform-origin: bottom;
+  background: linear-gradient(
+    45deg,
+    #ff7d7d,
+    #ff5a99,
+    #e376e5,
+    #9a7ef8,
+    transparent,
+    #9a7ef8,
+    #e376e5,
+    #ff5a99,
+    #ff7d7d
+  );
+  background-size: 300% 300%;
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: change-color 5s ease infinite;
+  opacity: 0.25;
 }
 
 @keyframes change-color {
-	0% {
-		background-position: 0% 50%;
-	}
-	50% {
-		background-position: 100% 50%;
-	}
-	100% {
-		background-position: 0% 50%;
-	}
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 </style>

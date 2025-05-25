@@ -1,13 +1,98 @@
+<script setup>
+import { Icon } from '@iconify/vue'
+import { inject, onBeforeMount, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { getInfoById } from '@/api/info/getInfo'
+import UserAvatar from '@/components/UserAvatar.vue'
+
+const router = useRouter()
+
+const user = ref()
+const userInfo = inject('userInfo')
+
+onBeforeMount(() => {
+  const { id } = useRoute().params
+  getInfoById(Number(id))
+    .then((res) => {
+      if (!res.code) {
+        user.value = res
+        user.value.title = getUserTitle(res.score)
+      }
+      else {
+        console.log(`请求无效：${res.msg} (${res.code})`)
+      }
+    })
+    .catch((error) => {
+      if (error.response) {
+        const res = error.response
+        console.log(`请求无效：${res.msg} (${res.code})`)
+        // this.$bvToast.toast(`请求无效：${res.data.msg} (${res.data.code})`, {
+        //   title: '内部错误',
+        //   variant: 'danger',
+        //   solid: true,
+        // });
+      }
+      else {
+        console.log('请求无效')
+        // this.$bvToast.toast('请求无效：', {
+        //   title: '内部错误',
+        //   variant: 'danger',
+        //   solid: true,
+        // });
+      }
+    })
+})
+
+function navigateChat() {
+  if (user.value.userID > 0) {
+    router.push({ name: 'Chat', query: { user: user.value.userID } })
+    stopPropagation()
+  }
+}
+
+function getUserTitle(userScore) {
+  if (userScore < 100) {
+    return '菜鸟'
+  }
+  if (userScore >= 100 && userScore < 300) {
+    return '大虾'
+  }
+  if (userScore >= 300 && userScore < 600) {
+    return '码农'
+  }
+  if (userScore >= 600 && userScore < 1000) {
+    return '程序猿'
+  }
+  if (userScore >= 1000 && userScore < 2000) {
+    return '工程师'
+  }
+  if (userScore >= 2000 && userScore < 3000) {
+    return '大牛'
+  }
+  if (userScore >= 3000 && userScore < 4000) {
+    return '专家'
+  }
+  if (userScore >= 4000 && userScore < 5000) {
+    return '大神'
+  }
+  return '祖师爷'
+}
+</script>
+
 <template>
-  <div class="user-profile-wrapper" v-if="user">
+  <div v-if="user" class="user-profile-wrapper">
     <div class="profile-card profile-header-wrapper">
       <div class="profile-header">
         <UserAvatar :src="user.avatarURL" />
         <div class="profile-header-info">
-          <div class="user-name">{{ user.name }}</div>
-          <div class="user-bio">{{ user.intro }}</div>
+          <div class="user-name">
+            {{ user.name }}
+          </div>
+          <div class="user-bio">
+            {{ user.intro }}
+          </div>
         </div>
-        <div @click="navigateChat" class="btn-chat" v-if="userInfo.userID != user.userID">
+        <div v-if="userInfo.userID != user.userID" class="btn-chat" @click="navigateChat">
           <Icon icon="tabler:send" />
           私信
         </div>
@@ -15,93 +100,14 @@
     </div>
     <div class="profile-main">
       <div class="main-left">
-        <div class="profile-card profile-dynamic"></div>
+        <div class="profile-card profile-dynamic" />
       </div>
       <div class="main-right">
-        <div class="profile-card profile-info"></div>
+        <div class="profile-card profile-info" />
       </div>
     </div>
   </div>
 </template>
-
-<script setup>
-import UserAvatar from '@/components/UserAvatar.vue';
-import { Icon } from '@iconify/vue';
-import { ref, inject, onBeforeMount } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { getInfoById } from '@/api/info/getInfo';
-
-const router = useRouter();
-
-const user = ref();
-const userInfo = inject('userInfo');
-
-onBeforeMount(() => {
-  const { id } = useRoute().params;
-  getInfoById(Number(id))
-    .then((res) => {
-      if (!res.code) {
-        user.value = res;
-        user.value.title = getUserTitle(res.score);
-      } else {
-        console.log(`请求无效：${res.msg} (${res.code})`);
-      }
-    })
-    .catch((error) => {
-      if (error.response) {
-        const res = error.response;
-        console.log(`请求无效：${res.msg} (${res.code})`);
-        // this.$bvToast.toast(`请求无效：${res.data.msg} (${res.data.code})`, {
-        //   title: '内部错误',
-        //   variant: 'danger',
-        //   solid: true,
-        // });
-      } else {
-        console.log('请求无效');
-        // this.$bvToast.toast('请求无效：', {
-        //   title: '内部错误',
-        //   variant: 'danger',
-        //   solid: true,
-        // });
-      }
-    });
-});
-
-function navigateChat() {
-  if (user.value.userID > 0) {
-    router.push({ name: "Chat", query: { user: user.value.userID } });
-    stopPropagation();
-  }
-}
-
-function getUserTitle(userScore) {
-  if (userScore < 100) {
-    return '菜鸟';
-  }
-  if (userScore >= 100 && userScore < 300) {
-    return '大虾';
-  }
-  if (userScore >= 300 && userScore < 600) {
-    return '码农';
-  }
-  if (userScore >= 600 && userScore < 1000) {
-    return '程序猿';
-  }
-  if (userScore >= 1000 && userScore < 2000) {
-    return '工程师';
-  }
-  if (userScore >= 2000 && userScore < 3000) {
-    return '大牛';
-  }
-  if (userScore >= 3000 && userScore < 4000) {
-    return '专家';
-  }
-  if (userScore >= 4000 && userScore < 5000) {
-    return '大神';
-  }
-  return '祖师爷';
-}
-</script>
 
 <style lang="scss">
 .user-profile-wrapper {
@@ -185,7 +191,6 @@ function getUserTitle(userScore) {
 
 @media screen and (max-width: 768px) {
   .profile-main {
-
     .main-left,
     .main-right {
       width: 100%;

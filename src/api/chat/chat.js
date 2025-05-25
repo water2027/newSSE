@@ -1,4 +1,4 @@
-import { requestFunc } from '../req';
+import { requestFunc } from '../req'
 
 async function getChatHistory(senderUserID, targetUserID) {
   try {
@@ -11,12 +11,13 @@ async function getChatHistory(senderUserID, targetUserID) {
         },
         query: { senderUserID, targetUserID },
       },
-      true
-    );
-    const data = await res.json();
-    return data;
-  } catch (e) {
-    console.error(e);
+      true,
+    )
+    const data = await res.json()
+    return data
+  }
+  catch (e) {
+    console.error(e)
   }
 }
 
@@ -31,13 +32,14 @@ async function getChatNotice(userID) {
         },
         query: { userID },
       },
-      true
-    );
-    const data = await res.json();
-    return data;
-  } catch (e) {
-    console.error(e);
+      true,
+    )
+    const data = await res.json()
+    return data
+  }
+  catch (e) {
+    console.error(e)
   }
 }
 
-export { getChatHistory, getChatNotice };
+export { getChatHistory, getChatNotice }

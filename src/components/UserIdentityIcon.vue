@@ -1,25 +1,16 @@
-<template>
-  <div v-if="identityIcon[identity]" :class="['user-identity', `identity-${identity}`]">
-    <Icon :icon="identityIcon[identity]" class="user-identity-icon" />
-    <div v-if="!noTip" class="user-identity-name">
-      {{ identityName[identity] }}
-    </div>
-  </div>
-</template>
-
 <script setup>
-import { Icon } from '@iconify/vue';
+import { Icon } from '@iconify/vue'
 
 const props = defineProps({
   identity: {
     type: String,
-    default: ''
+    default: '',
   },
   noTip: {
     type: Boolean,
-    default: false
-  }
-});
+    default: false,
+  },
+})
 
 const identityIcon = {
   teacher: 'material-symbols:book-ribbon',
@@ -31,6 +22,15 @@ const identityName = {
   organization: '组织',
 }
 </script>
+
+<template>
+  <div v-if="identityIcon[identity]" class="user-identity" :class="[`identity-${identity}`]">
+    <Icon :icon="identityIcon[identity]" class="user-identity-icon" />
+    <div v-if="!noTip" class="user-identity-name">
+      {{ identityName[identity] }}
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .user-identity {
@@ -64,7 +64,7 @@ const identityName = {
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
     opacity: 0;
-    transition: opacity .2s;
+    transition: opacity 0.2s;
 
     &::after {
       content: ' ';

@@ -1,3 +1,21 @@
+<script setup>
+import { onMounted, shallowRef } from 'vue'
+
+import { getHeatPosts } from '@/api/browse/getPost'
+import { showMsg } from '@/components/MessageBox'
+
+const heatPosts = shallowRef([])
+
+onMounted(async () => {
+  try {
+    heatPosts.value = await getHeatPosts()
+  }
+  catch (e) {
+    showMsg(`获取热帖失败:${e}`)
+  }
+})
+</script>
+
 <template>
   <div
     class="root nav-bar heat"
@@ -9,7 +27,7 @@
       v-for="post in heatPosts"
       :key="post.PostID"
       class="nav"
-      :to="'/postdetail/' + post.PostID"
+      :to="`/postdetail/${post.PostID}`"
     >
       <span>
         {{ post.Title }}
@@ -17,72 +35,57 @@
     </router-link>
   </div>
 </template>
-<script setup>
-import { shallowRef, onMounted } from 'vue';
 
-import { getHeatPosts } from '@/api/browse/getPost';
-import { showMsg } from '@/components/MessageBox';
-
-const heatPosts = shallowRef([]);
-
-onMounted(async () => {
-	try {
-		heatPosts.value = await getHeatPosts();
-	} catch (e) {
-		showMsg(`获取热帖失败:${e}`);
-	}
-});
-</script>
 <style scoped>
 #heat {
-	color: #ffffff;
-	text-shadow:
-		0 0 10px #ff3232de,
-		0 0 20px #ff3232de,
-		0 0 50px #ff3232de,
-		0 0 100px #ff3232de,
-		0 0 200px #ff3232de;
+  color: #ffffff;
+  text-shadow:
+    0 0 10px #ff3232de,
+    0 0 20px #ff3232de,
+    0 0 50px #ff3232de,
+    0 0 100px #ff3232de,
+    0 0 200px #ff3232de;
 }
 #heat::before {
-	content: '🔥';
+  content: '🔥';
 }
 #heat::after {
-	content: '🔥';
+  content: '🔥';
 }
 
 .nav-bar {
-	display: flex;
-	flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .heat {
-	text-align: center !important;
-	width: 100%;
+  text-align: center !important;
+  width: 100%;
 }
 
 .nav {
-	width: 100%;
-	margin-top: 10px;
-	margin-bottom: 10px;
-	padding: 20px;
-	border: 1px solid var(--color-border);
-	text-align: center;
-	text-decoration: none;
-	color: var(--color-text);
-	transition: all 0.3s;
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  text-align: center;
+  text-decoration: none;
+  color: var(--color-text);
+  transition: all 0.3s;
 }
 
 .nav:hover {
-	background-color: var(--color-nav-hover);
+  background-color: var(--color-nav-hover);
 }
 
 @media screen and (min-width: 768px) {
-	.root {
-		width: 25%;
-		margin-right: 20px;
-	}
-	.nav{
-		margin: 0;
-	}
+  .root {
+    width: 25%;
+    margin-right: 20px;
+  }
+  .nav {
+    margin: 0;
+  }
 }
 </style>
