@@ -116,7 +116,7 @@ function handler(type) {
  */
 async function like() {
   // 后端没有返回数据，不要赋值后再更新
-  if (props.comment.hasOwnProperty('PcommentID')) {
+  if (Object.prototype.hasOwnProperty.call(props.comment, 'PcommentID')) {
     try {
       const res = await likePostComment(
         commentData.value.PcommentID,
@@ -135,7 +135,7 @@ async function like() {
       return false
     }
   }
-  if (props.comment.hasOwnProperty('ccommentID')) {
+  if (Object.prototype.hasOwnProperty.call(props.comment, 'ccommentID')) {
     try {
       const res = await likeCommentComment(
         props.comment.ccommentID,

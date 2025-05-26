@@ -5,6 +5,7 @@ import { delPost } from '@/api/editPostAndComment/editPost'
 import { likePost, savePost } from '@/api/SaveAndLike/SaveAndLike'
 
 import { showMsg } from '@/components/MessageBox'
+import { useUserStore } from '@/store/userStore'
 import BasicCard from './BasicCard.vue'
 
 const props = defineProps({
@@ -20,7 +21,7 @@ const props = defineProps({
 // 不能直接修改props，所以要用ref包装
 const postData = ref(props.post)
 
-const userInfo = inject('userInfo')
+const { userInfo } = useUserStore()
 
 /**
  * @description 收藏。
@@ -30,7 +31,7 @@ async function handleSave() {
   try {
     await savePost(
       postData.value.PostID,
-      userInfo.value.phone,
+      userInfo.phone,
     )
     postData.value.IsSaved = !postData.value.IsSaved
     showMsg(postData.value.IsSaved ? '收藏成功' : '取消成功')
@@ -46,7 +47,7 @@ async function handleSave() {
 async function like() {
   // 后端没有返回数据，不要赋值后再更新
   try {
-    const res = await likePost(postData.value.PostID, userInfo.value.phone)
+    const res = await likePost(postData.value.PostID, userInfo.phone)
     if (res) {
       return true
     }
@@ -138,5 +139,15 @@ body.dark-mode .icon {
     box-shadow: var(--color-post-card-hover-box-shadow) 0px 5px 15px;
     transform: scale(1.03);
   }
+}
+
+p::after {
+  content: '...';
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-text);
+  display: block;
 }
 </style>

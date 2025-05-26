@@ -19,6 +19,7 @@
     "markdown-it": "^14.1.0",
     "markdown-it-katex": "^2.0.3",
     "newsse": "file:",
+    "pinia": "^3.0.2",
     "vue": "^3.5",
     "vue-router": "^4.3.3",
     "workbox-window": "^7.1.0"

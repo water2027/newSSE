@@ -9,6 +9,7 @@ import DetailCard from '@/components/card/DetailCard.vue'
 
 import { showImg } from '@/components/ImageShower'
 import { showMsg } from '@/components/MessageBox'
+import { useUserStore } from '@/store/userStore'
 import { strHandler } from '@/utils/strHandler'
 
 const CommentCard = defineAsyncComponent(() => import('@/components/card/CommentCard.vue'))
@@ -16,7 +17,7 @@ const CCommentCard = defineAsyncComponent(() => import('@/components/card/CComme
 
 const route = useRoute()
 
-const userInfo = inject('userInfo')
+const { userInfo } = useUserStore()
 
 const post = ref({})
 const isPostLoaded = computed(() => Object.keys(post.value).length !== 0)
@@ -40,7 +41,7 @@ function setSortType(type) {
 async function commentHandler(event) {
   const data = event.detail
   try {
-    const res = await data.func(userInfo.value.phone, post.value.PostID)
+    const res = await data.func(userInfo.phone, post.value.PostID)
     if (res) {
       showMsg('成功')
       await getCommentList()
@@ -68,7 +69,7 @@ async function commentHandler(event) {
 async function getCommentList() {
   try {
     const ID = Number(route.params.id)
-    const curComments = await getCommentsByPostID(ID, userInfo.value.phone)
+    const curComments = await getCommentsByPostID(ID, userInfo.phone)
     if (curComments)
       curComments.reverse()
     comments.value = curComments
@@ -106,7 +107,7 @@ async function clickHandler(event) {
 onMounted(async () => {
   try {
     const ID = Number(route.params.id)
-    const curPost = await getPostByID(ID, userInfo.value.phone)
+    const curPost = await getPostByID(ID, userInfo.phone)
     post.value = curPost
     await getCommentList()
   }

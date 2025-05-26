@@ -1,5 +1,5 @@
 import { showMsg } from '@/components/MessageBox'
-import { getTokenWithExpiry } from './auth'
+import { useUserStore } from '@/store/userStore'
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL
 
@@ -15,8 +15,8 @@ const apiUrl = import.meta.env.VITE_API_BASE_URL
  */
 async function requestFunc(url, object, tokenIsNeeded) {
   if (tokenIsNeeded) {
-    const token = getTokenWithExpiry('token')
-    if (!token) {
+    const { token } = useUserStore()
+    if (!token.value) {
       showMsg('登录过期，请重新登录')
       window.location.reload()
       return null
@@ -26,7 +26,7 @@ async function requestFunc(url, object, tokenIsNeeded) {
       method: object.method,
       headers: {
         ...object.headers,
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token.value}`,
       },
       body: JSON.stringify(object.body),
     })

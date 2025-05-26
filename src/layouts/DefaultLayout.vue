@@ -15,6 +15,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { getChatNotice } from '@/api/chat/chat'
 
 import { getNoticesNum } from '@/api/notice/notice'
+import { useUserStore } from '@/store/userStore'
 
 const HeatList = defineAsyncComponent(
   () => import('@/components/HeatList.vue'),
@@ -22,11 +23,10 @@ const HeatList = defineAsyncComponent(
 const BottomNavbar = defineAsyncComponent(
   () => import('@/components/BottomNavbar.vue'),
 )
-
 const router = useRouter()
 const route = useRoute()
 
-const userInfo = inject('userInfo')
+const { userInfo } = useUserStore()
 
 const mode = ref(document.body.className)
 function changeMode() {
@@ -168,7 +168,7 @@ async function updateChatNum(n) {
     chatNum.value = n
   }
   else {
-    const temp = await getChatNotice(userInfo.value.userID)
+    const temp = await getChatNotice(userInfo.userID)
     chatNum.value = temp.data.noticeNum
   }
 }

@@ -5,6 +5,7 @@ import App from './App.vue'
 import router from './router'
 import './assets/main.css'
 import './assets/mode.css'
+import 'virtual:uno.css'
 
 if ('serviceWorker' in navigator) {
   registerSW()

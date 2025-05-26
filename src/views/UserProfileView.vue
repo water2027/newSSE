@@ -1,14 +1,15 @@
 <script setup>
 import { Icon } from '@iconify/vue'
-import { inject, onBeforeMount, ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getInfoById } from '@/api/info/getInfo'
 import UserAvatar from '@/components/UserAvatar.vue'
+import { useUserStore } from '@/store/userStore'
 
 const router = useRouter()
 
 const user = ref()
-const userInfo = inject('userInfo')
+const { userInfo } = useUserStore()
 
 onBeforeMount(() => {
   const { id } = useRoute().params
@@ -92,7 +93,7 @@ function getUserTitle(userScore) {
             {{ user.intro }}
           </div>
         </div>
-        <div v-if="userInfo.userID != user.userID" class="btn-chat" @click="navigateChat">
+        <div v-if="userInfo.userID !== user.userID" class="btn-chat" @click="navigateChat">
           <Icon icon="tabler:send" />
           私信
         </div>

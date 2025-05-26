@@ -79,7 +79,7 @@ async function sendCommentFunc(phone, id) {
 
 async function deleteFunc() {
   let id
-  if (props.comment.hasOwnProperty('ccommentID')) {
+  if (Object.prototype.hasOwnProperty.call(props.comment, 'ccommentID')) {
     id = props.comment.ccommentID
     const res = await delCcomment(id)
     if (res) {

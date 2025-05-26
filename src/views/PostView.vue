@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/html-self-closing -->
 <script setup>
-import { inject, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { sendPost } from '@/api/editPostAndComment/editPost'
@@ -8,9 +8,10 @@ import { getTeachers } from '@/api/info/getTeacher'
 
 import MarkdownEditor from '@/components/MarkdownEditor.vue'
 import { showMsg } from '@/components/MessageBox'
+import { useUserStore } from '@/store/userStore'
 
 const router = useRouter()
-const userInfo = inject('userInfo')
+const { userInfo } = useUserStore()
 const partitions = ref([
   '主页',
   '日常吐槽',
@@ -46,7 +47,7 @@ async function submitPost() {
     '',
     teacher.value,
     postTitle,
-    userInfo.value.phone,
+    userInfo.phone,
   )
   router.push('/')
   showMsg(res.msg)

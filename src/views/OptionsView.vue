@@ -9,6 +9,7 @@ import { updateUserInfo, uploadAvatar } from '@/api/info/updateInfo'
 import { updatePassword } from '@/api/LoginAndRegister/forgetPwd'
 import { sendCode } from '@/api/LoginAndRegister/utils'
 import { showMsg } from '@/components/MessageBox'
+import { useUserStore } from '@/store/userStore'
 import {
   levelClassHandler,
   levelExpHandler,
@@ -17,7 +18,7 @@ import {
 
 const router = useRouter()
 
-const userInfo = inject('userInfo')
+const { userInfo } = useUserStore()
 const allInfo = ref({})
 const VCode = ref(null)
 const password1 = ref(null)
@@ -44,7 +45,7 @@ async function updatePasswordFunc() {
   }
   try {
     const res = await updatePassword(
-      userInfo.value.email,
+      userInfo.email,
       password1.value.value,
       password2.value.value,
       VCode.value.value,
@@ -102,7 +103,7 @@ function logout() {
 }
 
 onMounted(async () => {
-  allInfo.value = await getAllInfo(userInfo.value.phone)
+  allInfo.value = await getAllInfo(userInfo.phone)
 })
 </script>
 

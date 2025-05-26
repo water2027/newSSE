@@ -16,7 +16,7 @@ function setItemWithExpiry(key, value, ttl) {
  *
  * @param {string} userEmail
  * @param {string} userPassword 未加密的密码
- * @returns
+ * @returns {Promise<string>} token
  */
 async function userLogin(userEmail, userPassword) {
   try {
@@ -31,17 +31,18 @@ async function userLogin(userEmail, userPassword) {
       },
     }, false)
     const data = await res.json()
-    if (data.data?.token) {
+    const token = data.data?.token
+    if (token) {
       setItemWithExpiry('token', data.data.token, SEVEN_DAYS_IN_MS)
-      return true
+      return token
     }
     else {
-      return false
+      return ''
     }
   }
   catch (e) {
     console.error(e)
-    return false
+    return ''
   }
 }
 
