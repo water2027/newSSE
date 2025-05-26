@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { CustomFormData } from '@/composables/FormExam'
 import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
 
+import { useRouter } from 'vue-router'
 import { updatePassword } from '@/api/LoginAndRegister/forgetPwd'
 import { sendCode } from '@/api/LoginAndRegister/utils'
 import FormContainer from '@/components/FormContainer.vue'
@@ -9,7 +10,7 @@ import { showMsg } from '@/components/MessageBox'
 import { useFormExam } from '@/composables/FormExam'
 
 const router = useRouter()
-const form = ref([
+const form = ref<CustomFormData[]>([
   {
     id: 'email',
     value: '',

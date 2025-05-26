@@ -3,6 +3,13 @@ import { useUserStore } from '@/store/userStore'
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL
 
+export interface RequestObject {
+  method: string
+  headers: HeadersInit
+  body?: object
+  query?: Record<string, string>
+}
+
 /***
  * @param {string} url api地址，只需写https://ssemarket.cn/api 后的部分
  * @param {{method:string,headers:object,body:object|null}} object 请求体
@@ -13,7 +20,7 @@ const apiUrl = import.meta.env.VITE_API_BASE_URL
  * },
  *  true)
  */
-async function requestFunc(url, object, tokenIsNeeded) {
+async function requestFunc(url: string, object: RequestObject, tokenIsNeeded: boolean = true) {
   if (tokenIsNeeded) {
     const { token } = useUserStore()
     if (!token.value) {

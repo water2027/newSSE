@@ -2,8 +2,29 @@ import { computed, reactive } from 'vue'
 
 const SEVEN_DAYS_IN_MS = 7 * 24 * 60 * 60 * 1000 - 1000 * 60 * 60
 
-const userInfo = reactive({})
-const tokenInfo = reactive({
+export interface UserInfo {
+  userID: number
+  name: string
+  avatarURL: string
+  phone: string
+  email: string
+  identity: string
+}
+
+interface TokenInfo {
+  value: string
+  expiry: number
+}
+
+const userInfo = reactive<UserInfo>({
+  userID: 0,
+  name: '',
+  avatarURL: '',
+  phone: '',
+  email: '',
+  identity: '',
+})
+const tokenInfo = reactive<TokenInfo>({
   value: '',
   expiry: 0,
 })
@@ -16,18 +37,18 @@ const token = computed(() => {
   return tokenInfo.value
 })
 export function useUserStore() {
-  const setToken = (newToken) => {
+  const setToken = (newToken: string) => {
     const now = new Date()
     tokenInfo.value = newToken
     tokenInfo.expiry = now.getTime() + SEVEN_DAYS_IN_MS
   }
 
-  const setUserInfo = (newUserInfo) => {
+  const setUserInfo = (newUserInfo: string) => {
     Object.assign(userInfo, newUserInfo)
   }
 
   const isLogin = computed(() => {
-    return Object.keys(userInfo).length > 0 && token.value.length > 0
+    return token.value.length > 0 && userInfo.userID > 0
   })
 
   return {

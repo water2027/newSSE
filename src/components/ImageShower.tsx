@@ -1,8 +1,13 @@
-import { createApp } from 'vue'
+import { createApp, defineComponent } from 'vue'
 
 import '@/assets/ImageShower.css'
 
-const imageShower = {
+interface ImageShowerProps {
+  img: string
+  close: () => void
+}
+
+const ImageShower = defineComponent({
   props: {
     img: {
       type: String,
@@ -13,7 +18,7 @@ const imageShower = {
       required: true,
     },
   },
-  setup(props) {
+  setup(props: ImageShowerProps) {
     return () => (
       <div id="imgShower-root">
         <img
@@ -24,15 +29,15 @@ const imageShower = {
       </div>
     )
   },
-}
+})
 
-function showImg(img) {
+function showImg(img:string) {
   const div = document.createElement('div')
   document.body.appendChild(div)
-  const app = createApp(imageShower, {
+  const app = createApp(ImageShower, {
     img,
     close: () => {
-      app.unmount(div)
+      app.unmount()
       document.body.removeChild(div)
       window.removeEventListener('popstate', handlePopState)
       history.back()
@@ -41,7 +46,7 @@ function showImg(img) {
   app.mount(div)
 
   function handlePopState() {
-    app.unmount(div)
+    app.unmount()
     document.body.removeChild(div)
     window.removeEventListener('popstate', handlePopState)
   }

@@ -1,5 +1,6 @@
 <!-- eslint-disable regexp/no-super-linear-backtracking -->
 <script lang="ts" setup>
+import type { CustomFormData } from '@/composables/FormExam'
 import { computed, ref, useTemplateRef } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -16,7 +17,7 @@ const rememberMe = useTemplateRef('rememberMe')
 
 const passwordReg = /^\S*(?=\S{6})(?=\S*\d)(?=\S*[A-Z])(?=\S*[a-z])(?=\S*[!@#$%^&*? ])\S+$/
 
-const registerForm = ref([
+const registerForm = ref<CustomFormData[]>([
   {
     id: 'username',
     value: '',

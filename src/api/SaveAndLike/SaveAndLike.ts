@@ -6,7 +6,7 @@ import { requestFunc } from '../req'
  * @param {string} userTelephone
  * @returns 如果状态码2xx，返回true
  */
-async function likePost(postID, userTelephone) {
+async function likePost(postID: number, userTelephone: string) {
   try {
     // 没有返回数据，只能通过状态码判断
     const res = await requestFunc(`/auth/updateLike`, {
@@ -19,7 +19,7 @@ async function likePost(postID, userTelephone) {
         userTelephone,
       },
     }, true)
-    return res.ok
+    return res?.ok || false
   }
   catch (e) {
     console.error(e)
@@ -32,7 +32,7 @@ async function likePost(postID, userTelephone) {
  * @param {string} userTelephone
  * @returns 如果状态码2xx，返回true
  */
-async function likePostComment(pcommentID, userTelephone) {
+async function likePostComment(pcommentID: number, userTelephone: string) {
   try {
     const res = await requestFunc(`/auth/updatePcommentLike`, {
       method: 'POST',
@@ -44,9 +44,10 @@ async function likePostComment(pcommentID, userTelephone) {
         userTelephone,
       },
     }, true)
-    return res.ok
+    return res?.ok || false
   }
   catch (e) {
+    console.error(e)
     return false
   }
 }
@@ -56,7 +57,7 @@ async function likePostComment(pcommentID, userTelephone) {
  * @param {string} userTelephone
  * @returns 如果状态码2xx，返回true
  */
-async function likeCommentComment(ccommentID, userTelephone) {
+async function likeCommentComment(ccommentID: number, userTelephone: string) {
   try {
     const res = await requestFunc(`/auth/updateCcommentLike`, {
       method: 'POST',
@@ -68,20 +69,20 @@ async function likeCommentComment(ccommentID, userTelephone) {
         userTelephone,
       },
     }, true)
-    return res.ok
+    return res?.ok || false
   }
   catch (e) {
+    console.error(e)
     return false
   }
 }
 
 /***
- * @param {boolean} isSaved 目前是否收藏
  * @param {number} postID 要收藏的帖子id
  * @param {string} userTelephone
  * @returns 如果状态码2xx，返回true
  */
-async function savePost(postID, userTelephone) {
+async function savePost(postID: number, userTelephone: string) {
   try {
     const res = await requestFunc(`/auth/updateSave`, {
       method: 'POST',
@@ -93,9 +94,10 @@ async function savePost(postID, userTelephone) {
         userTelephone,
       },
     }, true)
-    return res.ok
+    return res?.ok || false
   }
   catch (e) {
+    console.error(e)
     return false
   }
 }

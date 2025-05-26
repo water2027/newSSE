@@ -8,15 +8,14 @@ import { requestFunc } from '../req'
  * @param {string} tagList 如果专区是课程专区，是一个老师；不是，为空
  * @param {string} title 标题
  * @param {string} userTelephone
- * @returns
  */
 async function sendPost(
-  content,
-  partition,
-  photos,
-  tagList,
-  title,
-  userTelephone,
+  content: string,
+  partition: string,
+  photos: string,
+  tagList: string,
+  title: string,
+  userTelephone: string,
 ) {
   try {
     const res = await requestFunc(`/auth/post`, {
@@ -33,7 +32,7 @@ async function sendPost(
         userTelephone,
       },
     }, true)
-    const data = await res.json()
+    const data = await res!.json()
     return data
   }
   catch (e) {
@@ -45,9 +44,8 @@ async function sendPost(
 /**
  *
  * @param {number} postID
- * @returns
  */
-async function delPost(postID) {
+async function delPost(postID: number) {
   try {
     const res = await requestFunc(`/auth/deletePost`, {
       method: 'POST',
@@ -58,7 +56,7 @@ async function delPost(postID) {
         postID,
       },
     }, true)
-    const data = await res.json()
+    const data = await res!.json()
     return data
   }
   catch (e) {

@@ -1,4 +1,6 @@
-<script setup>
+<script setup lang="ts">
+import type { CustomFormData } from '@/composables/FormExam'
+
 import { ref } from 'vue'
 
 import { getInfo } from '@/api/info/getInfo'
@@ -11,7 +13,7 @@ import { useUserStore } from '@/store/userStore'
 
 const { setToken, setUserInfo } = useUserStore()
 
-const form = ref([
+const form = ref<CustomFormData[]>([
   {
     id: 'email',
     label: 'email',

@@ -1,16 +1,58 @@
 import { requestFunc } from '../req'
-/**
- *
- * @param {number} limit 返回多少个帖子
- * @param {number} offset 返回帖子的偏移量，0为最新的limit个帖子
- * @param {string} partition 分区
- * @param {string} searchsort home/save/history
- * @param {string} searchinfo 搜索信息
- * @param {string} userTelephone 手机号
- * @param {string} tag 老师名字
- * @returns
- */
-async function getPosts(object) {
+
+export interface getPostsObject {
+  limit: number
+  offset: number
+  partition: string
+  searchsort: string
+  searchinfo: string
+  userTelephone: string
+  tag: string
+}
+
+export interface Post {
+  PostID: number
+  UserID?: number
+  UserName: string
+  UserScore: number
+  UserTelephone: string
+  UserAvatar: string
+  UserIdentity: string
+  Title: string
+  Content: string
+  Like: number
+  Comment: number
+  Browse: number
+  Heat: number
+  PostTime: string
+  IsSaved: boolean
+  IsLiked: boolean
+  Photos: string
+  Tag: string
+}
+
+const defaultPost: Post = {
+  PostID: 0,
+  UserID: 0,
+  UserName: '',
+  UserScore: 0,
+  UserTelephone: '',
+  UserAvatar: '',
+  UserIdentity: '',
+  Title: '',
+  Content: '',
+  Like: 0,
+  Comment: 0,
+  Browse: 0,
+  Heat: 0,
+  PostTime: '',
+  IsSaved: false,
+  IsLiked: false,
+  Photos: '',
+  Tag: '',
+}
+
+async function getPosts(object: getPostsObject): Promise<Post[]> {
   try {
     const res = await requestFunc(
       `/auth/browse`,
@@ -23,13 +65,25 @@ async function getPosts(object) {
       },
       true,
     )
-    const data = await res.json()
+    const data = await res!.json()
     return data
   }
   catch (e) {
     console.error(e)
-    return null
+    return []
   }
+}
+
+export interface getPostsNumObject {
+  partition: string
+  searchsort: string
+  searchinfo: string
+  tag: string
+  userTelephone: string
+}
+
+export interface getPostsNumResponse {
+  Postcount: number
 }
 
 /***
@@ -39,7 +93,9 @@ async function getPosts(object) {
  * @param {string} userTelephone
  * @returns {number} 返回帖子数量
  */
-async function getPostsNum(object) {
+async function getPostsNum(
+  object: getPostsNumObject,
+): Promise<number> {
   try {
     const res = await requestFunc(
       `/auth/getPostNum`,
@@ -52,20 +108,26 @@ async function getPostsNum(object) {
       },
       true,
     )
-    const data = await res.json()
+    const data = await res!.json()
     return data.Postcount
   }
   catch (e) {
     console.error(e)
-    return null
+    return -1
   }
+}
+
+export interface HeatPost {
+  PostID: number
+  Title: string
+  Heat: number
 }
 
 /**
  * @description 获取热门帖子
  * @returns 帖子数组
  */
-async function getHeatPosts() {
+async function getHeatPosts(): Promise<HeatPost[]> {
   try {
     const res = await requestFunc(
       `/auth/calculateHeat`,
@@ -77,12 +139,12 @@ async function getHeatPosts() {
       },
       true,
     )
-    const data = await res.json()
+    const data = await res!.json()
     return data
   }
   catch (e) {
     console.error(e)
-    return null
+    return []
   }
 }
 
@@ -92,7 +154,7 @@ async function getHeatPosts() {
  * @param {string} userTelephone
  * @returns {object} 返回帖子详情
  */
-async function getPostByID(PostID, userTelephone) {
+async function getPostByID(PostID: number, userTelephone: string): Promise<Post> {
   const result = await updateBrowseNum(PostID, userTelephone)
   if (!result) {
     console.error('增加浏览量失败')
@@ -113,12 +175,13 @@ async function getPostByID(PostID, userTelephone) {
       true,
     )
     try {
-      const data = await res.json()
+      const data = await res!.json()
       return data
     }
     catch (e) {
       console.error(e)
       return {
+        ...defaultPost,
         Title: '帖子不存在',
         Content: '帖子不存在',
       }
@@ -127,13 +190,14 @@ async function getPostByID(PostID, userTelephone) {
   catch (e) {
     console.error(e)
     return {
+      ...defaultPost,
       Title: '网络错误',
       Content: '网络错误',
     }
   }
 }
 
-async function updateBrowseNum(PostID, userTelephone) {
+async function updateBrowseNum(PostID: number, userTelephone: string) {
   try {
     const res = await requestFunc(
       `/auth/updateBrowseNum`,
@@ -149,7 +213,7 @@ async function updateBrowseNum(PostID, userTelephone) {
       },
       true,
     )
-    return res.ok
+    return res!.ok
   }
   catch (e) {
     console.error(e)

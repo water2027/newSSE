@@ -5,9 +5,12 @@ import { requestFunc } from '../req'
  * @param {string} content
  * @param {number} postID
  * @param {string} userTelephone
- * @returns
  */
-async function sendComment(content, postID, userTelephone) {
+async function sendComment(
+  content: string,
+  postID: number,
+  userTelephone: string,
+) {
   try {
     const res = await requestFunc(
       `/auth/postPcomment`,
@@ -24,7 +27,7 @@ async function sendComment(content, postID, userTelephone) {
       },
       true,
     )
-    return res.ok
+    return res!.ok
   }
   catch (e) {
     console.error(e)
@@ -32,12 +35,19 @@ async function sendComment(content, postID, userTelephone) {
   }
 }
 
+export interface sendPCommentObject {
+  content: string
+  userTelephone: string
+  postID: number
+  pcommentID: number
+  ccommentID?: number
+}
+
 /**
  * @description 给评论发评论
  * @param {{content:string,userTelephone:string,postID:number,pcommentID:number}} object 如果是给评论的评论发评论，需要多一个ccommentID:number
- * @returns
  */
-async function sendPComment(object) {
+async function sendPComment(object: sendPCommentObject) {
   try {
     const res = await requestFunc(
       `/auth/postCcomment`,
@@ -50,7 +60,7 @@ async function sendPComment(object) {
       },
       true,
     )
-    return res.ok
+    return res!.ok
   }
   catch (e) {
     console.error(e)
@@ -61,9 +71,8 @@ async function sendPComment(object) {
 /**
  *
  * @param {number} pcommentID
- * @returns
  */
-async function delComment(pcommentID) {
+async function delComment(pcommentID: number) {
   try {
     const res = await requestFunc(
       `/auth/deletePcomment`,
@@ -78,7 +87,7 @@ async function delComment(pcommentID) {
       },
       true,
     )
-    return res.ok
+    return res!.ok
   }
   catch (e) {
     console.error(e)
@@ -89,9 +98,8 @@ async function delComment(pcommentID) {
 /**
  *
  * @param {number} ccommentID
- * @returns
  */
-async function delCcomment(ccommentID) {
+async function delCcomment(ccommentID: number) {
   try {
     const res = await requestFunc(
       `/auth/deleteCcomment`,
@@ -106,7 +114,7 @@ async function delCcomment(ccommentID) {
       },
       true,
     )
-    return res.ok
+    return res!.ok
   }
   catch (e) {
     console.error(e)

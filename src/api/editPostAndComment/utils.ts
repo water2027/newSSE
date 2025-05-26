@@ -2,8 +2,8 @@ import { getTokenWithExpiry } from '../auth'
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL
 
-async function uploadPhoto(photo) {
-  const token = getTokenWithExpiry('token')
+async function uploadPhoto(photo: File) {
+  const token = getTokenWithExpiry()
   if (!token) {
     return
   }
