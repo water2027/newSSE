@@ -1,20 +1,15 @@
 <!-- eslint-disable vue/html-self-closing -->
 <script setup>
-import { computed, defineAsyncComponent, ref, shallowRef } from 'vue'
-import { showMsg } from '@/components/MessageBox'
+import { defineAsyncComponent } from 'vue'
 
 import { levelClassHandler, levelNameHandler } from '@/utils/level'
 import { strHandler } from '@/utils/strHandler'
 
 import UserAvatar from '../UserAvatar.vue'
 
-const props = defineProps({
+defineProps({
   cardData: {
     type: Object,
-    required: true,
-  },
-  likeHandler: {
-    type: Function,
     required: true,
   },
   // 如果是帖子卡片
@@ -25,51 +20,10 @@ const props = defineProps({
   },
 })
 
-const MarkdownContainer = defineAsyncComponent(() => {
-  return import('@/components/MarkdownContainer.vue')
-})
-
-const avatarUrl = shallowRef(`${import.meta.env.BASE_URL}default-avatar.svg`)
-
-const basicData = ref({
-  Like: props.cardData.Like,
-  IsLiked: props.cardData.IsLiked,
-})
-const identity = computed(() => {
-  const UserIdentity = props.cardData.UserIdentity
-  switch (UserIdentity) {
-    case 'student':
-      return 'student'
-    case 'teacher':
-      return 'teacher'
-    case 'organization':
-      return 'organization'
-    default:
-      return 'undefined'
-  }
-})
+const MarkdownContainer = defineAsyncComponent(() => import('@/components/MarkdownContainer.vue'))
 
 async function like() {
-  try {
-    basicData.value.IsLiked = !basicData.value.IsLiked
-    const res = await props.likeHandler()
-    if (res) {
-      if (basicData.value.IsLiked) {
-        basicData.value.Like++
-        showMsg('点赞成功')
-      }
-      else {
-        basicData.value.Like--
-        showMsg('取消成功')
-      }
-    }
-    else {
-      showMsg('失败了:-(')
-    }
-  }
-  catch (e) {
-    showMsg('失败了:-(')
-  }
+
 }
 </script>
 
@@ -85,7 +39,6 @@ async function like() {
       }}<span v-if="cardData.hasOwnProperty('userTargetName')">回复{{ cardData.userTargetName || '层主' }}</span></span>
       <span
         v-if="!cardData.hasOwnProperty('userTargetName')"
-        title="码之气，三段！"
         class="level"
         :class="levelClassHandler(cardData.UserScore)"
       >{{ levelNameHandler(cardData.UserScore) }}
@@ -169,10 +122,10 @@ async function like() {
         </svg>
       </span>
       <span
-        :class="basicData.IsLiked ? 'like' : ''"
+        :class="cardData.IsLiked ? 'like' : ''"
         @click.stop.prevent="like"
       >
-        {{ basicData.Like < 0 ? 0 : basicData.Like }}
+        {{ cardData.Like < 0 ? 0 : cardData.Like }}
         <svg
           viewBox="0 0 16 16"
           width="1em"

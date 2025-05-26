@@ -27,8 +27,6 @@ const props = defineProps({
 
 const MarkdownEditor = defineAsyncComponent(() => import('../MarkdownEditor.vue'))
 
-// 不能直接修改props，所以要用ref包装
-// 后端命名真该死啊
 const commentData = ref({
   UserName: props.comment.author,
   UserID: props.comment.authorID,
@@ -144,7 +142,6 @@ async function like() {
   >
     <BasicCard
       :card-data="commentData"
-      :like-handler="like"
     >
       <template #userButtons>
         <button
