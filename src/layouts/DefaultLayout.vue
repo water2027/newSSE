@@ -1,14 +1,14 @@
 <!-- eslint-disable vue/html-self-closing -->
-<script setup>
+<script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import {
   computed,
   defineAsyncComponent,
-  inject,
   onMounted,
   onUnmounted,
   provide,
   ref,
+  useTemplateRef,
 } from 'vue'
 
 import { useRoute, useRouter } from 'vue-router'
@@ -87,7 +87,7 @@ const heatPostsIsHidden = computed(() => {
 
 const chatNum = ref(0)
 
-const noticeNum = ref('')
+const noticeNum = ref(0)
 function reduceNoticeNum() {
   noticeNum.value--
 }
@@ -133,12 +133,13 @@ const changeTo = {
     searchsort.value = 'home'
   },
 }
-function changePathHandler(path) {
+function changePathHandler(path: keyof typeof changeTo) {
   changeTo[path]?.()
 }
 
-const sinfo = ref(null)
+const sinfo = useTemplateRef('sinfo')
 function search() {
+  if(!sinfo.value) return
   searchinfo.value = sinfo.value.value
   sinfo.value.value = ''
   router.push('/')
@@ -163,7 +164,7 @@ async function getNoticesNumFunc() {
   noticeNum.value = temp.unreadTotalNum
 }
 
-async function updateChatNum(n) {
+async function updateChatNum(n:number|undefined) {
   if (n !== undefined) {
     chatNum.value = n
   }
@@ -179,11 +180,11 @@ const startY = ref(0)
 const endY = ref(0)
 const headerHeight = ref('3em')
 
-function handleTouchStart(event) {
+function handleTouchStart(event: TouchEvent) {
   startY.value = event.touches[0].clientY
 }
 
-function handleTouchEnd(event) {
+function handleTouchEnd(event: TouchEvent) {
   endY.value = event.changedTouches[0].clientY
   // 如果两者相差不大，不触发
   if (Math.abs(startY.value - endY.value) < 10) {
@@ -203,10 +204,10 @@ onMounted(async () => {
   // 刷新时获取对应界面数据
   // 之后考虑在组件加载时获取
   const baseUrl = import.meta.env.BASE_URL
-  const path = window.location.pathname.replace(baseUrl, '')
+  const path = window.location.pathname.replace(baseUrl, '') as keyof typeof changeTo
   changePathHandler(path)
   getNoticesNumFunc()
-  updateChatNum()
+  updateChatNum(undefined)
   window.addEventListener('resize', updateWidth)
   if (!isPC.value) {
     window.addEventListener('touchstart', handleTouchStart)
@@ -639,9 +640,6 @@ body.dark-mode .lesson {
 
     input::placeholder {
       color: #aaa;
-    }
-
-    button {
     }
   }
 }

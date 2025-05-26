@@ -7,11 +7,7 @@ export interface NoticeNum {
   readTotalNum: number
 }
 
-/**
- *
- * @returns {Promise<number>} 通知数量
- */
-async function getNoticesNum(): Promise<number> {
+async function getNoticesNum(): Promise<NoticeNum> {
   try {
     const res = await requestFunc(`/auth/getNoticeNum`, {
       method: 'GET',
@@ -21,7 +17,11 @@ async function getNoticesNum(): Promise<number> {
     }, true)
     if (!res?.ok) {
       showMsg('获取通知数量失败')
-      return 0
+      return {
+        totalNum: 0,
+        unreadTotalNum: 0,
+        readTotalNum: 0,
+      }
     }
     const data = await res.json()
     return data
@@ -29,7 +29,11 @@ async function getNoticesNum(): Promise<number> {
   catch (e) {
     showMsg('获取通知数量失败')
     console.error(e)
-    return 0
+    return {
+      totalNum: 0,
+      unreadTotalNum: 0,
+      readTotalNum: 0,
+    }
   }
 }
 

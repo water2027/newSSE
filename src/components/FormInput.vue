@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 defineOptions({
   inheritAttrs: false,
 })
@@ -21,7 +21,7 @@ const info = defineModel({
     />
     <label
       class="pointer-events-none absolute bottom-[10px] left-0 text-gray-500 transition-all duration-300 ease peer-focus:scale-x-90 peer-valid:scale-x-90 peer-focus:border-0 peer-valid:border-0 peer-focus:text-base peer-valid:text-base peer-focus:text-[#eb6b26] peer-valid:text-[#eb6b26] peer-focus:font-bold peer-valid:font-bold peer-focus:-translate-y-[100%] peer-valid:-translate-y-[100%]"
-      :for="$attrs.id"
+      :for="$attrs.id as string"
     >{{ $attrs.label }}</label>
   </div>
 </template>

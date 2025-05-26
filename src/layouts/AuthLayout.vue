@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { onUnmounted, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store/userStore'
