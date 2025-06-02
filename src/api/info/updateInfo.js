@@ -63,4 +63,23 @@ async function uploadAvatar(photo) {
   }
 }
 
-export { updateUserInfo, uploadAvatar }
+async function updateEmailPush(user_id) {
+  try {
+    const res = await requestFunc(`/auth/changeEmailPush`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: {
+        user_id: user_id,
+      },
+    }, true)
+    // const data = await res.json()
+    // return data
+  }
+  catch (e) {
+    alert(e)
+    console.error(e)
+  }
+}
+export { updateUserInfo, uploadAvatar, updateEmailPush }
