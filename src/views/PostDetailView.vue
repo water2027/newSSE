@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -24,7 +24,8 @@ const isPostLoaded = computed(() => Object.keys(post.value).length !== 0)
 const comments = ref([])
 const postCommentID = ref(0)
 
-const sortType = ref('time')
+type SortType = 'time'|'likes'
+const sortType = ref<SortType>('time')
 const sortedComments = computed(() => {
   // 如果是按时间排序，直接返回原数组
   if (sortType.value === 'time') {
@@ -34,7 +35,7 @@ const sortedComments = computed(() => {
   // .slice()是为了不改变原数组
   return comments.value.slice().sort((a, b) => b.LikeNum - a.LikeNum)
 })
-function setSortType(type) {
+function setSortType(type: SortType) {
   sortType.value = type
 }
 

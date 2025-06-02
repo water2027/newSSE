@@ -1,3 +1,4 @@
+import type { Post } from '@/types/post'
 import { requestFunc } from '../req'
 
 export interface getPostsObject {
@@ -8,27 +9,6 @@ export interface getPostsObject {
   searchinfo: string
   userTelephone: string
   tag: string
-}
-
-export interface Post {
-  PostID: number
-  UserID?: number
-  UserName: string
-  UserScore: number
-  UserTelephone: string
-  UserAvatar: string
-  UserIdentity: string
-  Title: string
-  Content: string
-  Like: number
-  Comment: number
-  Browse: number
-  Heat: number
-  PostTime: string
-  IsSaved: boolean
-  IsLiked: boolean
-  Photos: string
-  Tag: string
 }
 
 const defaultPost: Post = {

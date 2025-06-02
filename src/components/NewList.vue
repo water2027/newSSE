@@ -1,32 +1,24 @@
-<script setup>
-import { onMounted, onUnmounted, useTemplateRef } from 'vue'
+<script setup lang="ts">
+import type { Post } from '@/types/post'
+import { onUnmounted, useTemplateRef, watch } from 'vue'
 import PostCard from './card/PostCard.vue'
 
-defineProps({
-  posts: {
-    type: Array,
-    default: () => [],
-  },
-  isLoading: {
-    type: Boolean,
-    default: false,
-  },
-  hasMore: {
-    type: Boolean,
-    default: true
-  }
-})
+const { posts = [], isLoading = false, hasMore = true } = defineProps<{
+  posts?: Post[]
+  isLoading?: boolean
+  hasMore?: boolean
+}>()
+
 const emits = defineEmits(['bottom'])
 
 const bottom = useTemplateRef('bottom')
-let observer = null
+let observer: IntersectionObserver
 
 function startObserver() {
   observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          console.log('bottom')
           emits('bottom')
         }
       })
@@ -48,9 +40,16 @@ function endObserver() {
   }
 }
 
-onMounted(() => {
-  startObserver()
-})
+watch(
+  () => bottom.value,
+  (newValue) => {
+    if (newValue) {
+      endObserver()
+      startObserver()
+    }
+  },
+  { immediate: true },
+)
 
 onUnmounted(() => {
   endObserver()
@@ -78,7 +77,7 @@ onUnmounted(() => {
       v-else-if="hasMore"
       class="bottomDiv"
     >
-      isLoading...
+      hasMore
     </div>
     <div v-else class="bottomDiv">
       noMore

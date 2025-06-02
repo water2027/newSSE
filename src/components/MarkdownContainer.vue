@@ -1,5 +1,3 @@
-<!-- eslint-disable vue/html-self-closing -->
-<!-- eslint-disable vue/no-v-html -->
 <script setup lang="ts">
 import DOMPurify from 'dompurify'
 
@@ -119,9 +117,9 @@ const safeHTML = computed(() => {
 
 <template>
   <div
-    id="content"
     ref="content"
     class="markdown-body"
+    data-theme="light"
     v-html="safeHTML"
   />
 </template>
