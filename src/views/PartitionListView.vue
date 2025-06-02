@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-const emit = defineEmits(['send-partition'])
+const emit = defineEmits(['sendPartition'])
 const router = useRouter()
 const partitions = ref([
   { name: '日常吐槽', description: '言短情长，抒发心声。', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/image/daily.jpg' },
@@ -18,7 +18,7 @@ const partitions = ref([
  * @param p 分区
  */
 function sendPartition(p) {
-  emit('send-partition', p)
+  emit('sendPartition', p)
   router.push('/')
 }
 </script>

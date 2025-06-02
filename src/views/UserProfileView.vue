@@ -3,6 +3,7 @@ import { Icon } from '@iconify/vue'
 import { onBeforeMount, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getInfoById } from '@/api/info/getInfo'
+import { showMsg } from '@/components/MessageBox'
 import UserAvatar from '@/components/UserAvatar.vue'
 import { useUserStore } from '@/store/userStore'
 
@@ -20,26 +21,16 @@ onBeforeMount(() => {
         user.value.title = getUserTitle(res.score)
       }
       else {
-        console.log(`请求无效：${res.msg} (${res.code})`)
+        showMsg(`请求无效：${res.msg} (${res.code})`)
       }
     })
     .catch((error) => {
       if (error.response) {
         const res = error.response
-        console.log(`请求无效：${res.msg} (${res.code})`)
-        // this.$bvToast.toast(`请求无效：${res.data.msg} (${res.data.code})`, {
-        //   title: '内部错误',
-        //   variant: 'danger',
-        //   solid: true,
-        // });
+        showMsg(`请求无效：${res.msg} (${res.code})`)
       }
       else {
-        console.log('请求无效')
-        // this.$bvToast.toast('请求无效：', {
-        //   title: '内部错误',
-        //   variant: 'danger',
-        //   solid: true,
-        // });
+        showMsg('请求无效')
       }
     })
 })

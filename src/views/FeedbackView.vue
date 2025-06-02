@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { feedback } from '@/api/feedback/feedback'
 import { showMsg } from '@/components/MessageBox'

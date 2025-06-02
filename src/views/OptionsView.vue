@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/html-self-closing -->
 <script setup>
-import { inject, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { getAllInfo } from '@/api/info/getInfo'

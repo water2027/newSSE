@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/html-self-closing -->
 <!-- eslint-disable vue/no-v-html -->
-<script setup>
+<script setup lang="ts">
 import DOMPurify from 'dompurify'
 
 import hljs from 'highlight.js/lib/core'
@@ -14,6 +14,8 @@ import html from 'highlight.js/lib/languages/xml'
 import MarkdownIt from 'markdown-it'
 import mk from 'markdown-it-katex'
 import { computed, ref } from 'vue'
+import 'github-markdown-css'
+import 'highlight.js/styles/atom-one-dark.css'
 
 const props = defineProps({
   markdownContent: {
@@ -28,11 +30,9 @@ hljs.registerLanguage('css', css)
 hljs.registerLanguage('javascript', javascript)
 hljs.registerLanguage('python', python)
 
-import('highlight.js/styles/atom-one-dark.css')
-
 const content = ref(null)
 
-const md = new MarkdownIt({
+const md: MarkdownIt = new MarkdownIt({
   html: true,
   breaks: true,
   linkify: true,
@@ -42,17 +42,18 @@ const md = new MarkdownIt({
       try {
         return `<pre class="hljs"><code>${hljs.highlight(str, { language: lang, ignoreIllegals: true }).value}</code></pre>`
       }
+      // eslint-disable-next-line unused-imports/no-unused-vars
       catch (__) {}
     }
     else {
       try {
         return `<pre class="hljs"><code>${hljs.highlightAuto(str).value}</code></pre>`
       }
+      // eslint-disable-next-line unused-imports/no-unused-vars
       catch (__) {}
     }
     return `<pre class="hljs"><code>${md.utils.escapeHtml(str)}</code></pre>`
   },
-  breaks: true,
   xhtmlOut: true,
   langPrefix: 'language-',
 }).use(mk, {
@@ -127,77 +128,21 @@ const safeHTML = computed(() => {
 
 <style scoped>
 @import url('@/assets/hl.css');
-@import url('@/assets/github-markdown.css');
 
 :deep(.katex-html) {
   display: none;
 }
 
-#content {
-  color: var(--color-text);
-  width: 100%;
-  max-width: 90vw;
-  height: auto;
-  font-size: 23px;
-  overflow: hidden;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-all;
-}
-
-:deep(li) {
-  line-height: 1.1;
-  margin-top: 0.5em;
-}
-
-:deep(table) {
-  border-collapse: collapse;
-  width: 100%;
-  border: white 1px solid;
-}
-
-:deep(th) {
-  border: white 1px solid;
-}
-
-:deep(td) {
-  border: white 1px solid;
-}
-
-:deep(p) {
-  font-size: 20px;
-  text-indent: 2rem;
+.markdown-body {
+  /* color: var(--color-text); */
+  background-color: var(--color-bg);
 }
 
 :deep(pre) {
-  background-color: #282c34;
-  color: rgb(180, 180, 180);
   padding: 10px;
   pointer-events: none;
   z-index: 0;
   position: relative;
-}
-:deep(pre) > code {
-  display: block;
-  overflow-x: auto;
-  color: rgb(180, 180, 180);
-  width: 100%;
-  pointer-events: auto;
-}
-:deep(pre) > code::-webkit-scrollbar {
-  height: 8px;
-}
-:deep(pre) > code::-webkit-scrollbar-track {
-  background: #1e2227;
-  border-radius: 4px;
-}
-:deep(pre) > code::-webkit-scrollbar-thumb {
-  background: #454b55;
-  border-radius: 4px;
-  cursor: pointer;
-}
-:deep(pre) > code::-webkit-scrollbar-thumb:hover {
-  background: #5a6069;
 }
 :deep(pre)::before {
   content: '';
@@ -214,5 +159,6 @@ const safeHTML = computed(() => {
   right: 5px;
   transform: translateZ(0);
   background-attachment: local;
+  cursor: pointer;
 }
 </style>

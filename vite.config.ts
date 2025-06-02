@@ -46,30 +46,6 @@ export default defineConfig({
       workbox: {
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/api\.ssemarket\.cn\/api\/.*$/,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'api-cache',
-              expiration: {
-                maxEntries: 30,
-                maxAgeSeconds: 60 * 60 * 24,
-              },
-            },
-          },
-          {
-            urlPattern: new RegExp(
-              `^https://ssemarket\.cn${base}.*\.html$`,
-            ),
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'html-cache',
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 7,
-              },
-            },
-          },
-          {
             urlPattern: new RegExp(
               `^https://ssemarket\.cn${base}.*\.js$`,
             ),
@@ -109,7 +85,6 @@ export default defineConfig({
           },
         ],
         globPatterns: [
-          `${base}index.html`,
           `${base}favicon.ico`,
           `${base}manifest.json`,
           `${base}android-chrome-192x192.png`,

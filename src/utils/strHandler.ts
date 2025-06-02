@@ -4,7 +4,7 @@
  * @param {string} str
  * @returns
  */
-function strHandler(type, str) {
+function strHandler(type: 'img' | 'time' | 'postImg', str:string): string | string[] {
   if (!str)
     return ''
   switch (type) {

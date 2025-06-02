@@ -3,7 +3,7 @@
  * @param {number} userScore
  * @returns
  */
-function levelNameHandler(userScore) {
+function levelNameHandler(userScore: number) {
   if (!userScore && userScore !== 0) {
     return 'lV? undefined'
   }
@@ -36,7 +36,7 @@ function levelNameHandler(userScore) {
   }
 }
 
-function levelClassHandler(userScore) {
+function levelClassHandler(userScore: number) {
   if (!userScore && userScore !== 0) {
     return 'level-undefined'
   }
@@ -70,7 +70,7 @@ function levelClassHandler(userScore) {
 }
 
 // 经验
-function levelExpHandler(userScore) {
+function levelExpHandler(userScore:number) {
   if (!userScore && userScore !== 0) {
     return '0'
   }

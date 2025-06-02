@@ -1,5 +1,5 @@
 <script setup>
-import { computed, defineAsyncComponent, inject, onMounted, ref } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { getCommentsByPostID } from '@/api/browse/getComment'
@@ -88,7 +88,7 @@ async function clickHandler(event) {
    * 在css里已经去除了pre标签的点击，只保留了pre::before的点击
    */
   if (event.target.tagName === 'PRE') {
-    const code = event.target.innerText
+    const code = event.target.textContent
     await navigator.clipboard.writeText(code)
     showMsg('代码已复制')
   }
