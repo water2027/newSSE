@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import {
-    onMounted,
+  onMounted,
   ref,
 } from 'vue'
 
 import NewList from '@/components/NewList.vue'
-import { useUserStore } from '@/store/userStore'
 import { usePostStore } from '@/store/postStore'
+import { useUserStore } from '@/store/userStore'
 
 const { userInfo } = useUserStore()
 const { posts, addPost, changeTo, refreshPosts, updateNum } = usePostStore()
@@ -23,9 +23,9 @@ async function update() {
 }
 
 onMounted(async () => {
-    refreshPosts()
-    changeTo('历史')
-    await updateNum(userInfo.phone)
+  refreshPosts()
+  changeTo('历史')
+  await updateNum(userInfo.phone)
 })
 </script>
 

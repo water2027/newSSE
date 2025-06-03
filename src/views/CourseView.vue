@@ -36,7 +36,7 @@ onMounted(async () => {
   const resp = await getTeachers()
   teachers.splice(0, teachers.length, ...resp)
 })
-watch(tag, async (newTag) => {
+watch(tag, (newTag) => {
   refreshPosts()
   changeTo('课程专区', newTag)
   hasMore.value = true

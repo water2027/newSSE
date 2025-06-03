@@ -139,7 +139,8 @@ function changePathHandler(path: keyof typeof changeTo) {
 
 const sinfo = useTemplateRef('sinfo')
 function search() {
-  if(!sinfo.value) return
+  if (!sinfo.value)
+    return
   searchinfo.value = sinfo.value.value
   sinfo.value.value = ''
   router.push('/')
@@ -149,7 +150,7 @@ function search() {
  * @description 这是分区页面的回调函数，分区页面选择分区后调用
  * @param p 分区名
  */
-function sendPartition(p:string) {
+function sendPartition(p: string) {
   partition.value = p
   searchinfo.value = ''
   searchsort.value = 'home'
@@ -164,7 +165,7 @@ async function getNoticesNumFunc() {
   noticeNum.value = temp.unreadTotalNum
 }
 
-async function updateChatNum(n:number|undefined) {
+async function updateChatNum(n: number | undefined) {
   if (n !== undefined) {
     chatNum.value = n
   }
@@ -433,18 +434,10 @@ onUnmounted(() => {
             </div>
           </div>
         </div>
-
         <router-view v-slot="{ Component }">
-          <KeepAlive>
-            <component
-              :is="Component"
-              v-if="route.meta.keepAlive"
-            />
+          <KeepAlive include="home">
+            <component :is="Component" :key="route.fullPath" />
           </KeepAlive>
-          <component
-            :is="Component"
-            v-if="!route.meta.keepAlive"
-          />
         </router-view>
       </div>
       <HeatList v-if="isPC && !heatPostsIsHidden" />

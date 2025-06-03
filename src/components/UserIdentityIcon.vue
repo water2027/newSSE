@@ -18,9 +18,9 @@ const identityName = {
 </script>
 
 <template>
-  <div v-if="identity in identityIcon" class="user-identity" :class="[`identity-${identity}`]">
-    <Icon :icon="identityIcon[identity as 'teacher'|'organization']" class="user-identity-icon" />
-    <div v-if="!noTip" class="user-identity-name">
+  <div v-if="identity in identityIcon" class="user-identity absolute bottom-0 right-0 h-5 w-5 flex cursor-help items-center justify-center rounded-full bg-[#fb0]" :class="[`identity-${identity}`]">
+    <Icon :icon="identityIcon[identity as 'teacher'|'organization']" class="user-identity-icon text-3 text-white" />
+    <div v-if="!noTip" class="user-identity-name pointer-events-none absolute bottom-5 z-2000 rounded-1 bg-[#333] op-0" p="x-2 y-1" text="65% [#eee]">
       {{ identityName[identity as 'teacher'|'organization'] }}
     </div>
   </div>
@@ -28,36 +28,12 @@ const identityName = {
 
 <style lang="scss" scoped>
 .user-identity {
-  display: flex;
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #fb0;
-  align-items: center;
-  justify-content: center;
-  cursor: help;
-
   .user-identity-icon {
-    color: #fff;
     filter: drop-shadow(1px 1px 0 #44444480);
-    font-size: 12px;
   }
 
   .user-identity-name {
-    position: absolute;
-    z-index: 2000;
-    pointer-events: none;
     word-break: keep-all;
-    font-size: 65%;
-    background: #333;
-    color: #eee;
-    bottom: 1.6rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    opacity: 0;
     transition: opacity 0.2s;
 
     &::after {

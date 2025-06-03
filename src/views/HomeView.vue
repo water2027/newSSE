@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import type { Condition } from '@/store/postStore'
+
+import type { Post } from '@/types/post'
 import {
   onActivated,
   onDeactivated,
@@ -6,14 +9,12 @@ import {
   reactive,
   ref,
 } from 'vue'
-
 import NewList from '@/components/NewList.vue'
+import { usePostStore } from '@/store/postStore'
 import { useUserStore } from '@/store/userStore'
-import { usePostStore, type Condition } from '@/store/postStore'
-import type { Post } from '@/types/post'
 
 const { userInfo } = useUserStore()
-const { posts, restorePosts, storePosts, addPost, updateNum } = usePostStore()
+const { posts, restorePosts, storePosts, addPost, updateNum, refreshPosts, changeTo } = usePostStore()
 const hasMore = ref(true)
 const isLoading = ref(false)
 // 保存滚动位置
@@ -21,7 +22,7 @@ const scrollTop = ref(0)
 const cachePosts = reactive<Post[]>([])
 const cacheTotalNum = ref(0)
 const cacheCondition = reactive<Condition>({
-    limit: 10,
+  limit: 10,
   offset: 0,
   partition: '主页',
   searchsort: 'home',
@@ -39,6 +40,8 @@ async function update() {
 }
 
 onMounted(async () => {
+  refreshPosts()
+  changeTo('主页')
   await updateNum(userInfo.phone)
 })
 
@@ -59,6 +62,9 @@ onDeactivated(() => {
   cachePosts.splice(0, cachePosts.length, ...data.cachePosts)
   cacheTotalNum.value = data.cacheTotalNum
   Object.assign(cacheCondition, data.cacheConditions)
+})
+defineExpose({
+  name: 'home'
 })
 </script>
 

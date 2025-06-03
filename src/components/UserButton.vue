@@ -14,14 +14,14 @@ function handleDelete() {
 </script>
 
 <template>
-  <div class="userButtons">
+  <div class="userButtons ml-a mt-0 h-fit flex flex-row">
     <button
       v-if="!noSave"
       style="background-color: transparent; border: none;"
       @click.stop.prevent="handleSave"
     >
       <div
-        class="icon"
+        class="icon h-7 w-7 bg-cover bg-no-repeat"
         :style="{
           backgroundImage:
             'url(\'https://img.icons8.com/?size=100&id=103&format=png&color=000000\')',
@@ -43,18 +43,7 @@ function handleDelete() {
 
 <style lang="scss">
 .userButtons {
-  margin-top: 0;
-  margin-left: auto;
-  display: flex;
-  flex-direction: row;
-  height: fit-content;
 
-  .icon {
-    width: 30px;
-    height: 30px;
-    background-size: 100%;
-    background-repeat: no-repeat;
-  }
 }
 body.dark-mode {
   .userButtons {

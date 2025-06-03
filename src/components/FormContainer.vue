@@ -21,13 +21,13 @@ defineProps({
   },
 })
 
-defineEmits(['SubmitForm'])
+defineEmits(['submitForm'])
 </script>
 
 <template>
   <form
     class="mx-auto mt-12 w-9/10 sm:mt-0 sm:w-1/2 sm:p-24"
-    @submit.prevent="$emit('SubmitForm')"
+    @submit.prevent="$emit('submitForm')"
   >
     <FormInput
       v-for="item in formData"
