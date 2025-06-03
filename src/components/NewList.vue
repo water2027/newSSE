@@ -63,25 +63,22 @@ onUnmounted(() => {
         v-for="post in posts"
         :key="post.PostID"
         :post="post"
-        :delete-handler="deleteHandler"
       />
     </transition-group>
-    <div
-      v-if="!isLoading"
-      ref="bottom"
-      class="bottomDiv"
-    >
-      loading...
-    </div>
-    <div
-      v-else-if="hasMore"
-      class="bottomDiv"
-    >
-      hasMore
-    </div>
-    <div v-else class="bottomDiv">
-      noMore
-    </div>
+    <template v-if="hasMore">
+      <div
+        v-if="!isLoading"
+        ref="bottom"
+        class="bottomDiv"
+      >
+        loading...
+      </div>
+    </template>
+    <template v-else>
+      <div class="bottomDiv">
+        noMore
+      </div>
+    </template>
   </div>
 </template>
 

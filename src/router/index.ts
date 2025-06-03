@@ -16,17 +16,17 @@ const routes = [
       {
         path: 'course',
         name: 'Course',
-        component: () => import('@/views/PostListView.vue'),
+        component: () => import('@/views/CourseView.vue'),
       },
       {
         path: 'save',
         name: 'Save',
-        component: () => import('@/views/PostListView.vue'),
+        component: () => import('@/views/SaveView.vue'),
       },
       {
         path: 'history',
         name: 'History',
-        component: () => import('@/views/PostListView.vue'),
+        component: () => import('@/views/HistoryView.vue'),
       },
       {
         path: 'partitions',
@@ -37,6 +37,11 @@ const routes = [
         path: 'post',
         name: 'Post',
         component: () => import('@/views/PostView.vue'),
+      },
+      {
+        path: 'partition',
+        name: 'Partition',
+        component: () => import('@/views/PartitionView.vue'),
       },
       {
         path: 'postdetail/:id',

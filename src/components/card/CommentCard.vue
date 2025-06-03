@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import type { Comment, SubComment } from '@/types/comment'
+import type { Comment } from '@/types/comment'
 import { defineAsyncComponent, ref, useTemplateRef } from 'vue'
 
 import { delComment, sendPComment } from '@/api/editPostAndComment/editComment'
 import {
-  likeCommentComment,
   likePostComment,
 } from '@/api/SaveAndLike/SaveAndLike'
 import { useUserStore } from '@/store/userStore'
-import { levelClassHandler, levelNameHandler } from '@/utils/level'
 import BasicInfo from '../BasicInfo.vue'
 
 import MarkdownContainer from '../MarkdownContainer.vue'
@@ -18,6 +16,8 @@ import UserAvatar from '../UserAvatar.vue'
 const { comment } = defineProps<{
   comment: Comment
 }>()
+
+const CCommentCard = defineAsyncComponent(() => import('@/components/card/CCommentCard.vue'))
 
 // const props = defineProps({
 //   comment: {
@@ -39,13 +39,14 @@ const root = useTemplateRef('root')
 
 const commentButtonIsShow = ref(false)
 const commentContent = ref('')
+const showSubComment = ref(false)
 
 const { userInfo } = useUserStore()
 
 /**
  * @description 发送评论
  */
-async function sendCommentFunc(id:number) {
+async function sendCommentFunc(id: number) {
   try {
     const sendingData = {
       content: commentContent.value,
@@ -70,7 +71,8 @@ async function sendCommentFunc(id:number) {
 
 async function deleteFunc() {
   const id = comment.PcommentID
-  if(!id) return
+  if (!id)
+    return
   const res = await delComment(id)
   if (res) {
     return true
@@ -157,13 +159,36 @@ async function like() {
         <button @click="commentButtonIsShow = !commentButtonIsShow">
           {{ commentButtonIsShow ? '算了' : '评论' }}
         </button>
-        <slot name="showComment" />
+        <button
+          v-if="comment.SubComments.length"
+          @click="
+            showSubComment = !showSubComment;
+          "
+        >
+          {{
+            showSubComment
+              ? '不想看了'
+              : '让我看看'
+          }}
+        </button>
       </div>
       <MarkdownEditor
         v-if="commentButtonIsShow"
         v-model="commentContent"
         @send="handler('comment')"
       />
+      <div
+        v-if="comment.SubComments && comment.SubComments.length > 0"
+        v-show="showSubComment"
+        class="subCommentList"
+      >
+        <CCommentCard
+          v-for="subComment in comment.SubComments"
+          :key="subComment.ccommentID"
+          :p-comment-id="comment.PcommentID"
+          :sub-comment="subComment"
+        />
+      </div>
     </div>
   </div>
 </template>

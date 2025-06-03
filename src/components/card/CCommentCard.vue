@@ -122,15 +122,18 @@ async function like() {
     class="postDetail root"
   >
     <div class="card-root root">
-      <div class="user">
+      <div class="flex flex-row">
         <UserAvatar
           :src="subComment.authorAvatar"
           :user-id="subComment.authorID"
           :user-identity="subComment.authorIdentity"
           :user-name="subComment.author"
           :user-score="subComment.authorScore"
-        />
-        <span v-if="subComment.hasOwnProperty('userTargetName')">回复{{ subComment.userTargetName || '层主' }}</span>
+        >
+          <template #reply>
+            <span v-if="subComment.hasOwnProperty('userTargetName')" class="w-full">回复{{ subComment.userTargetName || '层主' }}</span>
+          </template>
+        </UserAvatar>
         <template v-if="subComment.authorTelephone === userInfo.phone">
           <UserButton :no-save="true" :is-self="subComment.authorTelephone === userInfo.phone" />
         </template>

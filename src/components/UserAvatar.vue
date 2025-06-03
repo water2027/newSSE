@@ -3,35 +3,19 @@ import { useRouter } from 'vue-router'
 import { levelClassHandler, levelNameHandler } from '@/utils/level'
 import UserIdentityIcon from './UserIdentityIcon.vue'
 
-const props = defineProps({
-  src: {
-    type: String,
-    required: true,
-  },
-  userId: {
-    type: Number,
-    default: 0,
-  },
-  userIdentity: {
-    type: String,
-    default: '',
-  },
-  userName: {
-    type: String,
-    default: '',
-  },
-  userScore: {
-    type: Number,
-    default: 0,
-  },
-
-})
+const { userId = 0, userIdentity = '', userName = '', userScore = 0 } = defineProps<{
+  src: string
+  userId?: number
+  userIdentity?: string
+  userName?: string
+  userScore?: number
+}>()
 const router = useRouter()
 const defaultAvatar = `${import.meta.env.BASE_URL}default-avatar.svg`
 
 function navigate() {
-  if (props.userId > 0) {
-    router.push({ name: 'UserProfile', params: { id: props.userId } })
+  if (userId > 0) {
+    router.push({ name: 'UserProfile', params: { id: userId } })
     stopPropagation()
   }
 }
@@ -55,10 +39,11 @@ function navigate() {
     <span class="user-name">{{ userName
     }}</span>
     <span
-      class="level"
+      class="level max-w-fit w-full"
       :class="levelClassHandler(userScore)"
     >{{ levelNameHandler(userScore) }}
     </span>
+    <slot name="reply" />
   </div>
 </template>
 

@@ -198,7 +198,7 @@ function handleTouchEnd(event: TouchEvent) {
   }
 }
 
-onMounted(async () => {
+onMounted(() => {
   mode.value = localStorage.getItem('mode') || 'light-mode'
   document.body.className = mode.value
   // 刷新时获取对应界面数据
@@ -438,14 +438,8 @@ onUnmounted(() => {
           <KeepAlive>
             <component
               :is="Component"
-              v-if="route.meta.keepAlive"
             />
           </KeepAlive>
-          <component
-            :is="Component"
-            v-if="!route.meta.keepAlive"
-            @send-partition="sendPartition"
-          />
         </router-view>
       </div>
       <HeatList v-if="isPC && !heatPostsIsHidden" />

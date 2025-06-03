@@ -36,21 +36,19 @@ const token = computed(() => {
   }
   return tokenInfo.value
 })
+const isLogin = computed(() => {
+  return token.value.length > 0 && userInfo.userID > 0
+})
+function setToken(newToken: string) {
+  const now = new Date()
+  tokenInfo.value = newToken
+  tokenInfo.expiry = now.getTime() + SEVEN_DAYS_IN_MS
+}
+
+function setUserInfo(newUserInfo: string) {
+  Object.assign(userInfo, newUserInfo)
+}
 export function useUserStore() {
-  const setToken = (newToken: string) => {
-    const now = new Date()
-    tokenInfo.value = newToken
-    tokenInfo.expiry = now.getTime() + SEVEN_DAYS_IN_MS
-  }
-
-  const setUserInfo = (newUserInfo: string) => {
-    Object.assign(userInfo, newUserInfo)
-  }
-
-  const isLogin = computed(() => {
-    return token.value.length > 0 && userInfo.userID > 0
-  })
-
   return {
     token,
     isLogin,

@@ -90,7 +90,7 @@ function useCustomEvent(type: 'delete' | 'save' | 'like', id: number) {
 </script>
 
 <template>
-  <div ref="root" class="card-root post root">
+  <div ref="root" class="card-root root">
     <div class="h-fit flex flex-row items-start">
       <UserAvatar
         :src="post.UserAvatar"

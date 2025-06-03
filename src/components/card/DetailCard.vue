@@ -14,12 +14,11 @@ import MarkdownContainer from '../MarkdownContainer.vue'
 import UserAvatar from '../UserAvatar.vue'
 import UserButton from '../UserButton.vue'
 
-const OldImages = defineAsyncComponent(() => import('@/components/OldImages.vue'))
-
-
 const { post } = defineProps<{
   post: Post
 }>()
+
+const OldImages = defineAsyncComponent(() => import('@/components/OldImages.vue'))
 
 const MarkdownEditor = defineAsyncComponent(
   () => import('../MarkdownEditor.vue'),
@@ -117,7 +116,7 @@ function useCustomEvent(type: 'delete' | 'save' | 'like', id: number) {
     class="postDetail root"
   >
     <div class="card-root">
-      <div class="flex flex-row h-fit items-center">
+      <div class="h-fit flex flex-row items-center">
         <UserAvatar
           :src="post.UserAvatar"
           :user-id="post.UserID"
@@ -192,5 +191,4 @@ function useCustomEvent(type: 'delete' | 'save' | 'like', id: number) {
     flex-wrap: wrap;
   }
 }
-
 </style>

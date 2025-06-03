@@ -1,30 +1,29 @@
 <script setup lang="ts">
+import type { Comment } from '@/types/comment'
+import type { Post } from '@/types/post'
+
 import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { getCommentsByPostID } from '@/api/browse/getComment'
+
 import { getPostByID } from '@/api/browse/getPost'
-
 import DetailCard from '@/components/card/DetailCard.vue'
-
 import { showImg } from '@/components/ImageShower'
 import { showMsg } from '@/components/MessageBox'
 import { useUserStore } from '@/store/userStore'
 import { strHandler } from '@/utils/strHandler'
 
 const CommentCard = defineAsyncComponent(() => import('@/components/card/CommentCard.vue'))
-const CCommentCard = defineAsyncComponent(() => import('@/components/card/CCommentCard.vue'))
 
 const route = useRoute()
 
 const { userInfo } = useUserStore()
 
-const post = ref({})
-const isPostLoaded = computed(() => Object.keys(post.value).length !== 0)
-const comments = ref([])
-const postCommentID = ref(0)
+const post = ref<Post>()
+const comments = ref<Comment[]>([])
 
-type SortType = 'time'|'likes'
+type SortType = 'time' | 'likes'
 const sortType = ref<SortType>('time')
 const sortedComments = computed(() => {
   // 如果是按时间排序，直接返回原数组
@@ -41,6 +40,7 @@ function setSortType(type: SortType) {
 
 async function commentHandler(event) {
   const data = event.detail
+  if (!post.value) return
   try {
     const res = await data.func(userInfo.phone, post.value.PostID)
     if (res) {
@@ -84,20 +84,23 @@ async function getCommentList() {
  *
  * @description 复制代码和展示图片。直接绑定根容器
  */
-async function clickHandler(event) {
+async function clickHandler(event: MouseEvent) {
   /**
    * 在css里已经去除了pre标签的点击，只保留了pre::before的点击
    */
-  if (event.target.tagName === 'PRE') {
-    const code = event.target.textContent
+  const el = event.target as HTMLElement
+  if(!el) return
+  if (el.tagName === 'PRE') {
+    const code = el.textContent
+    if (!code) return
     await navigator.clipboard.writeText(code)
     showMsg('代码已复制')
   }
-  else if (event.target.tagName === 'IMG') {
+  else if (el.tagName === 'IMG') {
     // 拿到图片的src
-    const src = event.target.src
+    const src = (el as HTMLImageElement).src
     // 如果class名为user-avatar，直接不展示
-    if (event.target.className === 'user-avatar-img') {
+    if (el.className === 'user-avatar-img') {
       return
     }
     const uploadImg = strHandler('postImg', src)
@@ -124,10 +127,11 @@ onMounted(async () => {
     @click="clickHandler"
     @comment-handle="commentHandler"
   >
-    <DetailCard
-      v-if="isPostLoaded"
-      :post="post"
-    />
+    <template v-if="post">
+      <DetailCard
+        :post="post"
+      />
+    </template>
     <div v-else>
       loading...
     </div>
@@ -157,7 +161,7 @@ onMounted(async () => {
       </div>
       <!-- 这是评论区 -->
       <div
-        v-if="post.Comment"
+        v-if="post?.Comment"
         class="commentList"
       >
         <!-- 使用id-评论数作为key使每次评论重新渲染当前评论 -->
@@ -168,38 +172,7 @@ onMounted(async () => {
         >
           <CommentCard
             :comment="comment"
-            :show-comment="postCommentID === comment.PcommentID"
-          >
-            <template #showComment>
-              <button
-                v-if="comment.SubComments.length"
-                @click="
-                  postCommentID
-                    = postCommentID === comment.PcommentID
-                      ? -1
-                      : comment.PcommentID
-                "
-              >
-                {{
-                  postCommentID === comment.PcommentID
-                    ? '不想看了'
-                    : '让我看看'
-                }}
-              </button>
-            </template>
-          </CommentCard>
-          <div
-            v-if="comment.SubComments && comment.SubComments.length > 0"
-            v-show="postCommentID === comment.PcommentID"
-            class="subCommentList"
-          >
-            <CCommentCard
-              v-for="subComment in comment.SubComments"
-              :key="subComment.ccommentID"
-              :p-comment-id="comment.PcommentID"
-              :comment="subComment"
-            />
-          </div>
+          />
         </div>
       </div>
     </div>
