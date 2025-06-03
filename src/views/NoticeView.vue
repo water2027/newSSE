@@ -1,4 +1,6 @@
-<script setup>
+<script setup lang="ts">
+// @ts-nocheck
+// TODO: ts 暂时禁用, 连跑起来
 import { inject, nextTick, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -10,18 +12,18 @@ import { strHandler } from '@/utils/strHandler'
 
 const router = useRouter()
 
-const { reduceNoticeNum } = inject('noticeNum')
-const notices = inject('notices')
+const { reduceNoticeNum } = inject('noticeNum') as any
+const notices = inject('notices') as any
 const readPage = ref(true)
-const noticesRead = ref([])
-const noticesUnread = ref([])
+const noticesRead = ref<any[]>([])
+const noticesUnread = ref<any[]>([])
 
 /**
  * @description 标记通知为已读
  * @param noticeID 通知ID
  * @returns void
  */
-async function readComment(noticeID) {
+async function readComment(noticeID:number) {
   const res = await readNotice(noticeID)
   if (res.status === 'success') {
     getNoticesFunc()
@@ -45,7 +47,7 @@ async function readAll() {
   nextTick(getNoticesFunc)
 }
 
-async function changeToPost(postID, noticeID) {
+async function changeToPost(postID:number, noticeID:number) {
   await readComment(noticeID)
   setTimeout(() => {
     router.push(`/postdetail/${postID}`)
@@ -55,13 +57,13 @@ async function changeToPost(postID, noticeID) {
 async function getNoticesFunc() {
   const read = await getNotices(0, notices.value.readTotalNum, 1)
   const unread = await getNotices(0, notices.value.unreadTotalNum, 0)
-  if (read.noticeList) {
+  if ('noticeList' in read) {
     noticesRead.value = read.noticeList.filter(item => item.postID !== 0)
   }
   else {
     noticesRead.value = []
   }
-  if (unread.noticeList) {
+  if ('noticeList' in unread) {
     noticesUnread.value = unread.noticeList
   }
   else {
@@ -132,7 +134,7 @@ onMounted(async () => {
         <span>{{ strHandler('time', notice.time) }}</span>
         <div>
           <button
-            @click="changeToPost(notice.postID)"
+            @click="changeToPost(notice.postID, notice.noticeID)"
           >
             查看原帖
           </button>

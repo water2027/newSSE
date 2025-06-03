@@ -59,6 +59,7 @@ export interface AllInfo {
   punishnum: number
   score: number
   userID: number
+  emailpush: boolean
 }
 
 /**
@@ -93,6 +94,7 @@ async function getAllInfo(userTelephone: string): Promise<AllInfo> {
       punishnum: 0,
       score: 0,
       userID: 0,
+      emailpush: false,
     }
   }
 }

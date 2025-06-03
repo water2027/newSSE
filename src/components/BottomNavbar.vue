@@ -1,20 +1,18 @@
-<script setup>
+<script setup lang="ts">
+import type { Ref } from 'vue'
 import { computed, inject, ref } from 'vue'
 
-const { selected } = defineProps({
-  selected: {
-    type: String,
-    default: 'main',
-  },
-})
+const { selected = 'main' } = defineProps<{
+  selected?: string
+}>()
 const emit = defineEmits(['changePath'])
-const { noticeNum } = inject('noticeNum')
+const { noticeNum } = inject('noticeNum') as any
 const chatNum = inject('chatNum')
 const displayBool = computed(() =>
   noticeNum.value === '0' ? 'none' : 'block',
 )
 
-const isPC = inject('isPC')
+const isPC = inject<Ref<boolean>>('isPC')
 
 // 控制 "我的" 菜单的显示与隐藏
 const myMenuVisible = ref(false)
@@ -22,7 +20,7 @@ function toggleMyMenu() {
   myMenuVisible.value = !myMenuVisible.value
 }
 
-function changeTo(path) {
+function changeTo(path: string) {
   emit('changePath', path)
 }
 </script>

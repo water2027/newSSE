@@ -1,10 +1,11 @@
 <!-- eslint-disable vue/html-self-closing -->
-<script setup>
-import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+<script setup lang="ts">
+import type { AllInfo } from '@/api/info/getInfo'
+import { onMounted, ref, useTemplateRef } from 'vue'
 
+import { useRouter } from 'vue-router'
 import { getAllInfo } from '@/api/info/getInfo'
-import { updateUserInfo, uploadAvatar, updateEmailPush } from '@/api/info/updateInfo'
+import { updateEmailPush, updateUserInfo, uploadAvatar } from '@/api/info/updateInfo'
 
 import { updatePassword } from '@/api/LoginAndRegister/forgetPwd'
 import { sendCode } from '@/api/LoginAndRegister/utils'
@@ -19,22 +20,39 @@ import {
 const router = useRouter()
 
 const { userInfo } = useUserStore()
-const allInfo = ref({})
-const VCode = ref(null)
-const password1 = ref(null)
-const password2 = ref(null)
+const allInfo = ref<AllInfo>({
+  avatarURL: '',
+  ban: '',
+  email: '',
+  intro: '',
+  name: '',
+  phone: '',
+  punishnum: 0,
+  score: 0,
+  userID: 0,
+  emailpush: false,
+})
+const VCode = useTemplateRef('VCode')
+const password1 = useTemplateRef('password1')
+const password2 = useTemplateRef('password2')
 
 async function codeHandler() {
   try {
+    if (!allInfo.value)
+      return
     await sendCode(allInfo.value.email, 1)
     showMsg('验证码发过去啦')
   }
   catch (e) {
-    showMsg(e)
+    showMsg('发送验证码失败')
+    console.error(e)
   }
 }
 
 async function updatePasswordFunc() {
+  if (!password1.value || !password2.value || !VCode.value) {
+    return
+  }
   if (password1.value.value === '' || password2.value.value === '') {
     showMsg('密码不能为空')
     return
@@ -53,13 +71,19 @@ async function updatePasswordFunc() {
     showMsg(res.msg)
   }
   catch (e) {
-    showMsg(e)
+    showMsg('更新密码失败')
+    console.error(e)
   }
 }
 
-async function uploadAvatarFunc(e) {
+async function uploadAvatarFunc(e: Event) {
   try {
-    const file = e.target.files[0]
+    if (!allInfo.value)
+      return
+    const el = e.target as HTMLInputElement
+    const file = el.files?.[0]
+    if (!file)
+      return
     const res = await uploadAvatar(file)
     allInfo.value.avatarURL = res.data.avatar_url
     showMsg(`${res.msg}记得点击下面的修改信息~`)
@@ -74,6 +98,8 @@ async function uploadAvatarFunc(e) {
  * @description 更新用户信息。试图阻止空格名字，但是后端没有阻止
  */
 async function updateUserInfoFunc() {
+  if (!allInfo.value)
+    return
   if (/^\s+|\s+$/.test(allInfo.value.name)) {
     showMsg('用户名不能以空格作为开头或者结尾')
     return
@@ -107,17 +133,18 @@ onMounted(async () => {
   isPushDisabled.value = allInfo.value.emailpush
 })
 
-
 async function togglePush() {
   try {
+    if (!allInfo.value)
+      return
     await updateEmailPush(allInfo.value.userID)
     isPushDisabled.value = !isPushDisabled.value
     showMsg(`邮件推送已${isPushDisabled.value ? '启用' : '禁用'}`)
-  } catch (e) {
+  }
+  catch (e) {
     console.error(e)
     showMsg('失败了')
   }
-
 }
 </script>
 
@@ -126,40 +153,42 @@ async function togglePush() {
     <h2>设置</h2>
     <div class="data">
       <h3>个人信息</h3>
-      <img :src="allInfo.avatarURL" alt="头像" style="margin: auto">
+      <img :src="allInfo?.avatarURL" alt="头像" style="margin: auto">
       <label for="fileInput" class="custom-file-label fileInput button">修改头像</label>
       <input id="fileInput" type="file" accept="image/*" style="display: none" @change="uploadAvatarFunc">
       <div>
         <div>
           <div class="user-basic-info info-form">
             <div class="user-details">
-              <p><strong>ID：</strong>{{ allInfo.phone }}</p>
-              <p><strong>邮箱：</strong>{{ allInfo.email }}</p>
+              <p><strong>ID：</strong>{{ allInfo?.phone }}</p>
+              <p><strong>邮箱：</strong>{{ allInfo?.email }}</p>
               <p><strong>经验：</strong></p>
               <div class="exp-container">
-                <span class="level" :class="levelClassHandler(allInfo.score)">{{ levelNameHandler(allInfo.score) }}
+                <span class="level" :class="levelClassHandler(allInfo?.score || 0)">{{ levelNameHandler(allInfo?.score || 0) }}
                 </span>
                 <div class="progress-container">
-                  <div class="progress-bar" :style="{
-                    width:
-                      `${(parseInt(allInfo.score)
-                        / parseInt(
-                          levelExpHandler(
-                            allInfo.score,
-                          ),
-                        ))
-                      * 100
-                      }%`,
-                    background:
-                      'linear-gradient(to right, #ff9999, #ff4d4d)',
-                  }" />
+                  <div
+                    class="progress-bar" :style="{
+                      width:
+                        `${((allInfo?.score || 0)
+                          / parseInt(
+                            levelExpHandler(
+                              allInfo?.score || 0,
+                            ),
+                          ))
+                          * 100
+                        }%`,
+                      background:
+                        'linear-gradient(to right, #ff9999, #ff4d4d)',
+                    }"
+                  />
                 </div>
-                {{ allInfo.score }} /{{
-                  levelExpHandler(allInfo.score)
+                {{ allInfo?.score }} /{{
+                  levelExpHandler(allInfo?.score || 0)
                 }}
                 <span class="level level-next">{{
                   levelNameHandler(
-                    levelExpHandler(allInfo.score),
+                    parseInt(levelExpHandler(allInfo?.score || 0)),
                   )
                 }}
                 </span>
@@ -196,8 +225,8 @@ async function togglePush() {
     </div>
     <div class="toggle-container" style="display: flex; align-items: center; gap: 10px;">
       <span>禁用邮件推送</span>
-      <div class="toggle-switch" @click="togglePush" :class="{ active: isPushDisabled }">
-        <span class="slider"></span>
+      <div class="toggle-switch" :class="{ active: isPushDisabled }" @click="togglePush">
+        <span class="slider" />
       </div>
     </div>
     <div class="data">
@@ -226,7 +255,7 @@ async function togglePush() {
   justify-content: space-between;
 }
 
-.data div>* {
+.data div > * {
   margin: 5px 0;
 }
 
@@ -373,16 +402,18 @@ input[type='file'] {
   transform: rotateX(180deg);
   position: absolute;
   transform-origin: bottom;
-  background: linear-gradient(45deg,
-      #ff7d7d3e,
-      #ff5a993e,
-      #e376e53e,
-      #9a7ef83e,
-      transparent,
-      #9a7ef73e,
-      #e376e53e,
-      #ff5a993e,
-      #ff7d7d3e);
+  background: linear-gradient(
+    45deg,
+    #ff7d7d3e,
+    #ff5a993e,
+    #e376e53e,
+    #9a7ef83e,
+    transparent,
+    #9a7ef73e,
+    #e376e53e,
+    #ff5a993e,
+    #ff7d7d3e
+  );
   background-size: 300% 300%;
   color: transparent;
   background-clip: text;
@@ -403,16 +434,18 @@ input[type='file'] {
   transform: rotateX(160deg) skew(10deg);
   position: absolute;
   transform-origin: bottom;
-  background: linear-gradient(45deg,
-      #ff7d7d,
-      #ff5a99,
-      #e376e5,
-      #9a7ef8,
-      transparent,
-      #9a7ef8,
-      #e376e5,
-      #ff5a99,
-      #ff7d7d);
+  background: linear-gradient(
+    45deg,
+    #ff7d7d,
+    #ff5a99,
+    #e376e5,
+    #9a7ef8,
+    transparent,
+    #9a7ef8,
+    #e376e5,
+    #ff5a99,
+    #ff7d7d
+  );
   background-size: 300% 300%;
   color: transparent;
   background-clip: text;
@@ -571,6 +604,6 @@ body.dark-mode .button:hover {
 }
 
 .toggle-switch.active {
-  background-color: #2196F3;
+  background-color: #2196f3;
 }
 </style>

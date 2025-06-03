@@ -108,7 +108,7 @@ async function registerAction() {
   }
   catch (error) {
     console.error('Register failed:', error)
-    showMsg(error)
+    showMsg('注册失败，请稍后再试')
   }
 }
 </script>

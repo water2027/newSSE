@@ -48,7 +48,7 @@ async function loginHandler() {
       if (rememberMe.value) {
         localStorage.setItem('email', email)
         localStorage.setItem('password', password)
-        localStorage.setItem('rememberMe', true)
+        localStorage.setItem('rememberMe', 'true')
       }
     }
   }

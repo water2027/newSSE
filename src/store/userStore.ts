@@ -45,7 +45,7 @@ function setToken(newToken: string) {
   tokenInfo.expiry = now.getTime() + SEVEN_DAYS_IN_MS
 }
 
-function setUserInfo(newUserInfo: string) {
+function setUserInfo(newUserInfo: UserInfo) {
   Object.assign(userInfo, newUserInfo)
 }
 export function useUserStore() {

@@ -70,7 +70,7 @@ function levelClassHandler(userScore: number) {
 }
 
 // 经验
-function levelExpHandler(userScore:number) {
+function levelExpHandler(userScore: number) {
   if (!userScore && userScore !== 0) {
     return '0'
   }
@@ -98,6 +98,7 @@ function levelExpHandler(userScore:number) {
   if (userScore >= 4000) {
     return '5000' // 满级就是5000
   }
+  return '0' // 默认返回0
 }
 
 export { levelClassHandler, levelExpHandler, levelNameHandler }

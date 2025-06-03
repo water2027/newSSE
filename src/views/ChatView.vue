@@ -1,15 +1,18 @@
-<script setup>
+<script setup lang="ts">
+// @ts-nocheck
+// TODO: ts 暂时禁用, 连跑起来
 import { Icon } from '@iconify/vue'
 import { inject, nextTick, onBeforeMount, onMounted, onUnmounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { getTokenWithExpiry } from '@/api/auth'
 import { getChatHistory } from '@/api/chat/chat'
 import { getInfoById } from '@/api/info/getInfo'
+import { showMsg } from '@/components/MessageBox'
 import UserAvatar from '@/components/UserAvatar.vue'
+import { useUserStore } from '@/store/userStore'
 
 const route = useRoute()
-const router = useRouter()
-const user = inject('userInfo')
+const { userInfo } = useUserStore()
 
 const draft = ref('')
 const current = ref({})
@@ -19,14 +22,14 @@ const messages = ref([])
 const historyDiv = ref(null)
 const updateChatNum = inject('updateChatNum')
 
-let ws = null
-const preDataFetch = []
+let ws: any = null
+const preDataFetch: any[] = []
 let dummyID = 100000000
 
 onBeforeMount(() => {
   const reqId = route.query.user
   if (reqId) {
-    if (Number(reqId) !== user.value.userID) {
+    if (Number(reqId) !== userInfo.userID) {
       preDataFetch.push(
         getInfoById(Number(reqId))
           .then((res) => {
@@ -65,25 +68,15 @@ function getDummyID() {
   return dummyID
 }
 
-function toastError(content) {
-  // $bvToast.toast(content, {
-  //   title: '内部错误',
-  //   variant: 'danger',
-  //   solid: true,
-  // });
-  console.log(`内部错误：${content}`)
+function toastError(content:string) {
+  showMsg(`内部错误：${content}`)
 }
 
-function toastInfo(content) {
-  // $bvToast.toast(content, {
-  //   title: '私信系统',
-  //   variant: 'primary',
-  //   solid: true,
-  // });
-  console.log(`私信系统：${content}`)
+function toastInfo(content:string) {
+  showMsg(`私信系统：${content}`)
 }
 
-function handleDraftKeyDown(event) {
+function handleDraftKeyDown(event: KeyboardEvent) {
   if (event.key === 'Enter' && event.ctrlKey) {
     sendMessage()
     event.stopPropagation()
@@ -111,7 +104,7 @@ function scrollHistory() {
 function sendMessage() {
   if (draft.value !== '') {
     const message = {
-      senderUserID: user.value.userID,
+      senderUserID: userInfo.userID,
       targetUserID: current.value.userID,
       content: draft.value,
     }
@@ -158,7 +151,7 @@ function handleSocketMessage(event) {
     dedupContacts()
   }
   else if (data.chatMsgID) {
-    if (data.targetUserID === user.value.userID) {
+    if (data.targetUserID === userInfo.userID) {
       if (data.senderUserID === current.value.userID) {
         messages.value.push(data)
         if (historyDiv.value.scrollTop + historyDiv.value.clientHeight - historyDiv.value.scrollHeight > -1) {
@@ -215,7 +208,7 @@ function connectWebSocket() {
 function keepConnection() {
   const state = ws ? ws.readyState : WebSocket.CLOSED
   if (state === WebSocket.OPEN) {
-    ws.send(JSON.stringify({ userID: user.value.userID, beat: 1 }))
+    ws.send(JSON.stringify({ userID: userInfo.userID, beat: 1 }))
   }
   else if (state === WebSocket.CLOSED) {
     connectWebSocket()
@@ -232,7 +225,7 @@ function sendWsMessage(message) {
 }
 
 function updateChatHistory(callback) {
-  getChatHistory(user.value.userID, current.value.userID)
+  getChatHistory(userInfo.userID, current.value.userID)
     .then((res) => {
       if (res.code === 200) {
         messages.value = []

@@ -149,7 +149,7 @@ function search() {
  * @description 这是分区页面的回调函数，分区页面选择分区后调用
  * @param p 分区名
  */
-function sendPartition(p) {
+function sendPartition(p:string) {
   partition.value = p
   searchinfo.value = ''
   searchsort.value = 'home'

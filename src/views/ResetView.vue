@@ -79,7 +79,8 @@ async function resetHandler() {
       router.push('/auth/login')
     }
     catch (e) {
-      showMsg(e)
+      console.error(e)
+      showMsg('重置密码失败，请稍后再试')
     }
   }
   else {
