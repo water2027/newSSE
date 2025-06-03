@@ -4,9 +4,13 @@ const { noSave = false } = defineProps<{
   isSaved?: boolean
   isSelf: boolean
 }>()
-defineEmits(['userAction'])
-function handleSave() {}
-function handleDelete() {}
+const emits = defineEmits(['userAction'])
+function handleSave() {
+  emits('userAction', 'save')
+}
+function handleDelete() {
+  emits('userAction', 'delete')
+}
 </script>
 
 <template>

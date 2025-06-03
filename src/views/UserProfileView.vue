@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import { onBeforeMount, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -38,11 +38,11 @@ onBeforeMount(() => {
 function navigateChat() {
   if (user.value.userID > 0) {
     router.push({ name: 'Chat', query: { user: user.value.userID } })
-    stopPropagation()
+    // stopPropagation()
   }
 }
 
-function getUserTitle(userScore) {
+function getUserTitle(userScore: number) {
   if (userScore < 100) {
     return '菜鸟'
   }

@@ -6,41 +6,23 @@ import { delPost } from '@/api/editPostAndComment/editPost'
 import { likePost, savePost } from '@/api/SaveAndLike/SaveAndLike'
 
 import { showMsg } from '@/components/MessageBox'
+import { usePostStore } from '@/store/postStore'
+
 import { useUserStore } from '@/store/userStore'
 
 import BasicInfo from '../BasicInfo.vue'
-
 import UserAvatar from '../UserAvatar.vue'
 import UserButton from '../UserButton.vue'
-
-const OldImages = defineAsyncComponent(() => import('@/components/OldImages.vue'))
 
 const { post } = defineProps<{
   post: Post
 }>()
+const { updatePost } = usePostStore()
+const OldImages = defineAsyncComponent(() => import('@/components/OldImages.vue'))
 
 const root = useTemplateRef<HTMLElement>('root')
 
 const { userInfo } = useUserStore()
-
-/**
- * @description 收藏。
- */
-async function handleSave() {
-  // 后端没有返回数据，不要赋值后再更新
-  try {
-    await savePost(
-      post.PostID,
-      userInfo.phone,
-    )
-    showMsg(post.IsSaved ? '取消成功' : '收藏成功')
-    useCustomEvent('save', post.PostID)
-  }
-  catch (e) {
-    console.error(e)
-    showMsg('失败了:-(')
-  }
-}
 
 /**
  * @description 点赞。
@@ -50,42 +32,47 @@ async function like() {
   try {
     await likePost(post.PostID, userInfo.phone)
     showMsg(post.IsLiked ? '取消成功' : '点赞成功')
-    useCustomEvent('like', post.PostID)
+    useCustomEvent('like')
   }
   catch (e) {
     console.error(e)
   }
 }
 
-/**
- * @description 删除帖子。
- */
-async function deletePost() {
+async function handleUserAction(type: 'delete' | 'save') {
   // 后端没有返回数据，不要赋值后再更新
-  try {
-    await delPost(post.PostID)
-    showMsg('删除成功')
-    useCustomEvent('delete', post.PostID)
-  }
-  catch (e) {
-    console.error(e)
-    showMsg('删除失败，请稍后再试')
+  switch (type) {
+    case 'save':{
+      try {
+        await savePost(
+          post.PostID,
+          userInfo.phone,
+        )
+        showMsg(post.IsSaved ? '取消成功' : '收藏成功')
+        useCustomEvent('save')
+      }
+      catch (e) {
+        console.error(e)
+        showMsg('失败了:-(')
+      }
+      break
+    }
+    case 'delete': {
+      try {
+        await delPost(post.PostID)
+        showMsg('删除成功')
+        useCustomEvent('delete')
+      }
+      catch (error) {
+        console.error(error)
+        showMsg('删除失败，请稍后再试')
+      }
+    }
   }
 }
 
-/**
- * 这里也可以用emit, 但是这样的话父组件需要监听所有子组件, 这样写让父组件监听一个事件就行了.
- * 如果未来哪天想改也没什么关系, 这样子写对代码提示不太好, detail的类型是未知的
- */
-function useCustomEvent(type: 'delete' | 'save' | 'like', id: number) {
-  const event = new CustomEvent('info-change', {
-    bubbles: true,
-    detail: {
-      type,
-      id,
-    },
-  })
-  root.value?.dispatchEvent(event)
+function useCustomEvent(type: 'delete' | 'save' | 'like') {
+  updatePost(post.PostID, type)
 }
 </script>
 
@@ -99,7 +86,7 @@ function useCustomEvent(type: 'delete' | 'save' | 'like', id: number) {
         :user-name="post.UserName"
         :user-score="post.UserScore"
       />
-      <UserButton :is-saved="post.IsSaved" :is-self="userInfo.phone === post.UserTelephone" />
+      <UserButton :is-saved="post.IsSaved" :is-self="userInfo.phone === post.UserTelephone" @user-action="handleUserAction" />
     </div>
     <RouterLink :to="`/postdetail/${post.PostID}`">
       <div

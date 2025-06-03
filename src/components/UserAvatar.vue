@@ -16,7 +16,7 @@ const defaultAvatar = `${import.meta.env.BASE_URL}default-avatar.svg`
 function navigate() {
   if (userId > 0) {
     router.push({ name: 'UserProfile', params: { id: userId } })
-    stopPropagation()
+    // stopPropagation()
   }
 }
 </script>
@@ -36,8 +36,10 @@ function navigate() {
       >
       <UserIdentityIcon :identity="userIdentity" />
     </div>
-    <span class="user-name">{{ userName
-    }}</span>
+    <div class="max-w-fit w-full">
+      <span class="user-name ml-1 w-full">{{ userName
+      }}</span>
+    </div>
     <span
       class="level max-w-fit w-full"
       :class="levelClassHandler(userScore)"
@@ -59,7 +61,6 @@ function navigate() {
 
   .user-name {
     color: var(--color-user-text);
-    margin-left: 10px;
     font-size: 18px;
   }
   .user-avatar {

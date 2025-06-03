@@ -3,13 +3,15 @@ import type { Post } from '@/types/post'
 import { defineAsyncComponent, ref, useTemplateRef } from 'vue'
 import { sendComment } from '@/api/editPostAndComment/editComment'
 
+import { delPost } from '@/api/editPostAndComment/editPost'
 import { likePost, savePost } from '@/api/SaveAndLike/SaveAndLike'
+
 import { showMsg } from '@/components/MessageBox'
 
+import { usePostStore } from '@/store/postStore'
 import { useUserStore } from '@/store/userStore'
 
 import BasicInfo from '../BasicInfo.vue'
-
 import MarkdownContainer from '../MarkdownContainer.vue'
 import UserAvatar from '../UserAvatar.vue'
 import UserButton from '../UserButton.vue'
@@ -17,6 +19,8 @@ import UserButton from '../UserButton.vue'
 const { post } = defineProps<{
   post: Post
 }>()
+
+const { updatePost } = usePostStore()
 
 const OldImages = defineAsyncComponent(() => import('@/components/OldImages.vue'))
 
@@ -49,15 +53,19 @@ async function sendCommentFunc() {
   }
 }
 
-function handler(type) {
+async function handler(type: 'comment') {
   let event
   switch (type) {
-    case 'comment':
+    case 'comment':{
+      const result = sendCommentFunc()
+      if (!result)
+        return showMsg('评论失败，请稍后再试')
+      showMsg('评论成功')
       event = new CustomEvent('comment-handle', {
-        detail: { func: sendCommentFunc, type: 'comment' },
         bubbles: true,
       })
       break
+    }
     default:
       break
   }
@@ -66,21 +74,35 @@ function handler(type) {
   root.value?.dispatchEvent(event)
 }
 
-/**
- * @description 收藏。
- */
-async function handleSave() {
+async function handleUserAction(type: 'delete' | 'save') {
   // 后端没有返回数据，不要赋值后再更新
-  try {
-    await savePost(
-      post.PostID,
-      userInfo.phone,
-    )
-    showMsg(post.IsSaved ? '取消成功' : '收藏成功')
-  }
-  catch (e) {
-    console.error(e)
-    showMsg('失败了:-(')
+  switch (type) {
+    case 'save':{
+      try {
+        await savePost(
+          post.PostID,
+          userInfo.phone,
+        )
+        showMsg(post.IsSaved ? '取消成功' : '收藏成功')
+        useCustomEvent('save')
+      }
+      catch (e) {
+        console.error(e)
+        showMsg('失败了:-(')
+      }
+      break
+    }
+    case 'delete': {
+      try {
+        await delPost(post.PostID)
+        showMsg('删除成功')
+        useCustomEvent('delete')
+      }
+      catch (error) {
+        console.error(error)
+        showMsg('删除失败，请稍后再试')
+      }
+    }
   }
 }
 
@@ -92,21 +114,15 @@ async function like() {
   try {
     await likePost(post.PostID, userInfo.phone)
     showMsg(post.IsLiked ? '取消成功' : '点赞成功')
-    useCustomEvent('like', post.PostID)
+    useCustomEvent('like')
   }
   catch (e) {
     console.error(e)
   }
 }
-function useCustomEvent(type: 'delete' | 'save' | 'like', id: number) {
-  const event = new CustomEvent('info-change', {
-    bubbles: true,
-    detail: {
-      type,
-      id,
-    },
-  })
-  root.value?.dispatchEvent(event)
+
+function useCustomEvent(type: 'delete' | 'save' | 'like') {
+  updatePost(post.PostID, type)
 }
 </script>
 
@@ -124,7 +140,7 @@ function useCustomEvent(type: 'delete' | 'save' | 'like', id: number) {
           :user-name="post.UserName"
           :user-score="post.UserScore"
         />
-        <UserButton :is-saved="post.IsSaved" :is-self="post.UserTelephone === userInfo.phone" />
+        <UserButton :is-saved="post.IsSaved" :is-self="post.UserTelephone === userInfo.phone" @user-action="handleUserAction" />
       </div>
       <div
         v-if="post.Title"

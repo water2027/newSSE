@@ -438,8 +438,13 @@ onUnmounted(() => {
           <KeepAlive>
             <component
               :is="Component"
+              v-if="route.meta.keepAlive"
             />
           </KeepAlive>
+          <component
+            :is="Component"
+            v-if="!route.meta.keepAlive"
+          />
         </router-view>
       </div>
       <HeatList v-if="isPC && !heatPostsIsHidden" />

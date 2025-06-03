@@ -12,9 +12,11 @@ import BasicInfo from '../BasicInfo.vue'
 import MarkdownContainer from '../MarkdownContainer.vue'
 import { showMsg } from '../MessageBox'
 import UserAvatar from '../UserAvatar.vue'
+import UserButton from '../UserButton.vue'
 
-const { comment } = defineProps<{
+const { comment, postId } = defineProps<{
   comment: Comment
+  postId: number
 }>()
 
 const CCommentCard = defineAsyncComponent(() => import('@/components/card/CCommentCard.vue'))
@@ -46,12 +48,12 @@ const { userInfo } = useUserStore()
 /**
  * @description 发送评论
  */
-async function sendCommentFunc(id: number) {
+async function sendCommentFunc() {
   try {
     const sendingData = {
       content: commentContent.value,
       userTelephone: userInfo.phone,
-      postID: id,
+      postID: postId,
       pcommentID: comment.PcommentID,
     }
 
@@ -82,21 +84,33 @@ async function deleteFunc() {
   }
 }
 
-function handler(type) {
+async function handler(type: 'delete' | 'comment') {
   let event
   switch (type) {
-    case 'delete':
+    case 'delete':{
+      const result = await deleteFunc()
+      if (!result) {
+        showMsg('删除失败')
+        return
+      }
+      showMsg('删除成功')
       event = new CustomEvent('comment-handle', {
-        detail: { func: deleteFunc, type: 'delete' },
         bubbles: true,
       })
       break
-    case 'comment':
+    }
+    case 'comment':{
+      const result = await sendCommentFunc()
+      if (!result) {
+        showMsg('评论失败')
+        return
+      }
+      showMsg('评论成功')
       event = new CustomEvent('comment-handle', {
-        detail: { func: sendCommentFunc, type: 'comment' },
         bubbles: true,
       })
       break
+    }
     default:
       return
   }
@@ -113,12 +127,15 @@ async function like() {
       comment.PcommentID,
       userInfo.phone,
     )
-    if (res) {
-      return true
+    if (!res) {
+      showMsg('点赞失败')
+      return
     }
-    else {
-      return false
-    }
+    showMsg('点赞成功')
+    const event = new CustomEvent('comment-handle', {
+      bubbles: true,
+    })
+    root.value?.dispatchEvent(event)
   }
   catch (e) {
     console.error(e)
@@ -126,6 +143,7 @@ async function like() {
     return false
   }
 }
+
 </script>
 
 <template>
@@ -142,14 +160,7 @@ async function like() {
           :user-name="comment.Author"
           :user-score="comment.AuthorScore"
         />
-        <div class="userButtons">
-          <button
-            v-if="comment.AuthorTelephone === userInfo.phone"
-            @click.stop.prevent="handler('delete')"
-          >
-            删除
-          </button>
-        </div>
+        <UserButton :no-save="true" :is-self="userInfo.phone === comment.AuthorTelephone" @user-action="handler" />
       </div>
       <MarkdownContainer
         :markdown-content="comment.Content || 'loading'"
@@ -187,6 +198,7 @@ async function like() {
           :key="subComment.ccommentID"
           :p-comment-id="comment.PcommentID"
           :sub-comment="subComment"
+          :post-id="postId"
         />
       </div>
     </div>

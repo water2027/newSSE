@@ -71,12 +71,13 @@ function updatePost(id: number, type: 'like' | 'save' | 'delete') {
     const mid = Math.floor((left + right) / 2)
     if (posts[mid].PostID === id) {
       target = mid
+      break
     }
     else if (posts[mid].PostID < id) {
-      left = mid + 1
+      right = mid - 1
     }
     else {
-      right = mid - 1
+      left = mid + 1
     }
   }
   const post = posts[target]
@@ -87,7 +88,7 @@ function updatePost(id: number, type: 'like' | 'save' | 'delete') {
         post.Like += post.IsLiked ? 1 : -1
         break
       case 'save':
-        post.IsSaved = true
+        post.IsSaved = !post.IsSaved
         break
       case 'delete':
         posts.splice(target, 1)

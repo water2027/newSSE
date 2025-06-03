@@ -38,33 +38,18 @@ function setSortType(type: SortType) {
   sortType.value = type
 }
 
-async function commentHandler(event) {
-  const data = event.detail
-  if (!post.value) return
-  try {
-    const res = await data.func(userInfo.phone, post.value.PostID)
-    if (res) {
-      showMsg('成功')
-      await getCommentList()
-      switch (data.type) {
-        case 'comment':
-          ++post.value.Comment
-          break
-        case 'delete':
-          --post.value.Comment
-          break
-        default:
-          break
-      }
+async function commentHandler() {
+  if (!post.value)
+    return
+  await getCommentList()
+  let len = 0
+  for (const comment of comments.value) {
+    if (comment.SubComments) {
+      len += comment.SubComments.length
     }
-    else {
-      showMsg('失败')
-    }
+    len += 1 // 包括主评论
   }
-  catch (e) {
-    console.error(e)
-    showMsg('失败')
-  }
+  post.value.Comment = len
 }
 
 async function getCommentList() {
@@ -89,10 +74,12 @@ async function clickHandler(event: MouseEvent) {
    * 在css里已经去除了pre标签的点击，只保留了pre::before的点击
    */
   const el = event.target as HTMLElement
-  if(!el) return
+  if (!el)
+    return
   if (el.tagName === 'PRE') {
     const code = el.textContent
-    if (!code) return
+    if (!code)
+      return
     await navigator.clipboard.writeText(code)
     showMsg('代码已复制')
   }
@@ -167,11 +154,12 @@ onMounted(async () => {
         <!-- 使用id-评论数作为key使每次评论重新渲染当前评论 -->
         <div
           v-for="comment in sortedComments"
-          :key="`${comment.PcommentID}-${comment.SubComments.length}`"
+          :key="`${comment.PcommentID}`"
           class="comment"
         >
           <CommentCard
             :comment="comment"
+            :post-id="post.PostID"
           />
         </div>
       </div>
