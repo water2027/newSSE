@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import type { Notice, NoticeNum } from '@/api/notice/notice'
-// TODO: ts 暂时禁用, 连跑起来
 import { inject, nextTick, onMounted, ref } from 'vue'
 
 import { useRouter } from 'vue-router'
