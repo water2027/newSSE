@@ -1,8 +1,7 @@
 <script setup lang="ts">
-// @ts-nocheck
-// TODO: ts 暂时禁用, 连跑起来
+import type { AllInfo } from '@/api/info/getInfo'
 import { Icon } from '@iconify/vue'
-import { inject, nextTick, onBeforeMount, onMounted, onUnmounted, ref } from 'vue'
+import { inject, nextTick, onBeforeMount, onMounted, onUnmounted, ref, useTemplateRef } from 'vue'
 import { useRoute } from 'vue-router'
 import { getTokenWithExpiry } from '@/api/auth'
 import { getChatHistory } from '@/api/chat/chat'
@@ -11,18 +10,39 @@ import { showMsg } from '@/components/MessageBox'
 import UserAvatar from '@/components/UserAvatar.vue'
 import { useUserStore } from '@/store/userStore'
 
+export interface Message {
+  senderUserID: number
+  targetUserID: number
+  content: string
+  chatMsgID: number
+  createdAt: number
+}
+
 const route = useRoute()
 const { userInfo } = useUserStore()
 
 const draft = ref('')
-const current = ref({})
-const contacts = ref([])
-const messages = ref([])
+type Contact = AllInfo & { unRead: number }
+const current = ref<Contact>({
+  avatarURL: '',
+  ban: '',
+  email: '',
+  intro: '',
+  name: '',
+  phone: '',
+  punishnum: 0,
+  score: 0,
+  userID: 0,
+  emailpush: false,
+  unRead: 0
+})
+const contacts = ref<Contact[]>([])
+const messages = ref<Message[]>([])
 
-const historyDiv = ref(null)
-const updateChatNum = inject('updateChatNum')
+const historyDiv = useTemplateRef<HTMLDivElement>('historyDiv')
+const updateChatNum = inject('updateChatNum') as (num?: number) => void
 
-let ws: any = null
+let ws: WebSocket
 const preDataFetch: any[] = []
 let dummyID = 100000000
 
@@ -68,11 +88,11 @@ function getDummyID() {
   return dummyID
 }
 
-function toastError(content:string) {
+function toastError(content: string) {
   showMsg(`内部错误：${content}`)
 }
 
-function toastInfo(content:string) {
+function toastInfo(content: string) {
   showMsg(`私信系统：${content}`)
 }
 
@@ -83,8 +103,8 @@ function handleDraftKeyDown(event: KeyboardEvent) {
   }
 }
 
-function selectContact(sel) {
-  if (!sel || sel.userID === current.value.userID)
+function selectContact(sel: Contact) {
+  if (!current.value || !sel || sel.userID === current.value.userID)
     return
 
   draft.value = ''
@@ -97,23 +117,29 @@ function selectContact(sel) {
 
 function scrollHistory() {
   nextTick(() => {
+    const el = historyDiv.value
+    if (!el)
+      return
     historyDiv.value.scrollTop = historyDiv.value.scrollHeight
   })
 }
 
 function sendMessage() {
   if (draft.value !== '') {
-    const message = {
+    if (!current.value)
+      return
+    const message: Message = {
       senderUserID: userInfo.userID,
       targetUserID: current.value.userID,
       content: draft.value,
+      chatMsgID: 0,
+      createdAt: Date.now(),
     }
 
     if (sendWsMessage(JSON.stringify(message))) {
       draft.value = ''
 
       message.chatMsgID = getDummyID()
-      message.createdAt = Date.now()
       messages.value.push(message)
 
       scrollHistory()
@@ -126,7 +152,7 @@ function sendMessage() {
 
 function dedupContacts() {
   const seen = new Set()
-  contacts.value = contacts.value.reduce((acc, current) => {
+  contacts.value = contacts.value.reduce((acc: Contact[], current) => {
     const keyValue = current.userID
     if (!seen.has(keyValue)) {
       seen.add(keyValue)
@@ -136,7 +162,7 @@ function dedupContacts() {
   }, [])
 }
 
-function handleSocketMessage(event) {
+function handleSocketMessage(event: MessageEvent<any>) {
   let data
   try {
     data = JSON.parse(event.data)
@@ -152,9 +178,12 @@ function handleSocketMessage(event) {
   }
   else if (data.chatMsgID) {
     if (data.targetUserID === userInfo.userID) {
-      if (data.senderUserID === current.value.userID) {
+      if (data.senderUserID === current.value?.userID) {
         messages.value.push(data)
-        if (historyDiv.value.scrollTop + historyDiv.value.clientHeight - historyDiv.value.scrollHeight > -1) {
+        const el = historyDiv.value
+        if (!el)
+          return
+        if (el.scrollTop + el.clientHeight - el.scrollHeight > -1) {
           scrollHistory()
         }
       }
@@ -182,11 +211,11 @@ function handleSocketMessage(event) {
   }
 }
 
-function convertChatUser(user, unRead) {
+function convertChatUser(user: AllInfo, unRead: number = 0) {
   return {
     ...user,
     intro: user.intro || '未设置签名',
-    unRead: unRead || 0,
+    unRead,
   }
 }
 
@@ -215,7 +244,7 @@ function keepConnection() {
   }
 }
 
-function sendWsMessage(message) {
+function sendWsMessage(message:string) {
   const state = ws ? ws.readyState : WebSocket.CLOSED
   if (state === WebSocket.OPEN) {
     ws.send(message)
@@ -224,7 +253,7 @@ function sendWsMessage(message) {
   return false
 }
 
-function updateChatHistory(callback) {
+function updateChatHistory(callback:()=>void) {
   getChatHistory(userInfo.userID, current.value.userID)
     .then((res) => {
       if (res.code === 200) {
@@ -242,7 +271,7 @@ function updateChatHistory(callback) {
     })
 }
 
-function getTimeShow(idx) {
+function getTimeShow(idx: number) {
   if (idx === 0) {
     const date = new Date(messages.value[0].createdAt)
     const str = date.toLocaleString()
@@ -252,7 +281,7 @@ function getTimeShow(idx) {
   const prev = new Date(messages.value[idx - 1].createdAt)
   const date = new Date(messages.value[idx].createdAt)
   if (!checkSameDay(prev, date)) {
-    if (prev.getYear() === date.getYear()) {
+    if (prev.getFullYear() === date.getFullYear()) {
       const str = date.toLocaleString()
       return str.substring(5, str.length - 3) // MM-dd HH:mm
     }
@@ -266,9 +295,9 @@ function getTimeShow(idx) {
   return null
 }
 
-function checkSameDay(x, y) {
+function checkSameDay(x: Date, y: Date) {
   return (
-    x.getYear() === y.getYear() && x.getMonth() === y.getMonth() && x.getDay() === y.getDay()
+    x.getFullYear() === y.getFullYear() && x.getMonth() === y.getMonth() && x.getDay() === y.getDay()
   )
 }
 </script>
@@ -284,7 +313,6 @@ function checkSameDay(x, y) {
         <div
           v-for="entry in contacts" :key="entry.userID"
           class="contact-entry" :class="[current.userID === entry.userID && 'selected']" @click="selectContact(entry)"
-          @keydown="handleKeyDown($event, () => selectContact(entry))"
         >
           <UserAvatar class="contact-icon" :src="entry.avatarURL" :alt="entry.name" />
           <div class="contact-info">
@@ -324,12 +352,12 @@ function checkSameDay(x, y) {
                   {{ getTimeShow(i) }}
                 </div>
               </div>
-              <div class="message-entry" :class="[entry.senderUserID === user.userID && 'reversed']">
-                <template v-if="entry.senderUserID === user.userID">
-                  <UserAvatar class="contact-icon" :src="user.avatarURL" :alt="user.name" />
+              <div class="message-entry" :class="[entry.senderUserID === userInfo.userID && 'reversed']">
+                <template v-if="entry.senderUserID === userInfo.userID">
+                  <UserAvatar class="contact-icon" :src="userInfo.avatarURL" :alt="userInfo.name" />
                   <div class="message-info">
                     <div class="message-sender">
-                      {{ user.name }}
+                      {{ userInfo.name }}
                     </div>
                     <div class="message-body">
                       {{ entry.content }}

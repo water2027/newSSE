@@ -53,13 +53,13 @@ export interface AllInfo {
   avatarURL: string
   ban: string
   email: string
+  emailpush: boolean
   intro: string
   name: string
   phone: string
   punishnum: number
   score: number
   userID: number
-  emailpush: boolean
 }
 
 /**
@@ -99,7 +99,8 @@ async function getAllInfo(userTelephone: string): Promise<AllInfo> {
   }
 }
 
-async function getInfoById(userID: number) {
+// 这玩意怎么有两个接口??
+async function getInfoById(userID: number): Promise<AllInfo> {
   try {
     const res = await requestFunc(
       `/auth/getInfo`,
@@ -117,6 +118,7 @@ async function getInfoById(userID: number) {
   }
   catch (e) {
     console.error(e)
+    throw e
   }
 }
 
