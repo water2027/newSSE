@@ -1,15 +1,17 @@
 <script setup lang="ts">
+import type { Tag } from '@/api/info/getTeacher'
+
 import {
-    onMounted,
+  onMounted,
   reactive,
   ref,
-  watch
+  watch,
 } from 'vue'
-
+import { getTeachers } from '@/api/info/getTeacher'
 import NewList from '@/components/NewList.vue'
-import { useUserStore } from '@/store/userStore'
 import { usePostStore } from '@/store/postStore'
-import { getTeachers, type Tag } from '@/api/info/getTeacher'
+import { useUserStore } from '@/store/userStore'
+
 const tag = ref('')
 const teachers = reactive<Tag[]>([])
 
@@ -28,23 +30,23 @@ async function update() {
 }
 
 onMounted(async () => {
-    refreshPosts()
-    changeTo('课程专区')
-    await updateNum(userInfo.phone)
-    const resp = await getTeachers()
-    teachers.splice(0, teachers.length, ...resp)
+  refreshPosts()
+  changeTo('课程专区')
+  await updateNum(userInfo.phone)
+  const resp = await getTeachers()
+  teachers.splice(0, teachers.length, ...resp)
 })
 watch(tag, async (newTag) => {
-    refreshPosts()
-    changeTo('课程专区', newTag)
-    hasMore.value = true
+  refreshPosts()
+  changeTo('课程专区', newTag)
+  hasMore.value = true
 })
 </script>
 
 <template>
   <div class="root">
     <h2>课程专区</h2>
-        <div>
+    <div>
       <span class="gradientUnderline">请选择你的老师，不选也没关系 </span>
       <select
         id="teacher"

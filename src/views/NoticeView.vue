@@ -1,9 +1,10 @@
 <script setup lang="ts">
-// @ts-nocheck
+import type { Ref } from 'vue'
+import type { Notice, NoticeNum } from '@/api/notice/notice'
 // TODO: ts 暂时禁用, 连跑起来
 import { inject, nextTick, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
 
+import { useRouter } from 'vue-router'
 import { getNotices, getNoticesNum, readNotice } from '@/api/notice/notice'
 
 import { showMsg } from '@/components/MessageBox'
@@ -13,17 +14,17 @@ import { strHandler } from '@/utils/strHandler'
 const router = useRouter()
 
 const { reduceNoticeNum } = inject('noticeNum') as any
-const notices = inject('notices') as any
+const notices = inject('notices') as Ref<NoticeNum>
 const readPage = ref(true)
-const noticesRead = ref<any[]>([])
-const noticesUnread = ref<any[]>([])
+const noticesRead = ref<Notice[]>([])
+const noticesUnread = ref<Notice[]>([])
 
 /**
  * @description 标记通知为已读
  * @param noticeID 通知ID
  * @returns void
  */
-async function readComment(noticeID:number) {
+async function readComment(noticeID: number) {
   const res = await readNotice(noticeID)
   if (res.status === 'success') {
     getNoticesFunc()
@@ -47,7 +48,7 @@ async function readAll() {
   nextTick(getNoticesFunc)
 }
 
-async function changeToPost(postID:number, noticeID:number) {
+async function changeToPost(postID: number, noticeID: number) {
   await readComment(noticeID)
   setTimeout(() => {
     router.push(`/postdetail/${postID}`)
