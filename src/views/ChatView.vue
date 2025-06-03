@@ -3,7 +3,6 @@ import type { AllInfo } from '@/api/info/getInfo'
 import { Icon } from '@iconify/vue'
 import { inject, nextTick, onBeforeMount, onMounted, onUnmounted, ref, useTemplateRef } from 'vue'
 import { useRoute } from 'vue-router'
-import { getTokenWithExpiry } from '@/api/auth'
 import { getChatHistory } from '@/api/chat/chat'
 import { getInfoById } from '@/api/info/getInfo'
 import { showMsg } from '@/components/MessageBox'
@@ -19,7 +18,7 @@ export interface Message {
 }
 
 const route = useRoute()
-const { userInfo } = useUserStore()
+const { userInfo, token } = useUserStore()
 
 const draft = ref('')
 type Contact = AllInfo & { unRead: number }
@@ -222,7 +221,7 @@ function convertChatUser(user: AllInfo, unRead: number = 0) {
 function connectWebSocket() {
   // connect websocket
   const wsURL = new URL('/websocket/auth/chat', import.meta.env.VITE_API_BASE_URL)
-  wsURL.searchParams.append('token', getTokenWithExpiry())
+  wsURL.searchParams.append('token', token.value)
   ws = new WebSocket(wsURL)
   ws.addEventListener('close', () => {
     setTimeout(() => {
