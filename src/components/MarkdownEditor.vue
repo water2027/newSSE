@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/html-self-closing -->
-<script setup>
-import { nextTick, onMounted, ref } from 'vue'
+<script setup lang="ts">
+import { nextTick, onMounted, ref, useTemplateRef } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { uploadPhoto } from '@/api/editPostAndComment/utils'
@@ -8,12 +8,12 @@ import { uploadPhoto } from '@/api/editPostAndComment/utils'
 import { showMsg } from '@/components/MessageBox'
 import MarkdownContainer from './MarkdownContainer.vue'
 
-const emit = defineEmits(['send'])
+defineEmits(['send'])
 
 const route = useRoute()
 
 const isPreview = ref(false)
-const textarea = ref(null)
+const textarea = useTemplateRef<HTMLTextAreaElement>('textarea')
 
 const modelValue = defineModel({
   type: String,
@@ -21,20 +21,21 @@ const modelValue = defineModel({
 })
 
 function autoResize() {
-  textarea.value.style.height = '450px'
-  textarea.value.style.height = `${textarea.value.scrollHeight}px`
+  textarea.value!.style.height = '450px'
+  textarea.value!.style.height = `${textarea.value!.scrollHeight}px`
 }
 
-function handleInput(event) {
+function handleInput(event: Event) {
   const top = document.body.scrollTop
-  modelValue.value = event.target.value
+  const el = event.target as HTMLTextAreaElement
+  modelValue.value = el.value
   autoResize()
   nextTick(() => {
     document.body.scrollTop = top
   })
 }
 
-async function upload(file) {
+async function upload(file: File) {
   if (file) {
     try {
       const data = await uploadPhoto(file)
@@ -53,25 +54,28 @@ async function upload(file) {
   }
 }
 
-async function uploadFile(event) {
-  const file = event.target.files[0]
+async function uploadFile(event:Event) {
+  const el = event.target as HTMLInputElement
+  const file = el.files![0]
   await upload(file)
 }
 
-async function handlePaste(event) {
-  const items = event.clipboardData.items
-
+async function handlePaste(event: ClipboardEvent) {
+  const items = event.clipboardData?.items
+  if(!items) return
   for (let i = 0; i < items.length; ++i) {
     const item = items[i]
     if (item.kind === 'file') {
       const file = item.getAsFile()
       event.preventDefault()
+      if(!file) return
       await upload(file)
     }
   }
 }
 
-function editContent(type) {
+type EditType = '标题' | '粗体' | '斜体'|'删除线'|'引用'|'无序列表'|'有序列表'|'表格'|'分割线'|'代码块'
+function editContent(type: EditType) {
   let insertion = ''
   let cursorOffset = 0
 
@@ -121,21 +125,18 @@ function editContent(type) {
       return
   }
 
-  const start = textarea.value.selectionStart
-  const end = textarea.value.selectionEnd
-  const newValue
-		= modelValue.value.slice(0, start)
-		  + insertion
-		  + modelValue.value.slice(end)
+  const start = textarea.value?.selectionStart
+  const end = textarea.value?.selectionEnd
+  const newValue = modelValue.value.slice(0, start) + insertion + modelValue.value.slice(end)
 
   modelValue.value = newValue
 
   // 在下一个事件循环中设置光标位置
   nextTick(() => {
-    textarea.value.focus()
-    textarea.value.setSelectionRange(
-      start + insertion.length + cursorOffset,
-      start + insertion.length + cursorOffset,
+    textarea.value?.focus()
+    textarea.value?.setSelectionRange(
+      start! + insertion.length + cursorOffset,
+      start! + insertion.length + cursorOffset,
     )
   })
 }
@@ -210,7 +211,6 @@ onMounted(() => {
       />
       <MarkdownContainer
         v-show="isPreview"
-        ref="mdContainer"
         :markdown-content="modelValue"
       />
     </div>

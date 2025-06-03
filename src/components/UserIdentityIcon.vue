@@ -1,16 +1,10 @@
-<script setup>
+<script setup lang="ts">
 import { Icon } from '@iconify/vue'
 
-const props = defineProps({
-  identity: {
-    type: String,
-    default: '',
-  },
-  noTip: {
-    type: Boolean,
-    default: false,
-  },
-})
+const { identity = '', noTip = false } = defineProps<{
+  identity?: string
+  noTip?: boolean
+}>()
 
 const identityIcon = {
   teacher: 'material-symbols:book-ribbon',
@@ -24,10 +18,10 @@ const identityName = {
 </script>
 
 <template>
-  <div v-if="identityIcon[identity]" class="user-identity" :class="[`identity-${identity}`]">
-    <Icon :icon="identityIcon[identity]" class="user-identity-icon" />
+  <div v-if="identity in identityIcon" class="user-identity" :class="[`identity-${identity}`]">
+    <Icon :icon="identityIcon[identity as 'teacher'|'organization']" class="user-identity-icon" />
     <div v-if="!noTip" class="user-identity-name">
-      {{ identityName[identity] }}
+      {{ identityName[identity as 'teacher'|'organization'] }}
     </div>
   </div>
 </template>

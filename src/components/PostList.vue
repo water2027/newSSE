@@ -92,6 +92,7 @@ async function getMore() {
     }
     catch (e) {
       curPage.value = 0
+      console.error('获取更多帖子失败:', e)
     }
   }
 }

@@ -1,29 +1,30 @@
-<script setup>
-import { computed, defineAsyncComponent, inject, onMounted, ref } from 'vue'
+<script setup lang="ts">
+import type { Comment } from '@/types/comment'
+import type { Post } from '@/types/post'
+
+import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { getCommentsByPostID } from '@/api/browse/getComment'
+
 import { getPostByID } from '@/api/browse/getPost'
-
 import DetailCard from '@/components/card/DetailCard.vue'
-
 import { showImg } from '@/components/ImageShower'
 import { showMsg } from '@/components/MessageBox'
+import { useUserStore } from '@/store/userStore'
 import { strHandler } from '@/utils/strHandler'
 
 const CommentCard = defineAsyncComponent(() => import('@/components/card/CommentCard.vue'))
-const CCommentCard = defineAsyncComponent(() => import('@/components/card/CCommentCard.vue'))
 
 const route = useRoute()
 
-const userInfo = inject('userInfo')
+const { userInfo } = useUserStore()
 
-const post = ref({})
-const isPostLoaded = computed(() => Object.keys(post.value).length !== 0)
-const comments = ref([])
-const postCommentID = ref(0)
+const post = ref<Post>()
+const comments = ref<Comment[]>([])
 
-const sortType = ref('time')
+type SortType = 'time' | 'likes'
+const sortType = ref<SortType>('time')
 const sortedComments = computed(() => {
   // 如果是按时间排序，直接返回原数组
   if (sortType.value === 'time') {
@@ -33,42 +34,28 @@ const sortedComments = computed(() => {
   // .slice()是为了不改变原数组
   return comments.value.slice().sort((a, b) => b.LikeNum - a.LikeNum)
 })
-function setSortType(type) {
+function setSortType(type: SortType) {
   sortType.value = type
 }
 
-async function commentHandler(event) {
-  const data = event.detail
-  try {
-    const res = await data.func(userInfo.value.phone, post.value.PostID)
-    if (res) {
-      showMsg('成功')
-      await getCommentList()
-      switch (data.type) {
-        case 'comment':
-          ++post.value.Comment
-          break
-        case 'delete':
-          --post.value.Comment
-          break
-        default:
-          break
-      }
+async function commentHandler() {
+  if (!post.value)
+    return
+  await getCommentList()
+  let len = 0
+  for (const comment of comments.value) {
+    if (comment.SubComments) {
+      len += comment.SubComments.length
     }
-    else {
-      showMsg('失败')
-    }
+    len += 1 // 包括主评论
   }
-  catch (e) {
-    console.error(e)
-    showMsg('失败')
-  }
+  post.value.Comment = len
 }
 
 async function getCommentList() {
   try {
     const ID = Number(route.params.id)
-    const curComments = await getCommentsByPostID(ID, userInfo.value.phone)
+    const curComments = await getCommentsByPostID(ID, userInfo.phone)
     if (curComments)
       curComments.reverse()
     comments.value = curComments
@@ -82,20 +69,25 @@ async function getCommentList() {
  *
  * @description 复制代码和展示图片。直接绑定根容器
  */
-async function clickHandler(event) {
+async function clickHandler(event: MouseEvent) {
   /**
    * 在css里已经去除了pre标签的点击，只保留了pre::before的点击
    */
-  if (event.target.tagName === 'PRE') {
-    const code = event.target.innerText
+  const el = event.target as HTMLElement
+  if (!el)
+    return
+  if (el.tagName === 'PRE') {
+    const code = el.textContent
+    if (!code)
+      return
     await navigator.clipboard.writeText(code)
     showMsg('代码已复制')
   }
-  else if (event.target.tagName === 'IMG') {
+  else if (el.tagName === 'IMG') {
     // 拿到图片的src
-    const src = event.target.src
+    const src = (el as HTMLImageElement).src
     // 如果class名为user-avatar，直接不展示
-    if (event.target.className === 'user-avatar-img') {
+    if (el.className === 'user-avatar-img') {
       return
     }
     const uploadImg = strHandler('postImg', src)
@@ -106,7 +98,7 @@ async function clickHandler(event) {
 onMounted(async () => {
   try {
     const ID = Number(route.params.id)
-    const curPost = await getPostByID(ID, userInfo.value.phone)
+    const curPost = await getPostByID(ID, userInfo.phone)
     post.value = curPost
     await getCommentList()
   }
@@ -122,10 +114,11 @@ onMounted(async () => {
     @click="clickHandler"
     @comment-handle="commentHandler"
   >
-    <DetailCard
-      v-if="isPostLoaded"
-      :post="post"
-    />
+    <template v-if="post">
+      <DetailCard
+        :post="post"
+      />
+    </template>
     <div v-else>
       loading...
     </div>
@@ -155,49 +148,19 @@ onMounted(async () => {
       </div>
       <!-- 这是评论区 -->
       <div
-        v-if="post.Comment"
+        v-if="post?.Comment"
         class="commentList"
       >
         <!-- 使用id-评论数作为key使每次评论重新渲染当前评论 -->
         <div
           v-for="comment in sortedComments"
-          :key="`${comment.PcommentID}-${comment.SubComments.length}`"
+          :key="`${comment.PcommentID}`"
           class="comment"
         >
           <CommentCard
             :comment="comment"
-            :show-comment="postCommentID === comment.PcommentID"
-          >
-            <template #showComment>
-              <button
-                v-if="comment.SubComments.length"
-                @click="
-                  postCommentID
-                    = postCommentID === comment.PcommentID
-                      ? -1
-                      : comment.PcommentID
-                "
-              >
-                {{
-                  postCommentID === comment.PcommentID
-                    ? '不想看了'
-                    : '让我看看'
-                }}
-              </button>
-            </template>
-          </CommentCard>
-          <div
-            v-if="comment.SubComments && comment.SubComments.length > 0"
-            v-show="postCommentID === comment.PcommentID"
-            class="subCommentList"
-          >
-            <CCommentCard
-              v-for="subComment in comment.SubComments"
-              :key="subComment.ccommentID"
-              :p-comment-id="comment.PcommentID"
-              :comment="subComment"
-            />
-          </div>
+            :post-id="post.PostID"
+          />
         </div>
       </div>
     </div>

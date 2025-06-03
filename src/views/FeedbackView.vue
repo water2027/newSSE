@@ -1,14 +1,16 @@
-<script setup>
-import { ref } from 'vue'
+<script setup lang="ts">
+import { useTemplateRef } from 'vue'
 import { feedback } from '@/api/feedback/feedback'
 import { showMsg } from '@/components/MessageBox'
 
-const feedbackContent = ref(null)
+const feedbackContent = useTemplateRef<HTMLTextAreaElement>('feedbackContent')
 async function submitFeedback() {
+  const el = feedbackContent.value
+  if (!el) return
   // 去除空格
-  feedbackContent.value.value = feedbackContent.value.value.trim()
-  if (feedbackContent.value.value) {
-    const res = await feedback(feedbackContent.value.value, '')
+  el.value = el.value.trim()
+  if (el.value) {
+    const res = await feedback(el.value, '')
     showMsg(res.msg)
   }
   else {

@@ -1,14 +1,16 @@
-<script setup>
+<script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { inject, onBeforeMount, ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getInfoById } from '@/api/info/getInfo'
+import { showMsg } from '@/components/MessageBox'
 import UserAvatar from '@/components/UserAvatar.vue'
+import { useUserStore } from '@/store/userStore'
 
 const router = useRouter()
 
 const user = ref()
-const userInfo = inject('userInfo')
+const { userInfo } = useUserStore()
 
 onBeforeMount(() => {
   const { id } = useRoute().params
@@ -19,26 +21,16 @@ onBeforeMount(() => {
         user.value.title = getUserTitle(res.score)
       }
       else {
-        console.log(`请求无效：${res.msg} (${res.code})`)
+        showMsg(`请求无效：${res.msg} (${res.code})`)
       }
     })
     .catch((error) => {
       if (error.response) {
         const res = error.response
-        console.log(`请求无效：${res.msg} (${res.code})`)
-        // this.$bvToast.toast(`请求无效：${res.data.msg} (${res.data.code})`, {
-        //   title: '内部错误',
-        //   variant: 'danger',
-        //   solid: true,
-        // });
+        showMsg(`请求无效：${res.msg} (${res.code})`)
       }
       else {
-        console.log('请求无效')
-        // this.$bvToast.toast('请求无效：', {
-        //   title: '内部错误',
-        //   variant: 'danger',
-        //   solid: true,
-        // });
+        showMsg('请求无效')
       }
     })
 })
@@ -46,11 +38,11 @@ onBeforeMount(() => {
 function navigateChat() {
   if (user.value.userID > 0) {
     router.push({ name: 'Chat', query: { user: user.value.userID } })
-    stopPropagation()
+    // stopPropagation()
   }
 }
 
-function getUserTitle(userScore) {
+function getUserTitle(userScore: number) {
   if (userScore < 100) {
     return '菜鸟'
   }
@@ -92,7 +84,7 @@ function getUserTitle(userScore) {
             {{ user.intro }}
           </div>
         </div>
-        <div v-if="userInfo.userID != user.userID" class="btn-chat" @click="navigateChat">
+        <div v-if="userInfo.userID !== user.userID" class="btn-chat" @click="navigateChat">
           <Icon icon="tabler:send" />
           私信
         </div>

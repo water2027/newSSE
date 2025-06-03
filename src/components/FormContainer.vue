@@ -1,5 +1,5 @@
-<script setup>
-// import { type CustomFormData } from '@/composables/FormExam';
+<script setup lang="ts">
+import type { CustomFormData } from '@/composables/FormExam'
 
 import FormInput from '@/components/FormInput.vue'
 
@@ -16,7 +16,7 @@ defineProps({
   },
   formData: {
     // 要传递数组
-    type: Array,
+    type: Array<CustomFormData>,
     required: true,
   },
 })

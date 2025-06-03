@@ -91,7 +91,7 @@ function handleDraftKeyDown(event) {
 }
 
 function selectContact(sel) {
-  if (!sel || sel.userID == current.value.userID)
+  if (!sel || sel.userID === current.value.userID)
     return
 
   draft.value = ''

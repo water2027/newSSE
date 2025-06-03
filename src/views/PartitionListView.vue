@@ -1,8 +1,7 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-const emit = defineEmits(['send-partition'])
 const router = useRouter()
 const partitions = ref([
   { name: '日常吐槽', description: '言短情长，抒发心声。', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/image/daily.jpg' },
@@ -13,13 +12,9 @@ const partitions = ref([
   { name: '求职招募', description: '梦想职路，共创未来。', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/image/recruit.jpg' },
   { name: '其他', description: '畅所欲言，创意无限。', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/image/else.jpg' },
 ])
-/**
- * @description 告诉HomeView.vue分区改了
- * @param p 分区
- */
+
 function sendPartition(p) {
-  emit('send-partition', p)
-  router.push('/')
+  router.push('/partition?name=' + encodeURIComponent(p))
 }
 </script>
 

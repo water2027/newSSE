@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/html-self-closing -->
 <script setup>
-import { inject, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { getAllInfo } from '@/api/info/getInfo'
@@ -9,6 +9,7 @@ import { updateUserInfo, uploadAvatar, updateEmailPush } from '@/api/info/update
 import { updatePassword } from '@/api/LoginAndRegister/forgetPwd'
 import { sendCode } from '@/api/LoginAndRegister/utils'
 import { showMsg } from '@/components/MessageBox'
+import { useUserStore } from '@/store/userStore'
 import {
   levelClassHandler,
   levelExpHandler,
@@ -17,7 +18,7 @@ import {
 
 const router = useRouter()
 
-const userInfo = inject('userInfo')
+const { userInfo } = useUserStore()
 const allInfo = ref({})
 const VCode = ref(null)
 const password1 = ref(null)
@@ -44,7 +45,7 @@ async function updatePasswordFunc() {
   }
   try {
     const res = await updatePassword(
-      userInfo.value.email,
+      userInfo.email,
       password1.value.value,
       password2.value.value,
       VCode.value.value,
@@ -111,7 +112,7 @@ async function togglePush() {
   try {
     await updateEmailPush(allInfo.value.userID)
     isPushDisabled.value = !isPushDisabled.value
-    alert(`邮件推送已${isPushDisabled.value ? '禁用' : '启用'}`)
+    showMsg(`邮件推送已${isPushDisabled.value ? '禁用' : '启用'}`)
   } catch (e) {
     console.error(e)
     showMsg('失败了')
