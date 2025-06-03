@@ -16,13 +16,8 @@ onBeforeMount(() => {
   const { id } = useRoute().params
   getInfoById(Number(id))
     .then((res) => {
-      if (!res.code) {
         user.value = res
         user.value.title = getUserTitle(res.score)
-      }
-      else {
-        showMsg(`请求无效：${res.msg} (${res.code})`)
-      }
     })
     .catch((error) => {
       if (error.response) {
