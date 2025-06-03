@@ -103,7 +103,7 @@ function logout() {
 }
 const isPushDisabled = ref()
 onMounted(async () => {
-  allInfo.value = await getAllInfo(userInfo.value.phone)
+  allInfo.value = await getAllInfo(userInfo.phone)
   isPushDisabled.value = allInfo.value.emailpush
 })
 
@@ -112,7 +112,7 @@ async function togglePush() {
   try {
     await updateEmailPush(allInfo.value.userID)
     isPushDisabled.value = !isPushDisabled.value
-    showMsg(`邮件推送已${isPushDisabled.value ? '禁用' : '启用'}`)
+    showMsg(`邮件推送已${isPushDisabled.value ? '启用' : '禁用'}`)
   } catch (e) {
     console.error(e)
     showMsg('失败了')
