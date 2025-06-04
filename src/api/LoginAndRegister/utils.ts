@@ -1,4 +1,7 @@
-import CryptoJS from 'crypto-js'
+import AES from 'crypto-js/aes'
+import Utf8 from 'crypto-js/enc-utf8'
+import pad from 'crypto-js/pad-zeropadding'
+import SHA256 from 'crypto-js/sha256'
 import { showMsg } from '@/components/MessageBox'
 import { requestFunc } from '../req'
 /**
@@ -7,11 +10,11 @@ import { requestFunc } from '../req'
  * @param {string} key 密钥，默认为'16bit secret key'
  */
 function setPassword(data: string, key: string = '16bit secret key'): string {
-  const cypherKey = CryptoJS.enc.Utf8.parse(key)
-  CryptoJS.pad.ZeroPadding.pad(cypherKey, 4)
-  const iv = CryptoJS.SHA256(key).toString()
-  const cfg = { iv: CryptoJS.enc.Utf8.parse(iv) }
-  return CryptoJS.AES.encrypt(data, cypherKey, cfg).toString()
+  const cypherKey = Utf8.parse(key)
+  pad.pad(cypherKey, 4)
+  const iv = SHA256(key).toString()
+  const cfg = { iv: Utf8.parse(iv) }
+  return AES.encrypt(data, cypherKey, cfg).toString()
 }
 
 /***

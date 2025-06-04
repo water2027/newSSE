@@ -1,32 +1,24 @@
 <script setup lang="ts">
 import DOMPurify from 'dompurify'
-
-import hljs from 'highlight.js/lib/core'
-import c from 'highlight.js/lib/languages/c'
-import cpp from 'highlight.js/lib/languages/cpp'
-import css from 'highlight.js/lib/languages/css'
-
-import javascript from 'highlight.js/lib/languages/javascript'
-import python from 'highlight.js/lib/languages/python'
-import html from 'highlight.js/lib/languages/xml'
+// import javascript from 'highlight.js/lib/languages/javascript'
+// import python from 'highlight.js/lib/languages/python'
+// import html from 'highlight.js/lib/languages/xml'
 import MarkdownIt from 'markdown-it'
 import mk from 'markdown-it-katex'
+import Prism from 'prismjs'
 import { computed, ref } from 'vue'
+import 'prismjs/components/prism-c'
+import 'prismjs/components/prism-cpp'
+import 'prismjs/components/prism-css'
+import 'prismjs/components/prism-javascript'
+import 'prismjs/components/prism-python'
+import 'prismjs/components/prism-markup'
 import 'github-markdown-css'
-import 'highlight.js/styles/atom-one-dark.css'
+import 'prismjs/themes/prism-tomorrow.css'
 
-const props = defineProps({
-  markdownContent: {
-    type: String,
-    required: true,
-  },
-})
-hljs.registerLanguage('c', c)
-hljs.registerLanguage('cpp', cpp)
-hljs.registerLanguage('html', html)
-hljs.registerLanguage('css', css)
-hljs.registerLanguage('javascript', javascript)
-hljs.registerLanguage('python', python)
+const { markdownContent } = defineProps<{
+  markdownContent: string
+}>()
 
 const content = ref(null)
 
@@ -36,21 +28,27 @@ const md: MarkdownIt = new MarkdownIt({
   linkify: true,
   typographer: true,
   highlight: (str, lang) => {
-    if (lang && hljs.getLanguage(lang)) {
-      try {
-        return `<pre class="hljs"><code>${hljs.highlight(str, { language: lang, ignoreIllegals: true }).value}</code></pre>`
-      }
-      // eslint-disable-next-line unused-imports/no-unused-vars
-      catch (__) {}
+    const languageMap: Record<string, string> = {
+      html: 'markup',
+      xml: 'markup',
+      js: 'javascript',
+      ts: 'typescript',
+      py: 'python',
     }
-    else {
+
+    const normalizedLang = languageMap[lang] || lang
+
+        if (normalizedLang && Prism.languages[normalizedLang]) {
       try {
-        return `<pre class="hljs"><code>${hljs.highlightAuto(str).value}</code></pre>`
+        const highlighted = Prism.highlight(str, Prism.languages[normalizedLang], normalizedLang)
+        return `<pre class="language-${normalizedLang}"><code class="language-${normalizedLang}">${highlighted}</code></pre>`
       }
-      // eslint-disable-next-line unused-imports/no-unused-vars
-      catch (__) {}
+      catch (error) {
+        console.warn('Prism highlighting failed:', error)
+      }
     }
-    return `<pre class="hljs"><code>${md.utils.escapeHtml(str)}</code></pre>`
+
+    return `<pre class="language-none"><code>${md.utils.escapeHtml(str)}</code></pre>`
   },
   xhtmlOut: true,
   langPrefix: 'language-',
@@ -71,7 +69,7 @@ const md: MarkdownIt = new MarkdownIt({
  * @description 安全的html，会自动去掉script和iframe之类的标签
  */
 const safeHTML = computed(() => {
-  if (!props.markdownContent) {
+  if (!markdownContent) {
     return ''
   }
 
@@ -82,7 +80,7 @@ const safeHTML = computed(() => {
     }
   })
 
-  const rendered = md.render(props.markdownContent)
+  const rendered = md.render(markdownContent)
   const finalHTML = DOMPurify.sanitize(rendered, {
     ADD_TAGS: [
       'math',
@@ -125,8 +123,6 @@ const safeHTML = computed(() => {
 </template>
 
 <style scoped>
-@import url('@/assets/hl.css');
-
 :deep(.katex-html) {
   display: none;
 }
