@@ -17,7 +17,6 @@
     "crypto-js": "^3.1.9-1",
     "dompurify": "^3.1.6",
     "github-markdown-css": "^5.8.1",
-    "katex": "^0.16.11",
     "markdown-it": "^14.1.0",
     "markdown-it-katex": "^2.0.3",
     "newsse": "file:",
