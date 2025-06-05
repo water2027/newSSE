@@ -1,19 +1,17 @@
 <script setup lang="ts">
-import type { Ref } from 'vue'
-import type { Notice, NoticeNum } from '@/api/notice/notice'
-import { inject, nextTick, onMounted, ref } from 'vue'
+import type { Notice } from '@/api/notice/notice'
+import { nextTick, onMounted, ref } from 'vue'
 
 import { useRouter } from 'vue-router'
-import { getNotices, getNoticesNum, readNotice } from '@/api/notice/notice'
+import { getNotices, readNotice } from '@/api/notice/notice'
 
 import { showMsg } from '@/components/MessageBox'
-
+import { useNoticeStore } from '@/store/noticeStore'
 import { strHandler } from '@/utils/strHandler'
 
 const router = useRouter()
+const { noticeNum, refreshNoticeNum } = useNoticeStore()
 
-const { reduceNoticeNum } = inject('noticeNum') as any
-const notices = inject('notices') as Ref<NoticeNum>
 const readPage = ref(true)
 const noticesRead = ref<Notice[]>([])
 const noticesUnread = ref<Notice[]>([])
@@ -27,24 +25,23 @@ async function readComment(noticeID: number) {
   const res = await readNotice(noticeID)
   if (res.status === 'success') {
     getNoticesFunc()
-    reduceNoticeNum()
+    await refreshNoticeNum()
     showMsg('success')
   }
 }
 
 async function readAll() {
   // 遍历未读通知，标记为已读
-  for (let i = 0; i < noticesUnread.value.length; i++) {
-    try {
-      await readNotice(noticesUnread.value[i].noticeID)
-      reduceNoticeNum()
-    }
-    catch (e) {
-      console.error(e)
-    }
+  const promises = noticesUnread.value.map(notice => readNotice(notice.noticeID))
+  try {    
+    await Promise.all(promises)
+    await refreshNoticeNum()
+    showMsg('一键已读')
+    nextTick(getNoticesFunc)
+  } catch (error) {
+    showMsg('失败')
+    console.error('一键已读失败:', error)
   }
-  showMsg('一键已读')
-  nextTick(getNoticesFunc)
 }
 
 async function changeToPost(postID: number, noticeID: number) {
@@ -55,8 +52,8 @@ async function changeToPost(postID: number, noticeID: number) {
 }
 
 async function getNoticesFunc() {
-  const read = await getNotices(0, notices.value.readTotalNum, 1)
-  const unread = await getNotices(0, notices.value.unreadTotalNum, 0)
+  const read = await getNotices(0, noticeNum.readTotalNum, 1)
+  const unread = await getNotices(0, noticeNum.unreadTotalNum, 0)
   if ('noticeList' in read) {
     noticesRead.value = read.noticeList.filter(item => item.postID !== 0)
   }
@@ -73,10 +70,10 @@ async function getNoticesFunc() {
 
 onMounted(async () => {
   // 处理在通知页面刷新/直接打开通知页面的情况
-  if (!notices.value.readTotalNum || !notices.value.unreadTotalNum) {
-    notices.value = await getNoticesNum()
+  if (!noticeNum.readTotalNum || !noticeNum.unreadTotalNum) {
+    await refreshNoticeNum()
   }
-  getNoticesFunc()
+  await getNoticesFunc()
 })
 </script>
 

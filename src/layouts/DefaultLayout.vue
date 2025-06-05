@@ -14,7 +14,7 @@ import {
 import { useRoute, useRouter } from 'vue-router'
 import { getChatNotice } from '@/api/chat/chat'
 
-import { getNoticesNum } from '@/api/notice/notice'
+import { useNoticeStore } from '@/store/noticeStore'
 import { useUserStore } from '@/store/userStore'
 
 const HeatList = defineAsyncComponent(
@@ -27,6 +27,7 @@ const router = useRouter()
 const route = useRoute()
 
 const { userInfo } = useUserStore()
+const { noticeNum, refreshNoticeNum } = useNoticeStore()
 
 const mode = ref(document.body.className)
 function changeMode() {
@@ -87,17 +88,7 @@ const heatPostsIsHidden = computed(() => {
 
 const chatNum = ref(0)
 
-const noticeNum = ref(0)
-function reduceNoticeNum() {
-  noticeNum.value--
-}
-provide('noticeNum', {
-  noticeNum,
-  reduceNoticeNum,
-})
 provide('chatNum', chatNum)
-const notices = ref({})
-provide('notices', notices)
 
 const partition = ref('主页')
 provide('partition', partition)
@@ -156,15 +147,6 @@ function sendPartition(p: string) {
   searchsort.value = 'home'
 }
 
-/**
- * @description 获取通知数量
- */
-async function getNoticesNumFunc() {
-  const temp = await getNoticesNum()
-  notices.value = temp
-  noticeNum.value = temp.unreadTotalNum
-}
-
 async function updateChatNum(n: number | undefined) {
   if (n !== undefined) {
     chatNum.value = n
@@ -207,7 +189,7 @@ onMounted(() => {
   const baseUrl = import.meta.env.BASE_URL
   const path = window.location.pathname.replace(baseUrl, '') as keyof typeof changeTo
   changePathHandler(path)
-  getNoticesNumFunc()
+  refreshNoticeNum()
   updateChatNum(undefined)
   window.addEventListener('resize', updateWidth)
   if (!isPC.value) {
@@ -372,10 +354,10 @@ onUnmounted(() => {
             />
             通知
             <div
-              v-if="noticeNum"
+              v-if="noticeNum.unreadTotalNum"
               class="notice-num"
             >
-              {{ noticeNum }}
+              {{ noticeNum.unreadTotalNum }}
             </div>
           </router-link>
           <router-link to="/chat">
