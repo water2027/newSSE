@@ -4,21 +4,25 @@ import type { Condition } from '@/store/postStore'
 import type { Post } from '@/types/post'
 import {
   onActivated,
-  onDeactivated,
   onMounted,
   reactive,
   ref,
 } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 import NewList from '@/components/NewList.vue'
 import { usePostStore } from '@/store/postStore'
 import { useUserStore } from '@/store/userStore'
 
+defineOptions({
+  name: 'HomeView',
+})
 const { userInfo } = useUserStore()
 const { posts, restorePosts, storePosts, addPost, updateNum, refreshPosts, changeTo } = usePostStore()
 const hasMore = ref(true)
 const isLoading = ref(false)
 // 保存滚动位置
 const scrollTop = ref(0)
+const hasCache = ref(false)
 const cachePosts = reactive<Post[]>([])
 const cacheTotalNum = ref(0)
 const cacheCondition = reactive<Condition>({
@@ -43,28 +47,29 @@ onMounted(async () => {
   refreshPosts()
   changeTo('主页')
   await updateNum(userInfo.phone)
+  hasCache.value = true
 })
 
-// 组件被激活时（从缓存恢复）
+// 组件被激活时
 // 其它页面也可以这样做, 不过这里只弄了主页的缓存, 有需要可以改
 onActivated(async () => {
+  if (!hasCache.value)
+    return
   // 恢复滚动位置
-  document.body.scrollTop = scrollTop.value
+  document.documentElement.scrollTop = scrollTop.value
   isLoading.value = true
   await restorePosts(userInfo.phone, cachePosts, cacheTotalNum.value, cacheCondition)
   isLoading.value = false
 })
-onDeactivated(() => {
+
+onBeforeRouteLeave(() => {
   // 保存滚动位置
-  scrollTop.value = document.body.scrollTop
+  scrollTop.value = document.documentElement.scrollTop
   // 清空当前页面的帖子列表
   const data = storePosts()
   cachePosts.splice(0, cachePosts.length, ...data.cachePosts)
   cacheTotalNum.value = data.cacheTotalNum
   Object.assign(cacheCondition, data.cacheConditions)
-})
-defineExpose({
-  name: 'home'
 })
 </script>
 

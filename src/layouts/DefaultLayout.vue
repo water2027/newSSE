@@ -435,7 +435,7 @@ onUnmounted(() => {
           </div>
         </div>
         <router-view v-slot="{ Component }">
-          <KeepAlive include="home">
+          <KeepAlive include="HomeView">
             <component :is="Component" :key="route.fullPath" />
           </KeepAlive>
         </router-view>
