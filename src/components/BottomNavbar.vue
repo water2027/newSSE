@@ -36,7 +36,7 @@ function changeTo(path: string) {
 <template>
   <div
     id="bottomNavBar"
-    class="nav-bar bottom-nav-bar root"
+    class="bottom-nav-bar root flex flex-row justify-around"
   >
     <router-link
       class="nav"
@@ -203,12 +203,6 @@ body.dark-mode .bottom-nav-bar {
   to {
     opacity: 1;
   }
-}
-
-.nav-bar {
-  display: flex;
-  justify-content: space-around;
-  flex-direction: row;
 }
 
 .nav {
