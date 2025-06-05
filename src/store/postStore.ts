@@ -34,7 +34,8 @@ async function addPost(userTelephone: string, nums = 10) {
     ...conditions,
     userTelephone,
   })
-  if (!data) return 0
+  if (!data)
+    return 0
   posts.push(...data)
   conditions.offset += nums
   return data.length
@@ -81,19 +82,19 @@ function updatePost(id: number, type: 'like' | 'save' | 'delete') {
     }
   }
   const post = posts[target]
-  if (post) {
-    switch (type) {
-      case 'like':
-        post.IsLiked = !post.IsLiked
-        post.Like += post.IsLiked ? 1 : -1
-        break
-      case 'save':
-        post.IsSaved = !post.IsSaved
-        break
-      case 'delete':
-        posts.splice(target, 1)
-        break
-    }
+  if (!post)
+    return
+  switch (type) {
+    case 'like':
+      post.IsLiked = !post.IsLiked
+      post.Like += post.IsLiked ? 1 : -1
+      break
+    case 'save':
+      post.IsSaved = !post.IsSaved
+      break
+    case 'delete':
+      posts.splice(target, 1)
+      break
   }
 }
 
@@ -124,33 +125,33 @@ function refreshPosts() {
   conditions.tag = ''
 }
 
-function changeTo(p: typeof Partitions[number], tag:string = '') {
-    switch (p) {
-        case '主页':
-            conditions.partition = '主页'
-            conditions.searchinfo = ''
-            conditions.searchsort = 'home'
-            conditions.tag = tag
-            break
-        case '收藏':
-            conditions.partition = '收藏'
-            conditions.searchinfo = ''
-            conditions.searchsort = 'save'
-            conditions.tag = tag
-            break
-        case '历史':
-            conditions.partition = '历史'
-            conditions.searchinfo = ''
-            conditions.searchsort = 'history'
-            conditions.tag = tag
-            break
-        default:
-            conditions.partition = p
-            conditions.searchinfo = ''
-            conditions.searchsort = 'home'
-            conditions.tag = tag
-            break
-    }
+function changeTo(p: typeof Partitions[number], tag: string = '') {
+  switch (p) {
+    case '主页':
+      conditions.partition = '主页'
+      conditions.searchinfo = ''
+      conditions.searchsort = 'home'
+      conditions.tag = tag
+      break
+    case '收藏':
+      conditions.partition = '收藏'
+      conditions.searchinfo = ''
+      conditions.searchsort = 'save'
+      conditions.tag = tag
+      break
+    case '历史':
+      conditions.partition = '历史'
+      conditions.searchinfo = ''
+      conditions.searchsort = 'history'
+      conditions.tag = tag
+      break
+    default:
+      conditions.partition = p
+      conditions.searchinfo = ''
+      conditions.searchsort = 'home'
+      conditions.tag = tag
+      break
+  }
 }
 
 export function usePostStore() {

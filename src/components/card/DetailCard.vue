@@ -8,7 +8,6 @@ import { likePost, savePost } from '@/api/SaveAndLike/SaveAndLike'
 
 import { showMsg } from '@/components/MessageBox'
 
-import { usePostStore } from '@/store/postStore'
 import { useUserStore } from '@/store/userStore'
 
 import BasicInfo from '../BasicInfo.vue'
@@ -20,7 +19,7 @@ const { post } = defineProps<{
   post: Post
 }>()
 
-const { updatePost } = usePostStore()
+const emits = defineEmits(['infoChange'])
 
 const OldImages = defineAsyncComponent(() => import('@/components/OldImages.vue'))
 
@@ -33,7 +32,6 @@ const commentContent = ref('')
 
 const { userInfo } = useUserStore()
 const root = useTemplateRef('root')
-
 /**
  * @description 发送评论
  */
@@ -122,7 +120,7 @@ async function like() {
 }
 
 function useCustomEvent(type: 'delete' | 'save' | 'like') {
-  updatePost(post.PostID, type)
+  emits('infoChange', type)
 }
 </script>
 

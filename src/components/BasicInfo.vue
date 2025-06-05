@@ -69,7 +69,7 @@ function LikeChange() {
       </svg>
     </span>
     <span
-      id="like" class="*:pointer-events-none" :class="isLike ? 'like' : ''" @click.prevent="LikeChange"
+      id="like" class="cursor-pointer *:pointer-events-none" :class="isLike ? 'like' : ''" @click.prevent="LikeChange"
     >
       {{ like < 0 ? 0 : like }}
       <svg
@@ -100,7 +100,6 @@ function LikeChange() {
 
   .like {
     color: #ff0000;
-    cursor: pointer;
     transition: all 0.3s ease;
   }
 }

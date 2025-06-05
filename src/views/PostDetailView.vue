@@ -3,20 +3,24 @@ import type { Comment } from '@/types/comment'
 import type { Post } from '@/types/post'
 
 import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
-
+import { useRoute, useRouter } from 'vue-router'
 import { getCommentsByPostID } from '@/api/browse/getComment'
 
 import { getPostByID } from '@/api/browse/getPost'
+
 import DetailCard from '@/components/card/DetailCard.vue'
 import { showImg } from '@/components/ImageShower'
 import { showMsg } from '@/components/MessageBox'
+import { usePostStore } from '@/store/postStore'
 import { useUserStore } from '@/store/userStore'
 import { strHandler } from '@/utils/strHandler'
+
+const { updatePost } = usePostStore()
 
 const CommentCard = defineAsyncComponent(() => import('@/components/card/CommentCard.vue'))
 
 const route = useRoute()
+const router = useRouter()
 
 const { userInfo } = useUserStore()
 
@@ -95,6 +99,26 @@ async function clickHandler(event: MouseEvent) {
   }
 }
 
+function infoChange(type: 'like'|'save'|'delete') {
+  const ID = Number(route.params.id)
+  updatePost(ID, type)
+  switch (type) {
+    case 'like': {
+      post.value!.IsLiked = !post.value!.IsLiked
+      post.value!.Like += post.value!.IsLiked ? 1 : -1
+      break
+    }
+    case 'save': {
+      post.value!.IsSaved = !post.value!.IsSaved
+      break
+    }
+    case 'delete': {
+      router.push('/')
+      break
+    }
+  }
+}
+
 onMounted(async () => {
   try {
     const ID = Number(route.params.id)
@@ -117,6 +141,7 @@ onMounted(async () => {
     <template v-if="post">
       <DetailCard
         :post="post"
+        @info-change="infoChange"
       />
     </template>
     <div v-else>
