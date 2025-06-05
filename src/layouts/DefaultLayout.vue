@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/html-self-closing -->
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import {
@@ -76,7 +75,12 @@ function updateWidth() {
 }
 
 const isHomePage = computed(() => {
-  return route.path === '/'
+  const url = route.path.split('/')[1]
+  const allows = ['', 'partition']
+  if (allows.includes(url)) {
+    return true
+  }
+  return false
 })
 
 /**
@@ -90,43 +94,8 @@ const chatNum = ref(0)
 
 provide('chatNum', chatNum)
 
-const partition = ref('主页')
-provide('partition', partition)
 const searchinfo = ref('')
 provide('searchinfo', searchinfo)
-const searchsort = ref('home')
-provide('searchsort', searchsort)
-const selectedPath = ref('/')
-const changeTo = {
-  main() {
-    partition.value = '主页'
-    searchinfo.value = ''
-    searchsort.value = 'home'
-  },
-  save() {
-    partition.value = '收藏'
-    searchinfo.value = ''
-    searchsort.value = 'save'
-  },
-  history() {
-    partition.value = '历史'
-    searchinfo.value = ''
-    searchsort.value = 'history'
-  },
-  course() {
-    partition.value = '课程专区'
-    searchinfo.value = ''
-    searchsort.value = 'home'
-  },
-  highQuality() {
-    partition.value = '优质贴'
-    searchinfo.value = ''
-    searchsort.value = 'home'
-  },
-}
-function changePathHandler(path: keyof typeof changeTo) {
-  changeTo[path]?.()
-}
 
 const sinfo = useTemplateRef('sinfo')
 function search() {
@@ -135,16 +104,6 @@ function search() {
   searchinfo.value = sinfo.value.value
   sinfo.value.value = ''
   router.push('/')
-}
-
-/**
- * @description 这是分区页面的回调函数，分区页面选择分区后调用
- * @param p 分区名
- */
-function sendPartition(p: string) {
-  partition.value = p
-  searchinfo.value = ''
-  searchsort.value = 'home'
 }
 
 async function updateChatNum(n: number | undefined) {
@@ -186,9 +145,6 @@ onMounted(() => {
   document.body.className = mode.value
   // 刷新时获取对应界面数据
   // 之后考虑在组件加载时获取
-  const baseUrl = import.meta.env.BASE_URL
-  const path = window.location.pathname.replace(baseUrl, '') as keyof typeof changeTo
-  changePathHandler(path)
   refreshNoticeNum()
   updateChatNum(undefined)
   window.addEventListener('resize', updateWidth)
@@ -214,15 +170,12 @@ onUnmounted(() => {
     <header>
       <div class="site-top">
         <div class="top-left" />
-        <div
+        <RouterLink
           class="title"
-          @click="
-            $router.push('/');
-            changeTo.main();
-          "
+          to="/"
         >
           SSE MARKET
-        </div>
+        </RouterLink>
         <div class="top-right">
           <div
             class="mode-select"
@@ -267,7 +220,6 @@ onUnmounted(() => {
           </router-link>
           <router-link
             to="/course"
-            @click="changeTo.course()"
           >
             <div
               class="icon"
@@ -290,13 +242,13 @@ onUnmounted(() => {
             反馈
           </router-link>
         </div>
-        <div
+        <RouterLink
           v-if="!isPC && isHomePage"
+          to="/course"
           class="lesson"
           style="
 						background-image: url(https://img.icons8.com/?size=100&id=kmUrp7YjifpP&format=png&color=000000);
 					"
-          @click="changeTo.course()"
         />
         <div class="search">
           <input
@@ -320,9 +272,8 @@ onUnmounted(() => {
           v-if="isPC"
           class="account links"
         >
-          <router-link
+          <RouterLink
             to="/save"
-            @click="changeTo.save()"
           >
             <div
               class="icon"
@@ -331,10 +282,9 @@ onUnmounted(() => {
 							"
             />
             收藏
-          </router-link>
-          <router-link
+          </RouterLink>
+          <RouterLink
             to="/history"
-            @click="changeTo.history()"
           >
             <div
               class="icon"
@@ -344,7 +294,7 @@ onUnmounted(() => {
 							"
             />
             发帖历史
-          </router-link>
+          </RouterLink>
           <router-link to="/notice">
             <div
               class="icon"
@@ -391,19 +341,18 @@ onUnmounted(() => {
     <main>
       <BottomNavbar
         v-if="!isPC"
-        :selected="selectedPath"
-        @change-path="changePathHandler"
+        :notice-num="noticeNum.unreadTotalNum"
       />
       <div class="content">
         <div
           v-if="!isPC && isHomePage"
           class="partitions"
         >
-          <div
+          <RouterLink
             v-for="(p, index) in partitions"
             :key="index"
-            class="partition"
-            @click="sendPartition(p.name)"
+            :to="`/partition/${p.name}`"
+            class="partition block"
           >
             <div
               class="bright-icon"
@@ -414,7 +363,7 @@ onUnmounted(() => {
             <div class="partition-info">
               {{ p.name }}
             </div>
-          </div>
+          </RouterLink>
         </div>
         <router-view v-slot="{ Component }">
           <KeepAlive include="HomeView">

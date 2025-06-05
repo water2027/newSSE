@@ -1,15 +1,23 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import { computed, inject, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
-const { selected = 'main' } = defineProps<{
-  selected?: string
+const { noticeNum = 0 } = defineProps<{
+  noticeNum?: number
 }>()
 const emit = defineEmits(['changePath'])
-const { noticeNum } = inject('noticeNum') as any
+const route = useRoute()
+const selected = computed<string>(() => {
+  const path = route.path
+  const params = route.params
+  if ('name' in params)
+    return params.name as string
+  return path
+})
 const chatNum = inject('chatNum')
 const displayBool = computed(() =>
-  noticeNum.value === '0' ? 'none' : 'block',
+  noticeNum === 0 ? 'none' : 'block',
 )
 
 const isPC = inject<Ref<boolean>>('isPC')
@@ -32,7 +40,7 @@ function changeTo(path: string) {
   >
     <router-link
       class="nav"
-      :class="{ selected: selected === 'main' }"
+      :class="{ selected: selected === '/' }"
       to="/"
       @click="changeTo('main')"
     >
@@ -60,9 +68,9 @@ function changeTo(path: string) {
     </router-link>
     <!-- 这里显示有问题, 但是实在不想改了. 还是改日吧 -->
     <router-link
-      to="/"
+      to="/partition/优质贴"
       class="nav"
-      :class="{ selected: selected === '/high' }"
+      :class="{ selected: selected === '优质贴' }"
       @click="changeTo('high-quality')"
     >
       <svg

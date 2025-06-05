@@ -14,7 +14,7 @@ const partitions = ref([
 ])
 
 function sendPartition(p:string) {
-  router.push(`/partition?name=${encodeURIComponent(p)}`)
+  router.push(`/partition/${encodeURIComponent(p)}`)
 }
 </script>
 

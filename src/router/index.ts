@@ -10,59 +10,38 @@ const routes = [
       {
         path: '',
         name: 'Home',
-        // component: () => import('@/views/PostListView.vue'),
         component: () => import('@/views/HomeView.vue'),
-        meta: {
-          keepAlive: true,
-        },
       },
       {
         path: 'course',
         name: 'Course',
         component: () => import('@/views/CourseView.vue'),
-        meta: {
-          keepAlive: true,
-        },
       },
       {
         path: 'save',
         name: 'Save',
         component: () => import('@/views/SaveView.vue'),
-        meta: {
-          keepAlive: true,
-        },
       },
       {
         path: 'history',
         name: 'History',
         component: () => import('@/views/HistoryView.vue'),
-        meta: {
-          keepAlive: true,
-        },
       },
       {
         path: 'partitions',
         name: 'Partitions',
         component: () => import('@/views/PartitionListView.vue'),
-        meta: {
-          keepAlive: true,
-        },
       },
       {
         path: 'post',
         name: 'Post',
         component: () => import('@/views/PostView.vue'),
-        meta: {
-          keepAlive: true,
-        },
       },
       {
-        path: 'partition',
+        path: 'partition/:name',
         name: 'Partition',
         component: () => import('@/views/PartitionView.vue'),
-        meta: {
-          keepAlive: true,
-        },
+        props: true,
       },
       {
         path: 'postdetail/:id',

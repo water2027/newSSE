@@ -1,18 +1,21 @@
 <script setup lang="ts">
+import type { Partitions } from '@/store/postStore'
 import {
-    onMounted,
+  onMounted,
   ref,
 } from 'vue'
-import { useRouter } from 'vue-router'
-import NewList from '@/components/NewList.vue'
-import { useUserStore } from '@/store/userStore'
-import { usePostStore, Partitions } from '@/store/postStore'
+import { useRoute, useRouter } from 'vue-router'
 import { showMsg } from '@/components/MessageBox'
+import NewList from '@/components/NewList.vue'
+import { usePostStore } from '@/store/postStore'
+import { useUserStore } from '@/store/userStore'
 
+const name = ref('')
 const { userInfo } = useUserStore()
 const { posts, addPost, changeTo, refreshPosts } = usePostStore()
 const hasMore = ref(true)
 const isLoading = ref(false)
+const route = useRoute()
 const router = useRouter()
 async function update() {
   isLoading.value = true
@@ -24,24 +27,26 @@ async function update() {
 }
 
 onMounted(() => {
-    const partition = new URLSearchParams(window.location.search).get('name') as typeof Partitions[number]
-    if (!partition) {
-        router.push('/')
-        showMsg('分区不存在')
-        return
-    }
-    if(partition === '课程专区') {
-      router.push('/course')
-      return
-    }
-    refreshPosts()
-    changeTo(partition)
+  const params = route.params
+  if(!('name' in params)) {
+    router.push('/')
+    showMsg('分区不存在')
+    return
+  }
+  const partition = params.name as typeof Partitions[number]
+  if (partition === '课程专区') {
+    router.push('/course')
+    return
+  }
+  name.value = partition
+  refreshPosts()
+  changeTo(partition)
 })
 </script>
 
 <template>
   <div class="root">
-    <h2>主页</h2>
+    <h2>{{ name }}</h2>
     <NewList :posts="posts" :is-loading="isLoading" :has-more="hasMore" @bottom="update" />
   </div>
 </template>
