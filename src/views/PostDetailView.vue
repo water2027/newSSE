@@ -99,7 +99,7 @@ async function clickHandler(event: MouseEvent) {
   }
 }
 
-function infoChange(type: 'like'|'save'|'delete') {
+function infoChange(type: 'like' | 'save' | 'delete') {
   const ID = Number(route.params.id)
   updatePost(ID, type)
   switch (type) {
@@ -134,7 +134,7 @@ onMounted(async () => {
 
 <template>
   <div
-    class="root"
+    class="root w-full flex flex-col p-1%"
     @click="clickHandler"
     @comment-handle="commentHandler"
   >
@@ -147,25 +147,29 @@ onMounted(async () => {
     <div v-else>
       loading...
     </div>
-    <div class="comment">
+    <div class="comment mt-5 h-a w-full">
       <h2>评论</h2>
-      <div class="sort-comment">
+      <div class="sort-comment float-right mr-5vw flex flex-row gap-2">
         <div
-          class="sort-btn"
+          class="sort-btn max-w-30 min-w-25 w-20vw flex cursor-pointer items-center justify-center rounded-1 bg-[#f5f5f5] px-1 py-3 font-500 transition-all duration-300 ease"
+          hover="bg-[#e8d5c4]"
+          active="bg-[#d0b5a0] scale-98"
           @click="setSortType('time')"
         >
           <div
-            class="icon"
+            class="w-8 h-8 bg-contain bg-no-repeat mr-1"
             style="background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729845428749551312_icons8-sort-48.png);"
           />
           时间
         </div>
         <div
-          class="sort-btn"
+          class="sort-btn max-w-30 min-w-25 w-20vw flex cursor-pointer items-center justify-center rounded-1 bg-[#f5f5f5] px-1 py-3 font-500 transition-all duration-300 ease"
+          hover="bg-[#e8d5c4]"
+          active="bg-[#d0b5a0] scale-98"
           @click="setSortType('likes')"
         >
           <div
-            class="icon"
+            class="w-8 h-8 bg-contain bg-no-repeat mr-1"
             style="background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729845524483606271_icons8-sort-49.png);"
           />
           热度
@@ -174,7 +178,7 @@ onMounted(async () => {
       <!-- 这是评论区 -->
       <div
         v-if="post?.Comment"
-        class="commentList"
+        class="commentList min-w-full w-full"
       >
         <!-- 使用id-评论数作为key使每次评论重新渲染当前评论 -->
         <div
@@ -195,58 +199,8 @@ onMounted(async () => {
 <style scoped>
 .root {
   color: var(--color-text);
-  display: flex;
-  flex-direction: column;
-  padding: 1%;
-  width: 100%;
 }
 
-.comment {
-  width: 100%;
-  margin-top: 20px;
-  height: auto;
-}
-
-.commentList {
-  min-width: 100%;
-  width: 100%;
-}
-
-.subCommentList {
-  margin-left: 3%;
-}
-
-.sort-comment {
-  display: flex;
-  flex-direction: row;
-  float: right;
-  margin-right: 5vw;
-  gap: 10px;
-}
-
-.sort-btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 20vw;
-  max-width: 120px;
-  min-width: 100px;
-  padding: 6px 14px;
-  background-color: #f5f5f5;
-  font-weight: 550;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.sort-btn:hover {
-  background-color: #e8d5c4;
-}
-
-.sort-btn:active {
-  background-color: #d0b5a0;
-  transform: scale(0.98);
-}
 body.dark-mode .sort-btn {
   background-color: var(--color-bg);
   border: 1px solid whitesmoke;
@@ -254,18 +208,9 @@ body.dark-mode .sort-btn {
 }
 body.dark-mode .sort-btn:hover {
   background-color: #2c2c2c;
-
   color: white;
 }
 body.dark-mode .sort-btn:active {
   background-color: #444;
-}
-
-.icon {
-  width: 30px;
-  height: 30px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  margin-right: 5px;
 }
 </style>

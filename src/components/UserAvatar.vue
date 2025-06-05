@@ -29,22 +29,22 @@ function navigate() {
       @click="navigate"
     >
       <img
-        class="user-avatar-img"
+        class="user-avatar-img relative"
         :src="src || defaultAvatar"
         loading="lazy"
         :alt="userId.toString()"
       >
+      <span
+        class="level absolute w-fit whitespace-nowrap -transform-translate-y-25%"
+        :class="levelClassHandler(userScore)"
+      >{{ levelNameHandler(userScore) }}
+      </span>
       <UserIdentityIcon :identity="userIdentity" />
     </div>
     <div class="max-w-fit w-full">
       <span class="user-name ml-1 w-full">{{ userName
       }}</span>
     </div>
-    <span
-      class="level max-w-fit w-full"
-      :class="levelClassHandler(userScore)"
-    >{{ levelNameHandler(userScore) }}
-    </span>
     <slot name="reply" />
   </div>
 </template>
@@ -92,19 +92,21 @@ function navigate() {
     -0.2em -0.2em var(--color-level-undefined-box-shadow);
 }
 .level-0 {
-  background-color: #1aa6b9;
+  color: #18b5ca;
 }
 .level-1 {
-  background-color: #378814;
+  color: #378814;
 }
 .level-2 {
-  background-color: #d74a4a;
+  color: #d74a4a;
 }
 .level-3 {
-  background-color: rgb(240, 133, 39);
+  color: rgb(240, 133, 39);
 }
 .level-4 {
   background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
+  color: transparent;
+  background-clip: text;
   background-size: 300% 300%;
   animation: change-color 5s ease infinite;
 }
@@ -116,7 +118,6 @@ function navigate() {
   animation: change-color 5s ease infinite;
 }
 .level-6 {
-  position: relative;
   background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
   background-size: 300% 300%;
   color: transparent;
@@ -136,7 +137,6 @@ function navigate() {
   opacity: 0.5;
 }
 .level-7 {
-  position: relative;
   line-height: 32px;
   background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
   color: transparent;
@@ -169,7 +169,6 @@ function navigate() {
   opacity: 0.5;
 }
 .level-8 {
-  position: relative;
   line-height: 32px;
   text-shadow:
     2px 2px 4px rgba(0, 0, 0, 0.3),

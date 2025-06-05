@@ -9,6 +9,7 @@ import {
 import { useUserStore } from '@/store/userStore'
 import BasicInfo from '../BasicInfo.vue'
 
+import BasicCard from './BasicCard.vue'
 import MarkdownContainer from '../MarkdownContainer.vue'
 import { showMsg } from '../MessageBox'
 import UserAvatar from '../UserAvatar.vue'
@@ -20,18 +21,6 @@ const { comment, postId } = defineProps<{
 }>()
 
 const CCommentCard = defineAsyncComponent(() => import('@/components/card/CCommentCard.vue'))
-
-// const props = defineProps({
-//   comment: {
-//     type: Object,
-//     required: true,
-//   },
-//   pCommentId: {
-//     type: Number,
-//     required: false,
-//     default: 0,
-//   },
-// })
 
 const MarkdownEditor = defineAsyncComponent(
   () => import('../MarkdownEditor.vue'),
@@ -143,15 +132,11 @@ async function like() {
     return false
   }
 }
-
 </script>
 
 <template>
-  <div
-    ref="root"
-    class="postDetail root"
-  >
-    <div class="card-root root">
+  <BasicCard>
+    <div ref="root">
       <div class="user">
         <UserAvatar
           :src="comment.AuthorAvatar"
@@ -202,18 +187,17 @@ async function like() {
         />
       </div>
     </div>
-  </div>
+  </BasicCard>
 </template>
 
 <style scoped>
 .commentButton {
   display: flex;
   margin-top: 10px;
-}
-
-.commentButton button {
-  margin-left: 5px;
-  margin-right: 5px;
+  button {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
 }
 
 @media screen and (min-width: 768px) {
@@ -225,6 +209,9 @@ async function like() {
     border-radius: 5px;
     box-sizing: border-box;
   }
+  p {
+    text-indent: 2rem;
+  }
 }
 
 @media screen and (max-width: 768px) {
@@ -232,97 +219,10 @@ async function like() {
     width: 100%;
     display: grid !important;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-  }
-
-  .commentButton > :nth-child(1) {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .commentButton > :nth-child(2) {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  .commentButton > :nth-child(3) {
-    grid-column: 1 / span 2;
-    grid-row: 2;
-  }
-}
-
-.card-root {
-  width: 100%;
-  min-width: 100%;
-  min-height: 150px;
-  height: auto;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  margin: 10px 0;
-  padding: 15px;
-  box-shadow: var(--color-post-card-box-shadow) 0px 3px 8px;
-  transition: all 0.5s;
-
-  .user {
-    --userImage: 50px;
-    width: 100%;
-    height: 30px;
-    margin-right: auto;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    font-size: 1.2rem;
-    font-weight: bold;
-  }
-
-  .card-title {
-    margin-top: 10px;
-    margin-bottom: 8px;
   }
 }
 
 body.dark-mode .default-avatar {
   filter: invert(0.9);
-}
-
-.imgs img {
-  width: 100px;
-  height: 100px;
-  margin: 5px;
-}
-
-@media screen and (min-width: 768px) {
-  .card-root {
-    display: block;
-  }
-
-  .imgs {
-    display: flex;
-    flex-wrap: wrap;
-  }
-
-  p {
-    text-indent: 2rem;
-  }
-}
-
-.userButtons {
-  margin-top: 0;
-  margin-left: auto;
-  display: flex;
-  flex-direction: row;
-}
-
-p::after {
-  content: '...';
-}
-
-a {
-  text-decoration: none;
-  color: black;
-  display: block;
 }
 </style>

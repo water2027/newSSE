@@ -13,6 +13,7 @@ import { useUserStore } from '@/store/userStore'
 import BasicInfo from '../BasicInfo.vue'
 import MarkdownContainer from '../MarkdownContainer.vue'
 
+import BasicCard from './BasicCard.vue'
 import { showMsg } from '../MessageBox'
 import UserAvatar from '../UserAvatar.vue'
 
@@ -133,11 +134,8 @@ async function like() {
 </script>
 
 <template>
-  <div
-    ref="root"
-    class="postDetail root"
-  >
-    <div class="card-root root">
+  <BasicCard>
+    <div ref="root">
       <div class="flex flex-row">
         <UserAvatar
           :src="subComment.authorAvatar"
@@ -170,82 +168,25 @@ async function like() {
         @send="handler('comment')"
       />
     </div>
-  </div>
+  </BasicCard>
 </template>
 
 <style scoped>
 .commentButton {
   display: flex;
   margin-top: 10px;
-}
-
-.commentButton button {
-  margin-left: 5px;
-  margin-right: 5px;
-}
-
-@media screen and (min-width: 768px) {
-  .postDetail {
-    width: 100%;
-    margin-left: 0;
-    margin-right: auto;
-    padding: 1%;
-    border-radius: 5px;
-    box-sizing: border-box;
+  button {
+    margin-left: 5px;
+    margin-right: 5px;
   }
 }
+
 
 @media screen and (max-width: 768px) {
   .commentButton {
     width: 100%;
     display: grid !important;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-  }
-
-  .commentButton > :nth-child(1) {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .commentButton > :nth-child(2) {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  .commentButton > :nth-child(3) {
-    grid-column: 1 / span 2;
-    grid-row: 2;
-  }
-}
-
-.card-root {
-  width: 100%;
-  min-width: 100%;
-  min-height: 150px;
-  height: auto;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  margin: 10px 0;
-  padding: 15px;
-  box-shadow: var(--color-post-card-box-shadow) 0px 3px 8px;
-  transition: all 0.5s;
-
-  .card-title {
-    margin-top: 10px;
-    margin-bottom: 8px;
-  }
-}
-
-@media screen and (min-width: 768px) {
-  .card-root {
-    display: block;
-  }
-
-  p {
-    text-indent: 2rem;
   }
 }
 </style>

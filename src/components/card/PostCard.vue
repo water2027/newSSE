@@ -10,6 +10,7 @@ import { usePostStore } from '@/store/postStore'
 
 import { useUserStore } from '@/store/userStore'
 
+import BasicCard from './BasicCard.vue'
 import BasicInfo from '../BasicInfo.vue'
 import UserAvatar from '../UserAvatar.vue'
 import UserButton from '../UserButton.vue'
@@ -19,8 +20,6 @@ const { post } = defineProps<{
 }>()
 const { updatePost } = usePostStore()
 const OldImages = defineAsyncComponent(() => import('@/components/OldImages.vue'))
-
-const root = useTemplateRef<HTMLElement>('root')
 
 const { userInfo } = useUserStore()
 
@@ -77,7 +76,7 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
 </script>
 
 <template>
-  <div ref="root" class="card-root root">
+  <BasicCard>
     <div class="h-fit flex flex-row items-start">
       <UserAvatar
         :src="post.UserAvatar"
@@ -90,7 +89,6 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
     </div>
     <RouterLink :to="`/postdetail/${post.PostID}`">
       <div
-        v-if="post.Title"
         class="card-title"
       >
         <h2 v-if="post.Title.length <= 10">
@@ -108,22 +106,10 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
       </template>
     </RouterLink>
     <BasicInfo :time="post.PostTime" :browse="post.Browse" :comment="post.Comment" :is-like="post.IsLiked" :like="post.Like" @like-change="like" />
-  </div>
+  </BasicCard>
 </template>
 
-<style scoped>
-button {
-  margin-left: 5px;
-  margin-right: 5px;
-}
-
-@media screen and (min-width: 768px) {
-  .card-root:hover {
-    box-shadow: var(--color-post-card-hover-box-shadow) 0px 5px 15px;
-    transform: scale(1.03);
-  }
-}
-
+<style>
 p::after {
   content: '...';
 }
@@ -131,33 +117,18 @@ p::after {
 a {
   display: block;
 }
-.card-root {
-  width: 100%;
-  min-width: 100%;
-  min-height: 150px;
-  height: auto;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  margin: 10px 0;
-  padding: 15px;
-  box-shadow: var(--color-post-card-box-shadow) 0px 3px 8px;
-  transition: all 0.5s;
 
-  .card-title {
-    margin-top: 10px;
-    margin-bottom: 8px;
-  }
+.card-title {
+  margin-bottom: 4px;
 }
 
 @media screen and (min-width: 768px) {
-  .card-root {
-    display: block;
-  }
-
   p {
     text-indent: 2rem;
+  }
+    .card-root:hover {
+    box-shadow: var(--color-post-card-hover-box-shadow) 0px 5px 15px;
+    transform: scale(1.03);
   }
 }
 </style>

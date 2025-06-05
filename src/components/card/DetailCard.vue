@@ -10,6 +10,7 @@ import { showMsg } from '@/components/MessageBox'
 
 import { useUserStore } from '@/store/userStore'
 
+import BasicCard from './BasicCard.vue'
 import BasicInfo from '../BasicInfo.vue'
 import MarkdownContainer from '../MarkdownContainer.vue'
 import UserAvatar from '../UserAvatar.vue'
@@ -125,11 +126,8 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
 </script>
 
 <template>
-  <div
-    ref="root"
-    class="postDetail root"
-  >
-    <div class="card-root">
+  <BasicCard>
+    <div ref="root" class="card-root">
       <div class="h-fit flex flex-row items-center">
         <UserAvatar
           :src="post.UserAvatar"
@@ -141,7 +139,6 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
         <UserButton :is-saved="post.IsSaved" :is-self="post.UserTelephone === userInfo.phone" @user-action="handleUserAction" />
       </div>
       <div
-        v-if="post.Title"
         class="card-title"
       >
         <h2 v-if="post.Title.length <= 10">
@@ -169,40 +166,12 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
         @send="handler('comment')"
       />
     </div>
-  </div>
+  </BasicCard>
 </template>
 
-<style scoped>
-.card-root {
-  width: 100%;
-  min-width: 100%;
-  min-height: 150px;
-  height: auto;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  margin: 10px 0;
-  padding: 15px;
-  box-shadow: var(--color-post-card-box-shadow) 0px 3px 8px;
-  transition: all 0.5s;
-
+<style>
   .card-title {
     margin-top: 10px;
     margin-bottom: 8px;
   }
-}
-
-.imgs img {
-  width: 100px;
-  height: 100px;
-  margin: 5px;
-}
-
-@media screen and (min-width: 768px) {
-  .imgs {
-    display: flex;
-    flex-wrap: wrap;
-  }
-}
 </style>
