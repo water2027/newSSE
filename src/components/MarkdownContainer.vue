@@ -128,7 +128,7 @@ const safeHTML = computed(() => {
 }
 
 .markdown-body {
-  /* color: var(--color-text); */
+  color: var(--color-text);
   background-color: var(--color-bg);
 }
 
