@@ -27,7 +27,7 @@ function LikeChange() {
         })
       }}</span>
     </div>
-    <div class="flex justify-around mt-3">
+    <div class="mt-3 flex justify-around">
       <span v-if="browse || browse === 0">
         {{ browse }}
         <svg
@@ -94,7 +94,7 @@ function LikeChange() {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 .like {
   color: #ff0000;
   transition: all 0.3s ease;

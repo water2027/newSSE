@@ -137,7 +137,7 @@ async function like() {
 <template>
   <BasicCard>
     <div ref="root">
-      <div class="user">
+      <div class="flex flex-row">
         <UserAvatar
           :src="comment.AuthorAvatar"
           :user-id="comment.AuthorID"

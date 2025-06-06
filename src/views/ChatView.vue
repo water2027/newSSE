@@ -521,7 +521,6 @@ function checkSameDay(x: Date, y: Date) {
   display: flex;
   margin: 0.5rem 0;
   word-break: break-word;
-
   .contact-icon {
     width: 46px;
   }

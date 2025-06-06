@@ -35,14 +35,15 @@ function navigate() {
         :alt="userId.toString()"
       >
       <span
+        v-if="userScore"
         class="level absolute w-fit whitespace-nowrap -transform-translate-y-25%"
         :class="levelClassHandler(userScore)"
       >{{ levelNameHandler(userScore) }}
       </span>
       <UserIdentityIcon :identity="userIdentity" />
     </div>
-    <div class="max-w-fit w-full">
-      <span class="user-name ml-1 w-full">{{ userName
+    <div class="max-w-fit w-full" v-if="userName">
+      <span class="user-name ml-1 w-full whitespace-nowrap">{{ userName
       }}</span>
     </div>
     <slot name="reply" />
@@ -53,7 +54,6 @@ function navigate() {
 .user {
   --userImage: 50px;
   width: 100%;
-  margin-right: auto;
   display: flex;
   align-items: center;
   font-size: 1.2rem;
