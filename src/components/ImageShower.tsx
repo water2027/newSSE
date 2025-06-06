@@ -31,7 +31,7 @@ const ImageShower = defineComponent({
   },
 })
 
-function showImg(img:string) {
+function showImg(img: string) {
   const div = document.createElement('div')
   document.body.appendChild(div)
   const app = createApp(ImageShower, {

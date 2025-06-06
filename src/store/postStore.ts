@@ -30,11 +30,11 @@ const conditions = reactive<Condition>({
 })
 
 /**
- * 
+ *
  * @param userTelephone 用户手机号
  * @returns 是否还有帖子可以获取
  */
-async function addPost(userTelephone: string) : Promise<boolean> {
+async function addPost(userTelephone: string): Promise<boolean> {
   const data = await getPosts({
     ...conditions,
     userTelephone,
@@ -179,6 +179,6 @@ export function usePostStore() {
     updatePost,
     changeTo,
     refreshPosts,
-    search
+    search,
   }
 }

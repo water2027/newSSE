@@ -33,7 +33,7 @@ const current = ref<Contact>({
   score: 0,
   userID: 0,
   emailpush: false,
-  unRead: 0
+  unRead: 0,
 })
 const contacts = ref<Contact[]>([])
 const messages = ref<Message[]>([])
@@ -243,7 +243,7 @@ function keepConnection() {
   }
 }
 
-function sendWsMessage(message:string) {
+function sendWsMessage(message: string) {
   const state = ws ? ws.readyState : WebSocket.CLOSED
   if (state === WebSocket.OPEN) {
     ws.send(message)
@@ -252,7 +252,7 @@ function sendWsMessage(message:string) {
   return false
 }
 
-function updateChatHistory(callback:()=>void) {
+function updateChatHistory(callback: () => void) {
   getChatHistory(userInfo.userID, current.value.userID)
     .then((res) => {
       if (res.code === 200) {
@@ -399,7 +399,6 @@ function checkSameDay(x: Date, y: Date) {
   width: 100%;
   gap: 1rem;
   padding: 0 15px;
-  
 }
 
 .contact-list {

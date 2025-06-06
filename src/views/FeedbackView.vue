@@ -6,7 +6,8 @@ import { showMsg } from '@/components/MessageBox'
 const feedbackContent = useTemplateRef<HTMLTextAreaElement>('feedbackContent')
 async function submitFeedback() {
   const el = feedbackContent.value
-  if (!el) return
+  if (!el)
+    return
   // 去除空格
   el.value = el.value.trim()
   if (el.value) {

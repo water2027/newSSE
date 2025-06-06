@@ -18,13 +18,13 @@ export function usePostView() {
     isLoading.value = false
   }
 
-  async function initialize(categoryName?: typeof Partitions[number], hooks?: {beforeRefresh?: () => void, afterRefresh?: () => void}) {
+  async function initialize(categoryName?: typeof Partitions[number], hooks?: { beforeRefresh?: () => void, afterRefresh?: () => void }) {
     if (hooks?.beforeRefresh) {
       hooks.beforeRefresh()
     }
     refreshPosts()
-    if(hooks?.afterRefresh) {
-        hooks.afterRefresh()
+    if (hooks?.afterRefresh) {
+      hooks.afterRefresh()
     }
     categoryName && changeTo(categoryName)
     await updateNum(userInfo.phone)

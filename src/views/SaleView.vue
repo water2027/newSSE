@@ -1,12 +1,12 @@
-
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, useTemplateRef } from 'vue'
 import { useRouter } from 'vue-router'
 import { uploadPhoto } from '@/api/editPostAndComment/utils'
 import { handleProduct } from '@/api/shop/handleProduct'
 import { showMsg } from '@/components/MessageBox'
-import { useUserStore }from '@/store/userStore'
-const {userInfo}= useUserStore()
+import { useUserStore } from '@/store/userStore'
+
+const { userInfo } = useUserStore()
 
 const router = useRouter()
 
@@ -25,7 +25,7 @@ const product = ref<ProductData>({
   price: null,
   description: '',
   images: [], // 存储图片URL
-  tempFiles: [] // 临时存储选择的文件，用于预览
+  tempFiles: [], // 临时存储选择的文件，用于预览
 })
 
 // 错误信息
@@ -38,28 +38,30 @@ const errors = ref<{
   name: '',
   price: '',
   description: '',
-  images: ''
+  images: '',
 })
 
 // 提交状态
 const isSubmitting = ref<boolean>(false)
+const fileInput = useTemplateRef<HTMLInputElement>('fileInput')
 
 // 触发文件选择
-const triggerFileInput = (): void => {
-  const fileInput = document.querySelector<HTMLInputElement>('input[type="file"]')
-  if (fileInput) {
-    fileInput.click()
+function triggerFileInput(): void {
+  if (fileInput.value) {
+    fileInput.value.click()
   }
 }
 
 // 处理文件选择
-const handleFiles = (event: Event): void => {
+function handleFiles(event: Event): void {
   const target = event.target as HTMLInputElement
   const files = target.files
-  if (!files) return
+  if (!files)
+    return
 
   for (const file of Array.from(files)) {
-    if (!isImage(file)) continue // 检查是否是图片
+    if (!isImage(file))
+      continue // 检查是否是图片
 
     if (product.value.tempFiles.length >= 5) {
       showMsg('最多只能上传5张图片')
@@ -81,31 +83,30 @@ const handleFiles = (event: Event): void => {
   }
 
   // 清空文件输入，以便可以重新选择相同的文件
-  const fileInput = document.querySelector<HTMLInputElement>('input[type="file"]')
-  if (fileInput) {
-    fileInput.value = ''
+  if (fileInput.value) {
+    fileInput.value.value = ''
   }
 }
 
 // 检查是否是图片
-const isImage = (file: File): boolean => {
+function isImage(file: File): boolean {
   return file.type.startsWith('image/')
 }
 
 // 删除图片
-const deleteImage = (index: number): void => {
+function deleteImage(index: number): void {
   product.value.tempFiles.splice(index, 1) // 从临时文件中删除
   product.value.images.splice(index, 1) // 从预览列表中删除
 }
 
 // 表单验证
-const validateForm = (): boolean => {
+function validateForm(): boolean {
   let isValid = true
   errors.value = {
     name: '',
     price: '',
     description: '',
-    images: ''
+    images: '',
   }
 
   if (!product.value.name) {
@@ -132,8 +133,9 @@ const validateForm = (): boolean => {
 }
 
 // 提交商品
-const submitProduct = async (): Promise<void> => {
-  if (isSubmitting.value) return
+async function submitProduct(): Promise<void> {
+  if (isSubmitting.value)
+    return
 
   if (!validateForm()) {
     showMsg('请修正表单中的错误')
@@ -150,7 +152,8 @@ const submitProduct = async (): Promise<void> => {
       try {
         const data = await uploadPhoto(file)
         imageUrls.push(data.fileURL)
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Error uploading file:', error)
         showMsg('部分图片上传失败，请重试')
         isSubmitting.value = false
@@ -160,22 +163,24 @@ const submitProduct = async (): Promise<void> => {
 
     // 将图片URL添加到商品对象
     product.value.images = imageUrls
-    
+
     // 这里添加提交逻辑，可以调用API提交整个商品对象
     // console.log('商品发布成功，图片URL:', imageUrls)
-    await handleProduct(product.value,userInfo.userID)
+    await handleProduct(product.value, userInfo.userID)
     await router.push('/shop')
     showMsg('商品发布成功')
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Error submitting product:', error)
     showMsg('商品发布失败，请重试')
-  } finally {
+  }
+  finally {
     isSubmitting.value = false
   }
 }
 
 // 取消发布
-const cancelPublish = (): void => {
+function cancelPublish(): void {
   if (confirm('确定要取消发布吗？已填写的信息将不会保存')) {
     router.push('/shop')
   }
@@ -187,90 +192,104 @@ const cancelPublish = (): void => {
     <div class="publish-header">
       <h1>发布新商品</h1>
     </div>
-    
-    <form @submit.prevent="submitProduct" class="product-form">
+
+    <form class="product-form" @submit.prevent="submitProduct">
       <div class="form-row">
         <!-- 商品名称 -->
         <div class="form-group flex-1">
           <label for="productName">商品名称</label>
-          <input 
-            type="text" 
-            id="productName" 
-            v-model.trim="product.name" 
-            placeholder="请输入商品名称" 
-            :class="{ 'error': errors.name }"
-          />
-          <div v-if="errors.name" class="error-message">{{ errors.name }}</div>
+          <input
+            id="productName"
+            v-model.trim="product.name"
+            type="text"
+            placeholder="请输入商品名称"
+            :class="{ error: errors.name }"
+          >
+          <div v-if="errors.name" class="error-message">
+            {{ errors.name }}
+          </div>
         </div>
-        
+
         <!-- 商品价格 -->
         <div class="form-group flex-1">
           <label for="productPrice">商品价格 (¥)</label>
-          <input 
-            type="number" 
-            id="productPrice" 
-            v-model.number="product.price" 
-            placeholder="请输入商品价格" 
-            :class="{ 'error': errors.price }"
-          />
-          <div v-if="errors.price" class="error-message">{{ errors.price }}</div>
+          <input
+            id="productPrice"
+            v-model.number="product.price"
+            type="number"
+            placeholder="请输入商品价格"
+            :class="{ error: errors.price }"
+          >
+          <div v-if="errors.price" class="error-message">
+            {{ errors.price }}
+          </div>
         </div>
       </div>
-      
+
       <!-- 商品图片上传 -->
       <div class="form-group">
         <label>商品图片 (最多上传5张)</label>
         <div class="images-upload-container">
-          <div 
-            class="image-upload-wrapper"
-            v-for="(image, index) in product.images" 
+          <div
+            v-for="(image, index) in product.images"
             :key="index"
+            class="image-upload-wrapper"
           >
-            <img :src="image" alt="预览图" class="preview-image" />
+            <img :src="image" alt="预览图" class="preview-image">
             <div class="image-actions">
-              <button type="button" class="delete-image" @click.stop="deleteImage(index)">删除</button>
+              <button type="button" class="delete-image" @click.stop="deleteImage(index)">
+                删除
+              </button>
             </div>
           </div>
-          
-          <div 
-            v-if="product.images.length < 5" 
+
+          <div
+            v-if="product.images.length < 5"
             class="upload-button-wrapper"
             @click="triggerFileInput"
           >
-            <input 
-              ref="fileInput" 
-              type="file" 
-              accept="image/*" 
-              multiple 
+            <input
+              ref="fileInput"
+              type="file"
+              accept="image/*"
+              multiple
               style="display: none"
               @change="handleFiles"
-            />
+            >
             <div class="upload-button">
               <i class="upload-icon">+</i>
               <span>添加图片</span>
             </div>
           </div>
         </div>
-        <div v-if="errors.images" class="error-message">{{ errors.images }}</div>
+        <div v-if="errors.images" class="error-message">
+          {{ errors.images }}
+        </div>
       </div>
-      
+
       <!-- 商品描述 -->
       <div class="form-group">
         <label for="productDescription">商品描述</label>
-        <textarea 
-          id="productDescription" 
-          v-model="product.description" 
-          placeholder="请输入商品详细描述" 
+        <textarea
+          id="productDescription"
+          v-model="product.description"
+          placeholder="请输入商品详细描述"
           rows="6"
-          :class="{ 'error': errors.description }"
-        ></textarea>
-        <div v-if="errors.description" class="error-message">{{ errors.description }}</div>
+          :class="{ error: errors.description }"
+        />
+        <div v-if="errors.description" class="error-message">
+          {{ errors.description }}
+        </div>
       </div>
-      
+
       <!-- 操作按钮 -->
       <div class="form-actions">
-        <button type="button" class="cancel-btn" @click="cancelPublish">取消</button>
-        <button type="submit" class="publish-btn" :disabled="isSubmitting">发布商品</button>
+        <button type="button" class="cancel-btn" @click="cancelPublish">
+          取消
+        </button>
+        <button type="submit" class="publish-btn" :disabled="isSubmitting">
+          发布商品
+        </button>
       </div>
     </form>
   </div>
@@ -282,45 +301,45 @@ const cancelPublish = (): void => {
   margin: 0 auto;
   padding: 20px;
 }
-  
+
 .publish-header {
   text-align: center;
   margin-bottom: 30px;
 }
-  
+
 .publish-header h1 {
   font-size: 24px;
   color: #333;
 }
-  
+
 .product-form {
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 30px;
 }
-  
+
 .form-row {
   display: flex;
   gap: 20px;
   margin-bottom: 25px;
 }
-  
+
 .form-group {
   margin-bottom: 25px;
 }
-  
+
 .flex-1 {
   flex: 1;
 }
-  
+
 .form-group label {
   display: block;
   margin-bottom: 8px;
   font-weight: bold;
   color: #333;
 }
-  
+
 .form-group input,
 .form-group textarea {
   width: 100%;
@@ -330,24 +349,24 @@ const cancelPublish = (): void => {
   font-size: 16px;
   box-sizing: border-box;
 }
-  
+
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
   border-color: #4c8baf;
 }
-  
+
 .form-group input.error,
 .form-group textarea.error {
   border-color: #e53935;
 }
-  
+
 .error-message {
   color: #e53935;
   font-size: 14px;
   margin-top: 5px;
 }
-  
+
 .images-upload-container {
   display: flex;
   flex-wrap: wrap;
@@ -357,25 +376,25 @@ const cancelPublish = (): void => {
   padding: 15px;
   min-height: 150px;
 }
-  
+
 .image-upload-wrapper {
   position: relative;
   width: 150px;
 }
-  
+
 .preview-image {
   width: 100%;
   height: 150px;
   object-fit: cover;
   border-radius: 4px;
 }
-  
+
 .image-actions {
   position: absolute;
   top: 5px;
   right: 5px;
 }
-  
+
 .delete-image {
   background-color: rgba(229, 57, 53, 0.8);
   color: white;
@@ -386,7 +405,7 @@ const cancelPublish = (): void => {
   font-size: 12px;
   cursor: pointer;
 }
-  
+
 .upload-button-wrapper {
   width: 150px;
   height: 150px;
@@ -398,28 +417,28 @@ const cancelPublish = (): void => {
   cursor: pointer;
   transition: background-color 0.3s;
 }
-  
+
 .upload-button-wrapper:hover {
   background-color: #e0e0e0;
 }
-  
+
 .upload-button {
   text-align: center;
 }
-  
+
 .upload-icon {
   font-size: 24px;
   margin-bottom: 8px;
   display: block;
 }
-  
+
 .form-actions {
   display: flex;
   justify-content: center; /* 居中对齐按钮 */
   gap: 15px;
   margin-top: 30px;
 }
-  
+
 .cancel-btn {
   padding: 12px 24px;
   background-color: #f5f5f5;
@@ -428,17 +447,17 @@ const cancelPublish = (): void => {
   cursor: pointer;
   font-size: 16px;
 }
-  
+
 .publish-btn {
   padding: 12px 24px;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
 }
-  
+
 .publish-btn:disabled {
   background-color: #cccccc;
   cursor: not-allowed;

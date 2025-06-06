@@ -36,7 +36,7 @@ function changeTo(path: string) {
 <template>
   <div
     id="bottomNavBar"
-    class="bottom-nav-bar root flex flex-row justify-around"
+    class="root bottom-nav-bar flex flex-row justify-around"
   >
     <router-link
       class="nav"
@@ -103,7 +103,7 @@ function changeTo(path: string) {
       />
       商城
     </router-link>
-    
+
     <router-link
       id="notice"
       :notice-num="noticeNum"

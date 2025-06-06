@@ -93,8 +93,8 @@ export default defineConfig({
     }),
     dnsPrefetchPlugin({
       maxLinks: 5,
-      exclude: ['localhost', '127.0.0.1', 'vuejs.org']
-    })
+      exclude: ['localhost', '127.0.0.1', 'vuejs.org'],
+    }),
   ],
   resolve: {
     alias: {

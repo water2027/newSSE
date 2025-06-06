@@ -13,7 +13,7 @@ const partitions = ref([
   { name: '其他', description: '畅所欲言，创意无限。', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/image/else.jpg' },
 ])
 
-function sendPartition(p:string) {
+function sendPartition(p: string) {
   router.push(`/partition/${encodeURIComponent(p)}`)
 }
 </script>

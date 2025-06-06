@@ -70,11 +70,13 @@ function search() {
         反馈
       </router-link>
       <router-link to="/shop">
-          <div class="icon" style="
+        <div
+          class="icon" style="
               background-image: url(https://img.icons8.com/ios-filled/100/shopping-bag.png);
               background-position: 0px 3px;
-            " />
-          商城
+            "
+        />
+        商城
       </router-link>
     </div>
     <form class="search" @submit.prevent="search">
@@ -96,7 +98,7 @@ function search() {
       </button>
     </form>
     <div
-      class="account links"
+      class="links account"
     >
       <RouterLink
         to="/save"

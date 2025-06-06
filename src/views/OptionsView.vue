@@ -154,7 +154,7 @@ async function togglePush() {
     <div class="data">
       <h3>个人信息</h3>
       <img :src="allInfo?.avatarURL" alt="头像" style="margin: auto">
-      <label for="fileInput" class="custom-file-label fileInput button">修改头像</label>
+      <label for="fileInput" class="button custom-file-label fileInput">修改头像</label>
       <input id="fileInput" type="file" accept="image/*" style="display: none" @change="uploadAvatarFunc">
       <div>
         <div>

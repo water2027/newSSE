@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { strHandler } from '@/utils/strHandler';
+import { strHandler } from '@/utils/strHandler'
 
 defineProps<{
   photos: string

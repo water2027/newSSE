@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import { useTemplateRef } from 'vue'
-import { useRouter } from 'vue-router'
-import { useRoute } from 'vue-router'
-import { computed } from 'vue'
+import { computed, useTemplateRef } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
 defineProps<{
   isHomePage: boolean
 }>()
@@ -22,7 +21,7 @@ const shopSidebarIsShow = computed(() => {
 </script>
 
 <template>
-  <div class="site-header" v-if="!shopSidebarIsShow">
+  <div v-if="!shopSidebarIsShow" class="site-header">
     <RouterLink
       v-if="isHomePage"
       to="/course"
@@ -51,7 +50,7 @@ const shopSidebarIsShow = computed(() => {
     </form>
     <router-link
       to="/post"
-      class="post-button icon bright-icon"
+      class="icon bright-icon post-button"
       style="
               width: 30px;
               height: 30px;

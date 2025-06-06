@@ -1,38 +1,38 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useRouter } from 'vue-router';
-import { useUserStore }from '@/store/userStore'
-const {userInfo}= useUserStore()
+import { defineComponent } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/store/userStore'
+
+const { userInfo } = useUserStore()
 export default defineComponent({
   setup() {
-    
-    const router = useRouter();
+    const router = useRouter()
 
     const goToMyProducts = () => {
-      router.push('/myproducts');
-    };
+      router.push('/myproducts')
+    }
 
     const goToMessages = () => {
-      alert("匿名买卖功能暂未开放");
-    };
+      alert('匿名买卖功能暂未开放')
+    }
 
     const goToPublish = () => {
-      router.push('/sale');
-    };
+      router.push('/sale')
+    }
 
     const goBack = () => {
-      router.push('/');
-    };
+      router.push('/')
+    }
 
     return {
       userInfo,
       goToMyProducts,
       goToMessages,
       goToPublish,
-      goBack
-    };
-  }
-});
+      goBack,
+    }
+  },
+})
 </script>
 
 <template>
@@ -72,7 +72,7 @@ export default defineComponent({
     <!-- 主内容区域 -->
     <div class="main-content">
       <!-- 这里放置主内容 -->
-      <slot></slot>
+      <slot />
     </div>
   </div>
 </template>

@@ -1,18 +1,17 @@
 <script setup lang = "ts">
-
 const props = defineProps({
   product: {
     type: Object,
-    required: true
-  }
-});
+    required: true,
+  },
+})
 
-const emit = defineEmits(['view-detail']);
+const emit = defineEmits(['view-detail'])
 
 // 查看商品详情
-const viewDetail = async () => {
-  emit('view-detail', props.product);
-};
+async function viewDetail() {
+  emit('view-detail', props.product)
+}
 </script>
 
 <template>
@@ -21,14 +20,22 @@ const viewDetail = async () => {
       <img :src="product.Photos[0]" :alt="product.name">
     </div>
     <div class="product-info">
-      <h3 class="product-name">{{ product.Name }}</h3>
-      <p class="product-seller">卖家: {{ product.Seller }}</p>
+      <h3 class="product-name">
+        {{ product.Name }}
+      </h3>
+      <p class="product-seller">
+        卖家: {{ product.Seller }}
+      </p>
       <div class="product-price">
         <span class="current-price">¥{{ product.Price }}</span>
       </div>
-      <p class="product-description">{{product.Description}}</p>
+      <p class="product-description">
+        {{ product.Description }}
+      </p>
     </div>
-    <button class="add-to-cart" @click="viewDetail">查看商品详情</button>
+    <button class="add-to-cart" @click="viewDetail">
+      查看商品详情
+    </button>
   </div>
 </template>
 
@@ -39,7 +46,9 @@ const viewDetail = async () => {
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
   display: flex;
   flex-direction: column;
 }
@@ -120,7 +129,7 @@ const viewDetail = async () => {
 
 .add-to-cart {
   padding: 8px;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 4px;

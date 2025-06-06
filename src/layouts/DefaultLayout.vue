@@ -55,7 +55,7 @@ const isHomePage = computed(() => {
 /**
  * @description 发帖和看帖的时候隐藏热榜
  */
- const heatPostsIsHidden = computed(() => {
+const heatPostsIsHidden = computed(() => {
   return /^\/(post|shop|myproducts|sale|productdetail)/.test(route.fullPath)
 })
 const shopSidebarIsShow = computed(() => {

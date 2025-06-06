@@ -64,7 +64,7 @@ onMounted(async () => {
 
 <template>
   <div class="root">
-    <div class="inputData title">
+    <div class="title inputData">
       <h3>标题</h3>
       <input
         ref="title"

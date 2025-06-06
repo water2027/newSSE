@@ -1,26 +1,26 @@
-<template>
-    <div class="floating-ball" @click="toggleSidebar">
-      <i class="material-icons">{{ isSidebarVisible ? '<' : '菜单' }}</i>
-    </div>
-    <div v-if="isSidebarVisible" class="shop-sidebar-container">
-        <ShopSidebar @close="closeSidebar"/>
-    </div>
-</template>
-
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref } from 'vue'
 import ShopSidebar from '@/components/ShopSidebar.vue'
 
 const isSidebarVisible = ref(false)
 
-const toggleSidebar = () => {
+function toggleSidebar() {
   isSidebarVisible.value = !isSidebarVisible.value
 }
 
-const closeSidebar = () => {
+function closeSidebar() {
   isSidebarVisible.value = false
 }
 </script>
+
+<template>
+  <div class="floating-ball" @click="toggleSidebar">
+    <i class="material-icons">{{ isSidebarVisible ? '<' : '菜单' }}</i>
+  </div>
+  <div v-if="isSidebarVisible" class="shop-sidebar-container">
+    <ShopSidebar @close="closeSidebar" />
+  </div>
+</template>
 
 <style scoped>
 .floating-ball {

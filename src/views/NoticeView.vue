@@ -33,12 +33,13 @@ async function readComment(noticeID: number) {
 async function readAll() {
   // 遍历未读通知，标记为已读
   const promises = noticesUnread.value.map(notice => readNotice(notice.noticeID))
-  try {    
+  try {
     await Promise.all(promises)
     await refreshNoticeNum()
     showMsg('一键已读')
     nextTick(getNoticesFunc)
-  } catch (error) {
+  }
+  catch (error) {
     showMsg('失败')
     console.error('一键已读失败:', error)
   }

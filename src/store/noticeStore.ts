@@ -9,13 +9,14 @@ const noticeNum = reactive<NoticeNum>({
 })
 
 async function refreshNoticeNum() {
-    try {
-        const data = await getNoticesNum()
-        Object.assign(noticeNum, data)
-    } catch (error) {
-        console.error('Error refreshing notice number:', error)
-        throw error
-    }
+  try {
+    const data = await getNoticesNum()
+    Object.assign(noticeNum, data)
+  }
+  catch (error) {
+    console.error('Error refreshing notice number:', error)
+    throw error
+  }
 }
 
 export function useNoticeStore() {

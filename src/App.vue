@@ -40,7 +40,8 @@ async function autoLogin() {
 
 onBeforeMount(async () => {
   window.addEventListener('beforeunload', handleBeforeUnload)
-  if (!localStorage.rememberMe) return
+  if (!localStorage.rememberMe)
+    return
   await autoLogin()
 })
 

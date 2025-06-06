@@ -42,7 +42,7 @@ function navigate() {
       </span>
       <UserIdentityIcon :identity="userIdentity" />
     </div>
-    <div class="max-w-fit w-full" v-if="userName">
+    <div v-if="userName" class="max-w-fit w-full">
       <span class="user-name ml-1 w-full whitespace-nowrap">{{ userName
       }}</span>
     </div>
