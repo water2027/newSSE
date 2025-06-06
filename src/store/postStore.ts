@@ -99,6 +99,11 @@ function updatePost(id: number, type: 'like' | 'save' | 'delete') {
       break
     case 'delete':
       posts.splice(target, 1)
+      // 最稳妥的办法是重新获取一次信息, 但是offset是难以确认的
+      // 低并发的情况下基本可以与服务端同步, 只要用户不长时间不刷新, 未来并发量高了再改吧
+      // 如果后端是根据id来获取帖子列表就好了
+      conditions.offset--
+      totalNum.value--
       break
   }
 }
@@ -113,11 +118,14 @@ async function getNewPosts(userTelephone: string) {
   if (num <= totalNum.value)
     return
   const oldOffset = conditions.offset
+  const oldLimit = conditions.limit
   conditions.offset = 0
+  conditions.limit = num - totalNum.value
   getPosts({ ...conditions, userTelephone }).then((newPosts) => {
     posts.unshift(...newPosts)
   })
-  conditions.offset = oldOffset
+  conditions.offset = oldOffset + conditions.limit
+  conditions.limit = oldLimit
 }
 
 function refreshPosts() {
