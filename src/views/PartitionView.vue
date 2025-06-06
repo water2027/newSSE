@@ -7,28 +7,16 @@ import {
 import { useRoute, useRouter } from 'vue-router'
 import { showMsg } from '@/components/MessageBox'
 import PostList from '@/components/PostList.vue'
-import { usePostStore } from '@/store/postStore'
-import { useUserStore } from '@/store/userStore'
+import { usePostView } from '@/composables/usePostView'
 
 const name = ref('')
-const { userInfo } = useUserStore()
-const { posts, addPost, changeTo, refreshPosts } = usePostStore()
-const hasMore = ref(true)
-const isLoading = ref(false)
 const route = useRoute()
 const router = useRouter()
-async function update() {
-  isLoading.value = true
-  const more = await addPost(userInfo.phone)
-  if (!more) {
-    hasMore.value = false
-  }
-  isLoading.value = false
-}
+const { posts, update, isLoading, hasMore, initialize } = usePostView()
 
 onMounted(() => {
   const params = route.params
-  if(!('name' in params)) {
+  if (!('name' in params)) {
     router.push('/')
     showMsg('分区不存在')
     return
@@ -39,8 +27,7 @@ onMounted(() => {
     return
   }
   name.value = partition
-  refreshPosts()
-  changeTo(partition)
+  initialize(partition)
 })
 </script>
 

@@ -1,31 +1,15 @@
 <script setup lang="ts">
 import {
   onMounted,
-  ref,
 } from 'vue'
 
 import PostList from '@/components/PostList.vue'
-import { usePostStore } from '@/store/postStore'
-import { useUserStore } from '@/store/userStore'
+import { usePostView } from '@/composables/usePostView'
 
-const { userInfo } = useUserStore()
-const { posts, addPost, changeTo, refreshPosts, updateNum } = usePostStore()
-const hasMore = ref(true)
-const isLoading = ref(false)
+const { posts, hasMore, isLoading, update, initialize } = usePostView()
 
-async function update() {
-  isLoading.value = true
-  const more = await addPost(userInfo.phone)
-  if (!more) {
-    hasMore.value = false
-  }
-  isLoading.value = false
-}
-
-onMounted(async () => {
-  refreshPosts()
-  changeTo('历史')
-  await updateNum(userInfo.phone)
+onMounted(() => {
+  initialize('历史')
 })
 </script>
 

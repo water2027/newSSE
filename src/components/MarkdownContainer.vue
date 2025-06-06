@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import DOMPurify from 'dompurify'
-// import javascript from 'highlight.js/lib/languages/javascript'
-// import python from 'highlight.js/lib/languages/python'
-// import html from 'highlight.js/lib/languages/xml'
 import MarkdownIt from 'markdown-it'
 import mk from 'markdown-it-katex'
 import Prism from 'prismjs'
