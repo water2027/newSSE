@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Post } from '@/types/post'
-import { defineAsyncComponent, useTemplateRef } from 'vue'
+import { defineAsyncComponent } from 'vue'
 
 import { delPost } from '@/api/editPostAndComment/editPost'
 import { likePost, savePost } from '@/api/SaveAndLike/SaveAndLike'
@@ -10,10 +10,10 @@ import { usePostStore } from '@/store/postStore'
 
 import { useUserStore } from '@/store/userStore'
 
-import BasicCard from './BasicCard.vue'
 import BasicInfo from '../BasicInfo.vue'
 import UserAvatar from '../UserAvatar.vue'
 import UserButton from '../UserButton.vue'
+import BasicCard from './BasicCard.vue'
 
 const { post } = defineProps<{
   post: Post
@@ -109,7 +109,7 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
   </BasicCard>
 </template>
 
-<style>
+<style scoped>
 p::after {
   content: '...';
 }
@@ -123,10 +123,7 @@ a {
 }
 
 @media screen and (min-width: 768px) {
-  p {
-    text-indent: 2rem;
-  }
-    .card-root:hover {
+  .card-root:hover {
     box-shadow: var(--color-post-card-hover-box-shadow) 0px 5px 15px;
     transform: scale(1.03);
   }

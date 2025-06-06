@@ -13,9 +13,9 @@ import { useUserStore } from '@/store/userStore'
 import BasicInfo from '../BasicInfo.vue'
 import MarkdownContainer from '../MarkdownContainer.vue'
 
-import BasicCard from './BasicCard.vue'
 import { showMsg } from '../MessageBox'
 import UserAvatar from '../UserAvatar.vue'
+import BasicCard from './BasicCard.vue'
 
 const { subComment, pCommentId, postId } = defineProps<{
   subComment: SubComment
@@ -180,7 +180,6 @@ async function like() {
     margin-right: 5px;
   }
 }
-
 
 @media screen and (max-width: 768px) {
   .commentButton {

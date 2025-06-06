@@ -9,11 +9,11 @@ import {
 import { useUserStore } from '@/store/userStore'
 import BasicInfo from '../BasicInfo.vue'
 
-import BasicCard from './BasicCard.vue'
 import MarkdownContainer from '../MarkdownContainer.vue'
 import { showMsg } from '../MessageBox'
 import UserAvatar from '../UserAvatar.vue'
 import UserButton from '../UserButton.vue'
+import BasicCard from './BasicCard.vue'
 
 const { comment, postId } = defineProps<{
   comment: Comment
@@ -208,9 +208,6 @@ async function like() {
     padding: 1%;
     border-radius: 5px;
     box-sizing: border-box;
-  }
-  p {
-    text-indent: 2rem;
   }
 }
 
