@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import { useTemplateRef } from 'vue'
 import { useRouter } from 'vue-router'
-
+import { useRoute } from 'vue-router'
+import { computed } from 'vue'
 defineProps<{
   isHomePage: boolean
 }>()
-
+const route = useRoute()
 const router = useRouter()
 const sinfo = useTemplateRef('sinfo')
 function search() {
@@ -15,10 +16,13 @@ function search() {
   router.push(`/search?sinfo=${encodeURIComponent(el.value)}`)
   el.value = ''
 }
+const shopSidebarIsShow = computed(() => {
+  return /^\/(myproducts|shop)/.test(route.fullPath)
+})
 </script>
 
 <template>
-  <div class="site-header">
+  <div class="site-header" v-if="!shopSidebarIsShow">
     <RouterLink
       v-if="isHomePage"
       to="/course"

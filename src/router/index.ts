@@ -84,6 +84,27 @@ const routes = [
         name: 'Chat',
         component: () => import('@/views/ChatView.vue'),
       },
+      {
+        path: '/shop',
+        name: 'Shop',
+        component: () => import('@/views/ShopView.vue'),
+      },
+      {
+        path: '/myproducts',
+        name: 'MyProducts',
+        component: () => import('@/views/ShopView.vue'),
+      },
+      {
+        path: '/productdetail/:ProductID',
+        name: 'Productdetail',
+        component: () => import('@/views/ProductView.vue'),
+        props: true,
+      },
+      {
+        path: '/sale',
+        name: 'Sale',
+        component: () => import('@/views/SaleView.vue'),
+      },
     ],
   },
   {
@@ -129,10 +150,11 @@ router.beforeEach((to, from, next) => {
   if (!isLogin.value) {
     let redirect = `redirect=${to.path}`
     const query = to.query
-    for(const key in query) {
+    for (const key in query) {
       const value = query[key]
       redirect = `${redirect}&${key}=${value}`
     }
+    console.log(redirect)
     next(`/auth/login?${redirect}`)
     return
   }
