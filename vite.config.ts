@@ -5,6 +5,7 @@ import vueJsxPlugin from '@vitejs/plugin-vue-jsx'
 import UnoCSS from 'unocss/vite'
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
+import dnsPrefetchPlugin from './plugins/vite-plugin-dns-prefetch'
 // https://vitejs.dev/config/
 const base = process.env.CF_PAGES ? '/' : '/new/'
 export default defineConfig({
@@ -90,6 +91,10 @@ export default defineConfig({
         clientsClaim: true,
       },
     }),
+    dnsPrefetchPlugin({
+      maxLinks: 5,
+      exclude: ['localhost', '127.0.0.1', 'vuejs.org']
+    })
   ],
   resolve: {
     alias: {
