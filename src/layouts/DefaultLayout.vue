@@ -140,7 +140,7 @@ onUnmounted(() => {
         <MobileHeader :style="{ height: headerHeight }" :is-home-page="isHomePage" />
       </template>
     </header>
-    <main class="mt-2 w-full p-0">
+    <main class="mt-2 w-full flex flex-row p-0">
       <template v-if="!isPC">
         <BottomNavbar
           :notice-num="noticeNum.unreadTotalNum"
@@ -159,7 +159,6 @@ onUnmounted(() => {
         </router-view>
       </div>
       <HeatList v-if="isPC && !heatPostsIsHidden" />
-      <div class="h-13vw" />
     </main>
   </div>
 </template>
