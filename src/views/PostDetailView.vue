@@ -91,7 +91,7 @@ async function clickHandler(event: MouseEvent) {
     // 拿到图片的src
     const src = (el as HTMLImageElement).src
     // 如果class名为user-avatar，直接不展示
-    if (el.className === 'user-avatar-img') {
+    if (el.classList.contains('user-avatar-img')) {
       return
     }
     const uploadImg = strHandler('postImg', src)
@@ -157,7 +157,7 @@ onMounted(async () => {
           @click="setSortType('time')"
         >
           <div
-            class="w-8 h-8 bg-contain bg-no-repeat mr-1"
+            class="mr-1 h-8 w-8 bg-contain bg-no-repeat"
             style="background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729845428749551312_icons8-sort-48.png);"
           />
           时间
@@ -169,7 +169,7 @@ onMounted(async () => {
           @click="setSortType('likes')"
         >
           <div
-            class="w-8 h-8 bg-contain bg-no-repeat mr-1"
+            class="mr-1 h-8 w-8 bg-contain bg-no-repeat"
             style="background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729845524483606271_icons8-sort-49.png);"
           />
           热度
