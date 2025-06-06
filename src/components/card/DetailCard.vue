@@ -56,7 +56,7 @@ async function handler(type: 'comment') {
   let event
   switch (type) {
     case 'comment':{
-      const result = sendCommentFunc()
+      const result = await sendCommentFunc()
       if (!result)
         return showMsg('评论失败，请稍后再试')
       showMsg('评论成功')
