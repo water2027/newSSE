@@ -22,8 +22,8 @@ const isLoading = ref(false)
 
 async function update() {
   isLoading.value = true
-  const num = await addPost(userInfo.phone, 10)
-  if (num <= 0) {
+  const more = await addPost(userInfo.phone)
+  if (!more) {
     hasMore.value = false
   }
   isLoading.value = false

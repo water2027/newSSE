@@ -19,8 +19,8 @@ const route = useRoute()
 const router = useRouter()
 async function update() {
   isLoading.value = true
-  const num = await addPost(userInfo.phone, 10)
-  if (num < 10) {
+  const more = await addPost(userInfo.phone)
+  if (!more) {
     hasMore.value = false
   }
   isLoading.value = false

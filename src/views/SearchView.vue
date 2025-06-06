@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {
-  nextTick,
   onMounted,
   ref,
 } from 'vue'
@@ -19,8 +18,8 @@ const route = useRoute()
 
 async function update() {
   isLoading.value = true
-  const num = await addPost(userInfo.phone, 10)
-  if (num < 10) {
+  const more = await addPost(userInfo.phone)
+  if (!more) {
     hasMore.value = false
   }
   isLoading.value = false
@@ -28,15 +27,12 @@ async function update() {
 
 onMounted(async () => {
   refreshPosts()
-  nextTick(async () => {
-    await 1
-    const query = route.query
-    if (!('sinfo' in query))
-      return showMsg('未知的搜索')
-    const sinfo = query.sinfo as string
-    search(sinfo)
-    await updateNum(userInfo.phone)
-  })
+  const query = route.query
+  if (!('sinfo' in query))
+    return showMsg('未知的搜索')
+  const sinfo = query.sinfo as string
+  search(sinfo)
+  await updateNum(userInfo.phone)
 })
 </script>
 
