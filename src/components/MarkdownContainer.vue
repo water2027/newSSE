@@ -3,13 +3,8 @@ import DOMPurify from 'dompurify'
 import MarkdownIt from 'markdown-it'
 import mk from 'markdown-it-katex'
 import Prism from 'prismjs'
-import { computed, ref } from 'vue'
-import 'prismjs/components/prism-c'
-import 'prismjs/components/prism-cpp'
-import 'prismjs/components/prism-css'
-import 'prismjs/components/prism-javascript'
-import 'prismjs/components/prism-python'
-import 'prismjs/components/prism-markup'
+import { computed, nextTick, useTemplateRef } from 'vue'
+import 'prismjs/plugins/autoloader/prism-autoloader'
 import 'github-markdown-css'
 import 'prismjs/themes/prism-tomorrow.css'
 
@@ -17,36 +12,39 @@ const { markdownContent } = defineProps<{
   markdownContent: string
 }>()
 
-const content = ref(null)
+const content = useTemplateRef<HTMLDivElement>('content')
+
+Prism.plugins.autoloader.languages_path = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/'
 
 const md: MarkdownIt = new MarkdownIt({
   html: true,
   breaks: true,
   linkify: true,
   typographer: true,
-  highlight: (str, lang) => {
-    const languageMap: Record<string, string> = {
-      html: 'markup',
-      xml: 'markup',
-      js: 'javascript',
-      ts: 'typescript',
-      py: 'python',
-    }
+  // highlight: (str, lang) => {
+  //   const languageMap: Record<string, string> = {
+  //     html: 'markup',
+  //     xml: 'markup',
+  //     js: 'javascript',
+  //     ts: 'typescript',
+  //     py: 'python',
+  //   }
 
-    const normalizedLang = languageMap[lang] || lang
+  //   const normalizedLang = languageMap[lang] || lang
 
-    if (normalizedLang && Prism.languages[normalizedLang]) {
-      try {
-        const highlighted = Prism.highlight(str, Prism.languages[normalizedLang], normalizedLang)
-        return `<pre class="language-${normalizedLang}"><code class="language-${normalizedLang}">${highlighted}</code></pre>`
-      }
-      catch (error) {
-        console.warn('Prism highlighting failed:', error)
-      }
-    }
+  //   if (normalizedLang && normalizedLang !== 'none') {
+  //     try {
+  //     // AutoLoader 会自动加载缺失的语言
+  //       const highlighted = Prism.highlight(str, Prism.languages[normalizedLang] || {}, normalizedLang)
+  //       return `<pre class="language-${normalizedLang}"><code class="language-${normalizedLang}">${highlighted}</code></pre>`
+  //     }
+  //     catch (error) {
+  //       console.warn('Prism highlighting failed:', error)
+  //     }
+  //   }
 
-    return `<pre class="language-none"><code>${md.utils.escapeHtml(str)}</code></pre>`
-  },
+  //   return `<pre class="language-none"><code>${md.utils.escapeHtml(str)}</code></pre>`
+  // },
   xhtmlOut: true,
   langPrefix: 'language-',
 }).use(mk, {
@@ -69,7 +67,8 @@ md.renderer.rules.image = (tokens, idx) => {
   const titleIndex = token.attrIndex('title')
   if (srcIndex < 0)
     return ''
-  if(!token.attrs) return ''
+  if (!token.attrs)
+    return ''
   const src = token.attrs[srcIndex][1]
   const alt = altIndex >= 0 ? `alt="${token.content}"` : ''
   const title = titleIndex >= 0 ? ` title="${token.attrs[titleIndex][1]}"` : ''
@@ -119,6 +118,9 @@ const safeHTML = computed(() => {
       'aria-hidden',
     ],
     FORBID_ATTR: ['style', 'onerror', 'onload', 'onmouseover', 'onmouseout'],
+  })
+  nextTick(() => {
+    Prism.highlightAllUnder(content.value!)
   })
 
   return finalHTML
