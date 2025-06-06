@@ -154,6 +154,10 @@ function changeTo(p: typeof Partitions[number], tag: string = '') {
   }
 }
 
+function search(sinfo: string) {
+  conditions.searchinfo = sinfo
+}
+
 export function usePostStore() {
   return {
     updateNum,
@@ -164,5 +168,6 @@ export function usePostStore() {
     updatePost,
     changeTo,
     refreshPosts,
+    search
   }
 }

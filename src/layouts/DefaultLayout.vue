@@ -94,16 +94,14 @@ const chatNum = ref(0)
 
 provide('chatNum', chatNum)
 
-const searchinfo = ref('')
-provide('searchinfo', searchinfo)
 
 const sinfo = useTemplateRef('sinfo')
 function search() {
-  if (!sinfo.value)
+  const el = sinfo.value as HTMLInputElement
+  if (!el || !el.value)
     return
-  searchinfo.value = sinfo.value.value
-  sinfo.value.value = ''
-  router.push('/')
+  router.push(`/search?sinfo=${encodeURIComponent(el.value)}`)
+  el.value = ''
 }
 
 async function updateChatNum(n: number | undefined) {
@@ -250,13 +248,14 @@ onUnmounted(() => {
 						background-image: url(https://img.icons8.com/?size=100&id=kmUrp7YjifpP&format=png&color=000000);
 					"
         />
-        <div class="search">
+        <form class="search" @submit.prevent="search">
           <input
+            id="sinfo"
+            name="sinfo"
             ref="sinfo"
-            placeholder="在 当前分区 搜索..."
-            @keydown.enter="search"
+            placeholder="搜索..."
           >
-          <button @click="search">
+          <button type="submit">
             <div
               class="icon"
               style="
@@ -267,7 +266,7 @@ onUnmounted(() => {
             />
           </button>
           <!-- 改成图标 -->
-        </div>
+        </form>
         <div
           v-if="isPC"
           class="account links"

@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import {
+  nextTick,
   onMounted,
   ref,
 } from 'vue'
 
+import { useRoute } from 'vue-router'
+import { showMsg } from '@/components/MessageBox'
 import NewList from '@/components/NewList.vue'
 import { usePostStore } from '@/store/postStore'
 import { useUserStore } from '@/store/userStore'
 
 const { userInfo } = useUserStore()
-const { posts, addPost, changeTo, refreshPosts, updateNum } = usePostStore()
+const { posts, addPost, refreshPosts, updateNum, search } = usePostStore()
 const hasMore = ref(true)
 const isLoading = ref(false)
+const route = useRoute()
 
 async function update() {
   isLoading.value = true
@@ -24,14 +28,21 @@ async function update() {
 
 onMounted(async () => {
   refreshPosts()
-  changeTo('收藏')
-  await updateNum(userInfo.phone)
+  nextTick(async () => {
+    await 1
+    const query = route.query
+    if (!('sinfo' in query))
+      return showMsg('未知的搜索')
+    const sinfo = query.sinfo as string
+    search(sinfo)
+    await updateNum(userInfo.phone)
+  })
 })
 </script>
 
 <template>
   <div class="root">
-    <h2>收藏</h2>
+    <h2>搜索</h2>
     <NewList :posts="posts" :is-loading="isLoading" :has-more="hasMore" @bottom="update" />
   </div>
 </template>

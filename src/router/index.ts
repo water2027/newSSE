@@ -28,6 +28,11 @@ const routes = [
         component: () => import('@/views/HistoryView.vue'),
       },
       {
+        path: 'search',
+        name: 'Search',
+        component: () => import('@/views/SearchView.vue'),
+      },
+      {
         path: 'partitions',
         name: 'Partitions',
         component: () => import('@/views/PartitionListView.vue'),
@@ -122,7 +127,13 @@ router.beforeEach((to, from, next) => {
     return
   }
   if (!isLogin.value) {
-    next(`/auth/login?redirect=${to.path}`)
+    let redirect = `redirect=${to.path}`
+    const query = to.query
+    for(const key in query) {
+      const value = query[key]
+      redirect = `${redirect}&${key}=${value}`
+    }
+    next(`/auth/login?${redirect}`)
     return
   }
   next()
