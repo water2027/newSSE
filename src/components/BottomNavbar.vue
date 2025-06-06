@@ -88,6 +88,23 @@ function changeTo(path: string) {
     </router-link>
 
     <router-link
+      id="shop"
+      :notice-num="chatNum"
+      :display-bool="chatNum === 0 ? 'none' : 'block'"
+      class="nav"
+      :class="{ selected: selected === '/shop' }"
+      to="/shop"
+    >
+      <div
+        class="icon"
+        style="
+					background-image: url(https://img.icons8.com/ios-filled/100/shopping-bag.png);
+				"
+      />
+      商城
+    </router-link>
+    
+    <router-link
       id="notice"
       :notice-num="noticeNum"
       :display-bool="displayBool"

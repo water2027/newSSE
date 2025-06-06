@@ -399,6 +399,7 @@ function checkSameDay(x: Date, y: Date) {
   width: 100%;
   gap: 1rem;
   padding: 0 15px;
+  
 }
 
 .contact-list {
@@ -613,6 +614,7 @@ function checkSameDay(x: Date, y: Date) {
 @media screen and (max-width: 768px) {
   .contact-list {
     width: 100%;
+    height: 10%;
   }
 
   .chat-main {
