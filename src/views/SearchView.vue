@@ -1,41 +1,27 @@
 <script setup lang="ts">
 import {
-  nextTick,
   onMounted,
-  ref,
 } from 'vue'
 
 import { useRoute } from 'vue-router'
 import { showMsg } from '@/components/MessageBox'
 import PostList from '@/components/PostList.vue'
+import { usePostView } from '@/composables/usePostView'
 import { usePostStore } from '@/store/postStore'
-import { useUserStore } from '@/store/userStore'
 
-const { userInfo } = useUserStore()
-const { posts, addPost, refreshPosts, updateNum, search } = usePostStore()
-const hasMore = ref(true)
-const isLoading = ref(false)
+const { search } = usePostStore()
 const route = useRoute()
-
-async function update() {
-  isLoading.value = true
-  const num = await addPost(userInfo.phone, 10)
-  if (num < 10) {
-    hasMore.value = false
-  }
-  isLoading.value = false
-}
+const { posts, update, isLoading, hasMore, initialize } = usePostView()
 
 onMounted(async () => {
-  refreshPosts()
-  nextTick(async () => {
-    await 1
-    const query = route.query
-    if (!('sinfo' in query))
-      return showMsg('未知的搜索')
-    const sinfo = query.sinfo as string
-    search(sinfo)
-    await updateNum(userInfo.phone)
+  const query = route.query
+  if (!('sinfo' in query))
+    return showMsg('未知的搜索')
+  const sinfo = query.sinfo as string
+  await initialize('主页', {
+    afterRefresh: () => {
+      search(sinfo)
+    },
   })
 })
 </script>

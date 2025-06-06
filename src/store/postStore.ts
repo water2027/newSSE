@@ -21,7 +21,7 @@ const totalNum = ref(0)
 const posts = reactive<Post[]>([])
 
 const conditions = reactive<Condition>({
-  limit: 10,
+  limit: initLimit() + 1,
   offset: 0,
   partition: '主页',
   searchsort: 'home',
@@ -29,16 +29,21 @@ const conditions = reactive<Condition>({
   tag: '',
 })
 
-async function addPost(userTelephone: string, nums = 10) {
+/**
+ * 
+ * @param userTelephone 用户手机号
+ * @returns 是否还有帖子可以获取
+ */
+async function addPost(userTelephone: string) : Promise<boolean> {
   const data = await getPosts({
     ...conditions,
     userTelephone,
   })
-  if (!data)
-    return 0
+  if (!data || data.length === 0)
+    return false
   posts.push(...data)
-  conditions.offset += nums
-  return data.length
+  conditions.offset += conditions.limit
+  return conditions.limit === data.length
 }
 
 async function restorePosts(userTelephone: string, cachePosts: Post[], cacheTotalNum: number, cacheConditions: typeof conditions) {
@@ -156,6 +161,12 @@ function changeTo(p: typeof Partitions[number], tag: string = '') {
 
 function search(sinfo: string) {
   conditions.searchinfo = sinfo
+}
+
+function initLimit() {
+  const h = window.innerHeight
+  const num = Math.floor(h / 250)
+  return num
 }
 
 export function usePostStore() {

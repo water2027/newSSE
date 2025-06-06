@@ -10,6 +10,7 @@ import {
 } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
 import PostList from '@/components/PostList.vue'
+import { usePostView } from '@/composables/usePostView'
 import { usePostStore } from '@/store/postStore'
 import { useUserStore } from '@/store/userStore'
 
@@ -17,9 +18,8 @@ defineOptions({
   name: 'HomeView',
 })
 const { userInfo } = useUserStore()
-const { posts, restorePosts, storePosts, addPost, updateNum, refreshPosts, changeTo } = usePostStore()
-const hasMore = ref(true)
-const isLoading = ref(false)
+const { restorePosts, storePosts } = usePostStore()
+const { posts, isLoading, hasMore, update, initialize } = usePostView()
 // 保存滚动位置
 const scrollTop = ref(0)
 const hasCache = ref(false)
@@ -34,19 +34,8 @@ const cacheCondition = reactive<Condition>({
   tag: '',
 })
 
-async function update() {
-  isLoading.value = true
-  const num = await addPost(userInfo.phone, 10)
-  if (num < 10) {
-    hasMore.value = false
-  }
-  isLoading.value = false
-}
-
 onMounted(async () => {
-  refreshPosts()
-  changeTo('主页')
-  await updateNum(userInfo.phone)
+  await initialize('主页')
   hasCache.value = true
 })
 

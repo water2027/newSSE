@@ -9,30 +9,17 @@ import {
 } from 'vue'
 import { getTeachers } from '@/api/info/getTeacher'
 import PostList from '@/components/PostList.vue'
+import { usePostView } from '@/composables/usePostView'
 import { usePostStore } from '@/store/postStore'
-import { useUserStore } from '@/store/userStore'
 
 const tag = ref('')
 const teachers = reactive<Tag[]>([])
 
-const { userInfo } = useUserStore()
-const { posts, addPost, changeTo, refreshPosts, updateNum } = usePostStore()
-const hasMore = ref(true)
-const isLoading = ref(false)
-
-async function update() {
-  isLoading.value = true
-  const num = await addPost(userInfo.phone, 10)
-  if (num <= 0) {
-    hasMore.value = false
-  }
-  isLoading.value = false
-}
+const { changeTo, refreshPosts } = usePostStore()
+const { posts, isLoading, hasMore, initialize, update } = usePostView()
 
 onMounted(async () => {
-  refreshPosts()
-  changeTo('课程专区')
-  await updateNum(userInfo.phone)
+  await initialize('课程专区')
   const resp = await getTeachers()
   teachers.splice(0, teachers.length, ...resp)
 })
