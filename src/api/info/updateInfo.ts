@@ -1,4 +1,4 @@
-import { getTokenWithExpiry } from '../auth'
+import { useUserStore } from '@/store/userStore'
 import { requestFunc } from '../req'
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL
@@ -26,7 +26,7 @@ async function updateUserInfo(avatarURL: string, intro: string, name: string, us
 }
 
 async function uploadAvatar(photo: File) {
-  const token = getTokenWithExpiry()
+  const token = useUserStore().token.value
   if (!token) {
     return
   }
