@@ -140,7 +140,7 @@ onUnmounted(() => {
         <MobileHeader :style="{ height: headerHeight }" :is-home-page="isHomePage" />
       </template>
     </header>
-    <main>
+    <main class="mt-2 w-full p-0">
       <template v-if="!isPC">
         <BottomNavbar
           :notice-num="noticeNum.unreadTotalNum"
@@ -206,47 +206,13 @@ header {
   align-items: center;
 }
 
-main {
-  width: 100%;
-  padding: 0;
-  margin-top: 10px;
-}
-
 /* 大屏幕样式 >768px */
 @media screen and (min-width: 768px) {
-  main {
-    display: flex;
-    flex-direction: row;
-  }
-
   .content {
     margin-left: 5%;
     margin-right: 5%;
     width: 100%;
     height: auto;
-  }
-
-  h2 {
-    margin-left: auto;
-    margin-right: auto;
-    padding: 10px;
-  }
-
-  footer {
-    display: none;
-  }
-}
-
-/* 小屏幕样式 <768px */
-@media screen and (max-width: 768px) {
-  main {
-    padding: 0;
-  }
-
-  .content {
-    width: 100%;
-    margin: 0;
-    border: none;
   }
 }
 </style>
