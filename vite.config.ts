@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { fileURLToPath, URL } from 'node:url'
 import vue from '@vitejs/plugin-vue'
 import vueJsxPlugin from '@vitejs/plugin-vue-jsx'
@@ -84,12 +85,7 @@ export default defineConfig({
             },
           },
         ],
-        globPatterns: [
-          `${base}favicon.ico`,
-          `${base}manifest.json`,
-          `${base}android-chrome-192x192.png`,
-          `${base}android-chrome-512x512.png`,
-        ],
+        globPatterns: [],
         skipWaiting: true,
         clientsClaim: true,
       },
