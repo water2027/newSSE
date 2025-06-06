@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ProductCreation } from '@/api/shop/handleProduct'
 import { ref, useTemplateRef } from 'vue'
 import { useRouter } from 'vue-router'
 import { uploadPhoto } from '@/api/editPostAndComment/utils'
@@ -10,19 +11,10 @@ const { userInfo } = useUserStore()
 
 const router = useRouter()
 
-// 商品数据接口
-interface ProductData {
-  name: string
-  price: number | null
-  description: string
-  images: string[]
-  tempFiles: File[]
-}
-
 // 商品数据
-const product = ref<ProductData>({
+const product = ref<ProductCreation & { tempFiles: File[] }>({
   name: '',
-  price: null,
+  price: 0,
   description: '',
   images: [], // 存储图片URL
   tempFiles: [], // 临时存储选择的文件，用于预览

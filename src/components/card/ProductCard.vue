@@ -6,11 +6,11 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['view-detail'])
+const emit = defineEmits(['viewDetail'])
 
 // 查看商品详情
 async function viewDetail() {
-  emit('view-detail', props.product)
+  emit('viewDetail', props.product)
 }
 </script>
 

@@ -1,9 +1,8 @@
 /**
  * @description 等级
  * @param {number} userScore
- * @returns
  */
-function levelNameHandler(userScore: number) {
+function levelNameHandler(userScore: number): string {
   if (!userScore && userScore !== 0) {
     return 'lV? undefined'
   }
@@ -34,6 +33,7 @@ function levelNameHandler(userScore: number) {
   if (userScore >= 5000) {
     return '祖师爷'
   }
+  return 'lV? undefined'
 }
 
 function levelClassHandler(userScore: number) {
@@ -67,6 +67,7 @@ function levelClassHandler(userScore: number) {
   if (userScore >= 5000) {
     return 'level-8'
   }
+  return 'lV-undefined'
 }
 
 // 经验

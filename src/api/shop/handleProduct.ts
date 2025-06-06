@@ -1,13 +1,13 @@
 import { requestFunc } from '../req'
 
-interface Product {
-  price: number | null
+export interface ProductCreation {
+  price: number
   name: string
   description: string
   images: string[]
 }
 
-interface PostProductRequestBody {
+export interface PostProductRequestBody {
   UserID: number
   Price: number
   Title: string
@@ -16,7 +16,7 @@ interface PostProductRequestBody {
   ISAnonymous: boolean
 }
 
-async function handleProduct(product: Product, id: number): Promise<any> {
+async function handleProduct(product: ProductCreation, id: number): Promise<any> {
   try {
     const res = await requestFunc(`/auth/postProduct`, {
       method: 'POST',
@@ -42,7 +42,6 @@ async function handleProduct(product: Product, id: number): Promise<any> {
     return data
   }
   catch (e) {
-    alert(e)
     console.error(e)
   }
 }

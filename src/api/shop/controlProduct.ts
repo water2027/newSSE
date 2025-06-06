@@ -1,8 +1,8 @@
 import { requestFunc } from '../req'
 
-interface DeleteProductRequestBody {
-  productID: number
-}
+// interface DeleteProductRequestBody {
+//   productID: number
+// }
 
 async function deleteProduct(productID: number): Promise<any> {
   try {
@@ -13,7 +13,7 @@ async function deleteProduct(productID: number): Promise<any> {
       },
       body: {
         productID,
-      } as DeleteProductRequestBody,
+      },
     }, true)
 
     // 添加类型检查
@@ -25,7 +25,6 @@ async function deleteProduct(productID: number): Promise<any> {
     return data
   }
   catch (e) {
-    alert(e)
     console.error(e)
   }
 }

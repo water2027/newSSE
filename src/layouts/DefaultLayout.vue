@@ -24,9 +24,7 @@ const BottomNavbar = defineAsyncComponent(
 const PcHeader = defineAsyncComponent(
   () => import('@/components/PcHeader.vue'),
 )
-const ShopSidebar = defineAsyncComponent(
-  () => import('@/components/ShopSidebar.vue'),
-)
+
 const PartitionList = defineAsyncComponent(() => import('@/components/PartitionList.vue'))
 const MobileHeader = defineAsyncComponent(() => import('@/components/MobileHeader.vue'))
 const route = useRoute()
@@ -56,10 +54,7 @@ const isHomePage = computed(() => {
  * @description 发帖和看帖的时候隐藏热榜
  */
 const heatPostsIsHidden = computed(() => {
-  return /^\/(post|shop|myproducts|sale|productdetail)/.test(route.fullPath)
-})
-const shopSidebarIsShow = computed(() => {
-  return /^\/(myproducts|shop)/.test(route.fullPath)
+  return /^\/(?:post|shop|myproducts|sale|productdetail)/.test(route.fullPath)
 })
 
 const chatNum = ref(0)
@@ -165,7 +160,6 @@ onUnmounted(() => {
         </router-view>
       </div>
       <HeatList v-if="isPC && !heatPostsIsHidden" />
-      <ShopSidebar v-if="isPC && shopSidebarIsShow" />
     </main>
   </div>
 </template>

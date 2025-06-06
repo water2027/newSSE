@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ProductDetail } from '@/api/shop/getProducts'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { deleteProduct } from '@/api/shop/controlProduct'
@@ -6,27 +7,24 @@ import { getProductByID } from '@/api/shop/getProducts'
 import { showMsg } from '@/components/MessageBox'
 import { useUserStore } from '@/store/userStore'
 
-interface ProductInterface {
-  SellerID: number
-  ProductID: number
-  Name: string
-  Seller: string
-  Price: number
-  Description: string
-  Photos: string
-  userId: number
-}
-
 const router = useRouter()
 const route = useRoute()
-const product = ref<ProductInterface>({} as ProductInterface)
+const product = ref<ProductDetail>({
+  SellerID: 0,
+  ProductID: 0,
+  Seller: '',
+  Price: 0,
+  Name: '',
+  Description: '',
+  Photos: [],
+  ISAnonymous: false,
+})
 const { userInfo } = useUserStore()
-const currentUserId = userInfo.userID
 const imageIndex = ref(0)
 
 // 判断当前登录用户是否是商品发布者
 const isCurrentUser = computed(() => {
-  return product.value.SellerID === currentUserId
+  return product.value.SellerID === userInfo.userID
 })
 
 // 获取商品详情的异步函数
@@ -34,7 +32,6 @@ async function fetchProductDetail(ProductID: number) {
   try {
     const response = await getProductByID(ProductID)
     product.value = response
-    console.log(response)
   }
   catch (error) {
     console.error('Failed to fetch product detail:', error)
@@ -69,9 +66,9 @@ function goBack() {
 }
 
 // 删除商品
-function DeleteProduct() {
+async function DeleteProduct() {
   if (confirm('确定要删除此商品吗？')) {
-    deleteProduct(Number(product.value.ProductID))
+    await deleteProduct(Number(product.value.ProductID))
     showMsg('商品已删除')
     router.push('/shop')
   }
@@ -84,10 +81,10 @@ function navigateChat() {
 }
 
 // 生命周期钩子 - 组件挂载后获取商品详情
-onMounted(() => {
+onMounted(async () => {
   const ProductID = route.params.ProductID
   if (ProductID) {
-    fetchProductDetail(Number(ProductID))
+    await fetchProductDetail(Number(ProductID))
   }
 })
 </script>

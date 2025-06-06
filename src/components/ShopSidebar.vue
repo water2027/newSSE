@@ -1,38 +1,7 @@
-<script lang="ts">
-import { defineComponent } from 'vue'
-import { useRouter } from 'vue-router'
+<script lang="ts" setup>
 import { useUserStore } from '@/store/userStore'
 
 const { userInfo } = useUserStore()
-export default defineComponent({
-  setup() {
-    const router = useRouter()
-
-    const goToMyProducts = () => {
-      router.push('/myproducts')
-    }
-
-    const goToMessages = () => {
-      alert('匿名买卖功能暂未开放')
-    }
-
-    const goToPublish = () => {
-      router.push('/sale')
-    }
-
-    const goBack = () => {
-      router.push('/')
-    }
-
-    return {
-      userInfo,
-      goToMyProducts,
-      goToMessages,
-      goToPublish,
-      goBack,
-    }
-  },
-})
 </script>
 
 <template>
@@ -51,39 +20,25 @@ export default defineComponent({
 
       <!-- 导航按钮部分 -->
       <div class="navigation-buttons">
-        <button class="nav-button" @click="goToMyProducts">
+        <RouterLink to="/shop/myproducts" class="nav-button">
           我的商品
-        </button>
-        <button class="nav-button" @click="goToMessages">
+        </RouterLink>
+        <RouterLink to="/chat" class="nav-button">
           私信通知
-          <!-- <span v-if="userInfo.unreadMessages > 0" class="notification-badge">
-            {{ userInfo.unreadMessages }}
-          </span> -->
-        </button>
-        <button class="nav-button" @click="goToPublish">
+        </RouterLink>
+        <RouterLink to="/shop/sale" class="nav-button">
           发布商品
-        </button>
-        <button class="nav-button" @click="goBack">
+        </RouterLink>
+        <RouterLink to="/" class="nav-button">
           返回主页
-        </button>
+        </RouterLink>
       </div>
     </div>
 
-    <!-- 主内容区域 -->
-    <div class="main-content">
-      <!-- 这里放置主内容 -->
-      <slot />
-    </div>
   </div>
 </template>
 
 <style scoped>
-.container {
-  display: flex;
-  width: 0%;
-  /* min-height: 100vh; */
-}
-
 .sidebar {
   width: 120px;
   background-color: #f8f9fa;

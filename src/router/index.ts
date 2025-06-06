@@ -85,26 +85,34 @@ const routes = [
         component: () => import('@/views/ChatView.vue'),
       },
       {
-        path: '/shop',
-        name: 'Shop',
-        component: () => import('@/views/ShopView.vue'),
+        path: 'shop',
+        name: 'ShopLayout',
+        component: () => import('@/layouts/ShopLayout.vue'),
+        children: [
+          {
+            path: '',
+            name: 'Shop',
+            component: () => import('@/views/ShopView.vue'),
+          },
+          {
+            path: 'myproducts',
+            name: 'MyProducts',
+            component: () => import('@/views/ShopView.vue'),
+          },
+          {
+            path: 'productdetail/:ProductID',
+            name: 'Productdetail',
+            component: () => import('@/views/ProductView.vue'),
+            props: true,
+          },
+          {
+            path: 'sale',
+            name: 'Sale',
+            component: () => import('@/views/SaleView.vue'),
+          },
+        ],
       },
-      {
-        path: '/myproducts',
-        name: 'MyProducts',
-        component: () => import('@/views/ShopView.vue'),
-      },
-      {
-        path: '/productdetail/:ProductID',
-        name: 'Productdetail',
-        component: () => import('@/views/ProductView.vue'),
-        props: true,
-      },
-      {
-        path: '/sale',
-        name: 'Sale',
-        component: () => import('@/views/SaleView.vue'),
-      },
+
     ],
   },
   {
@@ -154,7 +162,6 @@ router.beforeEach((to, from, next) => {
       const value = query[key]
       redirect = `${redirect}&${key}=${value}`
     }
-    console.log(redirect)
     next(`/auth/login?${redirect}`)
     return
   }

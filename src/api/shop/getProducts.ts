@@ -1,17 +1,39 @@
 import { requestFunc } from '../req'
 
-interface GetProductsRequestBody {
-  searchinfo: string
-  searchsort: string
-  limit: number
-  offset: number
+// interface GetProductsRequestBody {
+//   searchinfo: string
+//   searchsort: string
+//   limit: number
+//   offset: number
+// }
+
+// interface GetProductByIDRequestBody {
+//   productID: number
+// }
+
+export interface Product {
+  SellerID: number
+  ProductID: number
+  Seller: string
+  Price: number
+  Name: string
+  Description: string
+  Photos: string[]
+  ISAnonymous: boolean
 }
 
-interface GetProductByIDRequestBody {
-  productID: number
+export interface ProductDetail {
+  SellerID: number
+  ProductID: number
+  Seller: string
+  Price: number
+  Name: string
+  Description: string
+  Photos: string[]
+  ISAnonymous: boolean
 }
 
-async function getProducts(Searchsort: string): Promise<any> {
+async function getProducts(Searchsort: string): Promise<Product[]> {
   try {
     const res = await requestFunc(`/auth/getProducts`, {
       method: 'POST',
@@ -23,23 +45,23 @@ async function getProducts(Searchsort: string): Promise<any> {
         searchsort: Searchsort, // 用于分表查询 分为home,history两种
         limit: 10,
         offset: 0,
-      } as GetProductsRequestBody,
+      },
     }, true)
 
     if (!res) {
       throw new Error('No response received')
     }
 
-    const data = await res.json()
-    return data
+    const data = await res.json() as Product[]
+    return data || []
   }
   catch (e) {
-    alert(e)
     console.error(e)
+    return []
   }
 }
 
-async function getProductByID(id: number): Promise<any> {
+async function getProductByID(id: number): Promise<ProductDetail> {
   try {
     const res = await requestFunc(`/auth/getProductDetail`, {
       method: 'POST',
@@ -48,19 +70,28 @@ async function getProductByID(id: number): Promise<any> {
       },
       body: {
         productID: id,
-      } as GetProductByIDRequestBody,
+      },
     }, true)
 
     if (!res) {
       throw new Error('No response received')
     }
 
-    const data = await res.json()
+    const data = await res.json() as ProductDetail
     return data
   }
   catch (e) {
-    alert(e)
     console.error(e)
+    return {
+      SellerID: 0,
+      ProductID: 0,
+      Seller: '',
+      Price: 0,
+      Name: '',
+      Description: '',
+      Photos: [],
+      ISAnonymous: false,
+    }
   }
 }
 

@@ -1,16 +1,11 @@
 <script setup lang="ts">
+import type { Product } from '@/api/shop/getProducts'
 import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
 
+import { useRoute, useRouter } from 'vue-router'
 import { getProducts } from '@/api/shop/getProducts'
 import ProductCard from '@/components/card/ProductCard.vue'
 import FloatingBall from '@/components/FloatingBall.vue'
-
-interface Product {
-  ProductID: string
-  Price: number
-  // 添加其他产品属性
-}
 
 interface CarouselItem {
   image: string
@@ -30,13 +25,13 @@ const autoplayTimer = ref<number | null>(null)
 const loadedImagesCount = ref(0)
 const totalImagesToLoad = ref(0)
 const carouselItems = ref<CarouselItem[]>([
-  { image: './img/1.jpg', title: 'P1' },
-  { image: './img/2.jpg', title: 'P2' },
-  { image: './img/3.jpg', title: 'P3' },
+  { image: '/new/img/1.jpg', title: 'P1' },
+  { image: '/new/img/2.jpg', title: 'P2' },
+  { image: '/new/img/3.jpg', title: 'P3' },
 ])
 
 // 计算属性：根据价格筛选商品
-const filteredProducts = computed(() => {
+const filteredProducts = computed<Product[]>(() => {
   let result = [...products.value]
   if (selectedPriceRange.value) {
     const [min, max] = selectedPriceRange.value.split('-')
@@ -58,7 +53,6 @@ const filteredProducts = computed(() => {
 async function initData() {
   try {
     await fetchProducts()
-    await fetchCarouselItems()
     setupAutoplay()
   }
   catch (error) {
@@ -66,9 +60,7 @@ async function initData() {
   }
   finally {
     // 仅在所有数据加载完成后隐藏加载状态
-    if (carouselItems.value.length > 0 && products.value.length > 0) {
-      isLoading.value = false
-    }
+    isLoading.value = false
   }
 }
 const route = useRoute()
@@ -83,13 +75,6 @@ async function fetchProducts() {
   else {
     products.value = await getProducts('history')
   }
-
-  console.log(products)
-}
-
-// 方法：获取轮播图数据
-function fetchCarouselItems() {
-  // carouselItems.value = carouselItems.value
 }
 
 // 方法：设置自动轮播
@@ -146,7 +131,6 @@ function handleViewDetail(product: Product) {
 // 生命周期钩子：组件挂载时
 onMounted(() => {
   initData()
-
   // 计算需要加载的图片总数
   totalImagesToLoad.value = products.value.length + carouselItems.value.length
 })
@@ -158,121 +142,128 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="shop-container">
-    <div v-if="!isPC">
-      <FloatingBall />
-    </div>
+  <div class="w-full flex flex-row">
     <!-- 加载中骨架屏 -->
-    <div v-if="isLoading" class="skeleton-screen">
-      <div class="skeleton-top-section">
-        <div class="skeleton-carousel" />
-        <div class="skeleton-filter" />
-      </div>
-      <div class="skeleton-bottom-section">
-        <h2 class="skeleton-title" />
-        <div class="skeleton-product-list">
-          <div v-for="i in 8" :key="i" class="skeleton-product-card" />
+    <template v-if="isLoading">
+      <div class="skeleton-screen">
+        <div class="skeleton-top-section">
+          <div class="skeleton-carousel" />
+          <div class="skeleton-filter" />
+        </div>
+        <div class="skeleton-bottom-section">
+          <h2 class="skeleton-title" />
+          <div class="skeleton-product-list">
+            <div v-for="i in 8" :key="i" class="skeleton-product-card" />
+          </div>
         </div>
       </div>
-    </div>
+    </template>
 
     <!-- 实际内容 -->
-    <div v-else>
-      <!-- 功能区和轮播图块 -->
-      <div class="top-section">
-        <!-- 轮播窗 -->
-        <div class="carousel-container">
-          <div class="carousel">
-            <div class="carousel-inner" :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
-              <div
-                v-for="(item, index) in carouselItems"
-                :key="index"
-                class="carousel-item"
-              >
-                <img :src="item.image" alt="轮播图" @load="imageLoad">
-                <div class="carousel-title">
-                  {{ item.title }}
+    <template v-else>
+      <div class="flex flex-row">
+        <div>
+          <!-- 功能区和轮播图块 -->
+          <div class="top-section flex-">
+            <!-- 轮播窗 -->
+            <div class="carousel-container">
+              <div class="carousel">
+                <div class="carousel-inner" :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
+                  <div
+                    v-for="(item, index) in carouselItems"
+                    :key="index"
+                    class="carousel-item"
+                  >
+                    <img :src="item.image" alt="轮播图" @load="imageLoad">
+                    <div class="carousel-title">
+                      {{ item.title }}
+                    </div>
+                  </div>
+                </div>
+                <button class="carousel-control prev" @click="prevSlide">
+                  ❮
+                </button>
+                <button class="carousel-control next" @click="nextSlide">
+                  ❯
+                </button>
+                <div class="carousel-indicators">
+                  <span
+                    v-for="(item, index) in carouselItems"
+                    :key="index"
+                    class="indicator" :class="[{ active: index === currentIndex }]"
+                    @click="goToSlide(index)"
+                  />
                 </div>
               </div>
             </div>
-            <button class="carousel-control prev" @click="prevSlide">
-              ❮
-            </button>
-            <button class="carousel-control next" @click="nextSlide">
-              ❯
-            </button>
-            <div class="carousel-indicators">
-              <span
-                v-for="(item, index) in carouselItems"
-                :key="index"
-                class="indicator" :class="[{ active: index === currentIndex }]"
-                @click="goToSlide(index)"
-              />
-            </div>
-          </div>
-        </div>
 
-        <!-- 筛选条件 -->
-        <div class="filter-container">
-          <div class="filter-section">
-            <h3>筛选条件</h3>
-            <div class="price-filter">
-              <div class="price-label">
-                <label>价格区间：</label>
-              </div>
-              <div class="price-select-group">
-                <select v-model="selectedPriceRange">
-                  <option value="">
-                    请选择价格区间
-                  </option>
-                  <option value="0-200">
-                    0-200元
-                  </option>
-                  <option value="200-500">
-                    200-500元
-                  </option>
-                  <option value="500-1000">
-                    500-1000元
-                  </option>
-                  <option value="1000-2000">
-                    1000-2000元
-                  </option>
-                  <option value="2000-+">
-                    2000元以上
-                  </option>
-                </select>
+            <!-- 筛选条件 -->
+            <div class="filter-container">
+              <div class="filter-section">
+                <h3>筛选条件</h3>
+                <div class="price-filter">
+                  <div class="price-label">
+                    <label>价格区间：</label>
+                  </div>
+                  <div class="price-select-group">
+                    <select v-model="selectedPriceRange">
+                      <option value="">
+                        请选择价格区间
+                      </option>
+                      <option value="0-200">
+                        0-200元
+                      </option>
+                      <option value="200-500">
+                        200-500元
+                      </option>
+                      <option value="500-1000">
+                        500-1000元
+                      </option>
+                      <option value="1000-2000">
+                        1000-2000元
+                      </option>
+                      <option value="2000-+">
+                        2000元以上
+                      </option>
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- 商品展示块 -->
-      <div class="bottom-section">
-        <!-- 商品列表标题 -->
-        <h2 v-if="IsMain" class="product-list-title">
-          热门商品
-        </h2>
-        <h2 v-else class="product-list-title">
-          我的商品
-        </h2>
-        <!-- 商品列表 -->
-        <div class="product-list-wrapper">
-          <div v-if="filteredProducts.length > 0" class="product-list">
-            <ProductCard
-              v-for="product in filteredProducts"
-              :key="product.ProductID"
-              :product="product"
-              @view-detail="handleViewDetail"
-              @load="imageLoad"
-            />
-          </div>
-          <div v-else class="empty-product-list">
-            <p>没有找到符合条件的商品，请调整筛选条件。</p>
+          <!-- 商品展示块 -->
+          <div class="bottom-section">
+            <!-- 商品列表标题 -->
+            <h2 v-if="IsMain" class="product-list-title">
+              热门商品
+            </h2>
+            <h2 v-else class="product-list-title">
+              我的商品
+            </h2>
+            <!-- 商品列表 -->
+            <div class="product-list-wrapper">
+              <div v-if="filteredProducts.length > 0" class="product-list">
+                <ProductCard
+                  v-for="product in filteredProducts"
+                  :key="product.ProductID"
+                  :product="product"
+                  @view-detail="handleViewDetail"
+                  @load="imageLoad"
+                />
+              </div>
+              <div v-else class="empty-product-list">
+                <p>没有找到符合条件的商品，请调整筛选条件。</p>
+              </div>
+            </div>
           </div>
         </div>
+        <!-- <ShopSidebar /> -->
       </div>
-    </div>
+    </template>
+    <template v-if="!isPC">
+      <FloatingBall />
+    </template>
   </div>
 </template>
 

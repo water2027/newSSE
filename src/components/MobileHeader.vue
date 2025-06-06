@@ -16,7 +16,7 @@ function search() {
   el.value = ''
 }
 const shopSidebarIsShow = computed(() => {
-  return /^\/(myproducts|shop)/.test(route.fullPath)
+  return /^\/(?:myproducts|shop)/.test(route.fullPath)
 })
 </script>
 
