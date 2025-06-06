@@ -38,7 +38,7 @@ const md: MarkdownIt = new MarkdownIt({
 
     const normalizedLang = languageMap[lang] || lang
 
-        if (normalizedLang && Prism.languages[normalizedLang]) {
+    if (normalizedLang && Prism.languages[normalizedLang]) {
       try {
         const highlighted = Prism.highlight(str, Prism.languages[normalizedLang], normalizedLang)
         return `<pre class="language-${normalizedLang}"><code class="language-${normalizedLang}">${highlighted}</code></pre>`
@@ -64,6 +64,21 @@ const md: MarkdownIt = new MarkdownIt({
   // 禁用错误处理
   trust: true,
 })
+
+md.renderer.rules.image = (tokens, idx) => {
+  const token = tokens[idx]
+  const srcIndex = token.attrIndex('src')
+  const altIndex = token.attrIndex('alt')
+  const titleIndex = token.attrIndex('title')
+  if (srcIndex < 0)
+    return ''
+  if(!token.attrs) return ''
+  const src = token.attrs[srcIndex][1]
+  const alt = altIndex >= 0 ? `alt="${token.content}"` : ''
+  const title = titleIndex >= 0 ? ` title="${token.attrs[titleIndex][1]}"` : ''
+  // 添加懒加载属性
+  return `<img src="${src}"${alt}${title} loading="lazy" />`
+}
 
 /**
  * @description 安全的html，会自动去掉script和iframe之类的标签
