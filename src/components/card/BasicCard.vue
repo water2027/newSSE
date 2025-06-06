@@ -1,8 +1,7 @@
-
 <template>
-    <div class="card-root root w-full min-h-37 h-a flex flex-col">
-        <slot></slot>
-    </div>
+  <div class="card-root root min-h-37 w-full flex flex-col">
+    <slot />
+  </div>
 </template>
 
 <style lang="scss">

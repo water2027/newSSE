@@ -372,6 +372,7 @@ onUnmounted(() => {
         </router-view>
       </div>
       <HeatList v-if="isPC && !heatPostsIsHidden" />
+      <div class="h-13vw" />
     </main>
   </div>
 </template>

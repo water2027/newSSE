@@ -10,11 +10,11 @@ import { showMsg } from '@/components/MessageBox'
 
 import { useUserStore } from '@/store/userStore'
 
-import BasicCard from './BasicCard.vue'
 import BasicInfo from '../BasicInfo.vue'
 import MarkdownContainer from '../MarkdownContainer.vue'
 import UserAvatar from '../UserAvatar.vue'
 import UserButton from '../UserButton.vue'
+import BasicCard from './BasicCard.vue'
 
 const { post } = defineProps<{
   post: Post
@@ -127,7 +127,7 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
 
 <template>
   <BasicCard>
-    <div ref="root" class="card-root">
+    <div ref="root">
       <div class="h-fit flex flex-row items-center">
         <UserAvatar
           :src="post.UserAvatar"
@@ -171,7 +171,7 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
 
 <style>
   .card-title {
-    margin-top: 10px;
-    margin-bottom: 8px;
-  }
+  margin-top: 10px;
+  margin-bottom: 8px;
+}
 </style>
