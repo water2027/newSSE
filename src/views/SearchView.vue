@@ -7,7 +7,7 @@ import {
 
 import { useRoute } from 'vue-router'
 import { showMsg } from '@/components/MessageBox'
-import NewList from '@/components/NewList.vue'
+import PostList from '@/components/PostList.vue'
 import { usePostStore } from '@/store/postStore'
 import { useUserStore } from '@/store/userStore'
 
@@ -43,7 +43,7 @@ onMounted(async () => {
 <template>
   <div class="root">
     <h2>搜索</h2>
-    <NewList :posts="posts" :is-loading="isLoading" :has-more="hasMore" @bottom="update" />
+    <PostList :posts="posts" :is-loading="isLoading" :has-more="hasMore" @bottom="update" />
   </div>
 </template>
 

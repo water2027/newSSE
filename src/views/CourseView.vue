@@ -8,7 +8,7 @@ import {
   watch,
 } from 'vue'
 import { getTeachers } from '@/api/info/getTeacher'
-import NewList from '@/components/NewList.vue'
+import PostList from '@/components/PostList.vue'
 import { usePostStore } from '@/store/postStore'
 import { useUserStore } from '@/store/userStore'
 
@@ -44,7 +44,7 @@ watch(tag, (newTag) => {
 </script>
 
 <template>
-  <div class="root">
+  <div class="w-full">
     <h2>课程专区</h2>
     <div>
       <span class="gradientUnderline">请选择你的老师，不选也没关系 </span>
@@ -61,28 +61,6 @@ watch(tag, (newTag) => {
         </option>
       </select>
     </div>
-    <NewList :posts="posts" :is-loading="isLoading" :has-more="hasMore" @bottom="update" />
+    <PostList :posts="posts" :is-loading="isLoading" :has-more="hasMore" @bottom="update" />
   </div>
 </template>
-
-<style scoped>
-@media screen and (min-width: 768px) {
-  .root {
-    margin: 0 5%;
-  }
-  p {
-    text-indent: 2rem;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .root {
-    overflow-x: hidden;
-  }
-}
-
-.root {
-  width: 100%;
-  color: var(--color-text);
-}
-</style>

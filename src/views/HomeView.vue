@@ -9,7 +9,7 @@ import {
   ref,
 } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
-import NewList from '@/components/NewList.vue'
+import PostList from '@/components/PostList.vue'
 import { usePostStore } from '@/store/postStore'
 import { useUserStore } from '@/store/userStore'
 
@@ -74,30 +74,8 @@ onBeforeRouteLeave(() => {
 </script>
 
 <template>
-  <div class="root">
+  <div class="w-full">
     <h2>主页</h2>
-    <NewList :posts="posts" :is-loading="isLoading" :has-more="hasMore" @bottom="update" />
+    <PostList :posts="posts" :is-loading="isLoading" :has-more="hasMore" @bottom="update" />
   </div>
 </template>
-
-<style scoped>
-@media screen and (min-width: 768px) {
-  .root {
-    margin: 0 5%;
-  }
-  p {
-    text-indent: 2rem;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .root {
-    overflow-x: hidden;
-  }
-}
-
-.root {
-  width: 100%;
-  color: var(--color-text);
-}
-</style>
