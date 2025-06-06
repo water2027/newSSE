@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { AllInfo } from '@/api/info/getInfo'
 import { Icon } from '@iconify/vue'
 import { onBeforeMount, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -9,15 +10,14 @@ import { useUserStore } from '@/store/userStore'
 
 const router = useRouter()
 
-const user = ref()
+const user = ref<AllInfo>()
 const { userInfo } = useUserStore()
 
 onBeforeMount(() => {
   const { id } = useRoute().params
   getInfoById(Number(id))
     .then((res) => {
-        user.value = res
-        user.value.title = getUserTitle(res.score)
+      user.value = res
     })
     .catch((error) => {
       if (error.response) {
@@ -31,38 +31,10 @@ onBeforeMount(() => {
 })
 
 function navigateChat() {
-  if (user.value.userID > 0) {
+  if (user.value && user.value.userID > 0) {
     router.push({ name: 'Chat', query: { user: user.value.userID } })
     // stopPropagation()
   }
-}
-
-function getUserTitle(userScore: number) {
-  if (userScore < 100) {
-    return '菜鸟'
-  }
-  if (userScore >= 100 && userScore < 300) {
-    return '大虾'
-  }
-  if (userScore >= 300 && userScore < 600) {
-    return '码农'
-  }
-  if (userScore >= 600 && userScore < 1000) {
-    return '程序猿'
-  }
-  if (userScore >= 1000 && userScore < 2000) {
-    return '工程师'
-  }
-  if (userScore >= 2000 && userScore < 3000) {
-    return '大牛'
-  }
-  if (userScore >= 3000 && userScore < 4000) {
-    return '专家'
-  }
-  if (userScore >= 4000 && userScore < 5000) {
-    return '大神'
-  }
-  return '祖师爷'
 }
 </script>
 
@@ -70,27 +42,22 @@ function getUserTitle(userScore: number) {
   <div v-if="user" class="user-profile-wrapper">
     <div class="profile-card profile-header-wrapper">
       <div class="profile-header">
-        <UserAvatar :src="user.avatarURL" />
-        <div class="profile-header-info">
-          <div class="user-name">
-            {{ user.name }}
-          </div>
-          <div class="user-bio">
-            {{ user.intro }}
-          </div>
-        </div>
-        <div v-if="userInfo.userID !== user.userID" class="btn-chat" @click="navigateChat">
+        <UserAvatar class="relative" :src="user.avatarURL" :user-name="user.name" :user-score="user.score" />
+        <div v-if="userInfo.userID !== user.userID" class="btn-chat whitespace-nowrap" @click="navigateChat">
           <Icon icon="tabler:send" />
-          私信
+          <span class="whitespace-nowrap">
+            私信
+          </span>
         </div>
       </div>
     </div>
-    <div class="profile-main">
-      <div class="main-left">
-        <div class="profile-card profile-dynamic" />
-      </div>
-      <div class="main-right">
-        <div class="profile-card profile-info" />
+    <div class="flex flex-row">
+      <div class="flex-1">
+        <div class="profile-card profile-dynamic">
+          <span>
+            {{ user.intro || '没有个人简介呢' }}
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -113,33 +80,6 @@ function getUserTitle(userScore: number) {
     display: flex;
     align-items: center;
 
-    .user-avatar {
-      width: 4.2rem;
-      height: 4.2rem;
-
-      .user-avatar-img {
-        border: 2px solid #eee;
-      }
-    }
-
-    .profile-header-info {
-      margin-left: 1rem;
-      display: grid;
-      align-items: center;
-      flex: 1;
-
-      .user-name {
-        font-size: 20px;
-        font-weight: bold;
-        line-height: 1.8;
-      }
-
-      .user-bio {
-        font-size: 14px;
-        color: #555;
-      }
-    }
-
     .btn-chat {
       color: #909eb4;
       padding: 0.3em 1em;
@@ -158,29 +98,6 @@ function getUserTitle(userScore: number) {
         border-color: #666f7e;
         background: #666f7e10;
       }
-    }
-  }
-}
-
-.profile-main {
-  display: flex;
-  flex-wrap: wrap-reverse;
-  gap: 0 1em;
-
-  .main-left {
-    flex: 1;
-  }
-
-  .main-right {
-    width: 25%;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .profile-main {
-    .main-left,
-    .main-right {
-      width: 100%;
     }
   }
 }

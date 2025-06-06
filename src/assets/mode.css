@@ -1,7 +1,7 @@
 /* 存放明亮模式和黑暗模式的颜色 */
 /* 子元素使用css变量 */
 
-body.light-mode {
+body {
   --color-bg: #fafafa;
   background-color: var(--color-bg);
 

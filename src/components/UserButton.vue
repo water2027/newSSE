@@ -42,9 +42,6 @@ function handleDelete() {
 </template>
 
 <style lang="scss">
-.userButtons {
-
-}
 body.dark-mode {
   .userButtons {
     .icon {

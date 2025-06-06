@@ -54,7 +54,7 @@ async function upload(file: File) {
   }
 }
 
-async function uploadFile(event:Event) {
+async function uploadFile(event: Event) {
   const el = event.target as HTMLInputElement
   const file = el.files![0]
   await upload(file)
@@ -62,19 +62,21 @@ async function uploadFile(event:Event) {
 
 async function handlePaste(event: ClipboardEvent) {
   const items = event.clipboardData?.items
-  if(!items) return
+  if (!items)
+    return
   for (let i = 0; i < items.length; ++i) {
     const item = items[i]
     if (item.kind === 'file') {
       const file = item.getAsFile()
       event.preventDefault()
-      if(!file) return
+      if (!file)
+        return
       await upload(file)
     }
   }
 }
 
-type EditType = '标题' | '粗体' | '斜体'|'删除线'|'引用'|'无序列表'|'有序列表'|'表格'|'分割线'|'代码块'
+type EditType = '标题' | '粗体' | '斜体' | '删除线' | '引用' | '无序列表' | '有序列表' | '表格' | '分割线' | '代码块'
 function editContent(type: EditType) {
   let insertion = ''
   let cursorOffset = 0
@@ -258,50 +260,46 @@ onMounted(() => {
   justify-content: center;
   width: 100%;
   height: auto;
+  div {
+    width: 100%;
+    min-height: 100%;
+    border-radius: 5px;
+    padding: 10px;
+    height: auto;
+    overflow-y: hidden;
+  }
+  textarea {
+    width: 100%;
+    height: 450px;
+    border: 1px solid #d1d1d1;
+    border-radius: 5px;
+    padding: 10px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 16px;
+    resize: none;
+    transition: border-color 0.3s;
+    overflow: hidden;
+  }
 }
 .editorButton {
   margin-bottom: 15px;
-}
-
-.editorButton button {
-  background-color: #66bb6a;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 15px;
-  margin-right: 10px;
-  margin-top: 10px;
-  cursor: pointer;
-  transition:
-    background-color 0.3s,
-    transform 0.2s;
-}
-
-.editorButton button:hover {
-  background-color: #4caf50;
-  transform: translateY(-2px);
-}
-
-.container div {
-  width: 100%;
-  min-height: 100%;
-  border-radius: 5px;
-  padding: 10px;
-  height: auto;
-  overflow-y: hidden;
-}
-
-.container textarea {
-  width: 100%;
-  height: 450px;
-  border: 1px solid #d1d1d1;
-  border-radius: 5px;
-  padding: 10px;
-  font-family: 'Consolas', 'Courier New', monospace;
-  font-size: 16px;
-  resize: none;
-  transition: border-color 0.3s;
-  overflow: hidden;
+  button {
+    background-color: #66bb6a;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    margin-right: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition:
+      background-color 0.3s,
+      transform 0.2s;
+    &:hover {
+      background-color: #4caf50;
+      transform: translateY(-2px);
+    }
+  }
 }
 
 .buttons {
@@ -313,28 +311,27 @@ onMounted(() => {
   height: auto;
   padding: 10px;
   border-radius: 5px;
-}
+  .button {
+    width: 20vw;
+    height: 50px;
+    max-width: 100px;
+    margin-right: 20px;
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #42a5f5;
+    color: white;
+    text-align: center;
+    cursor: pointer;
+    transition:
+      background-color 0.3s,
+      transform 0.2s;
 
-.button {
-  width: 20vw;
-  height: 50px;
-  max-width: 100px;
-  margin-right: 20px;
-  margin-top: 20px;
-  padding: 10px;
-  border-radius: 8px;
-  background-color: #42a5f5;
-  color: white;
-  text-align: center;
-  cursor: pointer;
-  transition:
-    background-color 0.3s,
-    transform 0.2s;
-}
-
-.button:hover {
-  background-color: #2196f3;
-  transform: translateY(-2px);
+    &:hover {
+      background-color: #2196f3;
+      transform: translateY(-2px);
+    }
+  }
 }
 
 @media screen and (min-width: 768px) {
@@ -359,30 +356,34 @@ onMounted(() => {
 }
 
 /* 深色模式 */
-body.dark-mode .editorButton button {
-  background-color: darkorange;
-  color: #ffffff;
-}
-body.dark-mode .editorButton button:hover {
-  background-color: orange;
-  transform: translateY(-2px);
-}
-
-body.dark-mode .container textarea {
-  background-color: #333333;
-  color: #ffffff;
-  border: 1px solid #555555;
-}
-body.dark-mode .container textarea:focus {
-  border-color: #00eeff;
-  outline: none;
-}
-body.dark-mode .button {
-  background-color: #2196f3;
-  color: #ffffff;
-}
-
-body.dark-mode .button:hover {
-  background-color: #1976d2;
+body.dark-mode {
+  .editorButton {
+    button {
+      background-color: darkorange;
+      color: #ffffff;
+      &:hover {
+        background-color: orange;
+        transform: translateY(-2px);
+      }
+    }
+  }
+  .container {
+    textarea {
+      background-color: #333333;
+      color: #ffffff;
+      border: 1px solid #555555;
+      &:focus {
+        border-color: #00eeff;
+        outline: none;
+      }
+    }
+  }
+  .button {
+    background-color: #2196f3;
+    color: #ffffff;
+    &:hover {
+      background-color: #1976d2;
+    }
+  }
 }
 </style>
