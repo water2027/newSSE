@@ -89,7 +89,7 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
     </div>
     <RouterLink :to="`/postdetail/${post.PostID}`">
       <div
-        class="card-title"
+        class="mt-1"
       >
         <h2 v-if="post.Title.length <= 10">
           {{ post.Title || '' }}
@@ -116,10 +116,6 @@ p::after {
 
 a {
   display: block;
-}
-
-.card-title {
-  margin-bottom: 4px;
 }
 
 @media screen and (min-width: 768px) {

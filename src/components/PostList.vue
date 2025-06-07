@@ -57,11 +57,12 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div>
+  <div class="w-full">
     <transition-group name="list">
       <PostCard
         v-for="post in posts"
         :key="post.PostID"
+        class="mx-a my-3 w-15/16"
         :post="post"
       />
     </transition-group>

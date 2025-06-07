@@ -147,9 +147,9 @@ onMounted(async () => {
     <div v-else>
       loading...
     </div>
-    <div class="comment mt-5 h-a w-full">
+    <div class="mt-5 h-a w-full">
       <h2>评论</h2>
-      <div class="sort-comment float-right mr-5vw flex flex-row gap-2">
+      <div class="float-right mb-3 mr-5vw flex flex-row gap-2">
         <div
           class="sort-btn max-w-30 min-w-25 w-20vw flex cursor-pointer items-center justify-center rounded-1 bg-[#f5f5f5] px-1 py-3 font-500 transition-all duration-300 ease"
           hover="bg-[#e8d5c4]"
@@ -181,16 +181,16 @@ onMounted(async () => {
         class="commentList min-w-full w-full"
       >
         <!-- 使用id-评论数作为key使每次评论重新渲染当前评论 -->
-        <div
+        <template
           v-for="comment in sortedComments"
           :key="`${comment.PcommentID}`"
-          class="comment"
         >
           <CommentCard
+            class="mx-a my-3 w-15/16"
             :comment="comment"
             :post-id="post.PostID"
           />
-        </div>
+        </template>
       </div>
     </div>
   </div>

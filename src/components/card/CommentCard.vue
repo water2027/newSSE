@@ -151,7 +151,7 @@ async function like() {
         :markdown-content="comment.Content || 'loading'"
       />
       <BasicInfo :time="comment.CommentTime" :comment="comment.SubComments.length" :is-like="comment.IsLiked" :like="comment.LikeNum" @like-change="like" />
-      <div class="commentButton">
+      <div class="commentButton mb-3">
         <button @click="commentButtonIsShow = !commentButtonIsShow">
           {{ commentButtonIsShow ? '算了' : '评论' }}
         </button>
@@ -176,10 +176,10 @@ async function like() {
       <div
         v-if="comment.SubComments && comment.SubComments.length > 0"
         v-show="showSubComment"
-        class="subCommentList"
       >
         <CCommentCard
           v-for="subComment in comment.SubComments"
+          class="my-3 w-full"
           :key="subComment.ccommentID"
           :p-comment-id="comment.PcommentID"
           :sub-comment="subComment"
