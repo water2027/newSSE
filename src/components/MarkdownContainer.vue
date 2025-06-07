@@ -152,12 +152,12 @@ const safeHTML = computed(() => {
   overflow: auto;
 }
 
-:deep(code) {
+:deep(pre code) {
   display: block;
   position: relative;
 }
 
-:deep(code)::after {
+:deep(pre code)::after {
   content: '';
   background-image: url('/PhCopy.webp');
   background-size: cover;
