@@ -1,6 +1,11 @@
 <script lang="ts" setup>
 import { useUserStore } from '@/store/userStore'
-
+import { useRoute } from 'vue-router'
+import { computed } from 'vue'
+const route = useRoute()
+const IsMain = computed(() => {
+  return /^\/shop\/?$/.test(route.fullPath)
+})
 const { userInfo } = useUserStore()
 </script>
 
@@ -20,8 +25,11 @@ const { userInfo } = useUserStore()
 
       <!-- 导航按钮部分 -->
       <div class="navigation-buttons">
-        <RouterLink to="/shop/myproducts" class="nav-button">
+        <RouterLink to="/shop/myproducts" class="nav-button" v-if="IsMain">
           我的商品
+        </RouterLink>
+        <RouterLink to="/shop" class="nav-button" v-else>
+          返回首页
         </RouterLink>
         <RouterLink to="/chat" class="nav-button">
           私信通知

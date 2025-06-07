@@ -303,7 +303,7 @@ function checkSameDay(x: Date, y: Date) {
 
 <template>
   <div class="chat-wrapper">
-    <div class="contact-list">
+    <div :class="current.userID?'contact-list':'contact-list2'">
       <div class="contact-header">
         <Icon icon="tabler:send" />
         对话列表
@@ -335,7 +335,7 @@ function checkSameDay(x: Date, y: Date) {
             <div class="contact-entry selected">
               <UserAvatar class="contact-icon" :src="current.avatarURL" :alt="current.name" />
               <div class="contact-info">
-                <div class="contact-name">
+                <div :class="current.userID?'contact-name':'contact-name2'">
                   {{ current.name }}
                 </div>
                 <div class="contact-intro">
@@ -412,6 +412,17 @@ function checkSameDay(x: Date, y: Date) {
   overflow: hidden;
 }
 
+.contact-list2 {
+  display: flex;
+  max-height: calc(90dvh - 100px);
+  width: 25%;
+  padding: 0;
+  flex-direction: column;
+  background: var(--chat-bg-main);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
 .contact-header {
   font-weight: bold;
   padding: 0.5rem;
@@ -452,6 +463,13 @@ function checkSameDay(x: Date, y: Date) {
 }
 
 .contact-name {
+  font-size: 16px;
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contact-name2 {
   font-size: 16px;
   font-weight: bold;
   overflow: hidden;
@@ -611,13 +629,22 @@ function checkSameDay(x: Date, y: Date) {
 }
 
 @media screen and (max-width: 768px) {
-  .contact-list {
+  .contact-list2{
     width: 100%;
-    height: 10%;
   }
 
   .chat-main {
     width: 100%;
+  }
+
+}
+@media screen and (max-width: 530px) {
+  .contact-list{
+    width: 18%;
+  }
+
+  .contact-name2 {
+    font-size: 0px;
   }
 }
 </style>
