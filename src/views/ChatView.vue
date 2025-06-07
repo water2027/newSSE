@@ -303,7 +303,7 @@ function checkSameDay(x: Date, y: Date) {
 
 <template>
   <div class="chat-wrapper">
-    <div :class="current.userID?'contact-list':'contact-list2'">
+    <div :class="current.userID ? 'contact-list' : 'contact-list2'">
       <div class="contact-header">
         <Icon icon="tabler:send" />
         对话列表
@@ -335,7 +335,7 @@ function checkSameDay(x: Date, y: Date) {
             <div class="contact-entry selected">
               <UserAvatar class="contact-icon" :src="current.avatarURL" :alt="current.name" />
               <div class="contact-info">
-                <div :class="current.userID?'contact-name':'contact-name2'">
+                <div :class="current.userID ? 'contact-name' : 'contact-name2'">
                   {{ current.name }}
                 </div>
                 <div class="contact-intro">
@@ -629,17 +629,16 @@ function checkSameDay(x: Date, y: Date) {
 }
 
 @media screen and (max-width: 768px) {
-  .contact-list2{
+  .contact-list2 {
     width: 100%;
   }
 
   .chat-main {
     width: 100%;
   }
-
 }
 @media screen and (max-width: 530px) {
-  .contact-list{
+  .contact-list {
     width: 18%;
   }
 

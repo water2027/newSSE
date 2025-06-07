@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Ref } from 'vue'
 import { computed, inject, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -19,8 +18,6 @@ const chatNum = inject('chatNum')
 const displayBool = computed(() =>
   noticeNum === 0 ? 'none' : 'block',
 )
-
-const isPC = inject<Ref<boolean>>('isPC')
 
 // 控制 "我的" 菜单的显示与隐藏
 const myMenuVisible = ref(false)
@@ -53,7 +50,6 @@ function changeTo(path: string) {
       主页
     </router-link>
     <router-link
-      v-if="!isPC"
       class="nav"
       :class="{ selected: selected === '/heat' }"
       to="/heat"
@@ -66,7 +62,6 @@ function changeTo(path: string) {
       />
       热榜
     </router-link>
-    <!-- 这里显示有问题, 但是实在不想改了. 还是改日吧 -->
     <router-link
       to="/partition/优质贴"
       class="nav"
@@ -89,8 +84,6 @@ function changeTo(path: string) {
 
     <router-link
       id="shop"
-      :notice-num="chatNum"
-      :display-bool="chatNum === 0 ? 'none' : 'block'"
       class="nav"
       :class="{ selected: selected === '/shop' }"
       to="/shop"
@@ -200,8 +193,6 @@ function changeTo(path: string) {
   min-height: 80px;
   border: 1px solid var(--color-border);
   border-radius: 5px;
-  animation: fadeIn 0.5s;
-  transition: all 0.3s;
   position: fixed;
   bottom: 0;
   width: 100%;
@@ -211,15 +202,6 @@ function changeTo(path: string) {
 
 body.dark-mode .bottom-nav-bar {
   background-color: #2e2e2e;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 
 .nav {
