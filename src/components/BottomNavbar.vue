@@ -5,7 +5,6 @@ import { useRoute } from 'vue-router'
 const { noticeNum = 0 } = defineProps<{
   noticeNum?: number
 }>()
-const emit = defineEmits(['changePath'])
 const route = useRoute()
 const selected = computed<string>(() => {
   const path = route.path
@@ -25,9 +24,6 @@ function toggleMyMenu() {
   myMenuVisible.value = !myMenuVisible.value
 }
 
-function changeTo(path: string) {
-  emit('changePath', path)
-}
 </script>
 
 <template>
@@ -39,7 +35,6 @@ function changeTo(path: string) {
       class="nav"
       :class="{ selected: selected === '/' }"
       to="/"
-      @click="changeTo('main')"
     >
       <div
         class="icon"
@@ -111,7 +106,7 @@ function changeTo(path: string) {
     </router-link>
     <!-- 新增 '我的' 下拉菜单 -->
     <div
-      class="nav"
+      class="nav relative overflow-visible"
       @click="toggleMyMenu"
     >
       <div
@@ -136,7 +131,6 @@ function changeTo(path: string) {
           class="dropdown-item"
           :class="{ selected: selected === '/save' }"
           to="/save"
-          @click="changeTo('save')"
         >
           我的收藏
         </router-link>
@@ -144,7 +138,6 @@ function changeTo(path: string) {
           class="dropdown-item"
           :class="{ selected: selected === '/history' }"
           to="/history"
-          @click="changeTo('history')"
         >
           发帖历史
         </router-link>
@@ -178,7 +171,6 @@ function changeTo(path: string) {
   z-index: 1000;
   background-color: white;
   transform: translateZ(0);
-  contain: layout style paint;
   isolation: isolate;
 }
 
@@ -195,7 +187,6 @@ body.dark-mode .bottom-nav-bar {
   color: var(--color-text);
   position: relative;
   font-size: 0.9em;
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -208,6 +199,7 @@ body.dark-mode .bottom-nav-bar {
   display: flex;
   justify-content: space-around;
   position: absolute;
+  width: 100%;
   bottom: 85px;
   right: 10px;
   background-color: white;
