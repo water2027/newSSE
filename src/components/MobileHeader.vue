@@ -2,9 +2,6 @@
 import { computed, useTemplateRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-defineProps<{
-  isHomePage: boolean
-}>()
 const route = useRoute()
 const router = useRouter()
 const sinfo = useTemplateRef('sinfo')
