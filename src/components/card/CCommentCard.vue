@@ -81,7 +81,6 @@ async function handler(type: 'delete' | 'comment') {
         showMsg('删除失败')
         return
       }
-      showMsg('删除成功')
       event = new CustomEvent('comment-handle', {
         bubbles: true,
       })
@@ -93,7 +92,6 @@ async function handler(type: 'delete' | 'comment') {
         showMsg('评论失败')
         return
       }
-      showMsg('评论成功')
       event = new CustomEvent('comment-handle', {
         bubbles: true,
       })
@@ -119,7 +117,6 @@ async function like() {
       showMsg('点赞失败')
       return
     }
-    showMsg('点赞成功')
     const event = new CustomEvent('comment-handle', {
       bubbles: true,
     })

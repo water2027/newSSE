@@ -15,7 +15,7 @@ async function viewDetail() {
 </script>
 
 <template>
-  <div :class="['product-card', { 'sold-out': product.ISSold }]">
+  <div class="product-card" :class="[{ 'sold-out': product.ISSold }]">
     <div class="product-image">
       <img :src="product.Photos[0]" :alt="product.name">
       <div v-if="product.ISSold" class="sold-out-mark">已卖出~</div>

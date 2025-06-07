@@ -59,7 +59,6 @@ async function handler(type: 'comment') {
       const result = await sendCommentFunc()
       if (!result)
         return showMsg('评论失败，请稍后再试')
-      showMsg('评论成功')
       event = new CustomEvent('comment-handle', {
         bubbles: true,
       })
@@ -82,7 +81,6 @@ async function handleUserAction(type: 'delete' | 'save') {
           post.PostID,
           userInfo.phone,
         )
-        showMsg(post.IsSaved ? '取消成功' : '收藏成功')
         useCustomEvent('save')
       }
       catch (e) {
@@ -94,7 +92,6 @@ async function handleUserAction(type: 'delete' | 'save') {
     case 'delete': {
       try {
         await delPost(post.PostID)
-        showMsg('删除成功')
         useCustomEvent('delete')
       }
       catch (error) {
@@ -112,10 +109,10 @@ async function like() {
   // 后端没有返回数据，不要赋值后再更新
   try {
     await likePost(post.PostID, userInfo.phone)
-    showMsg(post.IsLiked ? '取消成功' : '点赞成功')
     useCustomEvent('like')
   }
   catch (e) {
+    showMsg('失败')
     console.error(e)
   }
 }

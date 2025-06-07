@@ -30,10 +30,10 @@ async function like() {
   // 后端没有返回数据，不要赋值后再更新
   try {
     await likePost(post.PostID, userInfo.phone)
-    showMsg(post.IsLiked ? '取消成功' : '点赞成功')
     useCustomEvent('like')
   }
   catch (e) {
+    showMsg('失败')
     console.error(e)
   }
 }
@@ -47,7 +47,6 @@ async function handleUserAction(type: 'delete' | 'save') {
           post.PostID,
           userInfo.phone,
         )
-        showMsg(post.IsSaved ? '取消成功' : '收藏成功')
         useCustomEvent('save')
       }
       catch (e) {
@@ -59,7 +58,6 @@ async function handleUserAction(type: 'delete' | 'save') {
     case 'delete': {
       try {
         await delPost(post.PostID)
-        showMsg('删除成功')
         useCustomEvent('delete')
       }
       catch (error) {
