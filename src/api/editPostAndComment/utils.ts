@@ -2,10 +2,15 @@ import { useUserStore } from '@/store/userStore'
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL
 
-async function uploadPhoto(photo: File) {
+export interface FileInfo {
+  fileURL: string
+  message: string
+}
+
+async function uploadPhoto(photo: File) : Promise<FileInfo> {
   const token = useUserStore().token.value
   if (!token) {
-    return
+    throw new Error('Authentication token is missing.')
   }
   const formData = new FormData()
 

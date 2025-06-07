@@ -40,7 +40,9 @@ async function upload(file: File) {
     try {
       const data = await uploadPhoto(file)
       showMsg(data.message)
-      modelValue.value += `<img src="${data.fileURL}" alt="${file.name}" loading="lazy" />`
+      // modelValue.value += `<p><img src="${data.fileURL}" alt="${file.name}" loading="lazy" /></p>`
+      // 适配Markdown渲染
+      modelValue.value += `![${file.name}](${data.fileURL})`
       autoResize()
     }
     catch (error) {

@@ -16,7 +16,7 @@ function LikeChange() {
 <template>
   <div>
     <div>
-      <span>{{
+      <span class="text-3">{{
         new Date(time).toLocaleString('zh-CN', {
           year: 'numeric',
           month: '2-digit',

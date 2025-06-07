@@ -2,9 +2,6 @@
 import { computed, useTemplateRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-defineProps<{
-  isHomePage: boolean
-}>()
 const route = useRoute()
 const router = useRouter()
 const sinfo = useTemplateRef('sinfo')
@@ -23,7 +20,6 @@ const shopSidebarIsShow = computed(() => {
 <template>
   <div v-if="!shopSidebarIsShow" class="site-header">
     <RouterLink
-      v-if="isHomePage"
       to="/course"
       class="lesson"
       style="

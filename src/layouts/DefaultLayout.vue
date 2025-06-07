@@ -138,15 +138,15 @@ onUnmounted(() => {
         <PcHeader :unread-chat-num="chatNum" :unread-notice-num="noticeNum.unreadTotalNum" />
       </template>
       <template v-else>
-        <MobileHeader :style="{ height: headerHeight }" :is-home-page="isHomePage" />
+        <MobileHeader :style="{ height: headerHeight }" />
       </template>
     </header>
+    <template v-if="!isPC">
+      <BottomNavbar
+        :notice-num="noticeNum.unreadTotalNum"
+      />
+    </template>
     <main class="mt-2 w-full flex flex-row p-0">
-      <template v-if="!isPC">
-        <BottomNavbar
-          :notice-num="noticeNum.unreadTotalNum"
-        />
-      </template>
       <div class="content">
         <template
           v-if="!isPC && isHomePage"
@@ -200,7 +200,7 @@ header {
 
 .content {
   width: 100%;
-  margin-bottom: 13vh !important;
+  padding-bottom: 80px;
   display: flex;
   flex-direction: column;
   align-items: center;
