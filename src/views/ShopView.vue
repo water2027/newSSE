@@ -25,9 +25,9 @@ const autoplayTimer = ref<number | null>(null)
 const loadedImagesCount = ref(0)
 const totalImagesToLoad = ref(0)
 const carouselItems = ref<CarouselItem[]>([
-  { image: '/new/img/1.jpg', title: 'P1' },
-  { image: '/new/img/2.jpg', title: 'P2' },
-  { image: '/new/img/3.jpg', title: 'P3' },
+  { image: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1749233653768900413_微信图片_20250606162503.jpg', title: 'P1' },
+  { image: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1749233654349407951_96618898_p0.jpg', title: 'P2' },
+  { image: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1749233654953918669_121867383_p0.jpg', title: 'P3' },
 ])
 
 // 计算属性：根据价格筛选商品
@@ -65,14 +65,13 @@ async function initData() {
 }
 const route = useRoute()
 const IsMain = computed(() => {
-  return /^\/shop/.test(route.fullPath)
+  return /^\/shop\/?$/.test(route.fullPath)
 })
 // 方法：获取商品数据
 async function fetchProducts() {
   if (IsMain.value) {
     products.value = await getProducts('home')
-  }
-  else {
+  }else {
     products.value = await getProducts('history')
   }
 }
@@ -125,7 +124,7 @@ function imageLoad() {
 
 // 方法：处理查看商品详情事件
 function handleViewDetail(product: Product) {
-  router.push(`/productdetail/${product.ProductID}`)
+  router.push(`/shop/productdetail/${product.ProductID}`)
 }
 
 // 生命周期钩子：组件挂载时

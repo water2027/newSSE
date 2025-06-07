@@ -2,7 +2,7 @@
 import type { ProductDetail } from '@/api/shop/getProducts'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { deleteProduct } from '@/api/shop/controlProduct'
+import { deleteProduct , saleProduct } from '@/api/shop/controlProduct'
 import { getProductByID } from '@/api/shop/getProducts'
 import { showMsg } from '@/components/MessageBox'
 import { useUserStore } from '@/store/userStore'
@@ -17,6 +17,7 @@ const product = ref<ProductDetail>({
   Name: '',
   Description: '',
   Photos: [],
+  ISSold: false,
   ISAnonymous: false,
 })
 const { userInfo } = useUserStore()
@@ -63,6 +64,15 @@ function chatWithSeller(isAnonymous: boolean) {
 // 返回商城主界面
 function goBack() {
   router.push('/shop')
+}
+
+//卖出商品
+async function SaleProduct() {
+  if (confirm('确定要删除此商品吗？')) {
+    await saleProduct(Number(product.value.ProductID))
+    showMsg('商品已删除')
+    router.push('/shop')
+  }
 }
 
 // 删除商品
@@ -167,6 +177,9 @@ onMounted(async () => {
         </button>
         <button @click="chatWithSeller(true)">
           匿名私聊
+        </button>
+        <button @click="SaleProduct" v-if="isCurrentUser && !product.ISSold">
+          标记售出
         </button>
       </div>
     </div>
@@ -349,7 +362,7 @@ onMounted(async () => {
 
 .chat-buttons {
   display: flex;
-  gap: 15px;
+  justify-content: space-between;
 }
 
 .chat-buttons button {
