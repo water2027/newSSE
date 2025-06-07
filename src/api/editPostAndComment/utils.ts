@@ -10,7 +10,7 @@ export interface FileInfo {
 async function uploadPhoto(photo: File) : Promise<FileInfo> {
   const token = useUserStore().token.value
   if (!token) {
-    throw new Error('错误')
+    throw new Error('Authentication token is missing.')
   }
   const formData = new FormData()
 
