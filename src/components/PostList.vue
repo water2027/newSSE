@@ -86,11 +86,11 @@ onUnmounted(() => {
 <style scoped lang="scss">
 .list-enter-active,
 .list-leave-active {
+  opacity: 1;
   transition: all 0.5s ease;
 }
 .list-enter-from,
 .list-leave-to {
   opacity: 0;
-  transform: translateX(30px);
 }
 </style>

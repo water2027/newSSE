@@ -35,7 +35,7 @@ const partitions = [
   <div
     class="mb-5 w-full flex overflow-x-scroll overflow-y-hidden"
   >
-    <RouterLink to="/partitions" class="partition w-1/5 flex flex-shrink-0 flex-col items-center overflow-hidden p-2">
+    <RouterLink to="/partitions" class="partition w-1/5 flex flex-shrink-0 flex-col cursor-pointer items-center overflow-hidden p-2">
       <div class="bright-icon m-1 h-7.5 w-7.5 bg-contain bg-no-repeat" style="background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/resized/1749271506345913319_more.png);" />
       <div class="whitespace-nowrap text-center text-2.5 font-800">
         全部分区
@@ -67,7 +67,6 @@ const partitions = [
   transition:
     box-shadow 0.3s ease,
     transform 0.3s ease;
-  cursor: pointer;
 }
 
 body.dark-mode .partition {

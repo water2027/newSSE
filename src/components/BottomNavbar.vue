@@ -62,26 +62,6 @@ function changeTo(path: string) {
       />
       热榜
     </router-link>
-    <!-- <router-link
-      to="/partition/优质贴"
-      class="nav"
-      :class="{ selected: selected === '优质贴' }"
-      @click="changeTo('high-quality')"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="3em"
-        height="3em"
-        viewBox="0 0 24 24"
-      >
-        <path
-          fill="currentColor"
-          d="m5.825 21l1.625-7.025L2 9.25l7.2-.625L12 2l2.8 6.625l7.2.625l-5.45 4.725L18.175 21L12 17.275z"
-        />
-      </svg>
-      优质贴
-    </router-link> -->
-
     <router-link
       id="shop"
       class="nav"
@@ -189,15 +169,17 @@ function changeTo(path: string) {
 
 .bottom-nav-bar {
   padding: 0;
-  height: 13vw;
-  min-height: 80px;
+  height: 80px;
   border: 1px solid var(--color-border);
   border-radius: 5px;
   position: fixed;
   bottom: 0;
   width: 100%;
-  z-index: 10;
+  z-index: 1000;
   background-color: white;
+  transform: translateZ(0);
+  contain: layout style paint;
+  isolation: isolate;
 }
 
 body.dark-mode .bottom-nav-bar {

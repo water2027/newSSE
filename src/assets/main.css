@@ -19,6 +19,7 @@ body,
 body {
   overflow-y: scroll;
   overflow-x: hidden;
+  position: relative;
 }
 
 @media screen and (min-width: 768px) {
