@@ -42,7 +42,7 @@ async function upload(file: File) {
       showMsg(data.message)
       // modelValue.value += `<p><img src="${data.fileURL}" alt="${file.name}" loading="lazy" /></p>`
       // 适配Markdown渲染
-      modelValue.value += `![${file.name}](${data.fileUrl})`
+      modelValue.value += `![${file.name}](${data.fileURL})`
       autoResize()
     }
     catch (error) {

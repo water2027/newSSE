@@ -138,7 +138,7 @@ onUnmounted(() => {
         <PcHeader :unread-chat-num="chatNum" :unread-notice-num="noticeNum.unreadTotalNum" />
       </template>
       <template v-else>
-        <MobileHeader :style="{ height: headerHeight }" :is-home-page="isHomePage" />
+        <MobileHeader :style="{ height: headerHeight }" />
       </template>
     </header>
     <template v-if="!isPC">

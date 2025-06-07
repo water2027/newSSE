@@ -42,8 +42,8 @@ const partitions = [
       </div>
     </RouterLink>
     <RouterLink
-      v-for="(p, index) in partitions"
-      :key="index"
+      v-for="p in partitions"
+      :key="p.name"
       :to="`/partition/${p.name}`"
       class="partition w-1/5 flex flex-shrink-0 flex-col items-center overflow-hidden p-2"
     >
