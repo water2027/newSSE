@@ -29,21 +29,21 @@ function navigate() {
       @click="navigate"
     >
       <img
-        class="user-avatar-img relative"
+        class="user-avatar-img"
         :src="src || defaultAvatar"
         loading="lazy"
         :alt="userId.toString()"
       >
+      <UserIdentityIcon :identity="userIdentity" />
+    </div>
+    <div v-if="userName" class="relative ml-1 h-full max-w-fit w-full flex flex-col items-center justify-center">
       <span
         v-if="userScore"
-        class="level absolute w-fit whitespace-nowrap -transform-translate-y-25%"
+        class="absolute left-0 top-0 w-fit whitespace-nowrap text-center text-3"
         :class="levelClassHandler(userScore)"
       >{{ levelNameHandler(userScore) }}
       </span>
-      <UserIdentityIcon :identity="userIdentity" />
-    </div>
-    <div v-if="userName" class="max-w-fit w-full">
-      <span class="user-name ml-1 w-full whitespace-nowrap">{{ userName
+      <span class="user-name w-fit whitespace-nowrap text-center text-5">{{ userName
       }}</span>
     </div>
     <slot name="reply" />
@@ -58,10 +58,10 @@ function navigate() {
   align-items: center;
   font-size: 1.2rem;
   font-weight: bold;
+  height: var(--userImage);
 
   .user-name {
     color: var(--color-user-text);
-    font-size: 18px;
   }
   .user-avatar {
     position: relative;
@@ -77,15 +77,6 @@ function navigate() {
   }
 }
 
-.level {
-  font-size: 13px;
-  margin-left: 6px;
-  border-radius: 10%;
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-top: 5px;
-  padding-bottom: 5px;
-}
 .level-undefined {
   text-shadow:
     0.2em 0.2em var(--color-level-undefined-box-shadow),
