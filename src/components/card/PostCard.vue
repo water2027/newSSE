@@ -89,10 +89,7 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
       <div
         class="mt-1"
       >
-        <h2 v-if="post.Title.length <= 10">
-          {{ post.Title || '' }}
-        </h2>
-        <h3 v-else>
+        <h3>
           {{ post.Title || '' }}
         </h3>
       </div>
