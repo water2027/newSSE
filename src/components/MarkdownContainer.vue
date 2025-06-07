@@ -148,26 +148,52 @@ const safeHTML = computed(() => {
 
 :deep(pre) {
   padding: 10px;
-  pointer-events: none;
-  z-index: 0;
   position: relative;
-  width: 100% !important;
+  overflow: auto;
 }
-:deep(pre)::before {
+
+:deep(code) {
+  display: block;
+  position: relative;
+}
+
+:deep(code)::after {
   content: '';
-  pointer-events: auto;
   background-image: url('/PhCopy.webp');
   background-size: cover;
   display: block;
-  position: absolute;
+  position: sticky;
+  filter: invert(1);
+  z-index: 10;
+  width: 20px;
+  height: 20px;
+  bottom: calc(100% - 20px);
+  left: calc(100% - 20px);
+  margin-top: -20px;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+/* :deep(pre) {
+  padding: 10px;
+  z-index: 0;
+  position: relative;
+}
+:deep(code)::after {
+  content: '';
+  background-image: url('/PhCopy.webp');
+  background-size: cover;
+  display: block;
+  position: sticky;
+  float: right;
   filter: invert(1);
   z-index: 1;
   width: 20px;
   height: 20px;
   top: 5px;
-  right: 5px;
+  right: 0;
   transform: translateZ(0);
   background-attachment: local;
   cursor: pointer;
-}
+} */
 </style>

@@ -80,7 +80,7 @@ async function clickHandler(event: MouseEvent) {
   const el = event.target as HTMLElement
   if (!el)
     return
-  if (el.tagName === 'PRE') {
+  if (el.tagName === 'CODE') {
     const code = el.textContent
     if (!code)
       return
