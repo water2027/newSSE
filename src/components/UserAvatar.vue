@@ -41,7 +41,7 @@ function navigate() {
         v-if="userScore"
         class="absolute left-0 top-0 w-fit whitespace-nowrap text-center text-3"
         :class="levelClassHandler(userScore)"
-      >{{ levelNameHandler(userScore) }}
+        >{{ levelNameHandler(userScore) }}
       </span>
       <span class="user-name w-fit whitespace-nowrap text-center text-5">{{ userName
       }}</span>
@@ -128,7 +128,6 @@ function navigate() {
   opacity: 0.5;
 }
 .level-7 {
-  line-height: 32px;
   background: linear-gradient(45deg, #ff7d7d, #ff5a99, #e376e5, #9a7ef8);
   color: transparent;
   background-clip: text;
@@ -141,6 +140,7 @@ function navigate() {
   transform: rotateX(180deg);
   position: absolute;
   transform-origin: bottom;
+  line-height: 32px;
   background: linear-gradient(
     45deg,
     #ff7d7d3e,
@@ -160,7 +160,6 @@ function navigate() {
   opacity: 0.5;
 }
 .level-8 {
-  line-height: 32px;
   text-shadow:
     2px 2px 4px rgba(0, 0, 0, 0.3),
     -2px -2px 4px rgba(255, 255, 255, 0.3);
@@ -170,6 +169,7 @@ function navigate() {
   transform: rotateX(160deg) skew(10deg);
   position: absolute;
   transform-origin: bottom;
+  line-height: 32px;
   background: linear-gradient(
     45deg,
     #ff7d7d,
