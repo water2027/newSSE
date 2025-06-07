@@ -119,7 +119,7 @@ onUnmounted(() => {
 
 <template>
   <div
-    class="root"
+    class="root w-full"
   >
     <header>
       <div class="site-top">
@@ -209,10 +209,8 @@ header {
 /* 大屏幕样式 >768px */
 @media screen and (min-width: 768px) {
   .content {
-    margin-left: 5%;
-    margin-right: 5%;
-    width: 100%;
-    height: auto;
+    padding-left: 5%;
+    padding-right: 5%;
   }
 }
 </style>

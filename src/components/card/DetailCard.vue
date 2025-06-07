@@ -124,8 +124,7 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
 
 <template>
   <BasicCard>
-    <div ref="root">
-      <div class="h-fit flex flex-row items-center">
+      <div ref="root" class="h-fit flex flex-row items-center">
         <UserAvatar
           :src="post.UserAvatar"
           :user-id="post.UserID"
@@ -138,12 +137,9 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
       <div
         class="card-title"
       >
-        <h2 v-if="post.Title.length <= 10">
+        <h2>
           {{ post.Title || '' }}
         </h2>
-        <h3 v-else>
-          {{ post.Title || '' }}
-        </h3>
       </div>
       <MarkdownContainer
         :markdown-content="post.Content || 'loading'"
@@ -160,9 +156,9 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
       <MarkdownEditor
         v-if="commentButtonIsShow"
         v-model="commentContent"
+        class="max-w-full"
         @send="handler('comment')"
       />
-    </div>
   </BasicCard>
 </template>
 

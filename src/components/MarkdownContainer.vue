@@ -130,7 +130,7 @@ const safeHTML = computed(() => {
 <template>
   <div
     ref="content"
-    class="markdown-body"
+    class="markdown-body w-full"
     data-theme="light"
     v-html="safeHTML"
   />
@@ -151,6 +151,7 @@ const safeHTML = computed(() => {
   pointer-events: none;
   z-index: 0;
   position: relative;
+  width: 100% !important;
 }
 :deep(pre)::before {
   content: '';

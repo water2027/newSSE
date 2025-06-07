@@ -45,7 +45,7 @@ onActivated(async () => {
   if (!hasCache.value)
     return
   // 恢复滚动位置
-  document.documentElement.scrollTop = scrollTop.value
+  document.body.scrollTop = scrollTop.value
   isLoading.value = true
   await restorePosts(userInfo.phone, cachePosts, cacheTotalNum.value, cacheCondition)
   isLoading.value = false
@@ -53,7 +53,7 @@ onActivated(async () => {
 
 onBeforeRouteLeave(() => {
   // 保存滚动位置
-  scrollTop.value = document.documentElement.scrollTop
+  scrollTop.value = document.body.scrollTop
   // 清空当前页面的帖子列表
   const data = storePosts()
   cachePosts.splice(0, cachePosts.length, ...data.cachePosts)
