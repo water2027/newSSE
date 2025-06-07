@@ -23,7 +23,6 @@ const shopSidebarIsShow = computed(() => {
 <template>
   <div v-if="!shopSidebarIsShow" class="site-header">
     <RouterLink
-      v-if="isHomePage"
       to="/course"
       class="lesson"
       style="

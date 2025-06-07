@@ -62,7 +62,7 @@ function changeTo(path: string) {
       />
       热榜
     </router-link>
-    <router-link
+    <!-- <router-link
       to="/partition/优质贴"
       class="nav"
       :class="{ selected: selected === '优质贴' }"
@@ -80,7 +80,7 @@ function changeTo(path: string) {
         />
       </svg>
       优质贴
-    </router-link>
+    </router-link> -->
 
     <router-link
       id="shop"

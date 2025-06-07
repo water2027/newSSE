@@ -5,6 +5,10 @@ const partitions = [
     src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865147020011731_icons8-chat-message-48.png',
   },
   {
+    name: '优质贴',
+    src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/resized/1749269586856504079_star.png',
+  },
+  {
     name: '打听求助',
     src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865259021372927_icons8-unverified-account-48.png',
   },
@@ -29,21 +33,27 @@ const partitions = [
 
 <template>
   <div
-    class="partitions"
+    class="mb-5 w-full flex overflow-x-scroll overflow-y-hidden"
   >
+    <RouterLink to="/partitions" class="partition w-1/5 flex flex-shrink-0 flex-col items-center overflow-hidden p-2">
+      <div class="bright-icon m-1 h-7.5 w-7.5 bg-contain bg-no-repeat" style="background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/resized/1749271506345913319_more.png);" />
+      <div class="whitespace-nowrap text-center text-2.5 font-800">
+        全部分区
+      </div>
+    </RouterLink>
     <RouterLink
       v-for="(p, index) in partitions"
       :key="index"
       :to="`/partition/${p.name}`"
-      class="partition block"
+      class="partition w-1/5 flex flex-shrink-0 flex-col items-center overflow-hidden p-2"
     >
       <div
-        class="bright-icon"
+        class="bright-icon m-1 h-7.5 w-7.5 bg-contain bg-no-repeat"
         :style="{
           backgroundImage: `url(${p.src})`,
         }"
       />
-      <div class="partition-info">
+      <div class="whitespace-nowrap text-center text-2.5 font-800">
         {{ p.name }}
       </div>
     </RouterLink>
@@ -51,25 +61,12 @@ const partitions = [
 </template>
 
 <style lang="scss">
-.partitions {
-  display: flex;
-  width: 100%;
-  margin-bottom: 20px;
-  justify-content: space-between;
-}
-
 .partition {
-  flex: 1 1 16%;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(240, 240, 240, 0.8));
   transition:
     box-shadow 0.3s ease,
     transform 0.3s ease;
-  padding: 10px;
   cursor: pointer;
 }
 
@@ -96,28 +93,6 @@ body.dark-mode .partition:hover {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
-.partition:last-child {
-  margin-right: 0;
-}
-
-.partition-info {
-  user-select: none;
-  width: 100%;
-  text-align: center;
-  font-size: 10px;
-  font-weight: 800;
-}
-
-.bright-icon {
-  display: block;
-  width: 100%;
-  height: 30px;
-  width: 30px;
-  text-align: center;
-  margin: 5px;
-  background-size: 100%;
-  background-repeat: no-repeat;
-}
 body.dark-mode .bright-icon {
   filter: invert(1) brightness(1.4) saturate(1.2) drop-shadow(0 0 6px rgba(150, 200, 255, 0.4))
     drop-shadow(0 0 10px rgba(150, 200, 255, 0.2));
