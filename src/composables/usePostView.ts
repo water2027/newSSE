@@ -23,10 +23,10 @@ export function usePostView() {
       hooks.beforeRefresh()
     }
     refreshPosts()
+    categoryName && changeTo(categoryName)
     if (hooks?.afterRefresh) {
       hooks.afterRefresh()
     }
-    categoryName && changeTo(categoryName)
     await updateNum(userInfo.phone)
   }
 
