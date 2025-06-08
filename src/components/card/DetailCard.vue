@@ -123,7 +123,7 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
 </script>
 
 <template>
-  <BasicCard>
+  <BasicCard class="w-15/16">
       <div ref="root" class="h-fit flex flex-row items-center">
         <UserAvatar
           :src="post.UserAvatar"

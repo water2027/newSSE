@@ -1,5 +1,5 @@
 <template>
-  <div class="root card-root mx-a min-h-37 w-full flex flex-col p-3">
+  <div class="root card-root mx-a min-h-37 flex flex-col p-3">
     <slot />
   </div>
 </template>
