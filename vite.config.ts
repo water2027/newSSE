@@ -5,6 +5,7 @@ import vueJsxPlugin from '@vitejs/plugin-vue-jsx'
 import UnoCSS from 'unocss/vite'
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
+import { visualizer } from 'rollup-plugin-visualizer'
 import dnsPrefetchPlugin from './plugins/vite-plugin-dns-prefetch'
 // https://vitejs.dev/config/
 const base = process.env.CF_PAGES ? '/' : '/new/'
@@ -14,6 +15,12 @@ export default defineConfig({
     vue(),
     vueJsxPlugin(),
     UnoCSS(),
+    visualizer({
+      filename: 'dist/stats.html',
+      open: true,
+      gzipSize: true,
+      brotliSize: true,
+    }),
     VitePWA({
       registerType: 'autoUpdate',
       scope: '/new/',
@@ -96,6 +103,17 @@ export default defineConfig({
       exclude: ['localhost', '127.0.0.1', 'vuejs.org'],
     }),
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vue: ['vue', 'vue-router'],
+          markdown: ['markdown-it', 'markdown-it-katex', 'prismjs', 'dompurify'],
+          cryptoJs: ['crypto-js'],
+        }
+      }
+    }
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

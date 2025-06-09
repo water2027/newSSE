@@ -21,30 +21,6 @@ const md: MarkdownIt = new MarkdownIt({
   breaks: true,
   linkify: true,
   typographer: true,
-  // highlight: (str, lang) => {
-  //   const languageMap: Record<string, string> = {
-  //     html: 'markup',
-  //     xml: 'markup',
-  //     js: 'javascript',
-  //     ts: 'typescript',
-  //     py: 'python',
-  //   }
-
-  //   const normalizedLang = languageMap[lang] || lang
-
-  //   if (normalizedLang && normalizedLang !== 'none') {
-  //     try {
-  //     // AutoLoader 会自动加载缺失的语言
-  //       const highlighted = Prism.highlight(str, Prism.languages[normalizedLang] || {}, normalizedLang)
-  //       return `<pre class="language-${normalizedLang}"><code class="language-${normalizedLang}">${highlighted}</code></pre>`
-  //     }
-  //     catch (error) {
-  //       console.warn('Prism highlighting failed:', error)
-  //     }
-  //   }
-
-  //   return `<pre class="language-none"><code>${md.utils.escapeHtml(str)}</code></pre>`
-  // },
   xhtmlOut: true,
   langPrefix: 'language-',
 }).use(mk, {
