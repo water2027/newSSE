@@ -2,7 +2,7 @@
 import type { ProductDetail } from '@/api/shop/getProducts'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { deleteProduct , saleProduct } from '@/api/shop/controlProduct'
+import { deleteProduct, saleProduct } from '@/api/shop/controlProduct'
 import { getProductByID } from '@/api/shop/getProducts'
 import { showMsg } from '@/components/MessageBox'
 import { useUserStore } from '@/store/userStore'
@@ -66,7 +66,7 @@ function goBack() {
   router.push('/shop')
 }
 
-//卖出商品
+// 卖出商品
 async function SaleProduct() {
   if (confirm('确定要删除此商品吗？')) {
     await saleProduct(Number(product.value.ProductID))
@@ -104,22 +104,12 @@ onMounted(async () => {
     <!-- 添加返回按钮和删除按钮 -->
     <div class="back-button-container">
       <button class="back-button" @click="goBack">
-        <img
-          width="36"
-          height="36"
-          src="https://img.icons8.com/sf-black/24/return.png"
-          alt="return"
-        >
+        <img width="36" height="36" src="https://img.icons8.com/sf-black/24/return.png" alt="return">
         <span>返回商城</span>
       </button>
 
       <button v-if="isCurrentUser" class="delete-button" @click="DeleteProduct">
-        <img
-          width="36"
-          height="36"
-          src="https://img.icons8.com/sf-black/24/delete.png"
-          alt="删除"
-        >
+        <img width="36" height="36" src="https://img.icons8.com/sf-black/24/delete.png" alt="删除">
         <span>删除商品</span>
       </button>
     </div>
@@ -131,7 +121,11 @@ onMounted(async () => {
           <div class="carousel-inner" :style="{ transform: `translateX(-${imageIndex * 100}%)` }">
             <!-- 使用统一的数据源 product.Photos -->
             <div v-for="(image, index) in product.Photos" :key="index" class="carousel-item">
-              <img :src="image" alt="商品图片">
+              <img v-if="product.Photos[0] !== ''" :src="image" alt="商品图片">
+              <img
+                v-else
+                src="https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/resized/1749436003030319551_nophotos.png"
+              >
             </div>
           </div>
           <button class="carousel-control prev" @click="prevImage">
@@ -143,10 +137,8 @@ onMounted(async () => {
           <!-- 使用统一的数据源 product.Photos -->
           <div class="carousel-indicators">
             <span
-              v-for="(image, index) in product.Photos"
-              :key="index"
-              class="indicator" :class="[{ active: index === imageIndex }]"
-              @click="goToImage(index)"
+              v-for="(image, index) in product.Photos" :key="index" class="indicator"
+              :class="[{ active: index === imageIndex }]" @click="goToImage(index)"
             />
           </div>
         </div>
@@ -178,7 +170,7 @@ onMounted(async () => {
         <button @click="chatWithSeller(true)">
           匿名私聊
         </button>
-        <button @click="SaleProduct" v-if="isCurrentUser && !product.ISSold">
+        <button v-if="isCurrentUser && !product.ISSold" @click="SaleProduct">
           标记售出
         </button>
       </div>
@@ -186,8 +178,8 @@ onMounted(async () => {
   </div>
 </template>
 
-  <style scoped>
-  .product-detail-container {
+<style scoped>
+.product-detail-container {
   display: flex;
   flex-direction: column;
   max-width: 1200px;

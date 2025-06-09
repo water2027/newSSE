@@ -17,7 +17,10 @@ async function viewDetail() {
 <template>
   <div class="product-card" :class="[{ 'sold-out': product.ISSold }]">
     <div class="product-image">
-      <img :src="product.Photos[0]" :alt="product.name">
+      <img :src="product.Photos[0]" :alt="product.name" v-if="product.Photos[0] !== ''">
+      <img
+        src="https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/resized/1749436003030319551_nophotos.png"
+        :alt="product.name" v-else>
       <div v-if="product.ISSold" class="sold-out-mark">已卖出~</div>
     </div>
     <div class="product-info">
@@ -62,7 +65,8 @@ async function viewDetail() {
 .product-image {
   height: 180px;
   overflow: hidden;
-  position: relative; /* 为绝对定位的 sold-out-mark 提供定位上下文 */
+  position: relative;
+  /* 为绝对定位的 sold-out-mark 提供定位上下文 */
 }
 
 .product-image img {
@@ -146,11 +150,13 @@ async function viewDetail() {
 
 /* 已售出商品的样式 */
 .sold-out {
-  opacity: 0.7; /* 整体稍微变暗 */
+  opacity: 0.7;
+  /* 整体稍微变暗 */
 }
 
 .sold-out .product-image img {
-  filter: grayscale(100%); /* 图片变灰 */
+  filter: grayscale(100%);
+  /* 图片变灰 */
 }
 
 .sold-out-mark {
@@ -159,25 +165,31 @@ async function viewDetail() {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: none; /* 半透明黑色背景 */
+  background-color: none;
+  /* 半透明黑色背景 */
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 24px;
   font-weight: bold;
-  transform: rotate(-35deg); /* 斜着显示 */
+  transform: rotate(-35deg);
+  /* 斜着显示 */
   transform-origin: center;
-  z-index: 1; /* 确保在图片上方 */
+  z-index: 1;
+  /* 确保在图片上方 */
 }
 
 /* 已售出商品的按钮样式 */
 .sold-out .add-to-cart {
-  background-color: #9e9e9e; /* 灰色按钮 */
-  cursor: not-allowed; /* 禁用光标 */
+  background-color: #9e9e9e;
+  /* 灰色按钮 */
+  cursor: not-allowed;
+  /* 禁用光标 */
 }
 
 .sold-out .add-to-cart:hover {
-  background-color: #9e9e9e; /* 灰色按钮 */
+  background-color: #9e9e9e;
+  /* 灰色按钮 */
 }
 </style>
