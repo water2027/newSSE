@@ -15,11 +15,11 @@ export default defineConfig({
     vue(),
     vueJsxPlugin(),
     UnoCSS(),
-    analyzer({
-      analyzerMode: 'server', // 默认值，启动本地服务器
-      openAnalyzer: true, // 自动打开浏览器
-      analyzerPort: 8888, // 分析服务器端口
-    }),
+    // analyzer({
+    //   analyzerMode: 'server', // 默认值，启动本地服务器
+    //   openAnalyzer: true, // 自动打开浏览器
+    //   analyzerPort: 8888, // 分析服务器端口
+    // }),
     VitePWA({
       registerType: 'autoUpdate',
       scope: '/new/',
