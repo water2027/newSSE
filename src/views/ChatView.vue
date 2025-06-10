@@ -9,10 +9,13 @@ import { showMsg } from '@/components/MessageBox'
 import UserAvatar from '@/components/UserAvatar.vue'
 import { useUserStore } from '@/store/userStore'
 
-export interface Message {
+export interface MessageCreation {
   senderUserID: number
   targetUserID: number
   content: string
+}
+
+export interface Message extends MessageCreation {
   chatMsgID: number
   createdAt: string
 }
@@ -127,19 +130,21 @@ function sendMessage() {
   if (draft.value !== '') {
     if (!current.value)
       return
-    const message: Message = {
+    const message: MessageCreation = {
       senderUserID: userInfo.userID,
       targetUserID: current.value.userID,
       content: draft.value,
-      chatMsgID: 0,
-      createdAt: new Date().toISOString(),
     }
 
     if (sendWsMessage(JSON.stringify(message))) {
-      draft.value = ''
-
-      message.chatMsgID = getDummyID()
-      messages.value.push(message)
+      draft.value = '';
+      const newMessage: Message = {
+        ...message,
+        chatMsgID: 0,
+        createdAt: new Date().toISOString()
+      } 
+      newMessage.chatMsgID = getDummyID()
+      messages.value.push(newMessage)
 
       scrollHistory()
     }
@@ -309,10 +314,8 @@ function checkSameDay(x: Date, y: Date) {
         对话列表
       </div>
       <div class="lite-scrollbar">
-        <div
-          v-for="entry in contacts" :key="entry.userID"
-          class="contact-entry" :class="[current.userID === entry.userID && 'selected']" @click="selectContact(entry)"
-        >
+        <div v-for="entry in contacts" :key="entry.userID" class="contact-entry"
+          :class="[current.userID === entry.userID && 'selected']" @click="selectContact(entry)">
           <UserAvatar class="contact-icon" :src="entry.avatarURL" :alt="entry.name" />
           <div class="contact-info">
             <div class="contact-name">
@@ -378,10 +381,8 @@ function checkSameDay(x: Date, y: Date) {
             </div>
           </div>
           <div class="message-footer">
-            <textarea
-              v-model="draft" placeholder="输入信息..." rows="4" class="lite-scrollbar message-input"
-              @keydown="handleDraftKeyDown"
-            />
+            <textarea v-model="draft" placeholder="输入信息..." rows="4" class="lite-scrollbar message-input"
+              @keydown="handleDraftKeyDown" />
             <div class="message-send" @click="sendMessage">
               发送
             </div>
@@ -539,6 +540,7 @@ function checkSameDay(x: Date, y: Date) {
   display: flex;
   margin: 0.5rem 0;
   word-break: break-word;
+
   .contact-icon {
     width: 46px;
   }
@@ -553,7 +555,7 @@ function checkSameDay(x: Date, y: Date) {
   justify-content: space-around;
 }
 
-.message-time > div {
+.message-time>div {
   padding: 0.1rem 0.75rem;
   background: #cccccc80;
   border-radius: 15px;
@@ -637,6 +639,7 @@ function checkSameDay(x: Date, y: Date) {
     width: 100%;
   }
 }
+
 @media screen and (max-width: 530px) {
   .contact-list {
     width: 18%;
