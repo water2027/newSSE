@@ -14,7 +14,7 @@ export interface Message {
   targetUserID: number
   content: string
   chatMsgID: number
-  createdAt: number
+  createdAt: string
 }
 
 const route = useRoute()
@@ -132,7 +132,7 @@ function sendMessage() {
       targetUserID: current.value.userID,
       content: draft.value,
       chatMsgID: 0,
-      createdAt: Date.now(),
+      createdAt: new Date().toISOString(),
     }
 
     if (sendWsMessage(JSON.stringify(message))) {

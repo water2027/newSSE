@@ -4,8 +4,8 @@ import vue from '@vitejs/plugin-vue'
 import vueJsxPlugin from '@vitejs/plugin-vue-jsx'
 import UnoCSS from 'unocss/vite'
 import { defineConfig } from 'vite'
+import { analyzer } from 'vite-bundle-analyzer'
 import { VitePWA } from 'vite-plugin-pwa'
-import { visualizer } from 'rollup-plugin-visualizer'
 import dnsPrefetchPlugin from './plugins/vite-plugin-dns-prefetch'
 // https://vitejs.dev/config/
 const base = process.env.CF_PAGES ? '/' : '/new/'
@@ -15,11 +15,10 @@ export default defineConfig({
     vue(),
     vueJsxPlugin(),
     UnoCSS(),
-    visualizer({
-      filename: 'dist/stats.html',
-      open: true,
-      gzipSize: true,
-      brotliSize: true,
+    analyzer({
+      analyzerMode: 'server', // 默认值，启动本地服务器
+      openAnalyzer: true, // 自动打开浏览器
+      analyzerPort: 8888, // 分析服务器端口
     }),
     VitePWA({
       registerType: 'autoUpdate',
@@ -110,9 +109,9 @@ export default defineConfig({
           vue: ['vue', 'vue-router'],
           markdown: ['markdown-it', 'markdown-it-katex', 'prismjs', 'dompurify'],
           cryptoJs: ['crypto-js'],
-        }
-      }
-    }
+        },
+      },
+    },
   },
   resolve: {
     alias: {

@@ -7,6 +7,7 @@
     "build": "vue-tsc && vite build",
     "type-check": "vue-tsc --noEmit",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-pattern .gitignore",
+    "build:analyze": "ANALYZE=true vite build",
     "dev": "vite",
     "format": "prettier --write src/",
     "preview": "vite preview"
@@ -45,7 +46,6 @@
     "node-html-parser": "^7.0.1",
     "prettier": "^3.5.3",
     "rollup": "^4.41.1",
-    "rollup-plugin-visualizer": "^6.0.3",
     "sass": "^1.89.1",
     "typescript": "^5.8.3",
     "unocss": "^66.1.3",
