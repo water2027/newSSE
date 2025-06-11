@@ -105,11 +105,31 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          vue: ['vue', 'vue-router'],
-          markdown: ['markdown-it', 'markdown-it-katex', 'prismjs', 'dompurify'],
-          cryptoJs: ['crypto-js'],
-        },
+        manualChunks(id) {
+          if (!id.includes('node_modules')) {
+            return;
+          }
+          id = id.split('node_modules/')[1];
+
+          if (id.includes('vue')) {
+            return 'vue';
+          }
+
+          if (id.includes('markdown-it') || id.includes('dompurify') || id.includes('katex')) {
+            return 'markdown';
+          }
+
+          // 不知道以后会不会换高亮包, 单独提出来吧
+          if (id.includes('prismjs')) {
+            return 'prismjs';
+          }
+
+          if (id.includes('crypto-js')) {
+            return 'cryptoJs';
+          }
+
+          return 'vendor';
+        }
       },
     },
   },
