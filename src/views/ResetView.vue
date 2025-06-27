@@ -50,7 +50,7 @@ const passwordCorrect = computed(() => {
   )
 })
 const emailCorrect = computed(() => {
-  return form.value[3].reg?.test(form.value[3].value)
+  return form.value[0].reg?.test(form.value[0].value)
 })
 
 async function resetHandler() {
