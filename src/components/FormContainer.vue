@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { CustomFormData } from '@/composables/FormExam'
-import { onMounted, useTemplateRef } from 'vue'
 
 import FormInput from '@/components/FormInput.vue'
 
@@ -23,27 +22,10 @@ defineProps({
 })
 
 defineEmits(['submitForm'])
-
-const form = useTemplateRef('form')
-
-onMounted(() => {
-  const el = form.value as HTMLFormElement
-  if (!el)
-    return
-  // 这里产生了耦合, 但是问题也许不大吧.
-  const container = el.children[0] as HTMLDivElement
-  if (!container)
-    return
-  const input = container.children[0] as HTMLInputElement
-  if (!input)
-    return
-  input.focus()
-})
 </script>
 
 <template>
   <form
-    ref="form"
     class="mx-auto mt-12 w-9/10 sm:mt-0 sm:w-1/2 sm:p-24"
     @submit.prevent="$emit('submitForm')"
   >

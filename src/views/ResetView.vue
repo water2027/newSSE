@@ -107,7 +107,7 @@ async function sendVerificationCode() {
     form-name="重置密码"
     :form-data="form"
     :disabled="!correct || !passwordCorrect"
-    @form-submit="resetHandler"
+    @submit-form="resetHandler"
   >
     <p class="mb-5 mt-5 text-center">
       <span :class="passwordCorrect ? 'text-green-400' : 'text-red-400'">{{
