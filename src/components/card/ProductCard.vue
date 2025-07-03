@@ -1,4 +1,8 @@
-<script setup lang="ts">
+<script setup>
+// No TypeScript typings needed in the setup script
+import { showImg } from '@/components/ImageShower'
+import { strHandler } from '@/utils/strHandler'
+
 const props = defineProps({
   product: {
     type: Object,
@@ -9,18 +13,43 @@ const props = defineProps({
 const emit = defineEmits(['viewDetail'])
 
 // 查看商品详情
-async function viewDetail() {
+function viewDetail() {
   emit('viewDetail', props.product)
+}
+
+// 查看原图（从resized路径转为uploads路径）
+function viewOriginalImage(event) {
+  // 阻止事件冒泡，防止触发卡片的点击事件
+  event.stopPropagation()
+  
+  if (props.product.Photos && props.product.Photos[0]) {
+    // 从resized转为uploads路径来保持原图方向
+    const originalUrl = strHandler('postImg', props.product.Photos[0])
+    showImg(originalUrl)
+  }
+}
+
+// Function to get resized image URL with orientation preservation
+function getResizedUrl(url) {
+  if (!url) return '';
+  return url.replace('/uploads/', '/resized/');
 }
 </script>
 
 <template>
   <div class="product-card" :class="[{ 'sold-out': product.ISSold }]">
-    <div class="product-image">
-      <img :src="product.Photos[0]" :alt="product.name" v-if="product.Photos[0] !== ''">
+    <div class="product-image" @click="viewOriginalImage">
+      <img 
+        v-if="product.Photos && product.Photos[0]" 
+        :src="getResizedUrl(product.Photos[0])" 
+        :alt="product.Name" 
+        class="preserve-orientation"
+      >
       <img
+        v-else
         src="https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/resized/1749436003030319551_nophotos.png"
-        :alt="product.name" v-else>
+        :alt="product.Name"
+      >
       <div v-if="product.ISSold" class="sold-out-mark">已卖出~</div>
     </div>
     <div class="product-info">
@@ -66,6 +95,7 @@ async function viewDetail() {
   height: 180px;
   overflow: hidden;
   position: relative;
+  cursor: pointer;
   /* 为绝对定位的 sold-out-mark 提供定位上下文 */
 }
 
@@ -74,6 +104,11 @@ async function viewDetail() {
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s;
+}
+
+/* Add image orientation preservation */
+.preserve-orientation {
+  image-orientation: from-image;
 }
 
 .product-card:hover .product-image img {
