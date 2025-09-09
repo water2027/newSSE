@@ -93,8 +93,8 @@ async function registerAction() {
   const email = registerForm.value[1].value
   const password = registerForm.value[2].value
   const password2 = registerForm.value[3].value
-  const vcode = registerForm.value[4].value
-  const cd_key = registerForm.value[5].value
+  const vcode = registerForm.value[4].value.trim() // 去除前后空格
+  const cd_key = registerForm.value[5].value.trim() // 去除前后空格
 
   try {
     const resp = await userRegister(cd_key, email, name, password, password2, vcode)
