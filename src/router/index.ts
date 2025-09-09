@@ -141,7 +141,7 @@ const router = createRouter({
     },
     {
       path: '/:catchAll(.*)',
-      redirect: '/'
+      redirect: '/',
     },
   ],
 })

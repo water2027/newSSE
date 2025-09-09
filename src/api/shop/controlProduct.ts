@@ -1,7 +1,7 @@
 import { requestFunc } from '../req'
 
 interface DeleteProductRequestBody {
-  productID: number;
+  productID: number
 }
 
 async function deleteProduct(productID: number): Promise<any> {
@@ -12,21 +12,21 @@ async function deleteProduct(productID: number): Promise<any> {
         'Content-Type': 'application/json',
       },
       body: {
-        productID: productID,
+        productID,
       } as DeleteProductRequestBody,
-    }, true);
+    }, true)
 
     // 添加类型检查
     if (!res) {
-      throw new Error('No response received');
+      throw new Error('No response received')
     }
 
-    const data = await res.json();
-    return data;
+    const data = await res.json()
+    return data
   }
   catch (e) {
-    alert(e);
-    console.error(e);
+    alert(e)
+    console.error(e)
   }
 }
 
@@ -38,22 +38,22 @@ async function saleProduct(productID: number): Promise<any> {
         'Content-Type': 'application/json',
       },
       body: {
-        productID: productID,
+        productID,
       } as DeleteProductRequestBody,
-    }, true);
+    }, true)
 
     // 添加类型检查
     if (!res) {
-      throw new Error('No response received');
+      throw new Error('No response received')
     }
 
-    const data = await res.json();
-    return data;
+    const data = await res.json()
+    return data
   }
   catch (e) {
-    alert(e);
-    console.error(e);
+    alert(e)
+    console.error(e)
   }
 }
 
-export { deleteProduct, saleProduct };
+export { deleteProduct, saleProduct }

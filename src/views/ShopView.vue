@@ -71,7 +71,8 @@ const IsMain = computed(() => {
 async function fetchProducts() {
   if (IsMain.value) {
     products.value = await getProducts('home')
-  }else {
+  }
+  else {
     products.value = await getProducts('history')
   }
 }

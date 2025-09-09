@@ -48,5 +48,3 @@ defineEmits(['submitForm'])
     </button>
   </form>
 </template>
-
-

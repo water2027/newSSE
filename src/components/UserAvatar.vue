@@ -41,7 +41,7 @@ function navigate() {
         v-if="userScore"
         class="absolute left-0 top-0 w-fit whitespace-nowrap text-center text-3"
         :class="levelClassHandler(userScore)"
-        >{{ levelNameHandler(userScore) }}
+      >{{ levelNameHandler(userScore) }}
       </span>
       <span class="user-name w-fit whitespace-nowrap text-center text-5">{{ userName
       }}</span>

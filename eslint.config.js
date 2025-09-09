@@ -7,5 +7,7 @@ export default antfu({
 }, {
   rules: {
     'style/no-tabs': 'off',
+    'no-alert': 'off',
+    'no-console': 'off',
   },
 })

@@ -124,41 +124,41 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
 
 <template>
   <BasicCard class="w-15/16">
-      <div ref="root" class="h-fit flex flex-row items-center">
-        <UserAvatar
-          :src="post.UserAvatar"
-          :user-id="post.UserID"
-          :user-identity="post.UserIdentity"
-          :user-name="post.UserName"
-          :user-score="post.UserScore"
-        />
-        <UserButton :is-saved="post.IsSaved" :is-self="post.UserTelephone === userInfo.phone" @user-action="handleUserAction" />
-      </div>
-      <div
-        class="card-title"
-      >
-        <h2>
-          {{ post.Title || '' }}
-        </h2>
-      </div>
-      <MarkdownContainer
-        :markdown-content="post.Content || 'loading'"
+    <div ref="root" class="h-fit flex flex-row items-center">
+      <UserAvatar
+        :src="post.UserAvatar"
+        :user-id="post.UserID"
+        :user-identity="post.UserIdentity"
+        :user-name="post.UserName"
+        :user-score="post.UserScore"
       />
-      <template v-if="post.Photos">
-        <OldImages :photos="post.Photos" />
-      </template>
-      <BasicInfo :time="post.PostTime" :browse="post.Browse" :comment="post.Comment" :is-like="post.IsLiked" :like="post.Like" @like-change="like" />
-      <div class="commentButton">
-        <button @click="commentButtonIsShow = !commentButtonIsShow">
-          {{ commentButtonIsShow ? '隐藏' : '发评论' }}
-        </button>
-      </div>
-      <MarkdownEditor
-        v-if="commentButtonIsShow"
-        v-model="commentContent"
-        class="max-w-full"
-        @send="handler('comment')"
-      />
+      <UserButton :is-saved="post.IsSaved" :is-self="post.UserTelephone === userInfo.phone" @user-action="handleUserAction" />
+    </div>
+    <div
+      class="card-title"
+    >
+      <h2>
+        {{ post.Title || '' }}
+      </h2>
+    </div>
+    <MarkdownContainer
+      :markdown-content="post.Content || 'loading'"
+    />
+    <template v-if="post.Photos">
+      <OldImages :photos="post.Photos" />
+    </template>
+    <BasicInfo :time="post.PostTime" :browse="post.Browse" :comment="post.Comment" :is-like="post.IsLiked" :like="post.Like" @like-change="like" />
+    <div class="commentButton">
+      <button @click="commentButtonIsShow = !commentButtonIsShow">
+        {{ commentButtonIsShow ? '隐藏' : '发评论' }}
+      </button>
+    </div>
+    <MarkdownEditor
+      v-if="commentButtonIsShow"
+      v-model="commentContent"
+      class="max-w-full"
+      @send="handler('comment')"
+    />
   </BasicCard>
 </template>
 

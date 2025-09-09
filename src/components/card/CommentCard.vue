@@ -176,8 +176,8 @@ async function like() {
       >
         <CCommentCard
           v-for="subComment in comment.SubComments"
-          class="my-3 w-full"
           :key="subComment.ccommentID"
+          class="my-3 w-full"
           :p-comment-id="comment.PcommentID"
           :sub-comment="subComment"
           :post-id="postId"

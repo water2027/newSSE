@@ -4,7 +4,6 @@ import vue from '@vitejs/plugin-vue'
 import vueJsxPlugin from '@vitejs/plugin-vue-jsx'
 import UnoCSS from 'unocss/vite'
 import { defineConfig } from 'vite'
-import { analyzer } from 'vite-bundle-analyzer'
 import { VitePWA } from 'vite-plugin-pwa'
 import dnsPrefetchPlugin from './plugins/vite-plugin-dns-prefetch'
 // https://vitejs.dev/config/
@@ -107,29 +106,29 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (!id.includes('node_modules')) {
-            return;
+            return
           }
-          id = id.split('node_modules/')[1];
+          id = id.split('node_modules/')[1]
 
           if (id.includes('vue')) {
-            return 'vue';
+            return 'vue'
           }
 
           if (id.includes('markdown-it') || id.includes('dompurify') || id.includes('katex')) {
-            return 'markdown';
+            return 'markdown'
           }
 
           // 不知道以后会不会换高亮包, 单独提出来吧
           if (id.includes('prismjs')) {
-            return 'prismjs';
+            return 'prismjs'
           }
 
           if (id.includes('crypto-js')) {
-            return 'cryptoJs';
+            return 'cryptoJs'
           }
 
-          return 'vendor';
-        }
+          return 'vendor'
+        },
       },
     },
   },

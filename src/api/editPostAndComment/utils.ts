@@ -7,7 +7,7 @@ export interface FileInfo {
   message: string
 }
 
-async function uploadPhoto(photo: File) : Promise<FileInfo> {
+async function uploadPhoto(photo: File): Promise<FileInfo> {
   const token = useUserStore().token.value
   if (!token) {
     throw new Error('Authentication token is missing.')

@@ -122,7 +122,8 @@ async function getNewPosts(userTelephone: string) {
   conditions.offset = 0
   conditions.limit = num - totalNum.value
   getPosts({ ...conditions, userTelephone }).then((newPosts) => {
-    if(!newPosts || newPosts.length === 0) return
+    if (!newPosts || newPosts.length === 0)
+      return
     posts.unshift(...newPosts)
   })
   conditions.offset = oldOffset + conditions.limit

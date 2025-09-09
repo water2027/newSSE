@@ -19,6 +19,6 @@ const isPC = inject('isPC') as Ref<boolean>
 <template>
   <div class="w-full flex flex-row">
     <RouterView />
-    <ShopSidebar class="ml-10 w-fit" v-if="isPC && shopSidebarIsShow" />
+    <ShopSidebar v-if="isPC && shopSidebarIsShow" class="ml-10 w-fit" />
   </div>
 </template>

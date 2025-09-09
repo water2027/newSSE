@@ -23,7 +23,6 @@ const myMenuVisible = ref(false)
 function toggleMyMenu() {
   myMenuVisible.value = !myMenuVisible.value
 }
-
 </script>
 
 <template>
