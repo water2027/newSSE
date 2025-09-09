@@ -38,7 +38,7 @@ async function sendCode(email: string, mode: 0 | 1) {
       false,
     )
     if (!res!.ok) {
-      showMsg('发送验证码失败')
+      showMsg('发送验证码失败, 请重新获取')
       return null
     }
     const data = await res!.json()
@@ -46,7 +46,7 @@ async function sendCode(email: string, mode: 0 | 1) {
   }
   catch (e) {
     console.error(e)
-    showMsg('发送验证码失败')
+    showMsg('发送验证码失败, 请重新获取')
   }
 }
 
