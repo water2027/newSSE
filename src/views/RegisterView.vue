@@ -15,7 +15,7 @@ import { useFormExam } from '@/composables/FormExam'
 const router = useRouter()
 const rememberMe = useTemplateRef('rememberMe')
 
-const passwordReg = /^\S*(?=\S{6})(?=\S*\d)(?=\S*[A-Z])(?=\S*[a-z])(?=\S*[!@#$%^&*? ])\S+$/
+// const passwordReg = /^\S*(?=\S{6})(?=\S*\d)(?=\S*[A-Z])(?=\S*[a-z])(?=\S*[!@#$%^&*? ])\S+$/
 
 const registerForm = ref<CustomFormData[]>([
   {
@@ -36,14 +36,14 @@ const registerForm = ref<CustomFormData[]>([
     value: '',
     label: '密码',
     type: 'password',
-    reg: passwordReg,
+    // reg: passwordReg,
     autocomplete: 'new-password',
   },
   {
     id: 'password2',
     value: '',
     label: '确认密码',
-    reg: passwordReg,
+    // reg: passwordReg,
     type: 'password',
   },
   {
@@ -66,18 +66,22 @@ const emailIsCorrect = computed(() => {
 
 const { correct } = useFormExam(registerForm)
 
-const passwordIsCorrect = computed(() => {
-  const password = registerForm.value[2].value
-  const password2 = registerForm.value[3].value
-  return password === password2 && passwordReg.test(password)
-})
+// const passwordIsCorrect = computed(() => {
+//   const password = registerForm.value[2].value
+//   const password2 = registerForm.value[3].value
+//   return password === password2 && passwordReg.test(password)
+// })
 
 async function sendCodeAction() {
   const email = registerForm.value[1].value
   if (!emailIsCorrect.value) {
     return
   }
-  await sendCode(email, 0)
+  const data = await sendCode(email, 0)
+  if (!data) {
+    return
+  }
+  showMsg('验证码发送成功，请注意查收')
 }
 
 async function registerAction() {
@@ -120,6 +124,7 @@ async function registerAction() {
     :disabled="!correct"
     @submit-form="registerAction"
   >
+    <!--
     <span v-if="!passwordIsCorrect" class="text-sm text-red-500">
       密码至少6位，包含大小写字母、数字和!@#$%^&*? 中的一个
       <br>
@@ -127,6 +132,7 @@ async function registerAction() {
     <span v-else class="mx-a block text-sm text-green-500">
       密码符合要求
     </span>
+     -->
     <div class="flex flex-row justify-between">
       <div class="mx-a">
         <input ref="rememberMe" type="checkbox">
