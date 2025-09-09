@@ -14,6 +14,7 @@ import { showMsg } from '@/components/MessageBox'
 import { usePostStore } from '@/store/postStore'
 import { useUserStore } from '@/store/userStore'
 import { strHandler } from '@/utils/strHandler'
+import { setTitle } from '@/utils/title'
 
 const { updatePost } = usePostStore()
 
@@ -124,6 +125,7 @@ onMounted(async () => {
     const ID = Number(route.params.id)
     const curPost = await getPostByID(ID, userInfo.phone)
     post.value = curPost
+    setTitle(post.value.Title)
     await getCommentList()
   }
   catch (e) {

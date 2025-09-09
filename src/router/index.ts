@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/store/userStore'
+import { setTitle } from '@/utils/title'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -151,6 +152,7 @@ const { isLogin } = useUserStore()
 router.beforeEach((to, from, next) => {
   if (to.path.startsWith('/auth')) {
     next()
+    setTitle(to.name as string)
     return
   }
   if (!isLogin.value) {
@@ -164,6 +166,7 @@ router.beforeEach((to, from, next) => {
     return
   }
   next()
+  setTitle(to.name as string)
 })
 
 export default router
