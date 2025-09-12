@@ -2,6 +2,8 @@
 import type { Post } from '@/types/post'
 import { defineAsyncComponent } from 'vue'
 
+import { debounceAsync } from '@/utils/debounced'
+
 import { delPost } from '@/api/editPostAndComment/editPost'
 import { likePost, savePost } from '@/api/SaveAndLike/SaveAndLike'
 
@@ -24,7 +26,7 @@ const OldImages = defineAsyncComponent(() => import('@/components/OldImages.vue'
 const { userInfo } = useUserStore()
 
 /**
- * @description 点赞。
+ * @description 点赞。懒得装防抖
  */
 async function like() {
   // 后端没有返回数据，不要赋值后再更新
@@ -38,6 +40,7 @@ async function like() {
   }
 }
 
+const handleUserActionDebounce = debounceAsync(handleUserAction)
 async function handleUserAction(type: 'delete' | 'save') {
   // 后端没有返回数据，不要赋值后再更新
   switch (type) {
@@ -83,7 +86,7 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
         :user-name="post.UserName"
         :user-score="post.UserScore"
       />
-      <UserButton :is-saved="post.IsSaved" :is-self="userInfo.phone === post.UserTelephone" @user-action="handleUserAction" />
+      <UserButton :is-saved="post.IsSaved" :is-self="userInfo.phone === post.UserTelephone" @user-action="handleUserActionDebounce" />
     </div>
     <RouterLink :to="`/postdetail/${post.PostID}`">
       <div

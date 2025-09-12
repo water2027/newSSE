@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Post } from '@/types/post'
+import { debounceAsync } from '@/utils/debounced'
 import { defineAsyncComponent, ref, useTemplateRef } from 'vue'
 import { sendComment } from '@/api/editPostAndComment/editComment'
 
@@ -36,6 +37,7 @@ const root = useTemplateRef('root')
 /**
  * @description 发送评论
  */
+
 async function sendCommentFunc() {
   const res = await sendComment(
     commentContent.value,
@@ -51,6 +53,8 @@ async function sendCommentFunc() {
     return false
   }
 }
+
+const handlerDebounce = debounceAsync(handler)
 
 async function handler(type: 'comment') {
   let event
@@ -157,7 +161,7 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
       v-if="commentButtonIsShow"
       v-model="commentContent"
       class="max-w-full"
-      @send="handler('comment')"
+      @send="handlerDebounce('comment')"
     />
   </BasicCard>
 </template>

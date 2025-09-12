@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Comment } from '@/types/comment'
+import { debounceAsync } from '@/utils/debounced'
 import { defineAsyncComponent, ref, useTemplateRef } from 'vue'
 
 import { delComment, sendPComment } from '@/api/editPostAndComment/editComment'
@@ -37,6 +38,7 @@ const { userInfo } = useUserStore()
 /**
  * @description 发送评论
  */
+
 async function sendCommentFunc() {
   try {
     const sendingData = {
@@ -73,6 +75,7 @@ async function deleteFunc() {
   }
 }
 
+const handlerDebounced = debounceAsync(handler)
 async function handler(type: 'delete' | 'comment') {
   let event
   switch (type) {
@@ -142,7 +145,7 @@ async function like() {
           :user-name="comment.Author"
           :user-score="comment.AuthorScore"
         />
-        <UserButton :no-save="true" :is-self="userInfo.phone === comment.AuthorTelephone" @user-action="handler" />
+        <UserButton :no-save="true" :is-self="userInfo.phone === comment.AuthorTelephone" @user-action="handlerDebounced" />
       </div>
       <MarkdownContainer
         :markdown-content="comment.Content || 'loading'"
@@ -168,7 +171,7 @@ async function like() {
       <MarkdownEditor
         v-if="commentButtonIsShow"
         v-model="commentContent"
-        @send="handler('comment')"
+        @send="handlerDebounced('comment')"
       />
       <div
         v-if="comment.SubComments && comment.SubComments.length > 0"
