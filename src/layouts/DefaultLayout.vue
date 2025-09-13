@@ -6,6 +6,7 @@ import {
   onUnmounted,
   provide,
   ref,
+  watch
 } from 'vue'
 
 import { useRoute } from 'vue-router'
@@ -103,18 +104,23 @@ onMounted(() => {
   refreshNoticeNum()
   updateChatNum(undefined)
   window.addEventListener('resize', updateWidth)
-  if (!isPC.value) {
-    window.addEventListener('touchstart', handleTouchStart)
-    window.addEventListener('touchend', handleTouchEnd)
-  }
 })
+
 onUnmounted(() => {
   window.removeEventListener('resize', updateWidth)
-  if (!isPC.value) {
+  window.removeEventListener('touchstart', handleTouchStart)
+  window.removeEventListener('touchend', handleTouchEnd)
+})
+
+watch(isPC, (value) => {
+  if (!value) {
+    window.addEventListener('touchstart', handleTouchStart)
+    window.addEventListener('touchend', handleTouchEnd)
+  } else {
     window.removeEventListener('touchstart', handleTouchStart)
     window.removeEventListener('touchend', handleTouchEnd)
   }
-})
+}, { immediate: true })
 </script>
 
 <template>
