@@ -3,7 +3,8 @@ import type { Post } from '@/types/post'
 import { onUnmounted, useTemplateRef, watch } from 'vue'
 import PostCard from './card/PostCard.vue'
 
-const { posts = [], isLoading = false, hasMore = true } = defineProps<{
+const { isDense, posts = [], isLoading = false, hasMore = true } = defineProps<{
+  isDense?: boolean
   posts?: Post[]
   isLoading?: boolean
   hasMore?: boolean
@@ -63,6 +64,7 @@ onUnmounted(() => {
         v-for="post in posts"
         :key="post.PostID"
         class="mx-a my-3 w-15/16"
+        :is-dense="isDense"
         :post="post"
       />
     </transition-group>
@@ -77,7 +79,7 @@ onUnmounted(() => {
     </template>
     <template v-else>
       <div class="bottomDiv">
-        noMore
+        暂无更多
       </div>
     </template>
   </div>
@@ -92,5 +94,9 @@ onUnmounted(() => {
 .list-enter-from,
 .list-leave-to {
   opacity: 0;
+}
+
+.bottomDiv {
+  text-align: center;
 }
 </style>

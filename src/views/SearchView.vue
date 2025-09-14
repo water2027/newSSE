@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import type { Partitions } from '@/store/postStore'
 import {
   onMounted,
+  ref,
 } from 'vue'
 
 import { useRoute } from 'vue-router'
@@ -13,14 +15,20 @@ const { search } = usePostStore()
 const route = useRoute()
 const { posts, update, isLoading, hasMore, initialize } = usePostView()
 
+const isDense = ref(false)
+
 onMounted(async () => {
   const query = route.query
   if (!('sinfo' in query))
     return showMsg('未知的搜索')
   const sinfo = query.sinfo as string
-  await initialize('主页', {
+  const partition = query?.partition as typeof Partitions[number]
+  // 参考PartitionView
+  if (partition === '课程交流')
+    isDense.value = true
+  await initialize(partition || '主页', {
     afterRefresh: () => {
-      search(sinfo)
+      search(sinfo, partition)
     },
   })
 })
@@ -29,7 +37,7 @@ onMounted(async () => {
 <template>
   <div class="root">
     <h2>搜索</h2>
-    <PostList :posts="posts" :is-loading="isLoading" :has-more="hasMore" @bottom="update" />
+    <PostList :posts="posts" :is-dense="isDense" :is-loading="isLoading" :has-more="hasMore" @bottom="update" />
   </div>
 </template>
 

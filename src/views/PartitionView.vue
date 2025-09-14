@@ -14,6 +14,8 @@ const route = useRoute()
 const router = useRouter()
 const { posts, update, isLoading, hasMore, initialize } = usePostView()
 
+const isDense = ref(false)
+
 onMounted(() => {
   const params = route.params
   if (!('name' in params)) {
@@ -26,6 +28,9 @@ onMounted(() => {
     router.push('/course')
     return
   }
+  if (partition === '课程交流')
+    // 对于课程交流分区，采用更紧凑的卡片布局
+    isDense.value = true
   name.value = partition
   initialize(partition)
 })
@@ -34,6 +39,6 @@ onMounted(() => {
 <template>
   <div class="w-full">
     <h2>{{ name }}</h2>
-    <PostList :posts="posts" :is-loading="isLoading" :has-more="hasMore" @bottom="update" />
+    <PostList :posts="posts" :is-dense="isDense" :is-loading="isLoading" :has-more="hasMore" @bottom="update" />
   </div>
 </template>

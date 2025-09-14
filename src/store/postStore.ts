@@ -4,7 +4,7 @@ import { reactive, ref, unref } from 'vue'
 
 import { getPosts, getPostsNum } from '@/api/browse/getPost'
 
-export const Partitions = ['主页', '收藏', '历史', '课程专区', '优质贴', '日常吐槽', '打听求助', '学习交流', '院务', '求职招募', '其他'] as const
+export const Partitions = ['主页', '收藏', '历史', '课程专区', '优质贴', '课程交流', '日常吐槽', '打听求助', '学习交流', '院务', '求职招募', '其他'] as const
 export const SearchSort = ['home', 'save', 'history'] as const
 
 export interface Condition {
@@ -170,8 +170,11 @@ function changeTo(p: typeof Partitions[number], tag: string = '') {
   }
 }
 
-function search(sinfo: string) {
+function search(sinfo: string, p?: typeof Partitions[number]) {
   conditions.searchinfo = sinfo
+  if (p) {
+    conditions.partition = p
+  }
 }
 
 function initLimit() {

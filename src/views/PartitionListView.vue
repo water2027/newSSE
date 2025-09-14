@@ -6,6 +6,7 @@ const router = useRouter()
 const partitions = ref([
   { name: '日常吐槽', description: '言短情长，抒发心声。', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/image/daily.jpg' },
   { name: '优质贴', description: '优质内容，分享交流。', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/image/secondhand.jpg' },
+  { name: '课程交流', description: '课程内容，分享交流。', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/image/study.jpg' },
   { name: '打听求助', description: '疑虑相询，忧难互助。', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/image/help.jpg' },
   { name: '学习交流', description: '知识碰撞，学术思辨。', src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/assets/image/study.jpg' },
   { name: '院务', description: '院内事务，信息发布。', src: 'https://pic2.zhimg.com/v2-4fd432574e38d33d52e35041a8e7fd52_720w.jpg?source=172ae18b' },
