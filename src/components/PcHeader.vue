@@ -15,7 +15,17 @@ function search() {
   const el = sinfo.value as HTMLInputElement
   if (!el || !el.value)
     return
-  router.push(`/search?sinfo=${encodeURIComponent(el.value)}`)
+  const currentRoute = router.currentRoute.value
+  if (currentRoute.path === '/partition/课程交流'
+    // 如果先搜索一次然后返回，再次搜索时path会被URI编码
+    || currentRoute.path === `/partition/${encodeURIComponent('课程交流')}`
+    || currentRoute?.query?.partition === '课程交流'
+    || currentRoute?.query?.partition === encodeURIComponent('课程交流')) {
+    router.push(`/search?sinfo=${encodeURIComponent(el.value)}&partition=课程交流`)
+  }
+  else {
+    router.push(`/search?sinfo=${encodeURIComponent(el.value)}`)
+  }
   el.value = ''
 }
 </script>
