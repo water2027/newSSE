@@ -23,8 +23,7 @@
     "newsse": "file:",
     "prismjs": "^1.30.0",
     "vue": "^3.5.17",
-    "vue-router": "^4.5.1",
-    "workbox-window": "^7.3.0"
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^4.16.2",
@@ -50,8 +49,7 @@
     "typescript": "^5.8.3",
     "unocss": "^66.3.3",
     "vite": "^7.0.7",
-    "vite-bundle-analyzer": "^0.22.3",
-    "vite-plugin-pwa": "^1.0.1",
+    "vite-bundle-analyzer": "^1.2.3",
     "vue-tsc": "^3.0.1"
   }
 }
