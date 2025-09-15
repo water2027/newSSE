@@ -205,6 +205,7 @@ body.dark-mode .bottom-nav-bar {
   padding: 5px;
   border-radius: 5px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  min-width: 96px;
 }
 body.dark-mode .my-dropdown {
   background-color: #2e2e2e;
@@ -217,6 +218,8 @@ body.dark-mode .my-dropdown {
   color: var(--color-text);
   text-decoration: none;
   border: 1px solid var(--color-border);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .dropdown-item:hover {

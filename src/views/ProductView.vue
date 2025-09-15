@@ -200,6 +200,7 @@ onMounted(async () => {
   background-color: transparent;
   border: none;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   color: #333;
   font-size: 18px;
   display: flex;
@@ -270,6 +271,7 @@ onMounted(async () => {
   border-radius: 50%;
   font-size: 18px;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   z-index: 10;
   display: flex;
   align-items: center;
@@ -301,6 +303,7 @@ onMounted(async () => {
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .indicator.active {
@@ -362,6 +365,7 @@ onMounted(async () => {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   font-size: 16px;
   transition: background-color 0.3s;
 }

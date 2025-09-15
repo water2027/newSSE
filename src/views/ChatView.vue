@@ -447,6 +447,7 @@ function checkSameDay(x: Date, y: Date) {
   padding: 0.75rem;
   align-items: center;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 
   &.selected {
     background: var(--chat-bg-highlight);
@@ -626,6 +627,7 @@ function checkSameDay(x: Date, y: Date) {
   border-radius: 3px;
   background: var(--chat-bg-main);
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 
   &:hover {
     color: rgb(0, 123, 255);

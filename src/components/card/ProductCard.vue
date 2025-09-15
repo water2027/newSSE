@@ -98,6 +98,7 @@ function getResizedUrl(url: string): string {
   overflow: hidden;
   position: relative;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   /* 为绝对定位的 sold-out-mark 提供定位上下文 */
 }
 
