@@ -24,7 +24,7 @@ class SnackbarManager {
   private instances: Map<string, SnackbarInstance> = new Map()
   private container: HTMLElement | null = null
   private isDestroyed = false
-  private hideTimers: Map<string, NodeJS.Timeout> = new Map()
+  private hideTimers: Map<string, ReturnType<typeof setTimeout>> = new Map()
 
   private createContainer(): HTMLElement {
     if (this.container)
@@ -55,7 +55,7 @@ class SnackbarManager {
     message.textContent = options.message
     content.appendChild(message)
 
-    let timeoutId: NodeJS.Timeout | null = null
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
 
     const instance: SnackbarInstance = {
       id,
