@@ -51,6 +51,11 @@ body {
   --chat-bg-highlight: #ddd;
   --chat-text: #888;
   --chat-text-tips: #383838;
+
+  --color-success: #4caf50;
+  --color-error: #f44336;
+  --color-info: #2196f3;
+  --color-warning: #ff9800;
 }
 
 body.dark-mode {

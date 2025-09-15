@@ -6,14 +6,17 @@ import {
   onUnmounted,
   provide,
   ref,
+  watch,
 } from 'vue'
 
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { getChatNotice } from '@/api/chat/chat'
 
 import ModeButton from '@/components/ModeButton.vue'
+import { useNewPostsStore } from '@/store/newPostsStore'
 import { useNoticeStore } from '@/store/noticeStore'
 import { useUserStore } from '@/store/userStore'
+import { showSnackbar } from '@/utils/snackbar'
 
 const HeatList = defineAsyncComponent(
   () => import('@/components/HeatList.vue'),
@@ -28,9 +31,11 @@ const PcHeader = defineAsyncComponent(
 const PartitionList = defineAsyncComponent(() => import('@/components/PartitionList.vue'))
 const MobileHeader = defineAsyncComponent(() => import('@/components/MobileHeader.vue'))
 const route = useRoute()
+const router = useRouter()
 
 const { userInfo } = useUserStore()
 const { noticeNum, refreshNoticeNum } = useNoticeStore()
+const { startPolling, stopPolling, newPostsNotification, hideNotification } = useNewPostsStore()
 
 const windowWidth = ref(window.innerWidth)
 const isPC = computed(() => {
@@ -107,12 +112,39 @@ onMounted(() => {
     window.addEventListener('touchstart', handleTouchStart)
     window.addEventListener('touchend', handleTouchEnd)
   }
+  // 启动新帖子轮询
+  startPolling()
 })
 onUnmounted(() => {
   window.removeEventListener('resize', updateWidth)
   if (!isPC.value) {
     window.removeEventListener('touchstart', handleTouchStart)
     window.removeEventListener('touchend', handleTouchEnd)
+  }
+  // 停止新帖子轮询
+  stopPolling()
+})
+
+// 监听新帖子通知变化，显示Snackbar
+watch(() => newPostsNotification.updatedAt, (updatedAt: number) => {
+  if (updatedAt > 0 && newPostsNotification.isVisible) {
+    const isCurrentlyOnHomePage = route.path === '/' || route.path === '/partition'
+
+    showSnackbar({
+      id: 'new-posts-notification',
+      message: `有 ${newPostsNotification.newPostIds.length} 条未查看的新帖子`,
+      actionText: isCurrentlyOnHomePage ? '去查看' : '去首页查看',
+      type: 'info',
+      position: isPC.value ? 'top' : 'bottom', // PC端在上方，移动端在下方
+      alwaysShow: true,
+      onAction: () => {
+        hideNotification()
+        router.push({ path: '/', query: { refresh: Date.now() } })
+      },
+      onClose: () => {
+        hideNotification()
+      },
+    })
   }
 })
 </script>

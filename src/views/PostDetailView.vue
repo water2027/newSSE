@@ -11,12 +11,14 @@ import { getPostByID } from '@/api/browse/getPost'
 import DetailCard from '@/components/card/DetailCard.vue'
 import { showImg } from '@/components/ImageShower'
 import { showMsg } from '@/components/MessageBox'
+import { useNewPostsStore } from '@/store/newPostsStore'
 import { usePostStore } from '@/store/postStore'
 import { useUserStore } from '@/store/userStore'
 import { strHandler } from '@/utils/strHandler'
 import { setTitle } from '@/utils/title'
 
 const { updatePost } = usePostStore()
+const { removeNewPostId } = useNewPostsStore()
 
 const CommentCard = defineAsyncComponent(() => import('@/components/card/CommentCard.vue'))
 
@@ -127,6 +129,8 @@ onMounted(async () => {
     post.value = curPost
     setTitle(post.value.Title)
     await getCommentList()
+    // 从新帖子列表中移除当前帖子ID
+    removeNewPostId(ID)
   }
   catch (e) {
     showMsg(`获取帖子失败: ${e}`)

@@ -3,11 +3,12 @@ import type { Post } from '@/types/post'
 import { onUnmounted, useTemplateRef, watch } from 'vue'
 import PostCard from './card/PostCard.vue'
 
-const { isDense, posts = [], isLoading = false, hasMore = true } = defineProps<{
+const { isDense, posts = [], isLoading = false, hasMore = true, newPostIds = [] } = defineProps<{
   isDense?: boolean
   posts?: Post[]
   isLoading?: boolean
   hasMore?: boolean
+  newPostIds?: number[]
 }>()
 
 const emits = defineEmits(['bottom'])
@@ -65,6 +66,7 @@ onUnmounted(() => {
         :key="post.PostID"
         class="mx-a my-3 w-15/16"
         :is-dense="isDense"
+        :is-new="newPostIds.includes(post.PostID)"
         :post="post"
       />
     </transition-group>
