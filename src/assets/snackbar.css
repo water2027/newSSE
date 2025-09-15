@@ -1,0 +1,140 @@
+.snackbar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.snackbar {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  padding: 8px 8px 8px 12px;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-border);
+  z-index: 1000;
+  transition: all 0.3s ease;
+  max-width: 90%;
+  min-width: 280px;
+  user-select: none;
+  -webkit-user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.snackbar--top {
+  top: 100px;
+}
+
+.snackbar--bottom {
+  bottom: 90px;
+}
+
+.snackbar--success {
+  border-left: 4px solid var(--color-success);
+}
+
+.snackbar--error {
+  border-left: 4px solid var(--color-error);
+}
+
+.snackbar--info {
+  border-left: 4px solid var(--color-info);
+}
+
+.snackbar--warning {
+  border-left: 4px solid var(--color-warning);
+}
+
+.snackbar:hover {
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.snackbar-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex: 1;
+}
+
+.snackbar-message {
+  font-size: 13px;
+  font-weight: 500;
+  flex: 1;
+}
+
+.snackbar-action {
+  background: var(--color-button-bg);
+  border: 1px solid var(--color-border);
+  color: var(--color-button);
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.snackbar-action:hover {
+  opacity: 0.8;
+}
+
+.snackbar-close {
+  background: transparent;
+  border: none;
+  color: var(--color-text);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  opacity: 0.7;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.snackbar-close:hover {
+  background: var(--color-button-bg);
+  color: var(--color-button);
+  opacity: 0.8;
+}
+
+.snackbar-enter-active,
+.snackbar-leave-active {
+  transition: all 0.3s ease;
+}
+
+.snackbar-enter-from {
+  opacity: 0;
+  transform: translateX(-50%) translateY(20px);
+}
+
+.snackbar-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(20px);
+}
+
+.snackbar--top.snackbar-enter-from {
+  transform: translateX(-50%) translateY(-20px);
+}
+
+.snackbar--top.snackbar-leave-to {
+  transform: translateX(-50%) translateY(-20px);
+}
