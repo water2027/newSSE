@@ -154,7 +154,7 @@ onUnmounted(() => {
           <PartitionList />
         </template>
         <router-view v-slot="{ Component }">
-          <KeepAlive include="HomeView">
+          <KeepAlive include="HomeView,PartitionView">
             <component :is="Component" :key="route.fullPath" />
           </KeepAlive>
         </router-view>
