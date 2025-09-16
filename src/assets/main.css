@@ -96,4 +96,12 @@ a {
   color: var(--color-link);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+
+  &:hover {
+    background: var(--color-hover);
+  }
+
+  &:active {
+    background: var(--color-active);
+  }
 }
