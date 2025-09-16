@@ -41,6 +41,7 @@ body {
 .fileInput,
 button {
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   pointer-events: auto;
   border: none;
   outline: none;
@@ -93,4 +94,14 @@ img {
 a {
   text-decoration: none;
   color: var(--color-link);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover {
+    background: var(--color-hover);
+  }
+
+  &:active {
+    background: var(--color-active);
+  }
 }

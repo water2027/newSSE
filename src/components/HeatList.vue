@@ -74,6 +74,7 @@ onMounted(async () => {
   text-decoration: none;
   color: var(--color-text);
   transition: all 0.3s;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .nav:hover {

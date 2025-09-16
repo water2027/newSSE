@@ -207,6 +207,11 @@ onMounted(async () => {
   color: var(--color-text);
 }
 
+.sort-btn {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body.dark-mode .sort-btn {
   background-color: var(--color-bg);
   border: 1px solid whitesmoke;

@@ -269,6 +269,7 @@ img {
   display: inline-block;
   padding: 6px 12px;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   width: 100%;
   height: auto;
   border: none;
@@ -520,6 +521,7 @@ input[type='file'] {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   transition: background-color 0.3s ease;
 }
 
@@ -584,6 +586,7 @@ body.dark-mode .button:hover {
   background-color: #ccc;
   border-radius: 13px;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   overflow: hidden;
 }
 

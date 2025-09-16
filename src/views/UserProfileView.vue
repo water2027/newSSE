@@ -86,6 +86,7 @@ function navigateChat() {
       border: 1px solid #909eb4;
       border-radius: 3px;
       cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
       align-self: flex-end;
 
       svg {

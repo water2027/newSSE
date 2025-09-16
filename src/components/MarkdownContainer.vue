@@ -147,6 +147,7 @@ const safeHTML = computed(() => {
   left: calc(100% - 20px);
   margin-top: -20px;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   pointer-events: auto;
 }
 

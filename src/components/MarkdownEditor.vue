@@ -294,6 +294,7 @@ onMounted(() => {
     margin-right: 10px;
     margin-top: 10px;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
     transition:
       background-color 0.3s,
       transform 0.2s;
@@ -325,6 +326,7 @@ onMounted(() => {
     color: white;
     text-align: center;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
     transition:
       background-color 0.3s,
       transform 0.2s;

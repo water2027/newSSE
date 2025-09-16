@@ -32,10 +32,11 @@ document.body.className = mode.value
 </template>
 
 <style scoped lang="scss">
-  .mode-select {
+.mode-select {
   color: #eee;
   display: flex;
   align-items: center;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 </style>
