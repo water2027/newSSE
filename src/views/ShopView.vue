@@ -429,6 +429,7 @@ onBeforeUnmount(() => {
   border-radius: 50%;
   font-size: 18px;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   z-index: 10;
   display: flex;
   align-items: center;
@@ -460,6 +461,7 @@ onBeforeUnmount(() => {
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .indicator.active {

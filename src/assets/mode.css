@@ -26,6 +26,9 @@ body {
   --color-selected-shadow-first: rgba(70, 70, 94, 0.25);
   --color-selected-shadow-second: rgba(0, 0, 0, 0.3);
 
+  --color-hover: rgba(70, 70, 94, 0.1);
+  --color-active: rgba(0, 0, 0, 0.2);
+
   --color-title-selected: #00a4af;
   --color-title-bg: rgba(136, 243, 255, 0.683);
 
@@ -82,6 +85,9 @@ body.dark-mode {
 
   --color-selected-shadow-first: rgba(255, 255, 255, 0.1);
   --color-selected-shadow-second: rgba(255, 255, 255, 0.2);
+
+  --color-hover: rgba(255, 255, 255, 0.1);
+  --color-active: rgba(255, 255, 255, 0.2);
 
   --color-title-selected: #b8860b;
   --color-title-bg: #ffb700cd;

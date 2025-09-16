@@ -217,6 +217,8 @@ body.dark-mode .my-dropdown {
   color: var(--color-text);
   text-decoration: none;
   border: 1px solid var(--color-border);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .dropdown-item:hover {

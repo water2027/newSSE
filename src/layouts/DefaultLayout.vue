@@ -218,6 +218,7 @@ header {
     font-size: 18px;
     font-family: 'Ubuntu Mono', Arial, Helvetica, sans-serif;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .top-left,

@@ -35,6 +35,7 @@ function closeSidebar() {
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   user-select: none;
   z-index: 1000;

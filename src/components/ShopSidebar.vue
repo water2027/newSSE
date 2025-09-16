@@ -100,6 +100,7 @@ const { userInfo } = useUserStore()
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
