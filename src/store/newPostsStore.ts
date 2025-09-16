@@ -13,7 +13,7 @@ const newPostsNotification = reactive({
 const cachedHomePostIds = ref<number[]>([])
 
 // 轮询定时器
-let pollingTimer: NodeJS.Timeout | null = null
+let pollingTimer: ReturnType<typeof setInterval> | null = null
 
 // 是否正在轮询新帖子
 const isPollingNewPosts = ref(false)
