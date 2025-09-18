@@ -141,6 +141,11 @@ const router = createRouter({
       ],
     },
     {
+      path: '/connect',
+      name: 'Connect',
+      component: () => import('@/views/ConnectView.vue'),
+    },
+    {
       path: '/:catchAll(.*)',
       redirect: '/',
     },
