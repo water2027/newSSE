@@ -1,4 +1,3 @@
-import { showMsg } from '@/components/MessageBox'
 import { requestFunc } from '../req'
 
 export interface OAuth2Info {
@@ -37,15 +36,13 @@ export async function checkOAuth2App(appId: string): Promise<OAuth2AppInfo> {
   }, true)
 
   if (!response) {
-    showMsg('网络请求失败')
-    return { app_id: '', app_name: '', app_icon: '', description: '' }
+    throw new Error('网络请求失败')
   }
 
-  const result = await response?.json()
+  const result = await response.json()
 
   if (result.code !== 200) {
-    showMsg(result.message || '获取应用信息失败')
-    return { app_id: '', app_name: '', app_icon: '', description: '' }
+    throw new Error(result.message || '获取应用信息失败')
   }
 
   return result.data
@@ -66,15 +63,13 @@ export async function authorizeOAuth2App(oauth2Info: OAuth2Info): Promise<OAuth2
   }, true)
 
   if (!response) {
-    showMsg('网络请求失败')
-    return { redirect_url: '' }
+    throw new Error('网络请求失败')
   }
 
   const result = await response.json()
 
   if (result.code !== 200) {
-    showMsg(result.message || '授权失败')
-    return { redirect_url: '' }
+    throw new Error(result.message || '授权失败')
   }
 
   return result.data
