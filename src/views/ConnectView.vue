@@ -3,6 +3,7 @@ import type { OAuth2Info } from '@/api/oauth2/oauth2'
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { authorizeOAuth2App, checkOAuth2App } from '@/api/oauth2/oauth2'
+import { showMsg } from '@/components/MessageBox'
 import { useUserStore } from '@/store/userStore'
 
 const route = useRoute()
@@ -59,7 +60,7 @@ function getOAuth2Params() {
   }
 
   if (oauth2Params.value.scope !== 'read_basic') {
-    error.value = '暂不支持此类授权'
+    error.value = '暂不支持'
     checking.value = false
     return false
   }
@@ -95,12 +96,11 @@ async function handleAuthorize() {
     const result = await authorizeOAuth2App(oauth2Params.value)
 
     // 跳转到重定向URL
-    if (result.redirect_url)
-      window.location.href = result.redirect_url
+    window.location.href = result.redirect_url
   }
-  catch (e) {
-    console.log(e)
+  catch (err) {
     loading.value = false
+    showMsg(err instanceof Error ? err.message : '授权失败')
   }
 }
 
@@ -129,16 +129,16 @@ onMounted(() => {
     <!-- 错误状态 -->
     <div v-else-if="error" class="flex flex-col items-center justify-center text-center">
       <div class="mb-2 text-lg text-red-600 font-semibold">
-        授权出错
+        授权过程出错
       </div>
       <div class="mb-6 text-gray-600">
         {{ error }}
       </div>
       <button
         class="rounded-lg bg-gray-500 px-6 py-2 text-white transition-colors hover:bg-gray-600"
-        @click="router.back()"
+        @click="router.push('/')"
       >
-        返回
+        返回首页
       </button>
     </div>
 
