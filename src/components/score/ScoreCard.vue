@@ -4,7 +4,7 @@ import { defineAsyncComponent } from 'vue'
 
 import { delPost } from '@/api/editPostAndComment/editPost'
 
-import { likePost, savePost } from '@/api/SaveAndLike/SaveAndLike'
+import { likePost } from '@/api/SaveAndLike/SaveAndLike'
 import { showMsg } from '@/components/MessageBox'
 
 import { usePostStore } from '@/store/postStore'
@@ -13,9 +13,9 @@ import { useUserStore } from '@/store/userStore'
 import { debounceAsync } from '@/utils/debounced'
 
 import BasicInfo from '../BasicInfo.vue'
+import BasicCard from '../card/BasicCard.vue'
 import UserAvatar from '../UserAvatar.vue'
 import UserButton from '../UserButton.vue'
-import BasicCard from './BasicCard.vue'
 
 const { post } = defineProps<{
   post: Post
@@ -41,23 +41,9 @@ async function like() {
 }
 
 const handleUserActionDebounce = debounceAsync(handleUserAction)
-async function handleUserAction(type: 'delete' | 'save') {
+async function handleUserAction(type: 'delete') {
   // 后端没有返回数据，不要赋值后再更新
-  switch (type) {
-    case 'save':{
-      try {
-        await savePost(
-          post.PostID,
-          userInfo.phone,
-        )
-        useCustomEvent('save')
-      }
-      catch (e) {
-        console.error(e)
-        showMsg('失败了:-(')
-      }
-      break
-    }
+  switch (type) { // 只能delete
     case 'delete': {
       try {
         await delPost(post.PostID)
@@ -71,7 +57,7 @@ async function handleUserAction(type: 'delete' | 'save') {
   }
 }
 
-function useCustomEvent(type: 'delete' | 'save' | 'like') {
+function useCustomEvent(type: 'delete' | 'like') {
   updatePost(post.PostID, type)
 }
 </script>
@@ -86,7 +72,7 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
         :user-name="post.UserName"
         :user-score="post.UserScore"
       />
-      <UserButton :is-saved="post.IsSaved" :is-self="userInfo.phone === post.UserTelephone" @user-action="handleUserActionDebounce" />
+      <UserButton :no-save="true" :is-saved="False" :is-self="userInfo.phone === post.UserTelephone" @user-action="handleUserActionDebounce" />
     </div>
     <RouterLink :to="`/postdetail/${post.PostID}`">
       <div

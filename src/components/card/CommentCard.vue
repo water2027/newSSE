@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { Comment } from '@/types/comment'
-import { debounceAsync } from '@/utils/debounced'
 import { defineAsyncComponent, ref, useTemplateRef } from 'vue'
-
 import { delComment, sendPComment } from '@/api/editPostAndComment/editComment'
+
 import {
   likePostComment,
 } from '@/api/SaveAndLike/SaveAndLike'
 import { useUserStore } from '@/store/userStore'
+import { debounceAsync } from '@/utils/debounced'
 import BasicInfo from '../BasicInfo.vue'
 
 import MarkdownContainer from '../MarkdownContainer.vue'

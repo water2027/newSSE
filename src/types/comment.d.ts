@@ -32,3 +32,21 @@ export interface SubComment {
   userTargetName: string
   showMenu: boolean
 }
+
+export interface ScoreComment {
+  ScommentID: number
+  AuthorID: number
+  Author: string
+  AuthorTelephone: string
+  AuthorScore: number
+  AuthorAvatar: string
+  AuthorIdentity: string
+  CommentTime: string
+  Content: string
+  LikeNum: number
+  DenyNum: number
+  IsLiked: boolean
+  IsDenied: boolean
+  Score: number
+  Show: boolean// 是否可见 根据content是否为空判断
+}

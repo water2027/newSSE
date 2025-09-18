@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import type { Post } from '@/types/post'
+import type { Post, Score } from '@/types/post'
+
 import { onUnmounted, useTemplateRef, watch } from 'vue'
 import PostCard from './card/PostCard.vue'
+import ScoreCard from './score/ScoreCard.vue'
 
-const { posts = [], isLoading = false, hasMore = true } = defineProps<{
-  posts?: Post[]
+const _props = defineProps<{
+  // 定义联合类型，接受 Post 或 Score 数组
+  items: (Post | Score)[]
+  // 标识当前显示的是 Post 还是 Score
+  type: 'post' | 'score'
   isLoading?: boolean
   hasMore?: boolean
 }>()
@@ -59,12 +64,25 @@ onUnmounted(() => {
 <template>
   <div class="w-full">
     <transition-group name="list">
-      <PostCard
-        v-for="post in posts"
-        :key="post.PostID"
-        class="mx-a my-3 w-15/16"
-        :post="post"
-      />
+      <!-- 静态条件渲染（根据type选择组件） -->
+      <template v-if="type === 'post'">
+        <PostCard
+          v-for="item in items as Post[]"
+          :key="`post-${item.PostID}`"
+          :post="item"
+          class="card mx-auto my-3 w-15/16"
+        />
+      </template>
+
+      <template v-else-if="type === 'score'">
+        <ScoreCard
+          v-for="item in items as Score[]"
+          :key="`score-${item.PostID}`"
+          :post="item"
+          :score="item"
+          class="card mx-auto my-3 w-15/16"
+        />
+      </template>
     </transition-group>
     <template v-if="hasMore">
       <div
@@ -79,6 +97,10 @@ onUnmounted(() => {
       <div class="bottomDiv">
         noMore
       </div>
+      <!--
+      <div class="bottomDiv">
+      {{ hasMore ? (isLoading ? 'loading...' : '') : 'noMore' }}
+      </div>ai给的优化 -->
     </template>
   </div>
 </template>

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { debounceAsync } from '@/utils/debounced'
 import { useTemplateRef } from 'vue'
 import { feedback } from '@/api/feedback/feedback'
 import { showMsg } from '@/components/MessageBox'
+import { debounceAsync } from '@/utils/debounced'
 
 const feedbackContent = useTemplateRef<HTMLTextAreaElement>('feedbackContent')
 
-//这是防抖
+// 这是防抖
 const submitFeedbackDebounced = debounceAsync(submitFeedback)
 
 async function submitFeedback() {

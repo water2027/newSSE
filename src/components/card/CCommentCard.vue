@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { SubComment } from '@/types/comment'
-import { debounceAsync } from '@/utils/debounced'//前面的没用上
 import { defineAsyncComponent, ref, useTemplateRef } from 'vue'
 import {
   delCcomment,
@@ -9,8 +8,9 @@ import {
 import {
   likeCommentComment,
 } from '@/api/SaveAndLike/SaveAndLike'
-
 import { useUserStore } from '@/store/userStore'
+
+import { debounceAsync } from '@/utils/debounced'// 前面的没用上
 import BasicInfo from '../BasicInfo.vue'
 import MarkdownContainer from '../MarkdownContainer.vue'
 
