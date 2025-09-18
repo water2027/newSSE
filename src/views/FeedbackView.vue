@@ -80,6 +80,7 @@ button {
   border-radius: 0.25rem;
   text-decoration: none;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn {

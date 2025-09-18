@@ -17,8 +17,10 @@ import UserAvatar from '../UserAvatar.vue'
 import UserButton from '../UserButton.vue'
 import BasicCard from './BasicCard.vue'
 
-const { post } = defineProps<{
+const { isDense, post, isNew } = defineProps<{
+  isDense?: boolean
   post: Post
+  isNew?: boolean
 }>()
 const { updatePost } = usePostStore()
 const OldImages = defineAsyncComponent(() => import('@/components/OldImages.vue'))
@@ -44,7 +46,7 @@ const handleUserActionDebounce = debounceAsync(handleUserAction)
 async function handleUserAction(type: 'delete' | 'save') {
   // 后端没有返回数据，不要赋值后再更新
   switch (type) {
-    case 'save':{
+    case 'save': {
       try {
         await savePost(
           post.PostID,
@@ -77,8 +79,9 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
 </script>
 
 <template>
-  <BasicCard>
-    <div class="h-fit flex flex-row items-start">
+  <!-- 紧凑布局下不显示用户信息、时间等 -->
+  <BasicCard :class="[isDense ? '' : 'min-h-37', { 'new-post': isNew }]">
+    <div v-show="!isDense" class="h-fit flex flex-row items-start">
       <UserAvatar
         :src="post.UserAvatar"
         :user-id="post.UserID"
@@ -96,14 +99,22 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
           {{ post.Title || '' }}
         </h3>
       </div>
-      <p>
+      <p v-show="!isDense">
         {{ post.Content.slice(0, 15) || 'loading' }}
       </p>
       <template v-if="post.Photos">
         <OldImages :photos="post.Photos" />
       </template>
     </RouterLink>
-    <BasicInfo :time="post.PostTime" :browse="post.Browse" :comment="post.Comment" :is-like="post.IsLiked" :like="post.Like" @like-change="like" />
+    <BasicInfo
+      :is-dense="isDense"
+      :time="post.PostTime"
+      :browse="post.Browse"
+      :comment="post.Comment"
+      :is-like="post.IsLiked"
+      :like="post.Like"
+      @like-change="like"
+    />
   </BasicCard>
 </template>
 
@@ -114,6 +125,27 @@ p::after {
 
 a {
   display: block;
+}
+
+/* 新帖子 */
+.new-post {
+  position: relative;
+  border-left: 4px solid var(--color-info) !important;
+}
+
+.new-post::before {
+  content: 'NEW';
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  background: var(--color-info);
+  color: var(--color-bg);
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  z-index: 10;
+  opacity: 0.8;
 }
 
 @media screen and (min-width: 768px) {

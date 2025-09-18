@@ -396,6 +396,7 @@ function cancelPublish(): void {
   height: 24px;
   font-size: 12px;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .upload-button-wrapper {
@@ -407,6 +408,7 @@ function cancelPublish(): void {
   background-color: #f5f5f5;
   border-radius: 4px;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   transition: background-color 0.3s;
 }
 
@@ -437,6 +439,7 @@ function cancelPublish(): void {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   font-size: 16px;
 }
 
@@ -447,11 +450,13 @@ function cancelPublish(): void {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   font-size: 16px;
 }
 
 .publish-btn:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+  -webkit-tap-highlight-color: transparent;
 }
 </style>

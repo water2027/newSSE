@@ -9,6 +9,10 @@ const partitions = [
     src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/resized/1749269586856504079_star.png',
   },
   {
+    name: '课程交流',
+    src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865462046077601_icons8-open-book-48.png',
+  },
+  {
     name: '打听求助',
     src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865259021372927_icons8-unverified-account-48.png',
   },

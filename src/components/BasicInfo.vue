@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-const { browse, comment, isLike = false, like = 0, nocomment = false } = defineProps<{
+const { isDense, browse, comment, isLike = false, like = 0 } = defineProps<{
+  isDense?: boolean
   browse?: number
   comment?: number
   nocomment?: boolean
@@ -16,7 +17,7 @@ function LikeChange() {
 
 <template>
   <div>
-    <div>
+    <div v-show="!isDense">
       <span class="text-3">{{
         new Date(time).toLocaleString('zh-CN', {
           year: 'numeric',

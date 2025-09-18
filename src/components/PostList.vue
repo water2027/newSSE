@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import type { Post, Score } from '@/types/post'
+import type { Post} from '@/types/post'
 
 import { onUnmounted, useTemplateRef, watch } from 'vue'
 import PostCard from './card/PostCard.vue'
-import ScoreCard from './score/ScoreCard.vue'
 
-const _props = defineProps<{
-  // 定义联合类型，接受 Post 或 Score 数组
-  items: (Post | Score)[]
-  // 标识当前显示的是 Post 还是 Score
-  type: 'post' | 'score'
+
+const { isDense, posts = [], isLoading = false, hasMore = true, newPostIds = [] } = defineProps<{
+  isDense?: boolean
+  posts?: Post[]
   isLoading?: boolean
   hasMore?: boolean
+  newPostIds?: number[]
 }>()
 
 const emits = defineEmits(['bottom'])
@@ -63,27 +62,14 @@ onUnmounted(() => {
 
 <template>
   <div class="w-full">
-    <transition-group name="list">
-      <!-- 静态条件渲染（根据type选择组件） -->
-      <template v-if="type === 'post'">
-        <PostCard
-          v-for="item in items as Post[]"
-          :key="`post-${item.PostID}`"
-          :post="item"
-          class="card mx-auto my-3 w-15/16"
-        />
-      </template>
-
-      <template v-else-if="type === 'score'">
-        <ScoreCard
-          v-for="item in items as Score[]"
-          :key="`score-${item.PostID}`"
-          :post="item"
-          :score="item"
-          class="card mx-auto my-3 w-15/16"
-        />
-      </template>
-    </transition-group>
+    <PostCard
+      v-for="post in posts as Post[]"
+      :key="post.PostID"
+      class="mx-a my-3 w-15/16"
+      :is-dense="isDense"
+      :is-new="newPostIds.includes(post.PostID)"
+      :post="post"
+    />
     <template v-if="hasMore">
       <div
         v-if="!isLoading"
@@ -95,7 +81,7 @@ onUnmounted(() => {
     </template>
     <template v-else>
       <div class="bottomDiv">
-        noMore
+        暂无更多
       </div>
       <!--
       <div class="bottomDiv">
@@ -114,5 +100,9 @@ onUnmounted(() => {
 .list-enter-from,
 .list-leave-to {
   opacity: 0;
+}
+
+.bottomDiv {
+  text-align: center;
 }
 </style>

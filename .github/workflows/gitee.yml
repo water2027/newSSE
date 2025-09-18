@@ -1,0 +1,52 @@
+name: sync-gitee
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Build Project
+    runs-on: ubuntu-latest
+    if: github.repository == 'water2027/newSSE'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install modules
+        run: pnpm install
+
+      - name: Build
+        run: pnpm run build
+
+  sync-gitee:
+    name: Sync to Gitee
+    runs-on: ubuntu-latest
+    environment: gitee
+    needs: build
+    # 在push且build成功时才执行
+    if: github.repository == 'water2027/newSSE' && github.event_name == 'push' && needs.build.result == 'success'
+    
+    steps:
+      - name: Sync to Gitee
+        uses: abersheeran/sync-gitee-mirror@v1-beta
+        with:
+          repository: qs_theme/newSSE
+          username: ${{ secrets.GITEE_USERNAME }}
+          password: ${{ secrets.GITEE_PASSWORD }}
