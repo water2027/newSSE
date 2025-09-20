@@ -2,13 +2,14 @@
 import type { OAuth2Info } from '@/api/oauth2/oauth2'
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { getAllInfo } from '@/api/info/getInfo'
 import { authorizeOAuth2App, checkOAuth2App } from '@/api/oauth2/oauth2'
 import { showMsg } from '@/components/MessageBox'
 import { useUserStore } from '@/store/userStore'
 
 const route = useRoute()
 const router = useRouter()
-const { isLogin } = useUserStore()
+const { isLogin, userInfo } = useUserStore()
 
 // OAuth2参数
 const oauth2Params = ref<OAuth2Info>({
@@ -29,6 +30,14 @@ const appInfo = ref({
 const loading = ref(false)
 const checking = ref(true)
 const error = ref('')
+
+// 用户基本信息
+const userBasicInfo = ref({
+  avatarURL: '',
+  name: '',
+  intro: '',
+  email: '',
+})
 
 // 目前权限只做了read_basic，注意这里改后端也要对应改
 const scopeDescriptions: Record<string, string> = {
@@ -84,6 +93,30 @@ async function checkAppInfo() {
 }
 
 /**
+ * 获取用户基本信息
+ */
+async function fetchuserBasicInfo() {
+  try {
+    const detailInfo = await getAllInfo(userInfo.phone)
+    userBasicInfo.value = {
+      avatarURL: detailInfo.avatarURL,
+      name: detailInfo.name,
+      intro: detailInfo.intro,
+      email: detailInfo.email,
+    }
+  }
+  catch (err) {
+    console.error('获取用户基本信息出错:', err)
+    userBasicInfo.value = {
+      avatarURL: userInfo.avatarURL,
+      name: userInfo.name,
+      intro: '',
+      email: userInfo.email,
+    }
+  }
+}
+
+/**
  * 处理授权
  */
 async function handleAuthorize() {
@@ -104,7 +137,7 @@ async function handleAuthorize() {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   // 检查用户是否已登录
   if (!isLogin.value) {
     const currentUrl = window.location.href
@@ -112,8 +145,12 @@ onMounted(() => {
     return
   }
 
-  if (getOAuth2Params())
-    checkAppInfo()
+  if (getOAuth2Params()) {
+    await Promise.all([
+      checkAppInfo(),
+      fetchuserBasicInfo(),
+    ])
+  }
 })
 </script>
 
@@ -167,6 +204,27 @@ onMounted(() => {
         </div>
         <div class="text-sm text-gray-600">
           {{ scopeDescriptions[oauth2Params.scope] || '访问您的信息' }}
+        </div>
+      </div>
+
+      <!-- 用户基本信息卡片 -->
+      <div v-if="oauth2Params.scope === 'read_basic'" class="mb-6 rounded-lg bg-gray-50 p-4">
+        <div class="flex items-center space-x-3">
+          <img
+            :src="userBasicInfo.avatarURL || '/default-avatar.svg'"
+            class="h-12 w-12 border-2 border-gray-200 rounded-full object-cover"
+          >
+          <div class="min-w-0 flex-1">
+            <div class="truncate text-sm text-gray-900 font-medium">
+              {{ userBasicInfo.name || '未设置昵称' }}
+            </div>
+            <div v-if="userBasicInfo.intro" class="truncate text-xs text-gray-600">
+              {{ userBasicInfo.intro }}
+            </div>
+            <div class="truncate text-xs text-gray-500">
+              {{ userBasicInfo.email }}
+            </div>
+          </div>
         </div>
       </div>
 
