@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import type { AllInfo } from '@/api/info/getInfo'
+import type { RelevantUser } from '@/composables/useChat'
 import { Icon } from '@iconify/vue'
-import { inject, nextTick, onBeforeMount, onMounted, onUnmounted, ref, useTemplateRef } from 'vue'
+import { nextTick, onBeforeMount, onMounted, ref, useTemplateRef } from 'vue'
 import { useRoute } from 'vue-router'
 import { getChatHistory } from '@/api/chat/chat'
 import { getInfoById } from '@/api/info/getInfo'
 import { showMsg } from '@/components/MessageBox'
 import UserAvatar from '@/components/UserAvatar.vue'
+import { useChat } from '@/composables/useChat'
 import { useUserStore } from '@/store/userStore'
 
 export interface MessageCreation {
@@ -21,10 +22,11 @@ export interface Message extends MessageCreation {
 }
 
 const route = useRoute()
-const { userInfo, token } = useUserStore()
+const { userInfo } = useUserStore()
+const { on, sendMessage: sendChatMessage } = useChat()
 
 const draft = ref('')
-type Contact = AllInfo & { unRead: number }
+type Contact = RelevantUser & Partial<{ ban: string, phone: string, punishnum: number, intro: string, unRead: number, emailpush: boolean }>
 const current = ref<Contact>({
   avatarURL: '',
   ban: '',
@@ -37,14 +39,13 @@ const current = ref<Contact>({
   userID: 0,
   emailpush: false,
   unRead: 0,
+  identity: '',
 })
 const contacts = ref<Contact[]>([])
 const messages = ref<Message[]>([])
 
 const historyDiv = useTemplateRef<HTMLDivElement>('historyDiv')
-const updateChatNum = inject('updateChatNum') as (num?: number) => void
 
-let ws: WebSocket
 const preDataFetch: any[] = []
 let dummyID = 100000000
 
@@ -55,7 +56,11 @@ onBeforeMount(() => {
       preDataFetch.push(
         getInfoById(Number(reqId))
           .then((res) => {
-            contacts.value.splice(0, 0, convertChatUser(res))
+            contacts.value[0] = {
+              ...contacts.value[0],
+              ...res,
+              unRead: 0,
+            }
             dedupContacts()
           })
           .catch((error) => {
@@ -71,18 +76,54 @@ onBeforeMount(() => {
       toastError('不能给自己发消息哦！')
     }
   }
-
-  keepConnection()
-  setInterval(keepConnection, 30000)
 })
 
 onMounted(() => {
   Promise.all(preDataFetch).then(() => selectContact(contacts.value[0]))
-  updateChatNum(0)
-})
-
-onUnmounted(() => {
-  updateChatNum()
+  on('Open', () => {
+    toastInfo('服务器连接成功')
+  })
+  on('RelevantUsers', (data) => {
+    contacts.value.push(...data.relevantUsers)
+    dedupContacts()
+  })
+  on('NewMessage', (data) => {
+    if (data.targetUserID === userInfo.userID) {
+      if (data.senderUserID === current.value?.userID) {
+        messages.value.push(data)
+        const el = historyDiv.value
+        if (!el)
+          return
+        if (el.scrollTop + el.clientHeight - el.scrollHeight > -1) {
+          scrollHistory()
+        }
+      }
+      else {
+        const idx = contacts.value.findIndex(it => it.userID === data.senderUserID)
+        if (idx !== -1) {
+          const contact = contacts.value[idx]
+          contact.unRead += 1
+          contacts.value.splice(idx, 1)
+          contacts.value.splice(0, 0, contact)
+        }
+        else {
+          getInfoById(data.senderUserID).then((res) => {
+            contacts.value[0] = {
+              ...contacts.value[0],
+              ...res,
+              unRead: 1,
+            }
+          })
+        }
+      }
+    }
+  })
+  on('MessageAck', (data) => {
+    if (data.code === 0) {
+      toastError(`请求失败：${data.msg} (${data.code})`)
+      console.error(data)
+    }
+  })
 })
 
 function getDummyID() {
@@ -136,7 +177,7 @@ function sendMessage() {
       content: draft.value,
     }
 
-    if (sendWsMessage(JSON.stringify(message))) {
+    if (sendChatMessage(message)) {
       draft.value = ''
       const newMessage: Message = {
         ...message,
@@ -164,97 +205,6 @@ function dedupContacts() {
     }
     return acc
   }, [])
-}
-
-function handleSocketMessage(event: MessageEvent<any>) {
-  let data
-  try {
-    data = JSON.parse(event.data)
-  }
-  catch (e) {
-    toastError('服务器响应无效')
-    console.error(e)
-    return
-  }
-  if (data.relevantUsers) {
-    contacts.value.push(...data.relevantUsers)
-    dedupContacts()
-  }
-  else if (data.chatMsgID) {
-    if (data.targetUserID === userInfo.userID) {
-      if (data.senderUserID === current.value?.userID) {
-        messages.value.push(data)
-        const el = historyDiv.value
-        if (!el)
-          return
-        if (el.scrollTop + el.clientHeight - el.scrollHeight > -1) {
-          scrollHistory()
-        }
-      }
-      else {
-        const idx = contacts.value.findIndex(it => it.userID === data.senderUserID)
-        if (idx !== -1) {
-          const contact = contacts.value[idx]
-          contact.unRead += 1
-          contacts.value.splice(idx, 1)
-          contacts.value.splice(0, 0, contact)
-        }
-        else {
-          getInfoById(data.senderUserID).then((res) => {
-            contacts.value.splice(0, 0, convertChatUser(res, 1))
-          })
-        }
-      }
-    }
-  }
-  else if (data.code) {
-    if (data.code === 0) {
-      toastError(`请求失败：${data.msg} (${data.code})`)
-      console.error(data)
-    }
-  }
-}
-
-function convertChatUser(user: AllInfo, unRead: number = 0) {
-  return {
-    ...user,
-    intro: user.intro || '未设置签名',
-    unRead,
-  }
-}
-
-function connectWebSocket() {
-  // connect websocket
-  const wsURL = new URL('/websocket/auth/chat', import.meta.env.VITE_API_BASE_URL)
-  wsURL.searchParams.append('token', token.value)
-  ws = new WebSocket(wsURL)
-  ws.addEventListener('close', () => {
-    setTimeout(() => {
-      keepConnection()
-    }, 5000)
-    toastError('服务器断开连接')
-  })
-  ws.addEventListener('open', () => toastInfo('已连接到服务器'))
-  ws.addEventListener('message', handleSocketMessage)
-}
-
-function keepConnection() {
-  const state = ws ? ws.readyState : WebSocket.CLOSED
-  if (state === WebSocket.OPEN) {
-    ws.send(JSON.stringify({ userID: userInfo.userID, beat: 1 }))
-  }
-  else if (state === WebSocket.CLOSED) {
-    connectWebSocket()
-  }
-}
-
-function sendWsMessage(message: string) {
-  const state = ws ? ws.readyState : WebSocket.CLOSED
-  if (state === WebSocket.OPEN) {
-    ws.send(message)
-    return true
-  }
-  return false
 }
 
 function updateChatHistory(callback: () => void) {

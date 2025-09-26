@@ -2,26 +2,30 @@ import { reactive, ref, shallowRef } from 'vue'
 import { useUserStore } from '@/store/userStore'
 import { useEventBus } from './useEventBus'
 
+export interface RelevantUser {
+  userID: number
+  email: string
+  name: string
+  avatarURL: string
+  identity: string
+  score: number
+  unRead: number
+}
+
+export interface ChatMessageItem {
+  chatMsgID: number
+  targetUserID: number
+  senderUserID: number
+  content: string
+  unread: number
+  createdAt: string
+}
+
 interface ChatEventMap {
   RelevantUsers: {
-    relevantUsers: {
-      userID: number
-      email: string
-      name: string
-      avatarURL: string
-      identity: string
-      score: number
-      unRead: number
-    }[]
+    relevantUsers: RelevantUser[]
   }
-  NewMessage: {
-    chatMsgID: number
-    targetUserID: number
-    senderUserID: number
-    content: string
-    unread: number
-    createdAt: string
-  }
+  NewMessage: ChatMessageItem
   MessageAck: { code: number, msg: string }
 }
 
@@ -92,9 +96,10 @@ export function useChat() {
     // })
     if (websocketClient.value && websocketClient.value.readyState === WebSocket.OPEN) {
       websocketClient.value.send(JSON.stringify(message))
+      return true
     }
     else {
-      throw new Error('WebSocket is not connected')
+      return false
     }
   }
 
