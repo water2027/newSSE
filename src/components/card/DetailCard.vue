@@ -140,6 +140,9 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
       />
       <UserButton :is-saved="post.IsSaved" :is-self="post.UserTelephone === userInfo.phone" @user-action="handleUserActionDebounce" />
     </div>
+    <div class="extension-slot">
+      <slot name="right-extension"></slot>
+    </div>
     <div
       class="card-title"
     >

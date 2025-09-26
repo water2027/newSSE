@@ -3,15 +3,20 @@ import type { Post} from '@/types/post'
 
 import { onUnmounted, useTemplateRef, watch } from 'vue'
 import PostCard from './card/PostCard.vue'
+import RatingCard from './rating/RatingCard.vue';
 
 
-const { isDense, posts = [], isLoading = false, hasMore = true, newPostIds = [] } = defineProps<{
+const { isDense, posts = [], isLoading = false, hasMore = true, newPostIds = [], postType = 'default'} = defineProps<{
   isDense?: boolean
   posts?: Post[]
   isLoading?: boolean
   hasMore?: boolean
   newPostIds?: number[]
+  postType?: 'post' | 'rating' // 只支持两种明确类型 rating只在打分区使用
 }>()
+
+// 直接根据 postType 选择组件
+const cardComponent = postType === 'rating' ? RatingCard : PostCard
 
 const emits = defineEmits(['bottom'])
 
@@ -62,10 +67,11 @@ onUnmounted(() => {
 
 <template>
   <div class="w-full">
-    <PostCard
-      v-for="post in posts as Post[]"
+    <component
+      v-for="post in posts"
       :key="post.PostID"
-      class="mx-a my-3 w-15/16"
+      :is="cardComponent"
+      class="mx-auto my-3 w-15/16"
       :is-dense="isDense"
       :is-new="newPostIds.includes(post.PostID)"
       :post="post"

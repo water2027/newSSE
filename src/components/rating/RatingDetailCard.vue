@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import type { Post } from '@/types/post'
-import { onMounted,defineAsyncComponent, ref, useTemplateRef } from 'vue'
-import { sendComment } from '@/api/editPostAndComment/editComment'
+// 因为不会覆写sendcommentfunc所以复制了一遍
+// 继承自DetailCard
+import type { Rating } from '@/types/post'
+import { defineAsyncComponent, ref, useTemplateRef,onMounted } from 'vue'
+import { sendRComment } from '@/api/editPostAndComment/editComment'
 import { delPost } from '@/api/editPostAndComment/editPost'
 
-import { likePost } from '@/api/SaveAndLike/SaveAndLike'
+import { likePost, savePost } from '@/api/SaveAndLike/SaveAndLike'
 import { showMsg } from '@/components/MessageBox'
 
 import { useUserStore } from '@/store/userStore'
@@ -12,19 +14,14 @@ import { useUserStore } from '@/store/userStore'
 import { debounceAsync } from '@/utils/debounced'
 
 import BasicInfo from '../BasicInfo.vue'
-import BasicCard from '../card/BasicCard.vue'
 import MarkdownContainer from '../MarkdownContainer.vue'
 import UserAvatar from '../UserAvatar.vue'
 import UserButton from '../UserButton.vue'
-
-// 导入评分组件
-import ScoreRating from './ScoreShow.vue'
-const currentRating = ref(0) // 当前评分状态
-
-import { submitRating,getRating } from '@/api/score/rating'
+import BasicCard from '../card/BasicCard.vue'
+import RatingDistribution from './RatingDistribution.vue'
 
 const { post } = defineProps<{
-  post: Post
+  post:Rating
 }>()
 
 const emits = defineEmits(['infoChange'])
@@ -41,33 +38,24 @@ const commentContent = ref('')
 const { userInfo } = useUserStore()
 const root = useTemplateRef('root')
 
-// 加载评分
-const loadRating = async () => {
-  try {
-    const rating = await getRating(post.PostID.toString())
-    currentRating.value = rating
-  } catch (error) {
-    console.error('加载评分失败:', error)
-    currentRating.value = 0
-  }
-}
+const currRatingList=ref(post.stars)
+const currRating = ref(post.UserRating)
 
-// 在组件挂载时获取评分
-onMounted(() => {
-  if (userInfo.phone) { // 确保用户已登录
-    loadRating()
-  }
-})
+
+function currentRatingClick(rating:number){
+  currRating.value = rating
+}
 
 /**
  * @description 发送评论
  */
 
 async function sendCommentFunc() {
-  const res = await sendComment(
+  const res = await sendRComment(
     commentContent.value,
     Number(post.PostID),
     userInfo.phone,
+    currRating.value,
   )
   if (res) {
     commentContent.value = ''
@@ -103,9 +91,23 @@ async function handler(type: 'comment') {
 
 const handleUserActionDebounce = debounceAsync(handleUserAction)
 
-async function handleUserAction(type: 'delete') {
+async function handleUserAction(type: 'delete' | 'save') {
   // 后端没有返回数据，不要赋值后再更新
   switch (type) {
+    case 'save':{
+      try {
+        await savePost(
+          post.PostID,
+          userInfo.phone,
+        )
+        useCustomEvent('save')
+      }
+      catch (e) {
+        console.error(e)
+        showMsg('失败了:-(')
+      }
+      break
+    }
     case 'delete': {
       try {
         await delPost(post.PostID)
@@ -137,30 +139,6 @@ async function like() {
 function useCustomEvent(type: 'delete' | 'save' | 'like') {
   emits('infoChange', type)
 }
-
-/**
- * @description 评分提交
- */
-const handleRatingSubmit = debounceAsync(async (value: number) => {
-  try {
-    const res = await submitRating(
-      value,
-      userInfo.phone,
-      post.PostID
-    )
-    
-    if (res) {
-      showMsg('评分成功')
-      // 可以在这里更新UI或触发其他逻辑
-      currentRating.value = value
-      emits('infoChange', 'rating') // 通知父组件评分已更新
-    }
-  } catch (error) {
-    console.error('评分提交失败:', error)
-    showMsg('评分失败')
-  }
-})
-
 </script>
 
 <template>
@@ -173,17 +151,8 @@ const handleRatingSubmit = debounceAsync(async (value: number) => {
         :user-name="post.UserName"
         :user-score="post.UserScore"
       />
-      <UserButton :no-save="true" :is-saved="false" :is-self="post.UserTelephone === userInfo.phone" @user-action="handleUserActionDebounce" />
+      <UserButton :is-saved="post.IsSaved" :is-self="post.UserTelephone === userInfo.phone" @user-action="handleUserActionDebounce" />
     </div>
-
-    <!-- 添加评分组件 -->
-    <ScoreRating 
-      :score="currentRating || post.UserScore || 0" 
-      :editable="userInfo.phone === post.UserTelephone" 
-      :post-id="post.PostID"
-      @submit-rating="handleRatingSubmit"
-    />
-
     <div
       class="card-title"
     >
@@ -200,8 +169,17 @@ const handleRatingSubmit = debounceAsync(async (value: number) => {
     <BasicInfo :time="post.PostTime" :browse="post.Browse" :comment="post.Comment" :is-like="post.IsLiked" :like="post.Like" @like-change="like" />
     <div class="commentButton">
       <button @click="commentButtonIsShow = !commentButtonIsShow">
-        {{ commentButtonIsShow ? '隐藏' : '评分' }}
+        {{ commentButtonIsShow ? '隐藏' : '发评论' }}
       </button>
+    </div>
+    <div class="flex items-center space-x-4">
+      <RatingShow
+        v-if="commentButtonIsShow"
+        :rating="currRating"
+        :editable="false"
+        @click="currentRatingClick(currRating)"
+        class="ml-4"
+      />
     </div>
     <MarkdownEditor
       v-if="commentButtonIsShow"
@@ -209,6 +187,7 @@ const handleRatingSubmit = debounceAsync(async (value: number) => {
       class="max-w-full"
       @send="handlerDebounce('comment')"
     />
+    <RatingDistribution :stars="currRatingList" />
   </BasicCard>
 </template>
 

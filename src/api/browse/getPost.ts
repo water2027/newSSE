@@ -1,4 +1,4 @@
-import type { Post } from '@/types/post'
+import type { Post, PostType, Rating } from '@/types/post'
 import { requestFunc } from '../req'
 
 export interface getPostsObject {
@@ -10,6 +10,7 @@ export interface getPostsObject {
   userTelephone: string
   tag: string
 }
+
 
 const defaultPost: Post = {
   PostID: 0,
@@ -32,21 +33,46 @@ const defaultPost: Post = {
   Tag: '',
 }
 
+const defaultRating: Rating = {
+  PostID: 0,
+  UserID: 0,
+  UserName: '',
+  UserScore: 0,
+  UserTelephone: '',
+  UserAvatar: '',
+  UserIdentity: '',
+  Title: '',
+  Content: '',
+  Like: 0,
+  Comment: 0,
+  Browse: 0,
+  Heat: 0,
+  PostTime: '',
+  IsSaved: false,
+  IsLiked: false,
+  Photos: '',
+  Tag: '',
+  rating: 0,
+  stars: [0, 0, 0, 0, 0],
+  UserRating: 0,
+}
+
 async function getPosts(object: getPostsObject): Promise<Post[]> {
   try {
     const res = await requestFunc(
-      `/auth/browse`,
+      "/auth/browse",
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: object,
+        body: {
+          ...object,
+        },
       },
       true,
     )
-    const data = await res!.json()
-    return data
+    return await res!.json()
   }
   catch (e) {
     console.error(e)
@@ -73,9 +99,7 @@ export interface getPostsNumResponse {
  * @param {string} userTelephone
  * @returns {number} 返回帖子数量
  */
-async function getPostsNum(
-  object: getPostsNumObject,
-): Promise<number> {
+async function getPostsNum(object: getPostsNumObject): Promise<number> {
   try {
     const res = await requestFunc(
       `/auth/getPostNum`,
@@ -84,7 +108,9 @@ async function getPostsNum(
         headers: {
           'Content-Type': 'application/json',
         },
-        body: object,
+        body: {
+          ...object,
+        }
       },
       true,
     )
@@ -134,7 +160,11 @@ async function getHeatPosts(): Promise<HeatPost[]> {
  * @param {string} userTelephone
  * @returns {object} 返回帖子详情
  */
-async function getPostByID(PostID: number, userTelephone: string): Promise<Post> {
+async function getPostByID(
+  PostID: number, 
+  userTelephone: string,
+  postType: PostType = 'post'
+): Promise<Post|Rating> {
   const result = await updateBrowseNum(PostID, userTelephone)
   if (!result) {
     console.error('增加浏览量失败')
@@ -150,6 +180,7 @@ async function getPostByID(PostID: number, userTelephone: string): Promise<Post>
         body: {
           postID: PostID,
           userTelephone,
+          postType,
         },
       },
       true,
@@ -160,8 +191,13 @@ async function getPostByID(PostID: number, userTelephone: string): Promise<Post>
     }
     catch (e) {
       console.error(e)
-      return {
+      return postType === 'post' ? {
         ...defaultPost,
+        Title: '帖子不存在',
+        Content: '帖子不存在',
+      }
+      :{
+        ...defaultRating,
         Title: '帖子不存在',
         Content: '帖子不存在',
       }
@@ -169,11 +205,17 @@ async function getPostByID(PostID: number, userTelephone: string): Promise<Post>
   }
   catch (e) {
     console.error(e)
-    return {
-      ...defaultPost,
-      Title: '网络错误',
-      Content: '网络错误',
-    }
+    return postType === 'post' ? {
+        ...defaultPost,
+        Title: '网络错误',
+        Content: '网络错误',
+      }
+      :{
+        ...defaultRating,
+        Title: '网络错误',
+        Content: '网络错误',
+      }
+    
   }
 }
 
@@ -201,4 +243,27 @@ async function updateBrowseNum(PostID: number, userTelephone: string) {
   }
 }
 
-export { getHeatPosts, getPostByID, getPosts, getPostsNum }
+async function getPostTypeByID(PostID: number): Promise<PostType> {
+  try {
+    const res = await requestFunc(
+      `/auth/getPostType`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: {
+          postID: PostID,
+        },
+      },
+      true,
+    )
+    return (await res!.json()) as PostType
+  }
+  catch (e) {
+    console.error(e)
+    return 'post'
+  }
+}
+
+export { getHeatPosts, getPostByID, getPosts, getPostsNum, getPostTypeByID }

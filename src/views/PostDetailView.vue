@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import type { Comment } from '@/types/comment'
-import type { Post } from '@/types/post'
+import type { Post,Rating } from '@/types/post'
 
 import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getCommentsByPostID } from '@/api/browse/getComment'
 
-import { getPostByID } from '@/api/browse/getPost'
+import { getPostByID, getPostTypeByID } from '@/api/browse/getPost'
+
+import type { PostType } from '@/types/post'
 
 import DetailCard from '@/components/card/DetailCard.vue'
+import RatingCard from '@/components/rating/RatingCard.vue'
+
 import { showImg } from '@/components/ImageShower'
 import { showMsg } from '@/components/MessageBox'
 import { useNewPostsStore } from '@/store/newPostsStore'
@@ -16,6 +20,7 @@ import { usePostStore } from '@/store/postStore'
 import { useUserStore } from '@/store/userStore'
 import { strHandler } from '@/utils/strHandler'
 import { setTitle } from '@/utils/title'
+import RatingDetailCard from '@/components/rating/RatingDetailCard.vue'
 
 const { updatePost } = usePostStore()
 const { removeNewPostId } = useNewPostsStore()
@@ -27,8 +32,10 @@ const router = useRouter()
 
 const { userInfo } = useUserStore()
 
-const post = ref<Post>()
+const post = ref<Post|Rating>()
 const comments = ref<Comment[]>([])
+
+const postType = ref<PostType>('post')
 
 type SortType = 'time' | 'likes'
 const sortType = ref<SortType>('time')
@@ -62,7 +69,7 @@ async function commentHandler() {
 async function getCommentList() {
   try {
     const ID = Number(route.params.id)
-    const curComments = await getCommentsByPostID(ID, userInfo.phone)
+    const curComments = await getCommentsByPostID(ID, userInfo.phone, postType.value)
     if (curComments)
       curComments.reverse()
     comments.value = curComments
@@ -125,7 +132,9 @@ function infoChange(type: 'like' | 'save' | 'delete') {
 onMounted(async () => {
   try {
     const ID = Number(route.params.id)
-    const curPost = await getPostByID(ID, userInfo.phone)
+    postType.value = await getPostTypeByID(ID)
+    const curPost = await getPostByID(ID, userInfo.phone, postType.value)
+    
     post.value = curPost
     setTitle(post.value.Title)
     await getCommentList()
@@ -145,10 +154,18 @@ onMounted(async () => {
     @comment-handle="commentHandler"
   >
     <template v-if="post">
-      <DetailCard
-        :post="post"
-        @info-change="infoChange"
-      />
+      <template v-if="postType==='post'">
+        <DetailCard
+          :post="post as Post"
+          @info-change="infoChange"
+        />
+      </template>
+      <template v-else-if="postType==='rating'">
+        <RatingDetailCard
+          :post="post as Rating"
+          @info-change="infoChange"
+        />
+      </template>
     </template>
     <div v-else>
       loading...
@@ -194,7 +211,7 @@ onMounted(async () => {
           <CommentCard
             class="mx-a my-3 w-15/16"
             :comment="comment"
-            :post-id="post.PostID"
+            :post-id="post.PostID""
           />
         </template>
       </div>

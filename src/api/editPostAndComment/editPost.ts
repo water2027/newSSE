@@ -8,6 +8,7 @@ import { requestFunc } from '../req'
  * @param {string} tagList 如果专区是课程专区，是一个老师；不是，为空
  * @param {string} title 标题
  * @param {string} userTelephone
+ * @param {string} postType post类型
  */
 async function sendPost(
   content: string,

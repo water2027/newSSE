@@ -122,4 +122,41 @@ async function delCcomment(ccommentID: number) {
   }
 }
 
-export { delCcomment, delComment, sendComment, sendPComment }
+/**
+ * @description 给帖子发评论
+ * @param {string} content
+ * @param {number} postID
+ * @param {string} userTelephone
+ */
+async function sendRComment(
+  content: string,
+  postID: number,
+  userTelephone: string,
+  rating: number,
+) {
+  try {
+    const res = await requestFunc(
+      `/auth/postRcomment`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: {
+          content,
+          postID,
+          userTelephone,
+          rating,
+        },
+      },
+      true,
+    )
+    return res!.ok
+  }
+  catch (e) {
+    console.error(e)
+    return false
+  }
+}
+
+export { delCcomment, delComment, sendComment, sendPComment, sendRComment }

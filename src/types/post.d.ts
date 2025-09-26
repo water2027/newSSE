@@ -19,24 +19,10 @@ export interface Post {
   Tag: string
 }
 
-export interface Score {
-  PostID: number
-  UserID?: number
-  UserName: string
-  UserScore: number
-  UserTelephone: string
-  UserAvatar: string
-  UserIdentity: string
-  Title: string
-  Content: string
-  Like: number
-  Comment: number
-  Browse: number
-  Heat: number
-  PostTime: string
-  IsSaved: boolean// 禁用收藏
-  IsLiked: boolean
-  Photos: string
-  Tag: string
-  AverageScore: number
+export interface Rating extends Post {
+  rating : number//帖子的平均得分
+  stars: [number, number, number, number, number]//帖子每个分数的数量
+  UserRating: number//用户的评分
 }
+
+export type PostType = "post"|"rating"

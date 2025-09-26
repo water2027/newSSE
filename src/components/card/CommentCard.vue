@@ -16,9 +16,10 @@ import UserAvatar from '../UserAvatar.vue'
 import UserButton from '../UserButton.vue'
 import BasicCard from './BasicCard.vue'
 
-const { comment, postId } = defineProps<{
+const { comment, postId, commentable = true } = defineProps<{
   comment: Comment
   postId: number
+  commentable?: boolean//是否可再评论
 }>()
 
 const CCommentCard = defineAsyncComponent(() => import('@/components/card/CCommentCard.vue'))
@@ -147,11 +148,15 @@ async function like() {
         />
         <UserButton :no-save="true" :is-self="userInfo.phone === comment.AuthorTelephone" @user-action="handlerDebounced" />
       </div>
+      <!-- 添加具名插槽用于扩展内容 -->
+      <div class="extension-slot">
+        <slot name="right-extension"></slot>
+      </div>
       <MarkdownContainer
         :markdown-content="comment.Content || 'loading'"
       />
       <BasicInfo :time="comment.CommentTime" :comment="comment.SubComments.length" :is-like="comment.IsLiked" :like="comment.LikeNum" @like-change="like" />
-      <div class="commentButton mb-3">
+      <div class="commentButton mb-3" v-if="commentable">
         <button @click="commentButtonIsShow = !commentButtonIsShow">
           {{ commentButtonIsShow ? '算了' : '评论' }}
         </button>
@@ -169,7 +174,7 @@ async function like() {
         </button>
       </div>
       <MarkdownEditor
-        v-if="commentButtonIsShow"
+        v-if="commentButtonIsShow && commentable"
         v-model="commentContent"
         @send="handlerDebounced('comment')"
       />

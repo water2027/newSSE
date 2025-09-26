@@ -191,7 +191,6 @@ watch(() => newPostsNotification.updatedAt, (updatedAt: number) => {
           </KeepAlive>
         </router-view>
       </div>
-      <HeatList v-if="isPC && !heatPostsIsHidden" />
     </main>
   </div>
 </template>

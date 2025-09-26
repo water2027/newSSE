@@ -22,6 +22,7 @@ const partitions = ref([
   '课程专区',
   '求职招募',
   '其他',
+  '打分',
 ])
 const postContent = ref('')
 const title = useTemplateRef('title')
@@ -37,6 +38,10 @@ async function submitPost() {
   let postTitle = title.value.value
   const content = postContent.value
   const postPartition = partition.value
+
+  //后端判断thetype 本来前端判断的，全改后端分区判断了
+  // const thetype = postPartition === '打分' ? 'rating' : 'post';
+
   // 去除标题的空格
   postTitle = postTitle.replace(/(^\s*)|(\s*$)/g, '')
 

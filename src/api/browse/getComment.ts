@@ -1,4 +1,5 @@
-import type { Comment } from '@/types/comment'
+import type { Comment,RatingComment } from '@/types/comment'
+import type { PostType } from '@/types/post'
 import { requestFunc } from '../req'
 
 /**
@@ -6,7 +7,10 @@ import { requestFunc } from '../req'
  * @param {number} PostID
  * @param {string} userTelephone
  */
-async function getCommentsByPostID(PostID: number, userTelephone: string): Promise<Comment[]> {
+async function getCommentsByPostID(
+  PostID: number,
+  userTelephone: string,
+  postType: PostType = 'post' ): Promise<Comment[]|RatingComment[]> {
   try {
     const res = await requestFunc(
       `/auth/showPcomments`,
@@ -18,6 +22,7 @@ async function getCommentsByPostID(PostID: number, userTelephone: string): Promi
         body: {
           postID: PostID,
           userTelephone,
+          postType,
         },
       },
       true,
@@ -30,5 +35,6 @@ async function getCommentsByPostID(PostID: number, userTelephone: string): Promi
     return []
   }
 }
+
 
 export { getCommentsByPostID }

@@ -91,6 +91,10 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
       />
       <UserButton :is-saved="post.IsSaved" :is-self="userInfo.phone === post.UserTelephone" @user-action="handleUserActionDebounce" />
     </div>
+    <!-- 添加具名插槽用于扩展内容 -->
+    <div class="extension-slot">
+      <slot name="right-extension"></slot>
+    </div>
     <RouterLink :to="`/postdetail/${post.PostID}`">
       <div
         class="mt-1"
