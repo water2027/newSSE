@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { AllInfo } from '@/api/info/getInfo'
+import type { ChatMessageItem, RelevantUser } from '@/composables/useChat'
 import { Icon } from '@iconify/vue'
-import { inject, nextTick, onBeforeMount, onMounted, onUnmounted, ref, useTemplateRef } from 'vue'
+import { nextTick, onMounted, onUnmounted, ref, useTemplateRef } from 'vue'
 import { useRoute } from 'vue-router'
-import { getChatHistory } from '@/api/chat/chat'
 import { getInfoById } from '@/api/info/getInfo'
 import { showMsg } from '@/components/MessageBox'
 import UserAvatar from '@/components/UserAvatar.vue'
+import { useChat } from '@/composables/useChat'
 import { useUserStore } from '@/store/userStore'
 
 export interface MessageCreation {
@@ -21,82 +21,37 @@ export interface Message extends MessageCreation {
 }
 
 const route = useRoute()
-const { userInfo, token } = useUserStore()
+const { userInfo } = useUserStore()
+const { on, off, contacts, chatHistory, sendChatMessage, selectContact: selectChatContact, addContact, current } = useChat()
 
 const draft = ref('')
-type Contact = AllInfo & { unRead: number }
-const current = ref<Contact>({
-  avatarURL: '',
-  ban: '',
-  email: '',
-  intro: '',
-  name: '',
-  phone: '',
-  punishnum: 0,
-  score: 0,
-  userID: 0,
-  emailpush: false,
-  unRead: 0,
-})
-const contacts = ref<Contact[]>([])
-const messages = ref<Message[]>([])
+type Contact = RelevantUser & Partial<{ ban: string, phone: string, punishnum: number, intro: string, unRead: number, emailpush: boolean }>
 
 const historyDiv = useTemplateRef<HTMLDivElement>('historyDiv')
-const updateChatNum = inject('updateChatNum') as (num?: number) => void
-
-let ws: WebSocket
-const preDataFetch: any[] = []
-let dummyID = 100000000
-
-onBeforeMount(() => {
-  const reqId = route.query.user
-  if (reqId) {
-    if (Number(reqId) !== userInfo.userID) {
-      preDataFetch.push(
-        getInfoById(Number(reqId))
-          .then((res) => {
-            contacts.value.splice(0, 0, convertChatUser(res))
-            dedupContacts()
-          })
-          .catch((error) => {
-            if (error.response) {
-              const res = error.response
-              toastError(`请求无效：${res.msg} (${res.code})`)
-              console.error(res)
-            }
-          }),
-      )
-    }
-    else {
-      toastError('不能给自己发消息哦！')
-    }
+function onNewMessage(data: ChatMessageItem) {
+  if (data.senderUserID === current.userID) {
+    const el = historyDiv.value
+    if (!el)
+      return
+    scrollHistory()
   }
+}
 
-  keepConnection()
-  setInterval(keepConnection, 30000)
-})
-
-onMounted(() => {
-  Promise.all(preDataFetch).then(() => selectContact(contacts.value[0]))
-  updateChatNum(0)
-})
-
-onUnmounted(() => {
-  updateChatNum()
-})
-
-function getDummyID() {
-  dummyID += 1
-  return dummyID
+function onMessageAck(data: { code: number, msg: string }) {
+  if (data.code === 0) {
+    toastError(`请求失败：${data.msg} (${data.code})`)
+    console.error(data)
+  }
 }
 
 function toastError(content: string) {
+  console.error(content)
   showMsg(`内部错误：${content}`)
 }
 
-function toastInfo(content: string) {
-  showMsg(`私信系统：${content}`)
-}
+// function toastInfo(content: string) {
+//   showMsg(`私信系统：${content}`)
+// }
 
 function handleDraftKeyDown(event: KeyboardEvent) {
   if (event.key === 'Enter' && event.ctrlKey) {
@@ -106,15 +61,14 @@ function handleDraftKeyDown(event: KeyboardEvent) {
 }
 
 function selectContact(sel: Contact) {
-  if (!current.value || !sel || sel.userID === current.value.userID)
-    return
-
   draft.value = ''
-  current.value = sel
-  current.value.unRead = 0
-  messages.value = []
 
-  updateChatHistory(() => scrollHistory())
+  selectChatContact(sel).then(() => {
+    scrollHistory()
+  }).catch((error) => {
+    toastError(`联系人切换失败：${error.message}`)
+    console.error(error)
+  })
 }
 
 function scrollHistory() {
@@ -127,163 +81,27 @@ function scrollHistory() {
 }
 
 function sendMessage() {
-  if (draft.value !== '') {
-    if (!current.value)
-      return
-    const message: MessageCreation = {
-      senderUserID: userInfo.userID,
-      targetUserID: current.value.userID,
-      content: draft.value,
-    }
-
-    if (sendWsMessage(JSON.stringify(message))) {
-      draft.value = ''
-      const newMessage: Message = {
-        ...message,
-        chatMsgID: 0,
-        createdAt: new Date().toISOString(),
-      }
-      newMessage.chatMsgID = getDummyID()
-      messages.value.push(newMessage)
-
-      scrollHistory()
-    }
-    else {
-      toastError('消息发送失败（服务器未连接）')
-    }
-  }
-}
-
-function dedupContacts() {
-  const seen = new Set()
-  contacts.value = contacts.value.reduce((acc: Contact[], current) => {
-    const keyValue = current.userID
-    if (!seen.has(keyValue)) {
-      seen.add(keyValue)
-      acc.push(current)
-    }
-    return acc
-  }, [])
-}
-
-function handleSocketMessage(event: MessageEvent<any>) {
-  let data
-  try {
-    data = JSON.parse(event.data)
-  }
-  catch (e) {
-    toastError('服务器响应无效')
-    console.error(e)
+  if (draft.value === '') {
     return
   }
-  if (data.relevantUsers) {
-    contacts.value.push(...data.relevantUsers)
-    dedupContacts()
-  }
-  else if (data.chatMsgID) {
-    if (data.targetUserID === userInfo.userID) {
-      if (data.senderUserID === current.value?.userID) {
-        messages.value.push(data)
-        const el = historyDiv.value
-        if (!el)
-          return
-        if (el.scrollTop + el.clientHeight - el.scrollHeight > -1) {
-          scrollHistory()
-        }
-      }
-      else {
-        const idx = contacts.value.findIndex(it => it.userID === data.senderUserID)
-        if (idx !== -1) {
-          const contact = contacts.value[idx]
-          contact.unRead += 1
-          contacts.value.splice(idx, 1)
-          contacts.value.splice(0, 0, contact)
-        }
-        else {
-          getInfoById(data.senderUserID).then((res) => {
-            contacts.value.splice(0, 0, convertChatUser(res, 1))
-          })
-        }
-      }
-    }
-  }
-  else if (data.code) {
-    if (data.code === 0) {
-      toastError(`请求失败：${data.msg} (${data.code})`)
-      console.error(data)
-    }
-  }
-}
 
-function convertChatUser(user: AllInfo, unRead: number = 0) {
-  return {
-    ...user,
-    intro: user.intro || '未设置签名',
-    unRead,
+  if (!sendChatMessage(draft.value)) {
+    toastError('消息发送失败（服务器未连接）')
   }
-}
 
-function connectWebSocket() {
-  // connect websocket
-  const wsURL = new URL('/websocket/auth/chat', import.meta.env.VITE_API_BASE_URL)
-  wsURL.searchParams.append('token', token.value)
-  ws = new WebSocket(wsURL)
-  ws.addEventListener('close', () => {
-    setTimeout(() => {
-      keepConnection()
-    }, 5000)
-    toastError('服务器断开连接')
-  })
-  ws.addEventListener('open', () => toastInfo('已连接到服务器'))
-  ws.addEventListener('message', handleSocketMessage)
-}
-
-function keepConnection() {
-  const state = ws ? ws.readyState : WebSocket.CLOSED
-  if (state === WebSocket.OPEN) {
-    ws.send(JSON.stringify({ userID: userInfo.userID, beat: 1 }))
-  }
-  else if (state === WebSocket.CLOSED) {
-    connectWebSocket()
-  }
-}
-
-function sendWsMessage(message: string) {
-  const state = ws ? ws.readyState : WebSocket.CLOSED
-  if (state === WebSocket.OPEN) {
-    ws.send(message)
-    return true
-  }
-  return false
-}
-
-function updateChatHistory(callback: () => void) {
-  getChatHistory(userInfo.userID, current.value.userID)
-    .then((res) => {
-      if (res.code === 200) {
-        messages.value = []
-        messages.value.push(...res.data.chatHistoryList)
-        callback()
-      }
-    })
-    .catch((error) => {
-      if (error.response) {
-        const res = error.response
-        toastError(`聊天记录获取失败：${res.msg} (${res.code})`)
-        console.error(res)
-      }
-    })
+  draft.value = ''
+  scrollHistory()
 }
 
 function getTimeShow(idx: number) {
   if (idx === 0) {
-    const date = new Date(messages.value[0].createdAt)
+    const date = new Date(chatHistory[0].createdAt)
     const str = date.toLocaleString()
     return str.substring(0, str.length - 3) // yyyy-MM-dd HH:mm
   }
 
-  const prev = new Date(messages.value[idx - 1].createdAt)
-  const date = new Date(messages.value[idx].createdAt)
+  const prev = new Date(chatHistory[idx - 1].createdAt)
+  const date = new Date(chatHistory[idx].createdAt)
   if (!checkSameDay(prev, date)) {
     if (prev.getFullYear() === date.getFullYear()) {
       const str = date.toLocaleString()
@@ -304,6 +122,46 @@ function checkSameDay(x: Date, y: Date) {
     x.getFullYear() === y.getFullYear() && x.getMonth() === y.getMonth() && x.getDay() === y.getDay()
   )
 }
+
+onMounted(() => {
+  on('NewMessage', onNewMessage)
+  on('MessageAck', onMessageAck)
+  const reqId = route.query.user
+  if (!reqId) {
+    if (current.userID) {
+      selectContact(current)
+    }
+    return
+  }
+  if (Number(reqId) === userInfo.userID) {
+    toastError('不能给自己发消息哦！')
+  }
+  getInfoById(Number(reqId))
+    .then((res) => {
+      const contact = {
+        ...res,
+        unRead: 0,
+        identity: '',
+      }
+      addContact(contact)
+      return contact
+    })
+    .then((contact) => {
+      selectContact(contact)
+    })
+    .catch((error) => {
+      if (error.response) {
+        const res = error.response
+        toastError(`请求无效：${res.msg} (${res.code})`)
+        console.error(res)
+      }
+    })
+})
+
+onUnmounted(() => {
+  off('NewMessage', onNewMessage)
+  off('MessageAck', onMessageAck)
+})
 </script>
 
 <template>
@@ -350,7 +208,7 @@ function checkSameDay(x: Date, y: Date) {
             </div>
           </div>
           <div ref="historyDiv" class="lite-scrollbar message-history">
-            <div v-for="(entry, i) in messages" :key="entry.chatMsgID">
+            <div v-for="(entry, i) in chatHistory" :key="entry.chatMsgID">
               <div v-if="getTimeShow(i)" class="message-time">
                 <div>
                   {{ getTimeShow(i) }}
