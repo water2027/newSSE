@@ -144,31 +144,11 @@ function editContent(type: EditType) {
     )
   })
 }
-
-/**
- * @description 保存草稿
- */
-function savePost() {
-  localStorage.setItem('draft', modelValue.value)
-  showMsg('已暂存为草稿')
-}
-
-onMounted(() => {
-  if (route.path === '/post') {
-    const draft = localStorage.getItem('draft')
-    if (draft) {
-      modelValue.value = draft
-      showMsg('读取草稿成功，已删除')
-      localStorage.removeItem('draft')
-    }
-  }
-})
 </script>
 
 <template>
   <div
     id="mdRoot"
-    class="root"
   >
     <div class="editorButton">
       <button @click="editContent('标题')">
@@ -219,13 +199,6 @@ onMounted(() => {
       />
     </div>
     <div class="buttons">
-      <div
-        v-if="route.path === '/post'"
-        class="button"
-        @click="savePost"
-      >
-        暂存为草稿
-      </div>
       <div
         class="button"
         @click="$emit('send')"
