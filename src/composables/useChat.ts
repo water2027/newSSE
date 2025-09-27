@@ -1,6 +1,9 @@
-import { reactive, ref, shallowRef } from 'vue'
+import { reactive, ref } from 'vue'
+import { getChatHistory, getChatNotice } from '@/api/chat/chat'
+import { getInfoById } from '@/api/info/getInfo'
 import { useUserStore } from '@/store/userStore'
 import { useEventBus } from './useEventBus'
+import { useWebSocket } from './useWebsocket'
 
 export interface RelevantUser {
   userID: number
@@ -21,6 +24,8 @@ export interface ChatMessageItem {
   createdAt: string
 }
 
+export type Contact = RelevantUser & Partial<{ ban: string, phone: string, punishnum: number, intro: string, unRead: number, emailpush: boolean }>
+
 interface ChatEventMap {
   RelevantUsers: {
     relevantUsers: RelevantUser[]
@@ -28,18 +33,6 @@ interface ChatEventMap {
   NewMessage: ChatMessageItem
   MessageAck: { code: number, msg: string }
 }
-
-interface WebSocketEventMap {
-  Open: Event
-  Close: CloseEvent
-  Error: Event
-}
-
-const WebSocketStatus = {
-  Unconnected: 0,
-  Connecting: 1,
-  Connected: 2,
-} as const
 
 // 客户端发送的信息
 interface ChatMessage {
@@ -59,210 +52,214 @@ function isNewMessage(event: any): event is ChatEventMap['NewMessage'] {
   return 'chatMsgID' in event && 'targetUserID' in event && 'senderUserID' in event && 'content' in event
 }
 
-// function isMessageAck(event: any): event is ChatEventMap['MessageAck'] {
-//   return 'code' in event && 'msg' in event
-// }
-
-type ChatEvent = keyof ChatEventMap
-type ChatEventMessage = ChatEventMap[ChatEvent]
+function isMessageAck(event: any): event is ChatEventMap['MessageAck'] {
+  return 'code' in event && 'msg' in event
+}
 
 // 单例模式
-const websocketClient = ref<WebSocket | null>(null)
-const heartbeatInterval = ref<number | null>(null)
-const connectionInfo = reactive({
-  status: WebSocketStatus.Unconnected as typeof WebSocketStatus[keyof typeof WebSocketStatus],
-  retryTimes: 0,
-  reconnectTimeout: null as number | null,
-})
-const MAX_RETRY = 5
-const { on, emit, off, cleanup: eventBusCleanup } = useEventBus<ChatEventMap & WebSocketEventMap>()
+const api = {} as {
+  connect: () => void
+  disconnect: () => void
+  sendChatMessage: (content: string) => boolean
+  on: <K extends keyof ChatEventMap>(event: K, handler: (data: ChatEventMap[K]) => void) => void
+  off: <K extends keyof ChatEventMap>(event: K, handler: (data: ChatEventMap[K]) => void) => void
+  selectContact: (contact: Contact) => Promise<void>
+  addContact: (contact: RelevantUser) => void
+  updateChatNum: () => void
+}
+
+let isInit = false
 const { userInfo, token } = useUserStore()
-const handleWebSocketError = shallowRef<(event: Event) => void>()
-// const messageQueue: {
-//   resolve: () => void
-//   reject: (reason?: any) => void
-// }[] = []
+const contacts = reactive<Contact[]>([])
+const current = reactive<Contact>({
+  userID: 0,
+  email: '',
+  name: '',
+  avatarURL: '',
+  identity: '',
+  score: 0,
+  unRead: 0,
+})
+// 当前会话的聊天记录
+const chatHistory = reactive<ChatMessageItem[]>([])
+const chatNum = ref(0)
+
+let dummyID = 100000000
+function getDummyID() {
+  dummyID += 1
+  return dummyID
+}
 
 export function useChat() {
-  const sendMessage = <T extends keyof ChatMessage>(message: ChatMessage[T]) => {
-    // return new Promise<void>((resolve, reject) => {
-    //   if (websocketClient.value && websocketClient.value.readyState === WebSocket.OPEN) {
-    //     websocketClient.value.send(JSON.stringify(message))
-    //     messageQueue.push({ resolve, reject })
-    //   }
-    //   else {
-    //     reject(new Error('WebSocket is not connected'))
-    //   }
-    // })
-    if (websocketClient.value && websocketClient.value.readyState === WebSocket.OPEN) {
-      websocketClient.value.send(JSON.stringify(message))
-      return true
-    }
-    else {
-      return false
-    }
-  }
-
-  const handleSocketMessage = (event: MessageEvent<string>) => {
-    let data: ChatEventMessage
-    try {
-      data = JSON.parse(event.data) as ChatEventMessage
-    }
-    catch (e) {
-      emit('Error', new ErrorEvent('error', {
-        error: new Error(`MessageParseError: ${(e as Error).message}`),
-      }))
+  const init = () => {
+    if (isInit) {
       return
     }
 
-    if (!data)
-      return
-
-    if (isRelevantUsers(data)) {
-      emit('RelevantUsers', data)
-      return
-    }
-
-    if (isNewMessage(data)) {
-      emit('NewMessage', data)
-    }
-
-    // if (isMessageAck(data)) {
-    //   // 没有办法知道哪条信息发送成功了
-    //   // 多端登录100%有问题
-    //   const { code, msg } = data
-    //   const handler = messageQueue.shift()
-    //   if (!handler) {
-    //     // 大概率是其它端
-    //     return
-    //   }
-    //   const { resolve, reject } = handler
-    //   if (code === 0) {
-    //     resolve()
-    //   }
-    //   else {
-    //     reject(new Error(msg || 'Message send failed'))
-    //   }
-    // }
-  }
-
-  const cleanupLastConnection = () => {
-    if (websocketClient.value) {
-      websocketClient.value.removeEventListener('message', handleSocketMessage)
-      websocketClient.value.close()
-      websocketClient.value = null
-    }
-    if (heartbeatInterval.value) {
-      clearInterval(heartbeatInterval.value)
-      heartbeatInterval.value = null
-    }
-  }
-
-  // 心跳
-  const keepConnection = () => {
-    const state = websocketClient.value ? websocketClient.value.readyState : WebSocket.CLOSED
-    if (state === WebSocket.OPEN) {
-      try {
-        sendMessage({ userID: userInfo.userID, beat: 1 })
-      }
-      catch (error) {
-        console.warn('Heartbeat failed:', error)
-      }
-    }
-  }
-
-  const connect = () => {
-    // 避免重复连接
-    if (websocketClient.value && websocketClient.value.readyState === WebSocket.OPEN) {
-      connectionInfo.status = WebSocketStatus.Connected
-      return
-    }
-    if (connectionInfo.status === WebSocketStatus.Connecting) {
-      return
-    }
-    connectionInfo.status = WebSocketStatus.Connecting
-
+    isInit = true
     const wsURL = new URL('/websocket/auth/chat', import.meta.env.VITE_API_BASE_URL)
     wsURL.searchParams.append('token', token.value)
     wsURL.protocol = wsURL.protocol.replace('http', 'ws')
-    websocketClient.value = new WebSocket(wsURL)
-    websocketClient.value.addEventListener('close', (e) => {
-      emit('Close', e)
-    }, {
-      once: true,
+    const { connect, sendWebSocketMessage, on: listenWebSocket, disconnect: disconnectWebSocket } = useWebSocket<ChatEventMap, ChatMessage>(wsURL, {
+      keepAliveOptions: {
+        interval: 30000,
+        fn: (sendWebSocketMessage) => {
+          sendWebSocketMessage({ userID: userInfo.userID, beat: 1 })
+        },
+      },
     })
-    websocketClient.value.addEventListener('open', (e) => {
-      connectionInfo.retryTimes = 0
-      heartbeatInterval.value = setInterval(keepConnection, 30000)
-      connectionInfo.status = WebSocketStatus.Connected
-      emit('Open', e)
-    }, {
-      once: true,
-    })
-    websocketClient.value.addEventListener('error', (e) => {
-      connectionInfo.status = WebSocketStatus.Unconnected
-      emit('Error', e)
-    }, {
-      once: true,
-    })
-    websocketClient.value.addEventListener('message', handleSocketMessage)
-  }
+    const { emit, on, off, cleanup } = useEventBus<ChatEventMap>()
 
-  const reconnect = () => {
-    cleanupLastConnection()
-    if (connectionInfo.reconnectTimeout) {
-      clearTimeout(connectionInfo.reconnectTimeout)
-    }
-    connectionInfo.reconnectTimeout = setTimeout(() => {
-      if (connectionInfo.retryTimes >= MAX_RETRY) {
-        connectionInfo.status = WebSocketStatus.Unconnected
-        return
+    // 也许未来有机会可以再封装吧, 现在好像没什么用
+    const sendMessage = sendWebSocketMessage
+
+    const sendChatMessage = (content: string) => {
+      if (current.userID === 0) {
+        return false
       }
 
-      if (connectionInfo.status === WebSocketStatus.Connecting)
-        return
+      const message = {
+        senderUserID: userInfo.userID,
+        targetUserID: current.userID,
+        content,
+      }
+      const result = sendMessage(message)
 
-      connectionInfo.retryTimes += 1
-      connect()
-    }, 500 * 2 ** (connectionInfo.retryTimes + 1))
-  }
+      if (result) {
+        chatHistory.push({
+          ...message,
+          createdAt: new Date().toISOString(),
+          chatMsgID: getDummyID(),
+          unread: 0,
+        })
+      }
 
-  const disconnect = () => {
-    if (connectionInfo.reconnectTimeout) {
-      clearTimeout(connectionInfo.reconnectTimeout)
-      connectionInfo.reconnectTimeout = null
-    }
-    connectionInfo.status = WebSocketStatus.Unconnected
-    connectionInfo.retryTimes = 0
-
-    if (heartbeatInterval.value) {
-      clearInterval(heartbeatInterval.value)
-      heartbeatInterval.value = null
+      return result
     }
 
-    if (websocketClient.value) {
-      websocketClient.value.removeEventListener('message', handleSocketMessage)
-      websocketClient.value.close()
-      websocketClient.value = null
+    const updateChatNum = () => {
+      // TODO: 需要取消上一次请求, 不过之后再统一封装一个函数吧
+      getChatNotice(userInfo.userID)
+        .then((resp) => {
+          chatNum.value = resp.data.noticeNum
+        })
+        .catch(() => {
+          // 不想处理了
+          chatNum.value = 0
+        })
     }
 
-    eventBusCleanup()
-  }
+    const handleSocketMessage = <K extends keyof ChatEventMap>(data: ChatEventMap[K]) => {
+      if (isNewMessage(data)) {
+        if (data.targetUserID !== userInfo.userID) {
+          // 不是发给我的消息
+          return
+        }
 
-  if (!handleWebSocketError.value) {
-    handleWebSocketError.value = (event: Event) => {
-      if (event.target instanceof WebSocket) {
-        reconnect()
+        emit('NewMessage', data)
+        updateChatNum()
+        if (data.senderUserID === current.userID) {
+          // 当前会话
+          chatHistory.push(data)
+          return
+        }
+
+        // 不是当前会话
+        const idx = contacts.findIndex(it => it.userID === data.senderUserID)
+        if (idx === -1) {
+          // 新发来的信息
+          getInfoById(data.senderUserID).then((res) => {
+            contacts.unshift({
+              ...res,
+              unRead: 1,
+              identity: '',
+            })
+          })
+        }
+        else {
+          const contact = contacts[idx]
+          contact.unRead = (contact.unRead || 0) + 1
+        }
+      }
+
+      if (isRelevantUsers(data)) {
+        // 这个事件貌似只在最开始的时候触发一次
+        // 不知道为什么要去重, 不过既然原本去重了, 这里也去重吧
+        const seen = new Set<number>()
+        const users = data.relevantUsers.reduce<Contact[]>((acc, currentUser) => {
+          if (seen.has(currentUser.userID)) {
+            return acc
+          }
+          acc.push(currentUser)
+          seen.add(currentUser.userID)
+          return acc
+        }, [])
+        Promise.all(users.map(user => getInfoById(user.userID))).then((resList) => {
+          contacts.splice(0, contacts.length, ...users.map((user, index) => ({ ...user, ...resList[index], unRead: 0 })))
+        })
+      }
+
+      if (isMessageAck(data)) {
+        emit('MessageAck', data)
       }
     }
-    on('Error', handleWebSocketError.value!)
+
+    listenWebSocket('Message', (data) => {
+      handleSocketMessage(data)
+    })
+
+    const addContact = (contact: RelevantUser) => {
+      if (!contacts.find(c => c.userID === contact.userID)) {
+        contacts.push(contact)
+      }
+    }
+
+    const selectContact = async (contact: Contact) => {
+      if (current.userID === contact.userID) {
+        return Promise.resolve()
+      }
+      // 在contacts中找到这个contact
+      const idx = contacts.findIndex(c => c.userID === contact.userID)
+      if (idx === -1) {
+        return Promise.reject(new Error('Contact not found'))
+      }
+
+      contacts[idx].unRead = 0
+      Object.assign(current, contacts[idx])
+      chatHistory.splice(0, chatHistory.length)
+      // 看上去是获取聊天记录, 实际上还有个已读功能
+      await getChatHistory(userInfo.userID, current.userID).then((res) => {
+        if (res.code === 200) {
+          chatHistory.splice(0, chatHistory.length, ...res.data.chatHistoryList)
+        }
+      })
+      updateChatNum()
+    }
+
+    Object.assign(api, {
+      connect,
+      disconnect() {
+        cleanup()
+        disconnectWebSocket()
+      },
+      sendChatMessage,
+      on,
+      off,
+
+      addContact,
+      selectContact,
+
+      updateChatNum,
+    })
   }
+
+  init()
 
   return {
-    connect,
-    disconnect,
-    on,
-    off,
-    sendMessage,
+    ...api,
+    contacts,
+    chatHistory,
+    current,
+    chatNum,
   }
 }

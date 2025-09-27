@@ -10,13 +10,11 @@ import {
 } from 'vue'
 
 import { useRoute, useRouter } from 'vue-router'
-import { getChatNotice } from '@/api/chat/chat'
 
 import ModeButton from '@/components/ModeButton.vue'
 import { useChat } from '@/composables/useChat'
 import { useNewPostsStore } from '@/store/newPostsStore'
 import { useNoticeStore } from '@/store/noticeStore'
-import { useUserStore } from '@/store/userStore'
 import { showSnackbar } from '@/utils/snackbar'
 
 const HeatList = defineAsyncComponent(
@@ -34,19 +32,10 @@ const MobileHeader = defineAsyncComponent(() => import('@/components/MobileHeade
 const route = useRoute()
 const router = useRouter()
 
-const { userInfo } = useUserStore()
 const { noticeNum, refreshNoticeNum } = useNoticeStore()
 const { startPolling, stopPolling, newPostsNotification, hideNotification } = useNewPostsStore()
 
-const { connect, disconnect, on } = useChat()
-const chatNum = ref(0)
-
-on('NewMessage', () => {
-  getChatNotice(userInfo.userID)
-    .then((resp) => {
-      chatNum.value = resp.data.noticeNum
-    })
-})
+const { connect, disconnect, chatNum } = useChat()
 
 const windowWidth = ref(window.innerWidth)
 const isPC = computed(() => {
