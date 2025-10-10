@@ -137,6 +137,21 @@ async function handleAuthorize() {
   }
 }
 
+/**
+ * 取消授权
+ */
+function cancelAuthorize(){
+  // 暂先返回三方界面
+  let ref = ''
+  if (document.referrer.length > 0) ref = document.referrer
+  try {
+    if (ref.length == 0 && opener.location.href.length > 0)
+      ref = opener.location.href
+  } catch (e) {}
+
+ window.location.href = ref
+}
+
 onMounted(async () => {
   // 检查用户是否已登录
   if (!isLogin.value) {
@@ -193,16 +208,16 @@ onMounted(async () => {
         授权给 {{ appInfo.app_name }}
       </div>
 
-      <div v-if="appInfo.description" class="mt-2 text-center text-sm text-gray-600">
+      <div v-if="appInfo.description" class="mt-2 text-center text-m text-gray-600">
         {{ appInfo.description }}
       </div>
 
       <!-- 权限说明 -->
       <div class="mt-4 rounded-lg bg-gray-50 p-4">
-        <div class="mb-2 text-sm text-gray-700">
+        <div class="mb-2 text-m text-gray-700">
           <strong>{{ appInfo.app_name }}</strong> 希望：
         </div>
-        <div class="text-sm text-gray-600">
+        <div class="text-m text-gray-600">
           {{ scopeDescriptions[oauth2Params.scope] || '访问您的信息' }}
         </div>
       </div>
@@ -215,13 +230,13 @@ onMounted(async () => {
             class="h-12 w-12 border-2 border-gray-200 rounded-full object-cover"
           >
           <div class="min-w-0 flex-1">
-            <div class="truncate text-sm text-gray-900 font-medium">
+            <div class="truncate text-m text-gray-900 font-medium">
               {{ userBasicInfo.name || '未设置昵称' }}
             </div>
-            <div v-if="userBasicInfo.intro" class="truncate text-xs text-gray-600">
+            <div v-if="userBasicInfo.intro" class="text-sm text-gray-600">
               {{ userBasicInfo.intro }}
             </div>
-            <div class="truncate text-xs text-gray-500">
+            <div class="truncate text-sm text-gray-500">
               {{ userBasicInfo.email }}
             </div>
           </div>
@@ -232,10 +247,16 @@ onMounted(async () => {
       <div class="mt-6 space-y-3">
         <button
           :disabled="loading"
-          class="h-12 w-full flex cursor-pointer items-center justify-center border-0 rounded-[20px] bg-[#eb6b26] text-lg text-white transition-colors disabled:bg-zinc-600 hover:bg-[#ff7e3b]"
+          class="h-[48px] w-full flex cursor-pointer items-center justify-center border-0 rounded-[24px] bg-[#eb6b26] text-lg text-white transition-colors disabled:bg-zinc-600 hover:bg-[#ff7e3b]"
           @click="handleAuthorize"
         >
           {{ loading ? '授权中...' : '允许' }}
+        </button>
+        <button
+          class="h-[48px] w-full flex cursor-pointer items-center justify-center border-0 rounded-[24px] bg-transparent text-lg transition-colors disabled:bg-zinc-600"
+          @click="cancelAuthorize"
+        >
+          取消
         </button>
       </div>
 
