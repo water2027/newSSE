@@ -68,7 +68,7 @@ function storePosts() {
   return { cachePosts, cacheTotalNum, cacheConditions }
 }
 
-function updatePost(id: number, type: 'like' | 'save' | 'delete') {
+function updatePost(id: number, type: 'like' | 'save' | 'delete' | 'rating' | 'comment') {
   // 二分查找
   let left = 0
   let right = posts.length - 1

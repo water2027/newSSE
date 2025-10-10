@@ -20,9 +20,9 @@ export interface Post {
 }
 
 export interface Rating extends Post {
-  rating : number//帖子的平均得分
-  stars: [number, number, number, number, number]//帖子每个分数的数量
-  UserRating: number//用户的评分
+  Rating: number// 帖子的平均得分
+  Stars: [number, number, number, number, number]// 帖子每个分数的数量
+  UserRating: number// 用户的评分
 }
 
-export type PostType = "post"|"rating"
+export type PostType = 'post' | 'rating'

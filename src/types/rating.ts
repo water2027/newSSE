@@ -1,3 +1,3 @@
 export interface RatingDetail {
-    Stars: [number, number, number, number, number]
+  Stars: [number, number, number, number, number]
 }

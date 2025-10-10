@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Condition, Partitions } from '@/store/postStore'
+import type { Condition } from '@/store/postStore'
 import type { Post } from '@/types/post'
 import {
   onActivated,
@@ -8,8 +8,7 @@ import {
   ref,
   watch,
 } from 'vue'
-import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
-import { showMsg } from '@/components/MessageBox'
+import { onBeforeRouteLeave, useRoute } from 'vue-router'
 import PostList from '@/components/PostList.vue'
 import { usePostView } from '@/composables/usePostView'
 import { usePostStore } from '@/store/postStore'
@@ -21,7 +20,6 @@ defineOptions({
 
 const name = ref('')
 const route = useRoute()
-const router = useRouter()
 const { userInfo } = useUserStore()
 const { restorePosts, storePosts } = usePostStore()
 const { posts, update, isLoading, hasMore, initialize } = usePostView()
@@ -53,11 +51,11 @@ onActivated(async () => {
   if (!hasCache.value)
     return
 
-    // 恢复滚动位置
-    document.body.scrollTop = scrollTop.value
-    isLoading.value = true
-    await restorePosts(userInfo.phone, cachePosts, cacheTotalNum.value, cacheCondition)
-    isLoading.value = false
+  // 恢复滚动位置
+  document.body.scrollTop = scrollTop.value
+  isLoading.value = true
+  await restorePosts(userInfo.phone, cachePosts, cacheTotalNum.value, cacheCondition)
+  isLoading.value = false
 })
 
 onBeforeRouteLeave(() => {

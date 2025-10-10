@@ -39,7 +39,7 @@ async function submitPost() {
   const content = postContent.value
   const postPartition = partition.value
 
-  //后端判断thetype 本来前端判断的，全改后端分区判断了
+  // 后端判断thetype 本来前端判断的，全改后端分区判断了
   // const thetype = postPartition === '打分' ? 'rating' : 'post';
 
   // 去除标题的空格

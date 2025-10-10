@@ -1,42 +1,46 @@
 <script setup lang="ts">
-import { ref} from 'vue'
 import type { RatingComment } from '@/types/comment'
 import CommentCard from '../card/CommentCard.vue'
 
 import RatingShow from './RatingShow.vue'
+import { watch } from 'vue'
 
 defineOptions({
-  name: 'RatingCard'
+  name: 'RatingCard',
 })
-
-const ratingdetail = ref('ratingdetail')
 
 // 1. 定义继承的 props（必须包含原组件的所有必需 props）
 interface RatingCommentProps {
   comment: RatingComment
   postId: number
-  commentable: boolean//是否可再评论
+  commentable: boolean// 是否可再评论
+  isDence: boolean// 是否密集显示(隐藏用户信息)
 }
 
-const props = defineProps<RatingCommentProps>()
+const _ = defineProps<RatingCommentProps>()
 
+watch(
+  () => _.comment,
+  (newVal) => {
+    // console.log(newVal)
+    // console.log(_.comment.AuthorRating)
+  }
+)
 </script>
 
 <template>
-    <CommentCard
-      :comment="comment"
-      :postId="postId"
-      :commentable="commentable"
-    >
+  <CommentCard
+    :comment="_.comment"
+    :post-id="postId"
+    :commentable="commentable"
+    :isDence="isDence"
+  >
     <!-- 填充right-extension插槽 -->
-      <template #right-extension>
-        <RatingShow
-          :Rating="comment.AutherRating"
-          :editable="false"
-        ></RatingShow>
-      </template>
-      
-    </CommentCard>
+    <template #right-extension>
+      <RatingShow
+        :rating="comment.AuthorRating"
+        :editable="false"
+      />
+    </template>
+  </CommentCard>
 </template>
-
-  

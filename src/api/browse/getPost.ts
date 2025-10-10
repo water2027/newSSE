@@ -11,7 +11,6 @@ export interface getPostsObject {
   tag: string
 }
 
-
 const defaultPost: Post = {
   PostID: 0,
   UserID: 0,
@@ -52,15 +51,15 @@ const defaultRating: Rating = {
   IsLiked: false,
   Photos: '',
   Tag: '',
-  rating: 0,
-  stars: [0, 0, 0, 0, 0],
+  Rating: 0,
+  Stars: [0, 0, 0, 0, 0],
   UserRating: 0,
 }
 
-async function getPosts(object: getPostsObject): Promise<Post[]> {
+async function getPosts(object: getPostsObject): Promise<Post[] | Rating[]> {
   try {
     const res = await requestFunc(
-      "/auth/browse",
+      '/auth/browse',
       {
         method: 'POST',
         headers: {
@@ -110,7 +109,7 @@ async function getPostsNum(object: getPostsNumObject): Promise<number> {
         },
         body: {
           ...object,
-        }
+        },
       },
       true,
     )
@@ -161,10 +160,10 @@ async function getHeatPosts(): Promise<HeatPost[]> {
  * @returns {object} 返回帖子详情
  */
 async function getPostByID(
-  PostID: number, 
+  PostID: number,
   userTelephone: string,
-  postType: PostType = 'post'
-): Promise<Post|Rating> {
+  postType: PostType = 'post',
+): Promise<Post | Rating> {
   const result = await updateBrowseNum(PostID, userTelephone)
   if (!result) {
     console.error('增加浏览量失败')
@@ -191,31 +190,32 @@ async function getPostByID(
     }
     catch (e) {
       console.error(e)
-      return postType === 'post' ? {
-        ...defaultPost,
-        Title: '帖子不存在',
-        Content: '帖子不存在',
-      }
-      :{
-        ...defaultRating,
-        Title: '帖子不存在',
-        Content: '帖子不存在',
-      }
+      return postType === 'post'
+        ? {
+            ...defaultPost,
+            Title: '帖子不存在',
+            Content: '帖子不存在',
+          }
+        : {
+            ...defaultRating,
+            Title: '帖子不存在',
+            Content: '帖子不存在',
+          }
     }
   }
   catch (e) {
     console.error(e)
-    return postType === 'post' ? {
-        ...defaultPost,
-        Title: '网络错误',
-        Content: '网络错误',
-      }
-      :{
-        ...defaultRating,
-        Title: '网络错误',
-        Content: '网络错误',
-      }
-    
+    return postType === 'post'
+      ? {
+          ...defaultPost,
+          Title: '网络错误',
+          Content: '网络错误',
+        }
+      : {
+          ...defaultRating,
+          Title: '网络错误',
+          Content: '网络错误',
+        }
   }
 }
 
@@ -258,7 +258,13 @@ async function getPostTypeByID(PostID: number): Promise<PostType> {
       },
       true,
     )
-    return (await res!.json()) as PostType
+    if (!res!.ok) {
+      console.error('获取帖子类型失败:', res!.status, res!.statusText)
+      return 'post'
+    }
+    
+    const data = await res!.json()
+    return data.data.postType as PostType
   }
   catch (e) {
     console.error(e)

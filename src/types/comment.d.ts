@@ -16,7 +16,7 @@ export interface Comment {
 }
 
 export interface RatingComment extends Comment {
-  AutherRating: number
+  AuthorRating: number
 }
 
 export interface SubComment {
@@ -36,5 +36,3 @@ export interface SubComment {
   userTargetName: string
   showMenu: boolean
 }
-
-

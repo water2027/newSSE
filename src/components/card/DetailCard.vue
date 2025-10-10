@@ -141,7 +141,7 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
       <UserButton :is-saved="post.IsSaved" :is-self="post.UserTelephone === userInfo.phone" @user-action="handleUserActionDebounce" />
     </div>
     <div class="extension-slot">
-      <slot name="right-extension"></slot>
+      <slot name="right-extension" />
     </div>
     <div
       class="card-title"
@@ -172,7 +172,12 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
 </template>
 
 <style>
-  .card-title {
+/* 扩展插槽定位 */
+.extension-slot {
+  position: relative;
+}
+
+.card-title {
   margin-top: 10px;
   margin-bottom: 8px;
 }

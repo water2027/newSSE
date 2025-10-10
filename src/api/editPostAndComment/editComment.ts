@@ -159,4 +159,139 @@ async function sendRComment(
   }
 }
 
-export { delCcomment, delComment, sendComment, sendPComment, sendRComment }
+/**
+ * @description 单独提交评分
+ * @param {string} userTelephone 用户电话
+ * @param {number} postID 帖子ID
+ * @param {number} rating 评分
+ */
+async function submitRating(
+  userTelephone: string,
+  postID: number,
+  rating: number,
+) {
+  try {
+    const res = await requestFunc(
+      `/auth/submitRating`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: {
+          UserTelephone: userTelephone,
+          PostID: postID,
+          Rating: rating,
+        },
+      },
+      true,
+    )
+    return res!.ok
+  }
+  catch (e) {
+    console.error('submitRating 错误:', e)
+    return false
+  }
+}
+
+/**
+ * @description 获取用户对帖子的评分
+ * @param {number} postID 帖子ID
+ */
+async function getUserPostRating(postID: number) {
+  try {
+    const res = await requestFunc(
+      `/auth/userPostRating`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: {
+          PostID: postID,
+        },
+      },
+      true,
+    )
+    
+    if (res!.ok) {
+      const data = await res!.json()
+      return data.rating || 0
+    } else {
+      return 0
+    }
+  }
+  catch (e) {
+    console.error('获取用户评分失败:', e)
+    return 0
+  }
+}
+
+/**
+ * @description 获取帖子的评分分布
+ * @param {number} postID 帖子ID
+ */
+async function getStarsDistribution(postID: number) {
+  try {
+    const res = await requestFunc(
+      `/auth/getStars`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: {
+          PostID: postID,
+        },
+      },
+      true,
+    )
+    
+    if (res!.ok) {
+      const data = await res!.json()
+      const stars = [data.star1 || 0, data.star2 || 0, data.star3 || 0, data.star4 || 0, data.star5 || 0]
+      return stars as [number, number, number, number, number]
+    } else {
+      return [0, 0, 0, 0, 0] as [number, number, number, number, number]
+    }
+  }
+  catch (e) {
+    console.error('获取评分分布失败:', e)
+    return [0, 0, 0, 0, 0] as [number, number, number, number, number]
+  }
+}
+
+/**
+ * @description 获取帖子的平均评分
+ * @param {number} postID 帖子ID
+ */
+async function getAverageRating(postID: number) {
+  try {
+    const res = await requestFunc(
+      `/auth/getAverageRating`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: {
+          PostID: postID,
+        },
+      },
+      true,
+    )
+    
+    if (res!.ok) {
+      const data = await res!.json()
+      return data.averageRating || 0
+    } else {
+      return 0
+    }
+  }
+  catch (e) {
+    console.error('获取平均评分失败:', e)
+    return 0
+  }
+}
+
+export { delCcomment, delComment, sendComment, sendPComment, sendRComment, submitRating, getUserPostRating, getStarsDistribution, getAverageRating }

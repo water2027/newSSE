@@ -16,10 +16,11 @@ import UserAvatar from '../UserAvatar.vue'
 import UserButton from '../UserButton.vue'
 import BasicCard from './BasicCard.vue'
 
-const { comment, postId, commentable = true } = defineProps<{
+const { comment, postId, commentable = true, isDence = false } = defineProps<{
   comment: Comment
   postId: number
-  commentable?: boolean//是否可再评论
+  commentable?: boolean// 是否可再评论
+  isDence?: boolean// 是否密集排列(隐藏用户信息)
 }>()
 
 const CCommentCard = defineAsyncComponent(() => import('@/components/card/CCommentCard.vue'))
@@ -138,7 +139,7 @@ async function like() {
 <template>
   <BasicCard>
     <div ref="root">
-      <div class="flex flex-row">
+      <div class="flex flex-row" v-if="!isDence">
         <UserAvatar
           :src="comment.AuthorAvatar"
           :user-id="comment.AuthorID"
@@ -148,15 +149,15 @@ async function like() {
         />
         <UserButton :no-save="true" :is-self="userInfo.phone === comment.AuthorTelephone" @user-action="handlerDebounced" />
       </div>
-      <!-- 添加具名插槽用于扩展内容 -->
-      <div class="extension-slot">
-        <slot name="right-extension"></slot>
+      <!-- 评分显示区域 -->
+      <div class="rating-display-area" v-if="$slots['right-extension']">
+        <slot name="right-extension" />
       </div>
       <MarkdownContainer
         :markdown-content="comment.Content || 'loading'"
       />
       <BasicInfo :time="comment.CommentTime" :comment="comment.SubComments.length" :is-like="comment.IsLiked" :like="comment.LikeNum" @like-change="like" />
-      <div class="commentButton mb-3" v-if="commentable">
+      <div v-if="commentable" class="commentButton mb-3">
         <button @click="commentButtonIsShow = !commentButtonIsShow">
           {{ commentButtonIsShow ? '算了' : '评论' }}
         </button>
@@ -196,6 +197,15 @@ async function like() {
 </template>
 
 <style scoped>
+/* 评分显示区域 */
+.rating-display-area {
+  margin: 8px 0;
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .commentButton {
   display: flex;
   margin-top: 10px;

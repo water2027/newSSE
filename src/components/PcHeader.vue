@@ -91,7 +91,7 @@ function search() {
       <router-link to="/rating">
         <div
           class="icon" style="
-              background-image: url(https://img.icons8.com/ios-filled/100/shopping-bag.png);
+              background-image: url(https://img.icons8.com/?size=100&id=60985&format=png&color=000000);
               background-position: 0px 3px;
             "
         />
