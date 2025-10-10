@@ -10,12 +10,11 @@ import {
 } from 'vue'
 
 import { useRoute, useRouter } from 'vue-router'
-import { getChatNotice } from '@/api/chat/chat'
 
 import ModeButton from '@/components/ModeButton.vue'
+import { useChat } from '@/composables/useChat'
 import { useNewPostsStore } from '@/store/newPostsStore'
 import { useNoticeStore } from '@/store/noticeStore'
-import { useUserStore } from '@/store/userStore'
 import { showSnackbar } from '@/utils/snackbar'
 
 const BottomNavbar = defineAsyncComponent(
@@ -30,9 +29,10 @@ const MobileHeader = defineAsyncComponent(() => import('@/components/MobileHeade
 const route = useRoute()
 const router = useRouter()
 
-const { userInfo } = useUserStore()
 const { noticeNum, refreshNoticeNum } = useNoticeStore()
 const { startPolling, stopPolling, newPostsNotification, hideNotification } = useNewPostsStore()
+
+const { connect, disconnect, chatNum } = useChat()
 
 const windowWidth = ref(window.innerWidth)
 const isPC = computed(() => {
@@ -52,21 +52,12 @@ const isHomePage = computed(() => {
   return false
 })
 
-const chatNum = ref(0)
-
-provide('chatNum', chatNum)
-
-async function updateChatNum(n: number | undefined) {
-  if (n !== undefined) {
-    chatNum.value = n
-  }
-  else {
-    const temp = await getChatNotice(userInfo.userID)
-    chatNum.value = temp.data.noticeNum
-  }
-}
-
-provide('updateChatNum', updateChatNum)
+/**
+ * @description 发帖和看帖的时候隐藏热榜
+ */
+const heatPostsIsHidden = computed(() => {
+  return /^\/(?:post|shop|myproducts|sale|productdetail)/.test(route.fullPath)
+})
 
 const { headerHeight, handleTouchStart, handleTouchEnd } = (() => {
   const headerHeight = ref('3em')
@@ -95,8 +86,8 @@ const { headerHeight, handleTouchStart, handleTouchEnd } = (() => {
 })()
 
 onMounted(() => {
+  connect()
   refreshNoticeNum()
-  updateChatNum(undefined)
   window.addEventListener('resize', updateWidth)
   if (!isPC.value) {
     window.addEventListener('touchstart', handleTouchStart)
@@ -113,6 +104,7 @@ onUnmounted(() => {
   }
   // 停止新帖子轮询
   stopPolling()
+  disconnect()
 })
 
 // 监听新帖子通知变化，显示Snackbar
@@ -166,6 +158,7 @@ watch(() => newPostsNotification.updatedAt, (updatedAt: number) => {
     <template v-if="!isPC">
       <BottomNavbar
         :notice-num="noticeNum.unreadTotalNum"
+        :chat-num="chatNum"
       />
     </template>
     <main class="mt-2 w-full flex flex-row p-0">

@@ -2,13 +2,14 @@
 import type { OAuth2Info } from '@/api/oauth2/oauth2'
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { getAllInfo } from '@/api/info/getInfo'
 import { authorizeOAuth2App, checkOAuth2App } from '@/api/oauth2/oauth2'
 import { showMsg } from '@/components/MessageBox'
 import { useUserStore } from '@/store/userStore'
 
 const route = useRoute()
 const router = useRouter()
-const { isLogin } = useUserStore()
+const { isLogin, userInfo } = useUserStore()
 
 // OAuth2参数
 const oauth2Params = ref<OAuth2Info>({
@@ -29,6 +30,14 @@ const appInfo = ref({
 const loading = ref(false)
 const checking = ref(true)
 const error = ref('')
+
+// 用户基本信息
+const userBasicInfo = ref({
+  avatarURL: '',
+  name: '',
+  intro: '',
+  email: '',
+})
 
 // 目前权限只做了read_basic，注意这里改后端也要对应改
 const scopeDescriptions: Record<string, string> = {
@@ -84,6 +93,30 @@ async function checkAppInfo() {
 }
 
 /**
+ * 获取用户基本信息
+ */
+async function fetchuserBasicInfo() {
+  try {
+    const detailInfo = await getAllInfo(userInfo.phone)
+    userBasicInfo.value = {
+      avatarURL: detailInfo.avatarURL,
+      name: detailInfo.name,
+      intro: detailInfo.intro,
+      email: detailInfo.email,
+    }
+  }
+  catch (err) {
+    console.error('获取用户基本信息出错:', err)
+    userBasicInfo.value = {
+      avatarURL: userInfo.avatarURL,
+      name: userInfo.name,
+      intro: '',
+      email: userInfo.email,
+    }
+  }
+}
+
+/**
  * 处理授权
  */
 async function handleAuthorize() {
@@ -104,7 +137,22 @@ async function handleAuthorize() {
   }
 }
 
-onMounted(() => {
+/**
+ * 取消授权
+ */
+function cancelAuthorize(){
+  // 暂先返回三方界面
+  let ref = ''
+  if (document.referrer.length > 0) ref = document.referrer
+  try {
+    if (ref.length == 0 && opener.location.href.length > 0)
+      ref = opener.location.href
+  } catch (e) {}
+
+ window.location.href = ref
+}
+
+onMounted(async () => {
   // 检查用户是否已登录
   if (!isLogin.value) {
     const currentUrl = window.location.href
@@ -112,8 +160,12 @@ onMounted(() => {
     return
   }
 
-  if (getOAuth2Params())
-    checkAppInfo()
+  if (getOAuth2Params()) {
+    await Promise.all([
+      checkAppInfo(),
+      fetchuserBasicInfo(),
+    ])
+  }
 })
 </script>
 
@@ -156,17 +208,38 @@ onMounted(() => {
         授权给 {{ appInfo.app_name }}
       </div>
 
-      <div v-if="appInfo.description" class="mt-2 text-center text-sm text-gray-600">
+      <div v-if="appInfo.description" class="mt-2 text-center text-m text-gray-600">
         {{ appInfo.description }}
       </div>
 
       <!-- 权限说明 -->
       <div class="mt-4 rounded-lg bg-gray-50 p-4">
-        <div class="mb-2 text-sm text-gray-700">
+        <div class="mb-2 text-m text-gray-700">
           <strong>{{ appInfo.app_name }}</strong> 希望：
         </div>
-        <div class="text-sm text-gray-600">
+        <div class="text-m text-gray-600">
           {{ scopeDescriptions[oauth2Params.scope] || '访问您的信息' }}
+        </div>
+      </div>
+
+      <!-- 用户基本信息卡片 -->
+      <div v-if="oauth2Params.scope === 'read_basic'" class="mb-6 rounded-lg bg-gray-50 p-4">
+        <div class="flex items-center space-x-3">
+          <img
+            :src="userBasicInfo.avatarURL || '/default-avatar.svg'"
+            class="h-12 w-12 border-2 border-gray-200 rounded-full object-cover"
+          >
+          <div class="min-w-0 flex-1">
+            <div class="truncate text-m text-gray-900 font-medium">
+              {{ userBasicInfo.name || '未设置昵称' }}
+            </div>
+            <div v-if="userBasicInfo.intro" class="text-sm text-gray-600">
+              {{ userBasicInfo.intro }}
+            </div>
+            <div class="truncate text-sm text-gray-500">
+              {{ userBasicInfo.email }}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -174,10 +247,16 @@ onMounted(() => {
       <div class="mt-6 space-y-3">
         <button
           :disabled="loading"
-          class="h-12 w-full flex cursor-pointer items-center justify-center border-0 rounded-[20px] bg-[#eb6b26] text-lg text-white transition-colors disabled:bg-zinc-600 hover:bg-[#ff7e3b]"
+          class="h-[48px] w-full flex cursor-pointer items-center justify-center border-0 rounded-[24px] bg-[#eb6b26] text-lg text-white transition-colors disabled:bg-zinc-600 hover:bg-[#ff7e3b]"
           @click="handleAuthorize"
         >
           {{ loading ? '授权中...' : '允许' }}
+        </button>
+        <button
+          class="h-[48px] w-full flex cursor-pointer items-center justify-center border-0 rounded-[24px] bg-transparent text-lg transition-colors disabled:bg-zinc-600"
+          @click="cancelAuthorize"
+        >
+          取消
         </button>
       </div>
 

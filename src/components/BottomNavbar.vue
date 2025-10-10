@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, inject, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-const { noticeNum = 0 } = defineProps<{
+const { noticeNum = 0, chatNum = 0 } = defineProps<{
   noticeNum?: number
+  chatNum?: number
 }>()
 const route = useRoute()
 const selected = computed<string>(() => {
@@ -13,7 +14,6 @@ const selected = computed<string>(() => {
     return params.name as string
   return path
 })
-const chatNum = inject('chatNum')
 const displayBool = computed(() =>
   noticeNum === 0 ? 'none' : 'block',
 )
