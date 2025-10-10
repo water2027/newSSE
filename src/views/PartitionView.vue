@@ -7,7 +7,7 @@ import {
   reactive,
   ref,
 } from 'vue'
-import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
+import { onBeforeRouteUpdate,onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import { showMsg } from '@/components/MessageBox'
 import PostList from '@/components/PostList.vue'
 import { usePostView } from '@/composables/usePostView'
@@ -32,10 +32,11 @@ const scrollTop = ref(0)
 const hasCache = ref(false)
 const cachePosts = reactive<Post[]>([])
 const cacheTotalNum = ref(0)
+const cachePartition = ref(route.params.name)
 const cacheCondition = reactive<Condition>({
   limit: 10,
   offset: 0,
-  partition: '' as typeof Partitions[number],
+  partition: cachePartition.value as typeof Partitions[number],
   searchsort: 'home',
   searchinfo: '',
   tag: '',
@@ -57,7 +58,7 @@ onMounted(async () => {
     // 对于课程交流分区，采用更紧凑的卡片布局
     isDense.value = true
   name.value = partition
-  await initialize(partition)
+  if(!hasCache.value) await initialize(partition)
   hasCache.value = true
 })
 
@@ -72,12 +73,21 @@ onActivated(async () => {
   isLoading.value = false
 })
 
-onBeforeRouteLeave(() => {
+onBeforeRouteUpdate(async (to, from) => {
+  // 清空当前页面的帖子列表
+  const data = storePosts()
+  cachePosts.splice(0, cachePosts.length, ...data.cachePosts)
+  cacheTotalNum.value = data.cacheTotalNum
+  Object.assign(cacheCondition, data.cacheConditions)
+})
+
+onBeforeRouteLeave(async () => {
   // 保存滚动位置
   scrollTop.value = document.body.scrollTop
   // 清空当前页面的帖子列表
   const data = storePosts()
   cachePosts.splice(0, cachePosts.length, ...data.cachePosts)
+  cachePartition.value = route.params.name
   cacheTotalNum.value = data.cacheTotalNum
   Object.assign(cacheCondition, data.cacheConditions)
 })
