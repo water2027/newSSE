@@ -31,7 +31,7 @@ const displayStars = computed(() => {
 const starStates = ref(displayStars.value)
 
 // 监听 props.rating 的变化
-watch(() => currRating.value, () => {
+watch(() => props.rating, () => {
   starStates.value = displayStars.value
 }, { immediate: true })
 

@@ -146,7 +146,7 @@ function cancelAuthorize() {
   if (document.referrer.length > 0)
     ref = document.referrer
   try {
-    if (ref.length === 0 && opener.location.href.length > 0)
+    if (ref.length === 0 && opener && opener.location && opener.location.href && opener.location.href.length > 0)
       ref = opener.location.href
   }
   catch {

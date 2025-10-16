@@ -18,18 +18,14 @@ export function debounceAsync<T extends (...args: any[]) => Promise<any>>(fn: T)
   let timeout: ReturnType<typeof setTimeout> | null = null
 
   return async (...args: Parameters<T>): Promise<ReturnType<T>> => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (timeout) {
         clearTimeout(timeout)
       }
 
       timeout = setTimeout(async () => {
-        try {
-          const result = await fn(...args)
-          resolve(result)
-        } catch (error) {
-          reject(error)
-        }
+        const result = await fn(...args)
+        resolve(result)
       }, MIN_CLICK_GAP)
     })
   }
