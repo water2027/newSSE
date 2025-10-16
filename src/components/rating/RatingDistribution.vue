@@ -15,9 +15,6 @@ const emits = defineEmits<{
 
 // 计算总数和百分比
 const total = computed(() => (props.stars || []).reduce((sum, v) => sum + v, 0))
-const percentages = computed(() =>
-  (props.stars || []).map(v => total.value ? Math.round((v / total.value) * 1000) / 10 : 0),
-)
 
 // 计算进度条宽度
 function getProgressWidth(count: number) {
@@ -39,22 +36,22 @@ function handleRatingClick(rating: number) {
           <span class="mobile-rating-title">评分</span>
           <span class="mobile-average-rating">{{ (averageRating || 0).toFixed(1) }}★</span>
         </div>
-        
+
         <!-- 用户评分区域 -->
         <div v-if="showUserRating" class="mobile-user-rating-section">
           <span class="mobile-user-rating-label">我的评分：</span>
           <div class="mobile-user-rating">
-            <span 
-              v-for="n in 5" 
-              :key="n" 
+            <span
+              v-for="n in 5"
+              :key="n"
               class="mobile-rating-star"
-              :class="{ 'filled': n <= (userRating || 0) }"
+              :class="{ filled: n <= (userRating || 0) }"
               @click="handleRatingClick(n)"
             >★</span>
             <span class="rating-hint">点击直接评分</span>
           </div>
         </div>
-        
+
         <!-- 评分分布 -->
         <!-- <div class="mobile-rating-breakdown">
           <div v-for="(count, index) in (stars || []).slice().reverse()" :key="`mobile-rating-${4-index}-${count}`" class="mobile-rating-item">
@@ -65,20 +62,20 @@ function handleRatingClick(rating: number) {
           </div>
         </div> -->
         <div class="rating-breakdown">
-          <div v-for="(count, index) in (stars || []).slice().reverse()" :key="`rating-${4-index}-${count}`" class="rating-item-small">
+          <div v-for="(count, index) in (stars || []).slice().reverse()" :key="`rating-${4 - index}-${count}`" class="rating-item-small">
             <div class="star-info">
               <span class="star-num">{{ 5 - index }}</span>
               <span class="star-icon">★</span>
             </div>
             <div class="progress-container-small">
-              <div class="progress-bar-small" :style="{ width: `${getProgressWidth(count)}%` }"></div>
+              <div class="progress-bar-small" :style="{ width: `${getProgressWidth(count)}%` }" />
             </div>
             <span class="star-count">{{ count }}</span>
           </div>
         </div>
       </div>
     </template>
-    
+
     <!-- 桌面端布局 -->
     <template v-else>
       <div class="desktop-rating-container">
@@ -86,31 +83,31 @@ function handleRatingClick(rating: number) {
           <span class="rating-number-small">{{ (averageRating || 0).toFixed(1) }}</span>
           <span class="rating-stars-small">★</span>
         </div>
-        
+
         <!-- 用户评分区域 -->
         <div v-if="showUserRating" class="user-rating-section">
           <span class="user-rating-label">我的评分：</span>
           <div class="user-rating-stars">
-            <span 
-              v-for="n in 5" 
-              :key="n" 
+            <span
+              v-for="n in 5"
+              :key="n"
               class="user-rating-star"
-              :class="{ 'filled': n <= (userRating || 0) }"
+              :class="{ filled: n <= (userRating || 0) }"
               @click="handleRatingClick(n)"
             >★</span>
           </div>
           <span class="rating-hint">点击直接评分</span>
         </div>
-        
+
         <!-- 评分分布 -->
         <div class="rating-breakdown">
-          <div v-for="(count, index) in (stars || []).slice().reverse()" :key="`rating-${4-index}-${count}`" class="rating-item-small">
+          <div v-for="(count, index) in (stars || []).slice().reverse()" :key="`rating-${4 - index}-${count}`" class="rating-item-small">
             <div class="star-info">
               <span class="star-num">{{ 5 - index }}</span>
               <span class="star-icon">★</span>
             </div>
             <div class="progress-container-small">
-              <div class="progress-bar-small" :style="{ width: `${getProgressWidth(count)}%` }"></div>
+              <div class="progress-bar-small" :style="{ width: `${getProgressWidth(count)}%` }" />
             </div>
             <span class="star-count">{{ count }}</span>
           </div>
@@ -135,10 +132,12 @@ function handleRatingClick(rating: number) {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
   border-radius: 12px;
   border: 1px solid rgba(226, 232, 240, 0.8);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.08),
+    0 3px 6px rgba(0, 0, 0, 0.04);
   backdrop-filter: blur(16px);
   min-width: 160px;
-  transform: scale(1.0);
+  transform: scale(1);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -181,8 +180,12 @@ function handleRatingClick(rating: number) {
 }
 
 @keyframes twinkle {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.1); }
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.1);
+  }
 }
 
 .user-rating-section {
@@ -423,94 +426,94 @@ function handleRatingClick(rating: number) {
     background: linear-gradient(135deg, rgba(31, 41, 55, 0.95) 0%, rgba(17, 24, 39, 0.9) 100%);
     border-color: rgba(55, 65, 81, 0.8);
   }
-  
+
   .rating-main {
     border-bottom-color: rgba(55, 65, 81, 0.6);
   }
-  
+
   .rating-main::after {
     background: linear-gradient(90deg, transparent 0%, #60a5fa 50%, transparent 100%);
   }
-  
+
   .rating-number-small {
     background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  
+
   .rating-stars-small {
     color: #60a5fa;
     filter: drop-shadow(0 2px 4px rgba(96, 165, 250, 0.3));
   }
-  
+
   .user-rating-section {
     background: rgba(96, 165, 250, 0.1);
     border-color: rgba(96, 165, 250, 0.2);
   }
-  
+
   .user-rating-label {
     color: #60a5fa;
   }
-  
+
   .rating-hint {
     color: #9ca3af;
   }
-  
+
   .rating-item-small:hover {
     background: rgba(96, 165, 250, 0.1);
   }
-  
+
   .star-num {
     background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  
+
   .star-icon {
     color: #60a5fa;
     filter: drop-shadow(0 1px 2px rgba(96, 165, 250, 0.3));
   }
-  
+
   .progress-container-small {
     background: linear-gradient(90deg, #374151 0%, #1f2937 100%);
   }
-  
+
   .progress-bar-small {
     background: linear-gradient(90deg, #60a5fa 0%, #3b82f6 50%, #1d4ed8 100%);
     box-shadow: 0 1px 3px rgba(96, 165, 250, 0.3);
   }
-  
+
   .star-count {
     background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  
+
   .mobile-rating-container {
     background: linear-gradient(135deg, rgba(31, 41, 55, 0.95) 0%, rgba(17, 24, 39, 0.9) 100%);
     border-color: rgba(55, 65, 81, 0.8);
   }
-  
+
   .mobile-rating-header {
     border-bottom-color: rgba(55, 65, 81, 0.6);
   }
-  
+
   .mobile-rating-title {
     color: #f9fafb;
   }
-  
+
   .mobile-average-rating {
     color: #60a5fa;
   }
-  
+
   .mobile-user-rating-section {
     background: rgba(96, 165, 250, 0.1);
     border-color: rgba(96, 165, 250, 0.2);
   }
-  
+
   .mobile-user-rating-label {
     color: #60a5fa;
   }

@@ -32,7 +32,7 @@ async function getCommentsByPostID(
       console.error('获取评论失败:', res!.status, res!.statusText)
       return []
     }
-    
+
     const data = await res!.json()
     if (postType === 'rating') {
       return data as RatingComment[]

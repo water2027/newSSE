@@ -52,13 +52,6 @@ const isHomePage = computed(() => {
   return false
 })
 
-/**
- * @description 发帖和看帖的时候隐藏热榜
- */
-const heatPostsIsHidden = computed(() => {
-  return /^\/(?:post|shop|myproducts|sale|productdetail)/.test(route.fullPath)
-})
-
 const { headerHeight, handleTouchStart, handleTouchEnd } = (() => {
   const headerHeight = ref('3em')
   let startY = 0

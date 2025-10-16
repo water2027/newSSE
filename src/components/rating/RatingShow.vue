@@ -11,16 +11,15 @@ const props = withDefaults(defineProps<Props>(), {
   editable: false,
 })
 
+const emit = defineEmits(['ratingClick'])
+
 const currRating = ref(props.rating)
 
-
-const emit = defineEmits(['ratingClick']) // 事件名同步更新
+// 事件名同步更新
 const hoverRating = ref(0)
 
 // 计算应该显示的星星数量
 const displayStars = computed(() => {
-  console.log(props.rating);
-  
   // 可编辑模式：总是显示5颗星星
   return Array.from({ length: 5 }, (_, index) => ({
     isFilled: index + 1 <= props.rating,
@@ -55,7 +54,7 @@ function handleStarClick(value: number) {
         </linearGradient>
       </defs>
     </svg>
-    
+
     <div class="stars">
       <svg
         v-for="star in starStates"

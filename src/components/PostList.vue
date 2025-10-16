@@ -88,10 +88,6 @@ onUnmounted(() => {
       <div class="bottomDiv">
         暂无更多
       </div>
-      <!--
-      <div class="bottomDiv">
-      {{ hasMore ? (isLoading ? 'loading...' : '') : 'noMore' }}
-      </div>ai给的优化 -->
     </template>
   </div>
 </template>

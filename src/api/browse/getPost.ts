@@ -262,7 +262,7 @@ async function getPostTypeByID(PostID: number): Promise<PostType> {
       console.error('获取帖子类型失败:', res!.status, res!.statusText)
       return 'post'
     }
-    
+
     const data = await res!.json()
     return data.data.postType as PostType
   }

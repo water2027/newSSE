@@ -56,7 +56,7 @@ async function commentHandler() {
   await getCommentList()
   let len = 0
   // console.log(comments.value);
-  
+
   for (const comment of comments.value) {
     if (comment.SubComments) {
       len += comment.SubComments.length
@@ -146,8 +146,7 @@ function infoChange(type: 'like' | 'save' | 'delete' | 'comment' | 'rating') {
       // 评分更新，重新获取帖子数据以更新评分信息
       refreshPostData()
       commentHandler()
-      
-      
+
       break
     }
   }
@@ -233,24 +232,26 @@ onMounted(async () => {
         <!-- 使用id-评论数作为key使每次评论重新渲染当前评论 -->
         <!-- Post类型固定渲染 -->
         <template v-if="postType === 'post'">
-          <CommentCard class="mx-a my-3 w-15/16"
+          <CommentCard
             v-for="comment in sortedComments"
             :key="comment.PcommentID"
-            :postId="post.PostID"
+            class="mx-a my-3 w-15/16"
+            :post-id="post.PostID"
             :commentable="true"
-            :isDence="false"
+            :is-dence="false"
             :comment="comment as Comment"
           />
         </template>
 
         <!-- Rating类型固定渲染 -->
         <template v-else-if="postType === 'rating'">
-          <RatingCommentCard class="mx-a my-3 w-15/16"
+          <RatingCommentCard
             v-for="comment in sortedComments"
             :key="comment.PcommentID"
-            :postId="post.PostID"
+            class="mx-a my-3 w-15/16"
+            :post-id="post.PostID"
             :commentable="false"
-            :isDence="false"
+            :is-dence="false"
             :comment="comment as RatingComment"
           />
         </template>

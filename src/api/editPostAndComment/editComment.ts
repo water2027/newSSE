@@ -213,11 +213,12 @@ async function getUserPostRating(postID: number) {
       },
       true,
     )
-    
+
     if (res!.ok) {
       const data = await res!.json()
       return data.rating || 0
-    } else {
+    }
+    else {
       return 0
     }
   }
@@ -246,12 +247,13 @@ async function getStarsDistribution(postID: number) {
       },
       true,
     )
-    
+
     if (res!.ok) {
       const data = await res!.json()
       const stars = [data.star1 || 0, data.star2 || 0, data.star3 || 0, data.star4 || 0, data.star5 || 0]
       return stars as [number, number, number, number, number]
-    } else {
+    }
+    else {
       return [0, 0, 0, 0, 0] as [number, number, number, number, number]
     }
   }
@@ -280,11 +282,12 @@ async function getAverageRating(postID: number) {
       },
       true,
     )
-    
+
     if (res!.ok) {
       const data = await res!.json()
       return data.averageRating || 0
-    } else {
+    }
+    else {
       return 0
     }
   }
@@ -294,4 +297,4 @@ async function getAverageRating(postID: number) {
   }
 }
 
-export { delCcomment, delComment, sendComment, sendPComment, sendRComment, submitRating, getUserPostRating, getStarsDistribution, getAverageRating }
+export { delCcomment, delComment, getAverageRating, getStarsDistribution, getUserPostRating, sendComment, sendPComment, sendRComment, submitRating }

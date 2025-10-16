@@ -7,7 +7,7 @@ import {
   reactive,
   ref,
 } from 'vue'
-import { onBeforeRouteUpdate,onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
+import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { showMsg } from '@/components/MessageBox'
 import PostList from '@/components/PostList.vue'
 import { usePostView } from '@/composables/usePostView'
@@ -61,7 +61,8 @@ onMounted(async () => {
     // 对于打分分区，采用更紧凑的卡片布局
     isDense.value = true
   name.value = partition
-  if(!hasCache.value) await initialize(partition)
+  if (!hasCache.value)
+    await initialize(partition)
   hasCache.value = true
 })
 
@@ -76,7 +77,7 @@ onActivated(async () => {
   isLoading.value = false
 })
 
-onBeforeRouteUpdate(async (to, from) => {
+onBeforeRouteUpdate(async () => {
   // 清空当前页面的帖子列表
   const data = storePosts()
   cachePosts.splice(0, cachePosts.length, ...data.cachePosts)

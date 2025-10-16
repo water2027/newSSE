@@ -139,7 +139,7 @@ async function like() {
 <template>
   <BasicCard>
     <div ref="root">
-      <div class="flex flex-row" v-if="!isDence">
+      <div v-if="!isDence" class="flex flex-row">
         <UserAvatar
           :src="comment.AuthorAvatar"
           :user-id="comment.AuthorID"
@@ -150,7 +150,7 @@ async function like() {
         <UserButton :no-save="true" :is-self="userInfo.phone === comment.AuthorTelephone" @user-action="handlerDebounced" />
       </div>
       <!-- 评分显示区域 -->
-      <div class="rating-display-area" v-if="$slots['right-extension']">
+      <div v-if="$slots['right-extension']" class="rating-display-area">
         <slot name="right-extension" />
       </div>
       <MarkdownContainer
