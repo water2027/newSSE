@@ -51,6 +51,7 @@ function handleRatingClick(rating: number) {
               :class="{ 'filled': n <= (userRating || 0) }"
               @click="handleRatingClick(n)"
             >★</span>
+            <span class="rating-hint">点击直接评分</span>
           </div>
         </div>
         

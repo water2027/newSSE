@@ -156,7 +156,7 @@ async function like() {
       <MarkdownContainer
         :markdown-content="comment.Content || 'loading'"
       />
-      <BasicInfo :time="comment.CommentTime" :comment="comment.SubComments.length" :is-like="comment.IsLiked" :like="comment.LikeNum" @like-change="like" />
+      <BasicInfo :time="comment.CommentTime" :comment="comment.SubComments.length" :nocomment="!commentable" :is-like="comment.IsLiked" :like="comment.LikeNum" @like-change="like" />
       <div v-if="commentable" class="commentButton mb-3">
         <button @click="commentButtonIsShow = !commentButtonIsShow">
           {{ commentButtonIsShow ? '算了' : '评论' }}

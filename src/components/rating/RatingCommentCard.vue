@@ -3,7 +3,6 @@ import type { RatingComment } from '@/types/comment'
 import CommentCard from '../card/CommentCard.vue'
 
 import RatingShow from './RatingShow.vue'
-import { watch } from 'vue'
 
 defineOptions({
   name: 'RatingCard',
@@ -19,13 +18,6 @@ interface RatingCommentProps {
 
 const _ = defineProps<RatingCommentProps>()
 
-watch(
-  () => _.comment,
-  (newVal) => {
-    // console.log(newVal)
-    // console.log(_.comment.AuthorRating)
-  }
-)
 </script>
 
 <template>
