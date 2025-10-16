@@ -3,6 +3,7 @@ const { isDense, browse, comment, isLike = false, like = 0 } = defineProps<{
   isDense?: boolean
   browse?: number
   comment?: number
+  nocomment?: boolean
   isLike?: boolean
   like?: number
   time: string
@@ -51,7 +52,7 @@ function LikeChange() {
           </g>
         </svg>
       </span>
-      <span v-if="comment || comment === 0">
+      <span v-if="(comment || comment === 0) && !nocomment">
         {{ comment < 0 ? 0 : comment }}
         <svg
           viewBox="0 0 16 16"

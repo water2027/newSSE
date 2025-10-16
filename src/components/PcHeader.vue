@@ -88,6 +88,15 @@ function search() {
         />
         商城
       </router-link>
+      <router-link to="/rating">
+        <div
+          class="icon" style="
+              background-image: url(https://img.icons8.com/?size=100&id=60985&format=png&color=000000);
+              background-position: 0px 3px;
+            "
+        />
+        打分
+      </router-link>
     </div>
     <form class="search" @submit.prevent="search">
       <input

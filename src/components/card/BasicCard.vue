@@ -6,6 +6,7 @@
 
 <style lang="scss">
 .card-root {
+  position: relative;
   border: 1px solid var(--color-border);
   border-radius: 8px;
   box-shadow: var(--color-post-card-box-shadow) 0px 3px 8px;

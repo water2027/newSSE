@@ -8,8 +8,9 @@ import {
 import {
   likeCommentComment,
 } from '@/api/SaveAndLike/SaveAndLike'
-
 import { useUserStore } from '@/store/userStore'
+
+import { debounceAsync } from '@/utils/debounced'// 前面的没用上
 import BasicInfo from '../BasicInfo.vue'
 import MarkdownContainer from '../MarkdownContainer.vue'
 
@@ -71,7 +72,7 @@ async function deleteFunc() {
     return false
   }
 }
-
+const handlerDebounced = debounceAsync(handler)
 async function handler(type: 'delete' | 'comment') {
   let event
   switch (type) {
@@ -146,7 +147,7 @@ async function like() {
           </template>
         </UserAvatar>
         <template v-if="subComment.authorTelephone === userInfo.phone">
-          <UserButton :no-save="true" :is-self="subComment.authorTelephone === userInfo.phone" @user-action="handler" />
+          <UserButton :no-save="true" :is-self="subComment.authorTelephone === userInfo.phone" @user-action="handlerDebounced" />
         </template>
       </div>
       <MarkdownContainer
@@ -162,7 +163,7 @@ async function like() {
       <MarkdownEditor
         v-if="commentButtonIsShow"
         v-model="commentContent"
-        @send="handler('comment')"
+        @send="handlerDebounced('comment')"
       />
     </div>
   </BasicCard>

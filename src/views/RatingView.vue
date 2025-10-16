@@ -1,75 +1,56 @@
 <script setup lang="ts">
-import type { Condition, Partitions } from '@/store/postStore'
+import type { Condition } from '@/store/postStore'
 import type { Post } from '@/types/post'
 import {
   onActivated,
   onMounted,
   reactive,
   ref,
+  watch,
 } from 'vue'
-import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
-import { showMsg } from '@/components/MessageBox'
+import { onBeforeRouteLeave, useRoute } from 'vue-router'
 import PostList from '@/components/PostList.vue'
 import { usePostView } from '@/composables/usePostView'
 import { usePostStore } from '@/store/postStore'
 import { useUserStore } from '@/store/userStore'
 
 defineOptions({
-  name: 'PartitionView',
+  name: 'RatingView',
 })
 
 const name = ref('')
 const route = useRoute()
-const router = useRouter()
 const { userInfo } = useUserStore()
 const { restorePosts, storePosts } = usePostStore()
 const { posts, update, isLoading, hasMore, initialize } = usePostView()
 
-const isDense = ref(false)
+const isDense = ref(true)
 
 // 保存滚动位置
 const scrollTop = ref(0)
 const hasCache = ref(false)
 const cachePosts = reactive<Post[]>([])
 const cacheTotalNum = ref(0)
-const cachePartition = ref(route.params.name)
 const cacheCondition = reactive<Condition>({
   limit: 10,
   offset: 0,
-  partition: cachePartition.value as typeof Partitions[number],
-  searchsort: 'home',
+  partition: '打分',
+  searchsort: 'rating',
   searchinfo: '',
   tag: '',
 })
 
 onMounted(async () => {
-  const params = route.params
-  if (!('name' in params)) {
-    router.push('/')
-    showMsg('分区不存在')
-    return
-  }
-  const partition = params.name as typeof Partitions[number]
-  if (partition === '课程专区') {
-    router.push('/course')
-    return
-  }
-  if (partition === '课程交流')
-    // 对于课程交流分区，采用更紧凑的卡片布局
-    isDense.value = true
-  if (partition === '打分')
-    // 对于打分分区，采用更紧凑的卡片布局
-    isDense.value = true
-  name.value = partition
-  if (!hasCache.value)
-    await initialize(partition)
+  await initialize('打分')
   hasCache.value = true
 })
 
 // 组件被激活时
+// 其它页面也可以这样做, 不过这里只弄了主页的缓存, 有需要可以改
 onActivated(async () => {
   if (!hasCache.value)
     return
+
   // 恢复滚动位置
   document.body.scrollTop = scrollTop.value
   isLoading.value = true
@@ -77,7 +58,9 @@ onActivated(async () => {
   isLoading.value = false
 })
 
-onBeforeRouteUpdate(async () => {
+onBeforeRouteLeave(() => {
+  // 保存滚动位置
+  scrollTop.value = document.body.scrollTop
   // 清空当前页面的帖子列表
   const data = storePosts()
   cachePosts.splice(0, cachePosts.length, ...data.cachePosts)
@@ -85,21 +68,25 @@ onBeforeRouteUpdate(async () => {
   Object.assign(cacheCondition, data.cacheConditions)
 })
 
-onBeforeRouteLeave(async () => {
-  // 保存滚动位置
-  scrollTop.value = document.body.scrollTop
-  // 清空当前页面的帖子列表
-  const data = storePosts()
-  cachePosts.splice(0, cachePosts.length, ...data.cachePosts)
-  cachePartition.value = route.params.name
-  cacheTotalNum.value = data.cacheTotalNum
-  Object.assign(cacheCondition, data.cacheConditions)
+// 监听路由参数变化，当有refresh参数时重新加载数据
+watch(() => route.query.refresh, async (newRefresh) => {
+  if (newRefresh && hasCache.value) {
+    // 重新加载最新数据
+    await initialize('打分')
+
+    // 清除refresh参数，避免重复触发
+    const newQuery = { ...route.query }
+    delete newQuery.refresh
+    // 使用replace避免在历史记录中留下refresh参数
+    const queryString = Object.keys(newQuery).length > 0 ? `?${new URLSearchParams(newQuery as Record<string, string>).toString()}` : ''
+    window.history.replaceState({}, '', `${route.path}${queryString}`)
+  }
 })
 </script>
 
 <template>
   <div class="w-full">
     <h2>{{ name }}</h2>
-    <PostList :posts="posts" :is-dense="isDense" :is-loading="isLoading" :has-more="hasMore" @bottom="update" />
+    <PostList :posts="posts" post-type="rating" :is-dense="isDense" :is-loading="isLoading" :has-more="hasMore" @bottom="update" />
   </div>
 </template>

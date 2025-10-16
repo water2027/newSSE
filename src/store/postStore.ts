@@ -4,8 +4,8 @@ import { reactive, ref, unref } from 'vue'
 
 import { getPosts, getPostsNum } from '@/api/browse/getPost'
 
-export const Partitions = ['主页', '收藏', '历史', '课程专区', '优质贴', '课程交流', '日常吐槽', '打听求助', '学习交流', '院务', '求职招募', '其他'] as const
-export const SearchSort = ['home', 'save', 'history'] as const
+export const Partitions = ['主页', '收藏', '历史', '课程专区', '优质贴', '课程交流', '日常吐槽', '打听求助', '学习交流', '院务', '求职招募', '其他', '打分'] as const
+export const SearchSort = ['home', 'save', 'history', 'rating'] as const
 
 export interface Condition {
   limit: number
@@ -68,7 +68,7 @@ function storePosts() {
   return { cachePosts, cacheTotalNum, cacheConditions }
 }
 
-function updatePost(id: number, type: 'like' | 'save' | 'delete') {
+function updatePost(id: number, type: 'like' | 'save' | 'delete' | 'rating' | 'comment') {
   // 二分查找
   let left = 0
   let right = posts.length - 1
@@ -159,6 +159,12 @@ function changeTo(p: typeof Partitions[number], tag: string = '') {
       conditions.partition = '历史'
       conditions.searchinfo = ''
       conditions.searchsort = 'history'
+      conditions.tag = tag
+      break
+    case '打分':
+      conditions.partition = '打分'
+      conditions.searchinfo = ''
+      conditions.searchsort = 'rating'
       conditions.tag = tag
       break
     default:

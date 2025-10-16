@@ -17,9 +17,6 @@ import { useNewPostsStore } from '@/store/newPostsStore'
 import { useNoticeStore } from '@/store/noticeStore'
 import { showSnackbar } from '@/utils/snackbar'
 
-const HeatList = defineAsyncComponent(
-  () => import('@/components/HeatList.vue'),
-)
 const BottomNavbar = defineAsyncComponent(
   () => import('@/components/BottomNavbar.vue'),
 )
@@ -53,13 +50,6 @@ const isHomePage = computed(() => {
     return true
   }
   return false
-})
-
-/**
- * @description 发帖和看帖的时候隐藏热榜
- */
-const heatPostsIsHidden = computed(() => {
-  return /^\/(?:post|shop|myproducts|sale|productdetail)/.test(route.fullPath)
 })
 
 const { headerHeight, handleTouchStart, handleTouchEnd } = (() => {
@@ -177,7 +167,6 @@ watch(() => newPostsNotification.updatedAt, (updatedAt: number) => {
           </KeepAlive>
         </router-view>
       </div>
-      <HeatList v-if="isPC && !heatPostsIsHidden" />
     </main>
   </div>
 </template>
