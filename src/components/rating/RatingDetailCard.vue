@@ -44,7 +44,6 @@ const isMobile = ref(window.innerWidth <= 768) // 临时设置为true来测试�
 // 检测屏幕尺寸
 function checkIsMobile() {
   isMobile.value = window.innerWidth <= 768
-  console.log('屏幕宽度:', window.innerWidth, '是否为移动端:', isMobile.value)
 }
 
 // 监听窗口大小变化
@@ -87,11 +86,8 @@ async function fetchUserRating() {
       commentRating.value = userRating
     }
 
-    // 更新评分分布
-    console.log('更新评分分布:', starsDistribution)
     // 直接更新响应式变量，不依赖 post.stars
     currRatingList.value = [...starsDistribution]
-    console.log('更新后的 currRatingList:', currRatingList.value)
 
     // 更新平均评分
     averageRating.value = averageRatingData
@@ -123,9 +119,6 @@ function updateLocalRatingData(newRating: number) {
   // 临时更新用户评分显示，实际数据会通过 fetchUserRating 从后端获取
   currRating.value = newRating
   commentRating.value = newRating
-
-  // 强制触发响应式更新
-  console.log('强制更新用户评分显示:', newRating)
 }
 
 async function currentRatingClick(rating: number) {

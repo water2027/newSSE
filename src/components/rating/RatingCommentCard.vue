@@ -29,7 +29,7 @@ interface RatingCommentProps {
     <!-- 填充right-extension插槽 -->
     <template #right-extension>
       <RatingShow
-        :rating="comment.AuthorRating"
+        :rating="_.comment.AuthorRating"
         :editable="false"
       />
     </template>

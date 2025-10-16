@@ -28,7 +28,7 @@ async function requestFunc(url: string, object: RequestObject, tokenIsNeeded: bo
       window.location.reload()
       return null
     }
-    const finalUrl = `${apiUrl}${url}?${new URLSearchParams(object.query).toString()}}`
+    const finalUrl = `${apiUrl}${url}?${new URLSearchParams(object.query).toString()}`
     const res = await fetch(`${finalUrl}`, {
       method: object.method,
       headers: {
