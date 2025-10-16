@@ -1,18 +1,16 @@
 <script setup lang="ts">
-import type { Comment, RatingComment } from '@/types/comment'
-import type { Post, PostType, Rating } from '@/types/post'
+import type { Comment } from '@/types/comment'
+import type { Post } from '@/types/post'
 
 import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getCommentsByPostID } from '@/api/browse/getComment'
 
-import { getPostByID, getPostTypeByID } from '@/api/browse/getPost'
+import { getPostByID } from '@/api/browse/getPost'
 
 import DetailCard from '@/components/card/DetailCard.vue'
-
 import { showImg } from '@/components/ImageShower'
 import { showMsg } from '@/components/MessageBox'
-import RatingDetailCard from '@/components/rating/RatingDetailCard.vue'
 import { useNewPostsStore } from '@/store/newPostsStore'
 import { usePostStore } from '@/store/postStore'
 import { useUserStore } from '@/store/userStore'
@@ -23,17 +21,14 @@ const { updatePost } = usePostStore()
 const { removeNewPostId } = useNewPostsStore()
 
 const CommentCard = defineAsyncComponent(() => import('@/components/card/CommentCard.vue'))
-const RatingCommentCard = defineAsyncComponent(() => import('@/components/rating/RatingCommentCard.vue'))
 
 const route = useRoute()
 const router = useRouter()
 
 const { userInfo } = useUserStore()
 
-const post = ref<Post | Rating>()
-const comments = ref<Comment[] | RatingComment[]>([])
-
-const postType = ref<PostType>('post')
+const post = ref<Post>()
+const comments = ref<Comment[]>([])
 
 type SortType = 'time' | 'likes'
 const sortType = ref<SortType>('time')
@@ -55,8 +50,6 @@ async function commentHandler() {
     return
   await getCommentList()
   let len = 0
-  // console.log(comments.value);
-
   for (const comment of comments.value) {
     if (comment.SubComments) {
       len += comment.SubComments.length
@@ -69,24 +62,13 @@ async function commentHandler() {
 async function getCommentList() {
   try {
     const ID = Number(route.params.id)
-    const curComments = await getCommentsByPostID(ID, userInfo.phone, postType.value)
+    const curComments = await getCommentsByPostID(ID, userInfo.phone)
     if (curComments)
       curComments.reverse()
     comments.value = curComments
   }
   catch (e) {
     showMsg(`获取评论失败: ${e}`)
-  }
-}
-
-async function refreshPostData() {
-  try {
-    const ID = Number(route.params.id)
-    const curPost = await getPostByID(ID, userInfo.phone, postType.value)
-    post.value = curPost
-  }
-  catch (e) {
-    showMsg(`获取帖子数据失败: ${e}`)
   }
 }
 
@@ -120,7 +102,7 @@ async function clickHandler(event: MouseEvent) {
   }
 }
 
-function infoChange(type: 'like' | 'save' | 'delete' | 'comment' | 'rating') {
+function infoChange(type: 'like' | 'save' | 'delete') {
   const ID = Number(route.params.id)
   updatePost(ID, type)
   switch (type) {
@@ -137,27 +119,13 @@ function infoChange(type: 'like' | 'save' | 'delete' | 'comment' | 'rating') {
       router.push('/')
       break
     }
-    case 'comment': {
-      // 评论更新，重新获取评论列表
-      commentHandler()
-      break
-    }
-    case 'rating': {
-      // 评分更新，重新获取帖子数据以更新评分信息
-      refreshPostData()
-      commentHandler()
-
-      break
-    }
   }
 }
 
 onMounted(async () => {
   try {
     const ID = Number(route.params.id)
-    postType.value = await getPostTypeByID(ID)
-    const curPost = await getPostByID(ID, userInfo.phone, postType.value)
-
+    const curPost = await getPostByID(ID, userInfo.phone)
     post.value = curPost
     setTitle(post.value.Title)
     await getCommentList()
@@ -177,21 +145,10 @@ onMounted(async () => {
     @comment-handle="commentHandler"
   >
     <template v-if="post">
-      <template v-if="postType === 'post'">
-        <DetailCard
-          :post="post as Post"
-          @info-change="infoChange"
-        />
-      </template>
-      <template v-else-if="postType === 'rating'">
-        <RatingDetailCard
-          :post="post as Rating"
-          @info-change="infoChange"
-        />
-      </template>
-      <template v-else>
-        <div>未知帖子类型</div>
-      </template>
+      <DetailCard
+        :post="post"
+        @info-change="infoChange"
+      />
     </template>
     <div v-else>
       loading...
@@ -226,33 +183,18 @@ onMounted(async () => {
       </div>
       <!-- 这是评论区 -->
       <div
-        v-if="post"
+        v-if="post?.Comment"
         class="commentList min-w-full w-full"
       >
         <!-- 使用id-评论数作为key使每次评论重新渲染当前评论 -->
-        <!-- Post类型固定渲染 -->
-        <template v-if="postType === 'post'">
+        <template
+          v-for="comment in sortedComments"
+          :key="`${comment.PcommentID}`"
+        >
           <CommentCard
-            v-for="comment in sortedComments"
-            :key="comment.PcommentID"
             class="mx-a my-3 w-15/16"
+            :comment="comment"
             :post-id="post.PostID"
-            :commentable="true"
-            :is-dence="false"
-            :comment="comment as Comment"
-          />
-        </template>
-
-        <!-- Rating类型固定渲染 -->
-        <template v-else-if="postType === 'rating'">
-          <RatingCommentCard
-            v-for="comment in sortedComments"
-            :key="comment.PcommentID"
-            class="mx-a my-3 w-15/16"
-            :post-id="post.PostID"
-            :commentable="false"
-            :is-dence="false"
-            :comment="comment as RatingComment"
           />
         </template>
       </div>

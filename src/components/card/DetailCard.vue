@@ -2,14 +2,13 @@
 import type { Post } from '@/types/post'
 import { defineAsyncComponent, ref, useTemplateRef } from 'vue'
 import { sendComment } from '@/api/editPostAndComment/editComment'
-import { delPost } from '@/api/editPostAndComment/editPost'
 
+import { delPost } from '@/api/editPostAndComment/editPost'
 import { likePost, savePost } from '@/api/SaveAndLike/SaveAndLike'
+
 import { showMsg } from '@/components/MessageBox'
 
 import { useUserStore } from '@/store/userStore'
-
-import { debounceAsync } from '@/utils/debounced'
 
 import BasicInfo from '../BasicInfo.vue'
 import MarkdownContainer from '../MarkdownContainer.vue'
@@ -37,7 +36,6 @@ const root = useTemplateRef('root')
 /**
  * @description 发送评论
  */
-
 async function sendCommentFunc() {
   const res = await sendComment(
     commentContent.value,
@@ -53,8 +51,6 @@ async function sendCommentFunc() {
     return false
   }
 }
-
-const handlerDebounce = debounceAsync(handler)
 
 async function handler(type: 'comment') {
   let event
@@ -75,8 +71,6 @@ async function handler(type: 'comment') {
     return
   root.value?.dispatchEvent(event)
 }
-
-const handleUserActionDebounce = debounceAsync(handleUserAction)
 
 async function handleUserAction(type: 'delete' | 'save') {
   // 后端没有返回数据，不要赋值后再更新
@@ -138,10 +132,7 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
         :user-name="post.UserName"
         :user-score="post.UserScore"
       />
-      <UserButton :is-saved="post.IsSaved" :is-self="post.UserTelephone === userInfo.phone" @user-action="handleUserActionDebounce" />
-    </div>
-    <div class="extension-slot">
-      <slot name="right-extension" />
+      <UserButton :is-saved="post.IsSaved" :is-self="post.UserTelephone === userInfo.phone" @user-action="handleUserAction" />
     </div>
     <div
       class="card-title"
@@ -166,18 +157,13 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
       v-if="commentButtonIsShow"
       v-model="commentContent"
       class="max-w-full"
-      @send="handlerDebounce('comment')"
+      @send="handler('comment')"
     />
   </BasicCard>
 </template>
 
 <style>
-/* 扩展插槽定位 */
-.extension-slot {
-  position: relative;
-}
-
-.card-title {
+  .card-title {
   margin-top: 10px;
   margin-bottom: 8px;
 }

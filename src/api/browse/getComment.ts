@@ -1,5 +1,4 @@
-import type { Comment, RatingComment } from '@/types/comment'
-import type { PostType } from '@/types/post'
+import type { Comment } from '@/types/comment'
 import { requestFunc } from '../req'
 
 /**
@@ -7,11 +6,7 @@ import { requestFunc } from '../req'
  * @param {number} PostID
  * @param {string} userTelephone
  */
-async function getCommentsByPostID(
-  PostID: number,
-  userTelephone: string,
-  postType: PostType = 'post',
-): Promise<Comment[] | RatingComment[]> {
+async function getCommentsByPostID(PostID: number, userTelephone: string): Promise<Comment[]> {
   try {
     const res = await requestFunc(
       `/auth/showPcomments`,
@@ -23,23 +18,12 @@ async function getCommentsByPostID(
         body: {
           postID: PostID,
           userTelephone,
-          postType,
         },
       },
       true,
     )
-    if (!res!.ok) {
-      console.error('获取评论失败:', res!.status, res!.statusText)
-      return []
-    }
-
     const data = await res!.json()
-    if (postType === 'rating') {
-      return data as RatingComment[]
-    }
-    else {
-      return data as Comment[]
-    }
+    return data
   }
   catch (e) {
     console.error(e)

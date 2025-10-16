@@ -44,10 +44,9 @@ function toggleMyMenu() {
       主页
     </router-link>
     <router-link
-      id="rating"
       class="nav"
-      :class="{ selected: selected === '/rating' }"
-      to="/rating"
+      :class="{ selected: selected === '/heat' }"
+      to="/heat"
     >
       <div
         class="icon"
@@ -55,7 +54,7 @@ function toggleMyMenu() {
 					background-image: url(https://img.icons8.com/?size=100&id=60985&format=png&color=000000);
 				"
       />
-      打分
+      热榜
     </router-link>
     <router-link
       id="shop"

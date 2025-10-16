@@ -140,20 +140,16 @@ async function handleAuthorize() {
 /**
  * 取消授权
  */
-function cancelAuthorize() {
+function cancelAuthorize(){
   // 暂先返回三方界面
   let ref = ''
-  if (document.referrer.length > 0)
-    ref = document.referrer
+  if (document.referrer.length > 0) ref = document.referrer
   try {
-    if (ref.length === 0 && opener && opener.location && opener.location.href && opener.location.href.length > 0)
+    if (ref.length == 0 && opener.location.href.length > 0)
       ref = opener.location.href
-  }
-  catch {
-    showMsg('无法获取来源页面URL，将返回首页')
-  }
+  } catch (e) {}
 
-  window.location.href = ref
+ window.location.href = ref
 }
 
 onMounted(async () => {
@@ -212,13 +208,13 @@ onMounted(async () => {
         授权给 {{ appInfo.app_name }}
       </div>
 
-      <div v-if="appInfo.description" class="text-m mt-2 text-center text-gray-600">
+      <div v-if="appInfo.description" class="mt-2 text-center text-m text-gray-600">
         {{ appInfo.description }}
       </div>
 
       <!-- 权限说明 -->
       <div class="mt-4 rounded-lg bg-gray-50 p-4">
-        <div class="text-m mb-2 text-gray-700">
+        <div class="mb-2 text-m text-gray-700">
           <strong>{{ appInfo.app_name }}</strong> 希望：
         </div>
         <div class="text-m text-gray-600">
@@ -234,7 +230,7 @@ onMounted(async () => {
             class="h-12 w-12 border-2 border-gray-200 rounded-full object-cover"
           >
           <div class="min-w-0 flex-1">
-            <div class="text-m truncate text-gray-900 font-medium">
+            <div class="truncate text-m text-gray-900 font-medium">
               {{ userBasicInfo.name || '未设置昵称' }}
             </div>
             <div v-if="userBasicInfo.intro" class="text-sm text-gray-600">

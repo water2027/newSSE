@@ -4,30 +4,29 @@ import { defineAsyncComponent } from 'vue'
 
 import { delPost } from '@/api/editPostAndComment/editPost'
 import { likePost, savePost } from '@/api/SaveAndLike/SaveAndLike'
+
 import { showMsg } from '@/components/MessageBox'
 import { usePostStore } from '@/store/postStore'
+
 import { useUserStore } from '@/store/userStore'
-import { debounceAsync } from '@/utils/debounced'
 
 import BasicInfo from '../BasicInfo.vue'
 import UserAvatar from '../UserAvatar.vue'
 import UserButton from '../UserButton.vue'
 import BasicCard from './BasicCard.vue'
 
-const { isDense, post, isNew, noSave = false } = defineProps<{
+const { isDense, post, isNew } = defineProps<{
   isDense?: boolean
   post: Post
   isNew?: boolean
-  noSave?: boolean
 }>()
-
 const { updatePost } = usePostStore()
 const OldImages = defineAsyncComponent(() => import('@/components/OldImages.vue'))
 
 const { userInfo } = useUserStore()
 
 /**
- * @description 点赞。懒得装防抖
+ * @description 点赞。
  */
 async function like() {
   // 后端没有返回数据，不要赋值后再更新
@@ -41,7 +40,6 @@ async function like() {
   }
 }
 
-const handleUserActionDebounce = debounceAsync(handleUserAction)
 async function handleUserAction(type: 'delete' | 'save') {
   // 后端没有返回数据，不要赋值后再更新
   switch (type) {
@@ -88,11 +86,7 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
         :user-name="post.UserName"
         :user-score="post.UserScore"
       />
-      <UserButton :is-saved="post.IsSaved" :is-self="userInfo.phone === post.UserTelephone" :no-save="noSave" @user-action="handleUserActionDebounce" />
-    </div>
-    <!-- 添加具名插槽用于扩展内容 -->
-    <div class="extension-slot">
-      <slot name="right-extension" />
+      <UserButton :is-saved="post.IsSaved" :is-self="userInfo.phone === post.UserTelephone" @user-action="handleUserAction" />
     </div>
     <RouterLink :to="`/postdetail/${post.PostID}`">
       <div
@@ -149,11 +143,6 @@ a {
   border-radius: 10px;
   z-index: 10;
   opacity: 0.8;
-}
-
-/* 扩展插槽定位 */
-.extension-slot {
-  position: relative;
 }
 
 @media screen and (min-width: 768px) {

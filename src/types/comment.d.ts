@@ -15,10 +15,6 @@ export interface Comment {
   IsDenied: boolean
 }
 
-export interface RatingComment extends Comment {
-  AuthorRating: number
-}
-
 export interface SubComment {
   ccommentID: number
   author: string

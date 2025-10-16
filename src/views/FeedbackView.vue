@@ -2,13 +2,8 @@
 import { useTemplateRef } from 'vue'
 import { feedback } from '@/api/feedback/feedback'
 import { showMsg } from '@/components/MessageBox'
-import { debounceAsync } from '@/utils/debounced'
 
 const feedbackContent = useTemplateRef<HTMLTextAreaElement>('feedbackContent')
-
-// 这是防抖
-const submitFeedbackDebounced = debounceAsync(submitFeedback)
-
 async function submitFeedback() {
   const el = feedbackContent.value
   if (!el)
@@ -37,7 +32,7 @@ async function submitFeedback() {
     <button
       type="button"
       class="btn btn-primary"
-      @click="submitFeedbackDebounced"
+      @click="submitFeedback"
     >
       提交
     </button>
