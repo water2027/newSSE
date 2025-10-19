@@ -1,141 +1,228 @@
 <script setup lang="ts">
 import type { Product } from '@/api/shop/getProducts'
-import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue'
-
+import { computed, inject, onBeforeUnmount, onMounted, ref, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getProducts } from '@/api/shop/getProducts'
 import ProductCard from '@/components/card/ProductCard.vue'
 import FloatingBall from '@/components/FloatingBall.vue'
+import { preloadSellerNames } from '@/utils/sellerNameMapper'
 
 interface CarouselItem {
   image: string
   title: string
+  subtitle?: string
 }
 
+// 常量定义
+const CAROUSEL_ITEMS: CarouselItem[] = [
+  { 
+    image: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1749233653768900413_微信图片_20250606162503.jpg', 
+    title: '精选商品',
+    subtitle: '品质保证，价格优惠'
+  },
+  { 
+    image: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1749233654349407951_96618898_p0.jpg', 
+    title: '热门推荐',
+    subtitle: '人气爆款，限时特惠'
+  },
+  { 
+    image: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1749233654953918669_121867383_p0.jpg', 
+    title: '新品上市',
+    subtitle: '最新款式，抢先体验'
+  },
+]
+
+const AUTOPLAY_INTERVAL = 5000
+const PRICE_RANGES = [
+  { value: '', label: '全部' },
+  { value: '0-5', label: '五元以内' },
+  { value: '0-20', label: '二十元以内' },
+  { value: '0-50', label: '五十元以内' },
+  { value: '0-100', label: '一百元以内' },
+  { value: '0-500', label: '五百元以内' },
+  { value: '500-1000000', label: '五百元以上' }
+] as const
+
+// 路由和注入
 const router = useRouter()
-const isPC = inject('isPC')
+const route = useRoute()
+const isPC = inject<boolean>('isPC', false)
+
 // 响应式数据
 const isLoading = ref(true)
 const products = ref<Product[]>([])
 const selectedPriceRange = ref<string>('')
 const currentIndex = ref(0)
 const autoplay = ref(true)
-const autoplayInterval = ref(5000)
 const autoplayTimer = ref<number | null>(null)
-const loadedImagesCount = ref(0)
-const totalImagesToLoad = ref(0)
-const carouselItems = ref<CarouselItem[]>([
-  { image: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1749233653768900413_微信图片_20250606162503.jpg', title: 'P1' },
-  { image: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1749233654349407951_96618898_p0.jpg', title: 'P2' },
-  { image: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1749233654953918669_121867383_p0.jpg', title: 'P3' },
-])
+const error = ref<string | null>(null)
+const retryCount = ref(0)
+const maxRetries = 3
 
-// 计算属性：根据价格筛选商品
+// 布局相关状态
+const layoutMode = ref<'grid' | 'list'>('grid') // 'grid' 为竖排，'list' 为横排
+
+// 使用常量而不是响应式数据
+const carouselItems = CAROUSEL_ITEMS
+
+// 计算属性
+const isMain = computed(() => /^\/shop\/?$/.test(route.fullPath))
+
 const filteredProducts = computed<Product[]>(() => {
-  let result = [...products.value]
-  if (selectedPriceRange.value) {
-    const [min, max] = selectedPriceRange.value.split('-')
+  if (!selectedPriceRange.value) return products.value
+  
+  const [min, max] = selectedPriceRange.value.split('-')
+  const minPrice = Number.parseInt(min, 10)
+  
+  return products.value.filter(product => {
     if (max === '+') {
-      result = result.filter(product => product.Price >= Number.parseInt(min))
+      return product.Price >= minPrice
     }
-    else {
-      result = result.filter(
-        product =>
-          product.Price >= Number.parseInt(min) && product.Price <= Number.parseInt(max),
-      )
-    }
-  }
-
-  return result
+    const maxPrice = Number.parseInt(max, 10)
+    return product.Price >= minPrice && product.Price <= maxPrice
+  })
 })
 
-// 方法：初始化数据
-async function initData() {
+const hasProducts = computed(() => products.value.length > 0)
+const hasFilteredProducts = computed(() => filteredProducts.value.length > 0)
+
+// 错误处理和重试机制
+async function fetchProductsWithRetry(): Promise<void> {
   try {
-    await fetchProducts()
-    setupAutoplay()
+    error.value = null
+    const endpoint = isMain.value ? 'home' : 'history'
+    products.value = await getProducts(endpoint)
+    retryCount.value = 0
+    
+    // 预加载卖家名称
+    if (products.value.length > 0) {
+      const sellerIds = products.value.map(product => product.SellerID)
+      await preloadSellerNames(sellerIds)
+    }
+  } catch (err) {
+    retryCount.value++
+    if (retryCount.value < maxRetries) {
+      console.warn(`获取商品数据失败，正在重试 (${retryCount.value}/${maxRetries})`)
+      setTimeout(() => fetchProductsWithRetry(), 1000 * retryCount.value)
+    } else {
+      error.value = '获取商品数据失败，请稍后重试'
+      console.error('获取商品数据失败:', err)
+    }
   }
-  catch (error) {
-    console.error('Error initializing data:', error)
-  }
-  finally {
-    // 仅在所有数据加载完成后隐藏加载状态
+}
+
+// 初始化数据
+async function initData(): Promise<void> {
+  try {
+    isLoading.value = true
+    await fetchProductsWithRetry()
+    if (!error.value) {
+      setupAutoplay()
+    }
+  } finally {
     isLoading.value = false
   }
 }
-const route = useRoute()
-const IsMain = computed(() => {
-  return /^\/shop\/?$/.test(route.fullPath)
-})
-// 方法：获取商品数据
-async function fetchProducts() {
-  if (IsMain.value) {
-    products.value = await getProducts('home')
-  }
-  else {
-    products.value = await getProducts('history')
-  }
+
+// 重试获取数据
+function retryFetch(): void {
+  retryCount.value = 0
+  initData()
 }
 
-// 方法：设置自动轮播
-function setupAutoplay() {
-  if (autoplay.value) {
+// 轮播图控制
+function setupAutoplay(): void {
+  if (autoplay.value && carouselItems.length > 1) {
     startAutoplay()
   }
 }
 
-// 方法：开始自动轮播
-function startAutoplay() {
+function startAutoplay(): void {
+  stopAutoplay() // 确保没有重复的定时器
   autoplayTimer.value = setInterval(() => {
     nextSlide()
-  }, autoplayInterval.value)
+  }, AUTOPLAY_INTERVAL)
 }
 
-// 方法：停止自动轮播
-function stopAutoplay() {
+function stopAutoplay(): void {
   if (autoplayTimer.value) {
     clearInterval(autoplayTimer.value)
     autoplayTimer.value = null
   }
 }
 
-// 方法：轮播图控制
-function nextSlide() {
-  currentIndex.value = (currentIndex.value + 1) % carouselItems.value.length
+function nextSlide(): void {
+  currentIndex.value = (currentIndex.value + 1) % carouselItems.length
 }
 
-function prevSlide() {
-  currentIndex.value
-      = (currentIndex.value - 1 + carouselItems.value.length)
-        % carouselItems.value.length
+function prevSlide(): void {
+  currentIndex.value = (currentIndex.value - 1 + carouselItems.length) % carouselItems.length
 }
 
-function goToSlide(index: number) {
-  currentIndex.value = index
-}
-
-// 方法：图片加载完成回调
-function imageLoad() {
-  loadedImagesCount.value++
-  // 检查所有图片是否加载完成
-  if (loadedImagesCount.value >= totalImagesToLoad.value) {
-    isLoading.value = false
+function goToSlide(index: number): void {
+  if (index >= 0 && index < carouselItems.length) {
+    currentIndex.value = index
   }
 }
 
-// 方法：处理查看商品详情事件
-function handleViewDetail(product: Product) {
+// 轮播图交互控制
+function handleCarouselMouseEnter(): void {
+  stopAutoplay()
+}
+
+function handleCarouselMouseLeave(): void {
+  if (autoplay.value) {
+    startAutoplay()
+  }
+}
+
+// 商品相关方法
+function handleViewDetail(product: Product): void {
   router.push(`/shop/productdetail/${product.ProductID}`)
 }
 
-// 生命周期钩子：组件挂载时
-onMounted(() => {
-  initData()
-  // 计算需要加载的图片总数
-  totalImagesToLoad.value = products.value.length + carouselItems.value.length
+// 价格筛选
+function handlePriceRangeChange(range: string): void {
+  selectedPriceRange.value = range
+}
+
+// 布局切换
+function toggleLayoutMode(): void {
+  layoutMode.value = layoutMode.value === 'grid' ? 'list' : 'grid'
+}
+
+// 设置布局模式
+function setLayoutMode(mode: 'grid' | 'list'): void {
+  layoutMode.value = mode
+}
+
+// 图片错误处理
+function handleImageError(event: Event): void {
+  const img = event.target as HTMLImageElement
+  img.src = 'https://via.placeholder.com/400x300?text=图片加载失败'
+}
+
+// 监听路由变化，重新获取数据
+watch(() => route.fullPath, () => {
+  if (route.path.startsWith('/shop')) {
+    initData()
+  }
+}, { immediate: false })
+
+// 监听页面可见性，控制轮播
+watch(() => document.visibilityState, (visibilityState) => {
+  if (visibilityState === 'visible' && autoplay.value) {
+    startAutoplay()
+  } else {
+    stopAutoplay()
+  }
 })
 
-// 生命周期钩子：组件销毁前
+// 生命周期钩子
+onMounted(async () => {
+  await initData()
+})
+
 onBeforeUnmount(() => {
   stopAutoplay()
 })
@@ -159,6 +246,20 @@ onBeforeUnmount(() => {
       </div>
     </template>
 
+    <!-- 错误状态 -->
+    <template v-else-if="error">
+      <div class="error-container">
+        <div class="error-content">
+          <div class="error-icon">⚠️</div>
+          <h3 class="error-title">加载失败</h3>
+          <p class="error-message">{{ error }}</p>
+          <button class="retry-button" @click="retryFetch">
+            重试
+          </button>
+        </div>
+      </div>
+    </template>
+
     <!-- 实际内容 -->
     <template v-else>
       <div class="flex flex-row">
@@ -167,31 +268,61 @@ onBeforeUnmount(() => {
           <div class="top-section flex-">
             <!-- 轮播窗 -->
             <div class="carousel-container">
-              <div class="carousel">
+              <div 
+                class="carousel"
+                @mouseenter="handleCarouselMouseEnter"
+                @mouseleave="handleCarouselMouseLeave"
+              >
                 <div class="carousel-inner" :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
                   <div
                     v-for="(item, index) in carouselItems"
-                    :key="index"
+                    :key="`carousel-${index}`"
                     class="carousel-item"
                   >
-                    <img :src="item.image" alt="轮播图" @load="imageLoad">
-                    <div class="carousel-title">
-                      {{ item.title }}
+                    <img 
+                      :src="item.image" 
+                      :alt="item.title"
+                      loading="lazy"
+                      @error="handleImageError"
+                    >
+                    <div class="carousel-overlay">
+                      <h2 class="carousel-title">{{ item.title }}</h2>
+                      <p class="carousel-subtitle">{{ item.subtitle || '精选商品推荐' }}</p>
                     </div>
                   </div>
                 </div>
-                <button class="carousel-control prev" @click="prevSlide">
-                  ❮
+                
+                <!-- 控制按钮 -->
+                <button 
+                  v-if="carouselItems.length > 1"
+                  class="carousel-control prev" 
+                  @click="prevSlide"
+                  aria-label="上一张"
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15,18 9,12 15,6"></polyline>
+                  </svg>
                 </button>
-                <button class="carousel-control next" @click="nextSlide">
-                  ❯
+                <button 
+                  v-if="carouselItems.length > 1"
+                  class="carousel-control next" 
+                  @click="nextSlide"
+                  aria-label="下一张"
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9,18 15,12 9,6"></polyline>
+                  </svg>
                 </button>
-                <div class="carousel-indicators">
+                
+                <!-- 指示器 -->
+                <div v-if="carouselItems.length > 1" class="carousel-indicators">
                   <span
                     v-for="(item, index) in carouselItems"
-                    :key="index"
-                    class="indicator" :class="[{ active: index === currentIndex }]"
+                    :key="`indicator-${index}`"
+                    class="indicator" 
+                    :class="{ active: index === currentIndex }"
                     @click="goToSlide(index)"
+                    :aria-label="`跳转到第${index + 1}张`"
                   />
                 </div>
               </div>
@@ -200,32 +331,29 @@ onBeforeUnmount(() => {
             <!-- 筛选条件 -->
             <div class="filter-container">
               <div class="filter-section">
-                <h3>筛选条件</h3>
+                <div class="filter-header">
+                  <h3>筛选条件</h3>
+                  <div class="filter-icon">🔍</div>
+                </div>
                 <div class="price-filter">
                   <div class="price-label">
-                    <label>价格区间：</label>
+                    <label>💰 价格区间：</label>
                   </div>
-                  <div class="price-select-group">
-                    <select v-model="selectedPriceRange">
-                      <option value="">
-                        请选择价格区间
-                      </option>
-                      <option value="0-200">
-                        0-200元
-                      </option>
-                      <option value="200-500">
-                        200-500元
-                      </option>
-                      <option value="500-1000">
-                        500-1000元
-                      </option>
-                      <option value="1000-2000">
-                        1000-2000元
-                      </option>
-                      <option value="2000-+">
-                        2000元以上
-                      </option>
-                    </select>
+                  <div class="price-options">
+                    <label 
+                      v-for="range in PRICE_RANGES" 
+                      :key="range.value" 
+                      class="price-option"
+                    >
+                      <input
+                        v-model="selectedPriceRange"
+                        type="radio"
+                        :value="range.value"
+                        name="priceRange"
+                        @change="handlePriceRangeChange(range.value)"
+                      >
+                      <span class="option-label">{{ range.label }}</span>
+                    </label>
                   </div>
                 </div>
               </div>
@@ -235,25 +363,81 @@ onBeforeUnmount(() => {
           <!-- 商品展示块 -->
           <div class="bottom-section">
             <!-- 商品列表标题 -->
-            <h2 v-if="IsMain" class="product-list-title">
-              热门商品
-            </h2>
-            <h2 v-else class="product-list-title">
-              我的商品
-            </h2>
+            <div class="product-list-header">
+              <div class="header-left">
+                <h2 class="product-list-title">
+                  {{ isMain ? '在售商品' : '我的商品' }}
+                </h2>
+                <div class="product-count">
+                  共 {{ filteredProducts.length }} 件商品
+                </div>
+              </div>
+              
+              <!-- 布局切换控制 -->
+              <div class="layout-controls">
+                <div class="layout-toggle">
+                  <button 
+                    class="layout-btn"
+                    :class="{ active: layoutMode === 'grid' }"
+                    @click="setLayoutMode('grid')"
+                    title="网格布局"
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="7" height="7"></rect>
+                      <rect x="14" y="3" width="7" height="7"></rect>
+                      <rect x="14" y="14" width="7" height="7"></rect>
+                      <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                  </button>
+                  <button 
+                    class="layout-btn"
+                    :class="{ active: layoutMode === 'list' }"
+                    @click="setLayoutMode('list')"
+                    title="列表布局"
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="8" y1="6" x2="21" y2="6"></line>
+                      <line x1="8" y1="12" x2="21" y2="12"></line>
+                      <line x1="8" y1="18" x2="21" y2="18"></line>
+                      <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                      <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                      <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
             <!-- 商品列表 -->
             <div class="product-list-wrapper">
-              <div v-if="filteredProducts.length > 0" class="product-list">
+              <div 
+                v-if="hasFilteredProducts" 
+                class="product-list"
+                :class="{
+                  'grid-layout': layoutMode === 'grid',
+                  'list-layout': layoutMode === 'list'
+                }"
+              >
                 <ProductCard
                   v-for="product in filteredProducts"
                   :key="product.ProductID"
                   :product="product"
+                  :layout-mode="layoutMode"
                   @view-detail="handleViewDetail"
-                  @load="imageLoad"
                 />
               </div>
+              <div v-else-if="hasProducts" class="empty-filter-results">
+                <div class="empty-icon">🔍</div>
+                <h3>没有找到符合条件的商品</h3>
+                <p>请尝试调整筛选条件</p>
+                <button class="clear-filter-btn" @click="selectedPriceRange = ''">
+                  清除筛选
+                </button>
+              </div>
               <div v-else class="empty-product-list">
-                <p>没有找到符合条件的商品，请调整筛选条件。</p>
+                <div class="empty-icon">📦</div>
+                <h3>暂无商品</h3>
+                <p>{{ isMain ? '热门商品即将上线，敬请期待！' : '您还没有发布任何商品' }}</p>
               </div>
             </div>
           </div>
@@ -268,12 +452,88 @@ onBeforeUnmount(() => {
 </template>
 
   <style scoped>
-  /* 样式保持不变 */
+/* 现代化商城容器样式 */
 .shop-container {
-  padding: 10px 0px;
+  padding: 0;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+  overflow-x: hidden;
+}
+
+.shop-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.shop-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* 错误状态样式 */
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  padding: 40px 20px;
+}
+
+.error-content {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  max-width: 400px;
+}
+
+.error-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.error-title {
+  font-size: 24px;
+  color: #e74c3c;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.error-message {
+  color: #666;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.retry-button {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #4c8baf 0%, #81b3e9 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.retry-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 139, 175, 0.3);
 }
 
 /* 骨架屏样式 */
@@ -359,21 +619,61 @@ onBeforeUnmount(() => {
 @media (max-width: 767px) {
   .top-section {
     flex-direction: column;
+    padding: 15px;
   }
 
   .carousel-container {
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+  }
+
+  .carousel {
+    height: 200px;
+  }
+
+  .carousel-overlay {
+    padding: 15px;
+  }
+
+  .carousel-title {
+    font-size: 18px;
+  }
+
+  .carousel-subtitle {
+    font-size: 12px;
   }
 
   .filter-container {
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+  }
+
+  .filter-section {
+    padding: 15px;
+  }
+
+  .price-options {
+    gap: 6px;
+  }
+
+  .price-option {
+    padding: 6px 10px;
   }
 
   .bottom-section {
     width: 100%;
-    padding: 20px;
+    padding: 15px;
+  }
+
+  .product-list-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .product-count {
+    font-size: 12px;
+    padding: 4px 8px;
   }
 }
 
@@ -382,8 +682,13 @@ onBeforeUnmount(() => {
   position: relative;
   height: 300px;
   overflow: hidden;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .carousel-inner {
@@ -404,16 +709,48 @@ onBeforeUnmount(() => {
   object-fit: cover;
 }
 
-.carousel-title {
+.carousel-overlay {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  background: linear-gradient(
+    180deg, 
+    transparent 0%, 
+    rgba(0, 0, 0, 0.3) 50%, 
+    rgba(0, 0, 0, 0.8) 100%
+  );
   color: white;
-  padding: 15px;
+  padding: 30px 20px 20px;
   text-align: center;
-  font-size: 18px;
+  backdrop-filter: blur(5px);
+}
+
+.carousel-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(255, 255, 255, 0.1);
+  background: linear-gradient(45deg, #fff, #f0f0f0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: titleGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes titleGlow {
+  0% { filter: brightness(1); }
+  100% { filter: brightness(1.2); }
+}
+
+.carousel-subtitle {
+  font-size: 16px;
+  margin: 0;
+  opacity: 0.9;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  font-weight: 300;
 }
 
 /* 轮播控制按钮 */
@@ -421,19 +758,35 @@ onBeforeUnmount(() => {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+  color: #333;
   border: none;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  font-size: 18px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   z-index: 10;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.carousel-control:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.9) 100%);
+  transform: translateY(-50%) scale(1.15);
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+.carousel-control:active {
+  transform: translateY(-50%) scale(1.05);
 }
 
 .carousel-control.prev {
@@ -447,64 +800,176 @@ onBeforeUnmount(() => {
 /* 轮播指示器 */
 .carousel-indicators {
   position: absolute;
-  bottom: 70px;
+  bottom: 20px;
   left: 0;
   right: 0;
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 12px;
+  padding: 10px;
 }
 
 .indicator {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.4);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent;
+  backdrop-filter: blur(5px);
+}
+
+.indicator:hover {
+  background: rgba(255, 255, 255, 0.7);
+  transform: scale(1.2);
 }
 
 .indicator.active {
-  background-color: white;
+  background: linear-gradient(45deg, #fff, #f0f0f0);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  transform: scale(1.3);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
 }
 
 /* 筛选框样式 */
 .filter-section {
-  background-color: white;
-  border-radius: 6px;
-  padding: 15px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.95) 100%);
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+}
+
+.filter-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.filter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 .filter-section h3 {
-  margin-top: 0;
-  margin-bottom: 15px;
-  font-size: 15px;
-  color: #333;
+  margin: 0;
+  font-size: 20px;
+  color: #2c3e50;
+  font-weight: 700;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.filter-icon {
+  font-size: 24px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-3px); }
+  60% { transform: translateY(-2px); }
 }
 
 .price-filter {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  margin-bottom: 15px;
-  width: 100%;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .price-label {
-  flex-shrink: 0;
-  margin-right: 10px;
+  font-weight: 600;
+  color: #555;
+  font-size: 14px;
 }
 
-.price-select-group {
-  flex: 1;
+.price-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.price-select-group select {
+.price-option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 12px 16px;
+  border-radius: 12px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(5px);
+  position: relative;
+  overflow: hidden;
+}
+
+.price-option::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
   width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.5s ease;
+}
+
+.price-option:hover::before {
+  left: 100%;
+}
+
+.price-option:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border-color: rgba(102, 126, 234, 0.3);
+  transform: translateX(5px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+}
+
+.price-option input[type="radio"] {
+  margin-right: 12px;
+  accent-color: #667eea;
+  transform: scale(1.2);
+}
+
+.option-label {
+  font-size: 15px;
+  color: #555;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.price-option:hover .option-label {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.price-option input[type="radio"]:checked + .option-label {
+  color: #667eea;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(102, 126, 234, 0.2);
 }
 
 /* 商品展示区域 */
@@ -512,11 +977,148 @@ onBeforeUnmount(() => {
   margin-top: 0;
 }
 
-.product-list-title {
-  margin-top: 0;
+.product-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
-  font-size: 22px;
-  color: #333;
+  padding: 0 4px;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.layout-controls {
+  display: flex;
+  align-items: center;
+}
+
+.layout-toggle {
+  display: flex;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 4px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.layout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #7f8c8d;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.layout-btn:hover {
+  background: rgba(34, 139, 34, 0.1);
+  color: #134e13;
+  transform: scale(1.05);
+}
+
+.layout-btn.active {
+  background: linear-gradient(135deg, #134e13 0%, #0d3d0d 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(19, 78, 19, 0.3);
+}
+
+.layout-btn.active:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(19, 78, 19, 0.4);
+}
+
+.product-list-title {
+  margin: 0;
+  font-size: 28px;
+  color: #000000;
+  --color-text: #000000;
+  font-weight: 800;
+  text-shadow: 
+  1px 1px 0 rgba(255, 255, 255, 0.1), 
+  0 2px 4px rgba(0, 0, 0, 0.3);  
+  position: relative;
+}
+
+.product-list-title::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 2px;
+}
+
+.product-count {
+  color: #7f8c8d;
+  font-size: 14px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 249, 250, 0.9) 100%);
+  padding: 8px 16px;
+  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+}
+
+/* 空状态样式 */
+.empty-product-list,
+.empty-filter-results {
+  text-align: center;
+  padding: 60px 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin: 20px 0;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+  opacity: 0.6;
+}
+
+.empty-product-list h3,
+.empty-filter-results h3 {
+  font-size: 20px;
+  color: #2c3e50;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.empty-product-list p,
+.empty-filter-results p {
+  color: #7f8c8d;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.clear-filter-btn {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #4c8baf 0%, #81b3e9 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.clear-filter-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 139, 175, 0.3);
 }
 
 /* 商品列表容器 */
@@ -527,40 +1129,66 @@ onBeforeUnmount(() => {
 .product-list {
   display: grid;
   gap: 20px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 网格布局（竖排） */
+.product-list.grid-layout {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+/* 列表布局（横排） */
+.product-list.list-layout {
+  grid-template-columns: 1fr;
+  gap: 16px;
 }
 
 /* 大屏幕布局 */
 @media (min-width: 1300px) {
-  .product-list {
+  .product-list.grid-layout {
     grid-template-columns: repeat(6, 1fr);
   }
 }
 
 /* 中等屏幕布局 */
 @media (min-width: 1000px) and (max-width: 1299px) {
-  .product-list {
+  .product-list.grid-layout {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
 /* 小屏幕布局 */
 @media (min-width: 600px) and (max-width: 999px) {
-  .product-list {
+  .product-list.grid-layout {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
 /* 超小屏幕布局 */
 @media (min-width: 576px) and (max-width: 599px) {
-  .product-list {
+  .product-list.grid-layout {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* 超小屏幕布局 */
+/* 移动端布局 */
 @media (max-width: 575px) {
-  .product-list {
+  .product-list.grid-layout {
     grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .product-list.list-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .layout-controls {
+    display: none; /* 移动端隐藏布局切换按钮 */
+  }
+  
+  .product-list-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
   }
 }
 

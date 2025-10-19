@@ -22,7 +22,7 @@ export interface Message extends MessageCreation {
 
 const route = useRoute()
 const { userInfo } = useUserStore()
-const { on, off, contacts, chatHistory, sendChatMessage, selectContact: selectChatContact, addContact, current } = useChat()
+const { on, off, contacts, chatHistory, sendChatMessage, selectContact: selectChatContact, addContact, current, isAnonymousMode, setAnonymousMode } = useChat()
 
 const draft = ref('')
 type Contact = RelevantUser & Partial<{ ban: string, phone: string, punishnum: number, intro: string, unRead: number, emailpush: boolean }>
@@ -91,6 +91,10 @@ function sendMessage() {
 
   draft.value = ''
   scrollHistory()
+}
+
+function toggleAnonymousMode() {
+  setAnonymousMode(!isAnonymousMode.value)
 }
 
 function getTimeShow(idx: number) {
@@ -219,7 +223,8 @@ onUnmounted(() => {
                   <UserAvatar class="contact-icon" :src="userInfo.avatarURL" :alt="userInfo.name" />
                   <div class="message-info">
                     <div class="message-sender">
-                      {{ userInfo.name }}
+                      {{ entry.isAnonymous ? '匿名用户' : userInfo.name }}
+                      <span v-if="entry.isAnonymous" class="anonymous-badge">🎭</span>
                     </div>
                     <div class="message-body">
                       {{ entry.content }}
@@ -230,7 +235,8 @@ onUnmounted(() => {
                   <UserAvatar class="contact-icon" :src="current.avatarURL" :alt="current.name" />
                   <div class="message-info">
                     <div class="message-sender">
-                      {{ current.name }}
+                      {{ entry.isAnonymous ? '匿名用户' : current.name }}
+                      <span v-if="entry.isAnonymous" class="anonymous-badge">🎭</span>
                     </div>
                     <div class="message-body">
                       {{ entry.content }}
@@ -241,8 +247,21 @@ onUnmounted(() => {
             </div>
           </div>
           <div class="message-footer">
+            <div class="message-controls">
+              <button 
+                class="anonymous-toggle" 
+                :class="{ active: isAnonymousMode }"
+                @click="toggleAnonymousMode"
+                title="切换匿名模式"
+              >
+                🎭 {{ isAnonymousMode ? '匿名模式' : '普通模式' }}
+              </button>
+            </div>
             <textarea
-              v-model="draft" placeholder="输入信息..." rows="4" class="lite-scrollbar message-input"
+              v-model="draft" 
+              :placeholder="isAnonymousMode ? '匿名输入信息...' : '输入信息...'" 
+              rows="4" 
+              class="lite-scrollbar message-input"
               @keydown="handleDraftKeyDown"
             />
             <div class="message-send" @click="sendMessage">
@@ -492,6 +511,41 @@ onUnmounted(() => {
     box-shadow: 0 0 5px 0.1rem rgba(0, 123, 255, 0.25);
     border-color: rgb(0, 123, 255);
   }
+}
+
+.message-controls {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.anonymous-toggle {
+  padding: 0.3em 0.8em;
+  border: 1px solid #ccc;
+  border-radius: 15px;
+  background: var(--chat-bg-main);
+  color: var(--chat-text);
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover {
+    background: #f0f0f0;
+    border-color: #999;
+  }
+
+  &.active {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+    border-color: #ff6b6b;
+  }
+}
+
+.anonymous-badge {
+  font-size: 12px;
+  margin-left: 0.3em;
+  opacity: 0.8;
 }
 
 @media screen and (max-width: 768px) {

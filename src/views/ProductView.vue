@@ -1,14 +1,22 @@
 <script setup lang="ts">
 import type { ProductDetail } from '@/api/shop/getProducts'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { deleteProduct, saleProduct } from '@/api/shop/controlProduct'
+// 由于与本地声明冲突，改为重命名导入
+import { deleteProduct as apiDeleteProduct, saleProduct as apiSaleProduct } from '@/api/shop/controlProduct'
 import { getProductByID } from '@/api/shop/getProducts'
 import { showMsg } from '@/components/MessageBox'
 import { useUserStore } from '@/store/userStore'
+import { getSellerName } from '@/utils/sellerNameMapper'
+import { useChat } from '@/composables/useChat'
 
+// 路由和状态管理
 const router = useRouter()
 const route = useRoute()
+const { userInfo } = useUserStore()
+const { setAnonymousMode } = useChat()
+
+// 响应式数据
 const product = ref<ProductDetail>({
   SellerID: 0,
   ProductID: 0,
@@ -20,161 +28,316 @@ const product = ref<ProductDetail>({
   ISSold: false,
   ISAnonymous: false,
 })
-const { userInfo } = useUserStore()
-const imageIndex = ref(0)
 
-// 判断当前登录用户是否是商品发布者
-const isCurrentUser = computed(() => {
-  return product.value.SellerID === userInfo.userID
-})
+const imageIndex = ref(0)
+const isLoading = ref(true)
+const error = ref<string | null>(null)
+const isDeleting = ref(false)
+const isSelling = ref(false)
+const sellerName = ref<string>('')
+
+// 计算属性
+const isCurrentUser = computed(() => product.value.SellerID === userInfo.userID)
+const hasImages = computed(() => product.value.Photos && product.value.Photos.length > 0)
+const canInteract = computed(() => !product.value.ISSold && !isDeleting.value && !isSelling.value)
 
 // 获取商品详情的异步函数
-async function fetchProductDetail(ProductID: number) {
+async function fetchProductDetail(ProductID: number): Promise<void> {
   try {
+    isLoading.value = true
+    error.value = null
     const response = await getProductByID(ProductID)
     product.value = response
+    
+    // 获取卖家名称
+    await fetchSellerName()
+  } catch (err) {
+    error.value = '获取商品详情失败，请稍后重试'
+    console.error('Failed to fetch product detail:', err)
+  } finally {
+    isLoading.value = false
   }
-  catch (error) {
-    console.error('Failed to fetch product detail:', error)
+}
+
+// 获取卖家名称
+async function fetchSellerName(): Promise<void> {
+  try {
+    const name = await getSellerName(product.value.SellerID)
+    sellerName.value = name
+  } catch (error) {
+    console.error('获取卖家名称失败:', error)
+    // 如果获取失败，使用原始数据或默认值
+    sellerName.value = product.value.Seller || `用户${product.value.SellerID}`
   }
 }
 
 // 轮播图控制
-function nextImage() {
-  imageIndex.value = (imageIndex.value + 1) % product.value.Photos.length
+function nextImage(): void {
+  if (hasImages.value) {
+    imageIndex.value = (imageIndex.value + 1) % product.value.Photos.length
+  }
 }
 
-function prevImage() {
-  imageIndex.value = (imageIndex.value - 1 + product.value.Photos.length) % product.value.Photos.length
+function prevImage(): void {
+  if (hasImages.value) {
+    imageIndex.value = (imageIndex.value - 1 + product.value.Photos.length) % product.value.Photos.length
+  }
 }
 
-function goToImage(index: number) {
-  imageIndex.value = index
+function goToImage(index: number): void {
+  if (hasImages.value && index >= 0 && index < product.value.Photos.length) {
+    imageIndex.value = index
+  }
 }
 
 // 私聊功能
-function chatWithSeller(isAnonymous: boolean) {
-  if (!isAnonymous) {
-    navigateChat()
+function chatWithSeller(isAnonymous: boolean): void {
+  if (!canInteract.value) return
+  
+  // 设置匿名模式
+  setAnonymousMode(isAnonymous)
+  
+  if (isAnonymous) {
+    showMsg('正在跳转到匿名私聊页面')
+  } else {
+    showMsg('正在跳转到私聊页面')
   }
-  const chatType = isAnonymous ? '匿名私聊未开放' : '私聊功能已触发'
-  showMsg(`${chatType}`)
+  
+  navigateChat()
 }
 
 // 返回商城主界面
-function goBack() {
+function goBack(): void {
   router.push('/shop')
 }
 
 // 卖出商品
-async function SaleProduct() {
-  if (confirm('确定要删除此商品吗？')) {
-    await saleProduct(Number(product.value.ProductID))
-    showMsg('商品已删除')
-    router.push('/shop')
+async function saleProduct(): Promise<void> {
+  if (!canInteract.value) return
+  
+  if (confirm('确定要标记此商品为已售出吗？')) {
+    try {
+      isSelling.value = true
+      // 调用后端API标记商品为已售出
+      await apiSaleProduct(Number(product.value.ProductID))
+      product.value.ISSold = true
+      showMsg('商品已标记为售出')
+    } catch (err) {
+      showMsg('操作失败，请稍后重试')
+      console.error('Sale product error:', err)
+    } finally {
+      isSelling.value = false
+    }
   }
 }
 
 // 删除商品
-async function DeleteProduct() {
-  if (confirm('确定要删除此商品吗？')) {
-    await deleteProduct(Number(product.value.ProductID))
-    showMsg('商品已删除')
-    router.push('/shop')
-  }
-}
-function navigateChat() {
-  if (product.value.SellerID > 0) {
-    router.push({ name: 'Chat', query: { user: product.value.SellerID } })
-    // stopPropagation()
+async function deleteProduct(): Promise<void> {
+  if (!canInteract.value) return
+  
+  if (confirm('确定要删除此商品吗？此操作不可恢复！')) {
+    try {
+      isDeleting.value = true
+      await apiDeleteProduct(Number(product.value.ProductID))
+      showMsg('商品已删除')
+      router.push('/shop')
+    } catch (err) {
+      showMsg('删除失败，请稍后重试')
+      console.error('Delete product error:', err)
+    } finally {
+      isDeleting.value = false
+    }
   }
 }
 
-// 生命周期钩子 - 组件挂载后获取商品详情
-onMounted(async () => {
+function navigateChat(): void {
+  if (product.value.SellerID > 0) {
+    router.push({ name: 'Chat', query: { user: product.value.SellerID } })
+  }
+}
+
+// 重试获取数据
+function retryFetch(): void {
   const ProductID = route.params.ProductID
   if (ProductID) {
-    await fetchProductDetail(Number(ProductID))
+    fetchProductDetail(Number(ProductID))
+  }
+}
+
+// 图片错误处理
+function handleImageError(event: Event): void {
+  const img = event.target as HTMLImageElement
+  img.src = 'https://via.placeholder.com/500x400?text=图片加载失败'
+}
+
+// 监听路由变化
+watch(() => route.params.ProductID, (newId) => {
+  if (newId) {
+    fetchProductDetail(Number(newId))
+  }
+}, { immediate: true })
+
+// 生命周期钩子
+onMounted(() => {
+  const ProductID = route.params.ProductID
+  if (ProductID) {
+    fetchProductDetail(Number(ProductID))
   }
 })
 </script>
 
 <template>
   <div class="product-detail-container">
-    <!-- 添加返回按钮和删除按钮 -->
-    <div class="back-button-container">
-      <button class="back-button" @click="goBack">
-        <img width="36" height="36" src="https://img.icons8.com/sf-black/24/return.png" alt="return">
-        <span>返回商城</span>
-      </button>
-
-      <button v-if="isCurrentUser" class="delete-button" @click="DeleteProduct">
-        <img width="36" height="36" src="https://img.icons8.com/sf-black/24/delete.png" alt="删除">
-        <span>删除商品</span>
-      </button>
+    <!-- 加载状态 -->
+    <div v-if="isLoading" class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>正在加载商品详情...</p>
     </div>
 
-    <!-- 商品图片轮播 -->
-    <div class="product-images-carousel">
-      <div class="carousel-container">
-        <div class="carousel">
-          <div class="carousel-inner" :style="{ transform: `translateX(-${imageIndex * 100}%)` }">
-            <!-- 使用统一的数据源 product.Photos -->
-            <div v-for="(image, index) in product.Photos" :key="index" class="carousel-item">
-              <img v-if="product.Photos[0] !== ''" :src="image" alt="商品图片">
-              <img
-                v-else
-                src="https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/resized/1749436003030319551_nophotos.png"
-              >
+    <!-- 错误状态 -->
+    <div v-else-if="error" class="error-container">
+      <div class="error-content">
+        <div class="error-icon">⚠️</div>
+        <h3>加载失败</h3>
+        <p>{{ error }}</p>
+        <button class="retry-button" @click="retryFetch">
+          重试
+        </button>
+      </div>
+    </div>
+
+    <!-- 商品详情内容 -->
+    <template v-else>
+      <!-- 返回按钮和操作按钮 -->
+      <div class="back-button-container">
+        <button class="back-button" @click="goBack">
+          <img width="24" height="24" src="https://img.icons8.com/sf-black/24/return.png" alt="return">
+          <span>返回商城</span>
+        </button>
+
+        <div v-if="isCurrentUser" class="action-buttons">
+          <button 
+            v-if="!product.ISSold"
+            class="sale-button" 
+            :disabled="isSelling"
+            @click="saleProduct"
+          >
+            <span v-if="isSelling">处理中...</span>
+            <span v-else>标记售出</span>
+          </button>
+          
+          <button 
+            class="delete-button" 
+            :disabled="isDeleting"
+            @click="deleteProduct"
+          >
+            <span v-if="isDeleting">删除中...</span>
+            <span v-else>删除商品</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 商品图片轮播 -->
+      <div class="product-images-carousel">
+        <div class="carousel-container">
+          <div class="carousel">
+            <div class="carousel-inner" :style="{ transform: `translateX(-${imageIndex * 100}%)` }">
+              <div v-for="(image, index) in product.Photos" :key="`image-${index}`" class="carousel-item">
+                <img 
+                  :src="image" 
+                  :alt="`商品图片 ${index + 1}`"
+                  loading="lazy"
+                  @error="handleImageError"
+                >
+              </div>
             </div>
-          </div>
-          <button class="carousel-control prev" @click="prevImage">
-            ❮
-          </button>
-          <button class="carousel-control next" @click="nextImage">
-            ❯
-          </button>
-          <!-- 使用统一的数据源 product.Photos -->
-          <div class="carousel-indicators">
-            <span
-              v-for="(image, index) in product.Photos" :key="index" class="indicator"
-              :class="[{ active: index === imageIndex }]" @click="goToImage(index)"
-            />
+            
+            <!-- 控制按钮 -->
+            <button 
+              v-if="hasImages && product.Photos.length > 1"
+              class="carousel-control prev" 
+              @click="prevImage"
+              aria-label="上一张"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15,18 9,12 15,6"></polyline>
+              </svg>
+            </button>
+            <button 
+              v-if="hasImages && product.Photos.length > 1"
+              class="carousel-control next" 
+              @click="nextImage"
+              aria-label="下一张"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9,18 15,12 9,6"></polyline>
+              </svg>
+            </button>
+            
+            <!-- 指示器 -->
+            <div v-if="hasImages && product.Photos.length > 1" class="carousel-indicators">
+              <span
+                v-for="(image, index) in product.Photos" 
+                :key="`indicator-${index}`" 
+                class="indicator"
+                :class="{ active: index === imageIndex }" 
+                @click="goToImage(index)"
+                :aria-label="`跳转到第${index + 1}张图片`"
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- 商品信息 -->
-    <div class="product-info">
-      <h1 class="product-title">
-        {{ product.Name }}
-      </h1>
-      <p class="product-seller">
-        卖家: {{ product.Seller }}
-      </p>
-      <div class="product-price-info">
-        <p class="current-price">
-          ¥{{ product.Price }}
-        </p>
-      </div>
-      <p class="product-description">
-        {{ product.Description }}
-      </p>
+      <!-- 商品信息 -->
+      <div class="product-info">
+        <div class="product-header">
+          <h1 class="product-title">
+            {{ product.Name }}
+          </h1>
+          <div v-if="product.ISSold" class="sold-badge">
+            已售出
+          </div>
+        </div>
+        
+        <div class="product-meta">
+          <p class="product-seller">
+            <span class="seller-icon">👤</span>
+            卖家: {{ sellerName || product.Seller || `用户${product.SellerID}` }}
+          </p>
+          <div class="product-price-info">
+            <span class="current-price">¥{{ product.Price.toLocaleString() }}</span>
+          </div>
+        </div>
+        
+        <div class="product-description">
+          <h3>商品描述</h3>
+          <p>{{ product.Description }}</p>
+        </div>
 
-      <!-- 私聊功能 -->
-      <div class="chat-buttons">
-        <button @click="chatWithSeller(false)">
-          私聊商家
-        </button>
-        <button @click="chatWithSeller(true)">
-          匿名私聊
-        </button>
-        <button v-if="isCurrentUser && !product.ISSold" @click="SaleProduct">
-          标记售出
-        </button>
+        <!-- 操作按钮 -->
+        <div class="action-buttons">
+          <button 
+            v-if="!isCurrentUser && canInteract"
+            class="chat-button primary" 
+            @click="chatWithSeller(false)"
+          >
+            💬 私聊商家
+          </button>
+          <button 
+            v-if="!isCurrentUser && canInteract"
+            class="chat-button secondary" 
+            @click="chatWithSeller(true)"
+          >
+            🎭 匿名私聊
+          </button>
+          <div v-if="!canInteract && !isCurrentUser" class="sold-notice">
+            <span class="notice-icon">⛔</span>
+            此商品已售出，无法进行交易
+          </div>
+        </div>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 
@@ -185,36 +348,157 @@ onMounted(async () => {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
 }
 
-/* 返回按钮和删除按钮样式 */
+.product-detail-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.product-detail-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* 加载和错误状态样式 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 40px;
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #4c8baf;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  padding: 40px 20px;
+}
+
+.error-content {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  max-width: 400px;
+}
+
+.error-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.error-content h3 {
+  font-size: 24px;
+  color: #e74c3c;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.error-content p {
+  color: #666;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.retry-button {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #4c8baf 0%, #81b3e9 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.retry-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 139, 175, 0.3);
+}
+
+/* 返回按钮和操作按钮样式 */
 .back-button-container {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
 }
 
 .back-button,
 .delete-button {
-  padding: 12px 0px;
-  background-color: transparent;
-  border: none;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 2px solid transparent;
+  border-radius: 8px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   color: #333;
-  font-size: 18px;
+  font-size: 16px;
+  font-weight: 600;
   display: flex;
   align-items: center;
   gap: 10px;
-  transition: color 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .back-button:hover {
   color: #4c8baf;
+  border-color: #4c8baf;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 139, 175, 0.3);
 }
 
 .delete-button:hover {
   color: #e53935;
+  border-color: #e53935;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
 }
 
 .back-button img,
@@ -231,9 +515,11 @@ onMounted(async () => {
 }
 
 .carousel-container {
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  border-radius: 16px;
   overflow: hidden;
+  background: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .carousel {
@@ -312,10 +598,34 @@ onMounted(async () => {
 
 /* 商品信息样式 */
 .product-info {
-  background-color: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.95) 100%);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+}
+
+.product-info::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+  background-size: 200% 100%;
+  border-radius: 20px 20px 0 0;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 .product-title {
@@ -357,30 +667,42 @@ onMounted(async () => {
 
 .chat-buttons {
   display: flex;
-  justify-content: space-between;
+  gap: 15px;
+  margin-top: 20px;
 }
 
 .chat-buttons button {
-  padding: 10px 20px;
+  padding: 14px 24px;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   font-size: 16px;
-  transition: background-color 0.3s;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .chat-buttons button:first-child {
-  background-color: #4caf50;
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+  color: white;
+}
+
+.chat-buttons button:nth-child(2) {
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
   color: white;
 }
 
 .chat-buttons button:last-child {
-  background-color: #2196f3;
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
   color: white;
 }
 
 .chat-buttons button:hover {
-  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 </style>
+

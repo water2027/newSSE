@@ -27,19 +27,24 @@ const { userInfo } = useUserStore()
       <!-- 导航按钮部分 -->
       <div class="navigation-buttons">
         <RouterLink v-if="IsMain" to="/shop/myproducts" class="nav-button">
-          我的商品
+          <span class="nav-icon">📦</span>
+          <span class="nav-text">商品</span>
         </RouterLink>
         <RouterLink v-else to="/shop" class="nav-button">
-          返回首页
+          <span class="nav-icon">🏠</span>
+          <span class="nav-text">返回首页</span>
         </RouterLink>
         <RouterLink to="/chat" class="nav-button">
-          私信通知
+          <span class="nav-icon">💬</span>
+          <span class="nav-text">消息</span>
         </RouterLink>
         <RouterLink to="/shop/sale" class="nav-button">
-          发布商品
+          <span class="nav-icon">💰</span>
+          <span class="nav-text">出售</span>
         </RouterLink>
-        <RouterLink to="/" class="nav-button">
-          返回主页
+        <RouterLink to="/" class="nav-button home-button">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-text">主页</span>
         </RouterLink>
       </div>
     </div>
@@ -48,27 +53,59 @@ const { userInfo } = useUserStore()
 
 <style scoped>
 .sidebar {
-  width: 120px;
-  background-color: #f8f9fa;
+  width: 200px;
+  background-image: url('/img/4.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   padding: 20px 0;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+  border-radius: 0 20px 20px 0;
+  position: relative;
+  min-height: 100vh;
+}
+
+.sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 0 20px 20px 0;
+  z-index: 1;
+}
+
+.sidebar > * {
+  position: relative;
+  z-index: 2;
 }
 
 .user-info {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px 0;
-  border-bottom: 1px solid #dee2e6;
+  padding: 30px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 20px;
 }
 
 .avatar-container {
   width: 80px;
   height: 80px;
-  border-radius: 10%;
+  border-radius: 50%;
   overflow: hidden;
   margin-bottom: 15px;
-  border: 3px solid #81b3e9;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.avatar-container:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .avatar {
@@ -80,37 +117,86 @@ const { userInfo } = useUserStore()
 .user-id {
   font-size: 16px;
   font-weight: 600;
-  color: #212529;
+  color: white;
+  text-align: center;
+  line-height: 1.3;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .navigation-buttons {
   display: flex;
   flex-direction: column;
-  margin-top: 20px;
+  gap: 12px;
+  padding: 0 20px;
 }
 
 .nav-button {
-  width: 80%;
+  width: 100%;
   height: 50px;
-  margin: 10px 10%;
   border: none;
-  border-radius: 8px;
-  background-color: #e9ecef;
-  color: #212529;
-  font-size: 15px;
-  font-weight: 500;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #2c3e50;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   display: flex;
   align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  position: relative;
   padding: 0 15px;
+  text-decoration: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .nav-button:hover {
-  background-color: #dee2e6;
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.nav-button.router-link-active {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+}
+
+.nav-icon {
+  font-size: 18px;
+  margin-right: 12px;
+  width: 20px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.nav-text {
+  font-size: 14px;
+  font-weight: 500;
+  flex: 1;
+}
+
+.nav-button:hover .nav-icon {
+  transform: scale(1.1);
+}
+
+.home-button {
+  background: white !important;
+  color: #2c3e50 !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+}
+
+.home-button:hover {
+  background: #f8f9fa !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+.home-button.router-link-active {
+  background: white !important;
+  color: #2c3e50 !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
 }
 
 .notification-badge {
@@ -131,10 +217,45 @@ const { userInfo } = useUserStore()
 
 @media (min-width: 1000px) {
   .sidebar {
-    width: 170px;
-    background-color: #f8f9fa;
-    padding: 20px 0;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    width: 220px;
+  }
+  
+  .avatar-container {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .user-id {
+    font-size: 18px;
+  }
+  
+  .nav-text {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 180px;
+    border-radius: 0 15px 15px 0;
+  }
+  
+  .avatar-container {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .user-id {
+    font-size: 14px;
+  }
+  
+  .nav-button {
+    height: 45px;
+    padding: 0 12px;
+  }
+  
+  .nav-text {
+    font-size: 13px;
   }
 }
 </style>

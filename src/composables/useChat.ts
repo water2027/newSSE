@@ -22,6 +22,7 @@ export interface ChatMessageItem {
   content: string
   unread: number
   createdAt: string
+  isAnonymous?: boolean // 新增：是否为匿名消息
 }
 
 export type Contact = RelevantUser & Partial<{ ban: string, phone: string, punishnum: number, intro: string, unRead: number, emailpush: boolean }>
@@ -41,6 +42,7 @@ interface ChatMessage {
     senderUserID: number
     targetUserID: number
     content: string
+    isAnonymous?: boolean // 新增：是否为匿名消息
   }
 }
 
@@ -60,12 +62,13 @@ function isMessageAck(event: any): event is ChatEventMap['MessageAck'] {
 const api = {} as {
   connect: () => void
   disconnect: () => void
-  sendChatMessage: (content: string) => boolean
+  sendChatMessage: (content: string, isAnonymous?: boolean) => boolean
   on: <K extends keyof ChatEventMap>(event: K, handler: (data: ChatEventMap[K]) => void) => void
   off: <K extends keyof ChatEventMap>(event: K, handler: (data: ChatEventMap[K]) => void) => void
   selectContact: (contact: Contact) => Promise<void>
   addContact: (contact: RelevantUser) => void
   updateChatNum: () => void
+  setAnonymousMode: (anonymous: boolean) => void
 }
 
 let isInit = false
@@ -83,6 +86,8 @@ const current = reactive<Contact>({
 // 当前会话的聊天记录
 const chatHistory = reactive<ChatMessageItem[]>([])
 const chatNum = ref(0)
+// 当前聊天是否为匿名模式
+const isAnonymousMode = ref(false)
 
 let dummyID = 100000000
 function getDummyID() {
@@ -113,15 +118,19 @@ export function useChat() {
     // 也许未来有机会可以再封装吧, 现在好像没什么用
     const sendMessage = sendWebSocketMessage
 
-    const sendChatMessage = (content: string) => {
+    const sendChatMessage = (content: string, isAnonymous?: boolean) => {
       if (current.userID === 0) {
         return false
       }
+
+      // 如果没有指定匿名状态，使用当前的匿名模式
+      const anonymousMode = isAnonymous !== undefined ? isAnonymous : isAnonymousMode.value
 
       const message = {
         senderUserID: userInfo.userID,
         targetUserID: current.userID,
         content,
+        isAnonymous: anonymousMode,
       }
       const result = sendMessage(message)
 
@@ -236,6 +245,10 @@ export function useChat() {
       updateChatNum()
     }
 
+    const setAnonymousMode = (anonymous: boolean) => {
+      isAnonymousMode.value = anonymous
+    }
+
     Object.assign(api, {
       connect,
       disconnect() {
@@ -250,6 +263,7 @@ export function useChat() {
       selectContact,
 
       updateChatNum,
+      setAnonymousMode,
     })
   }
 
@@ -261,5 +275,6 @@ export function useChat() {
     chatHistory,
     current,
     chatNum,
+    isAnonymousMode,
   }
 }
