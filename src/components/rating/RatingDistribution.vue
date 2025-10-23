@@ -51,16 +51,6 @@ function handleRatingClick(rating: number) {
             <span class="rating-hint">点击直接评分</span>
           </div>
         </div>
-
-        <!-- 评分分布 -->
-        <!-- <div class="mobile-rating-breakdown">
-          <div v-for="(count, index) in (stars || []).slice().reverse()" :key="`mobile-rating-${4-index}-${count}`" class="mobile-rating-item">
-            <div class="mobile-stars">
-              <span v-for="n in (5 - index)" :key="n" class="mobile-star-filled">★</span>
-            </div>
-            <span class="mobile-percentage">{{ getProgressWidth(count) }}%</span>
-          </div>
-        </div> -->
         <div class="rating-breakdown">
           <div v-for="(count, index) in (stars || []).slice().reverse()" :key="`rating-${4 - index}-${count}`" class="rating-item-small">
             <div class="star-info">

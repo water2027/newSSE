@@ -181,4 +181,29 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
   margin-top: 10px;
   margin-bottom: 8px;
 }
+
+/* 评论按钮样式 - 与普通帖子保持一致 */
+.commentButton {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.commentButton button {
+  margin-left: 5px;
+  margin-right: 5px;
+  background: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  min-width: 80px;
+}
+
+.commentButton button:hover {
+  background: #357abd;
+}
 </style>

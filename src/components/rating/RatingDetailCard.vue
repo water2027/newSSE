@@ -273,15 +273,6 @@ async function deleteRatingPost() {
       <OldImages :photos="post.Photos" />
     </template>
 
-    <div class="post-info">
-      <span class="post-time">{{ post.PostTime }}</span>
-      <span class="post-browse">浏览 {{ post.Browse }}</span>
-      <button class="like-button" :class="{ liked: post.IsLiked }" @click="like">
-        <span class="like-icon">{{ post.IsLiked ? '❤️' : '🤍' }}</span>
-        <span class="like-count">{{ post.Like }}</span>
-      </button>
-    </div>
-
     <!-- 手机端评分面板 - 放在帖子内容下方 -->
     <div v-if="isMobile">
       <RatingDistribution
@@ -294,11 +285,31 @@ async function deleteRatingPost() {
       />
     </div>
 
-    <!-- 评论功能 - 与普通帖子保持一致 -->
-    <div class="commentButton">
-      <button @click="commentButtonIsShow = !commentButtonIsShow">
-        {{ commentButtonIsShow ? '隐藏' : '发评论' }}
-      </button>
+    <div class="post-actions-container">
+      <div class="post-info">
+        <span class="post-time text-3">{{
+          new Date(post.PostTime).toLocaleString('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          })
+        }}</span>
+        <span class="post-browse">浏览 {{ post.Browse }}</span>
+      </div>
+      <div class="action-buttons">
+        <button class="like-button" :class="{ liked: post.IsLiked }" @click="like">
+          <span class="like-icon">{{ post.IsLiked ? '❤️' : '🤍' }}</span>
+          <span class="like-count">{{ post.Like }}</span>
+        </button>
+        <div class="commentButton">
+          <button @click="commentButtonIsShow = !commentButtonIsShow">
+            {{ commentButtonIsShow ? '隐藏' : '发评论' }}
+          </button>
+        </div>
+      </div>
     </div>
 
     <div v-if="post.UserTelephone === userInfo.phone && !isMobile" class="deleteButton">
@@ -306,18 +317,6 @@ async function deleteRatingPost() {
         删除
       </button>
     </div>
-
-    <!-- 评分选择器 - 只在显示评论时显示
-    <div v-if="commentButtonIsShow" class="rating-selector">
-      <span class="rating-label">评分：</span>
-      <RatingShow
-        :key="`comment-rating-${commentRating}`"
-        :rating="commentRating"
-        :editable="true"
-        @ratingClick="commentRatingClick"
-      />
-      <span class="rating-display">{{ commentRating }}/5</span>
-    </div> -->
 
     <MarkdownEditor
       v-if="commentButtonIsShow"
@@ -493,21 +492,39 @@ async function deleteRatingPost() {
   background-clip: text;
 }
 
+/* 帖子操作容器 */
+.post-actions-container {
+  position: relative;
+  margin: 12px 0;
+  padding: 8px 0;
+  border-top: 1px solid #f0f0f0;
+}
+
 /* 简化的帖子信息 */
 .post-info {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin: 12px 0;
-  padding: 8px 0;
   font-size: 14px;
   color: #666;
-  border-top: 1px solid #f0f0f0;
+  margin: 0;
+  padding: 0;
+  border: none;
 }
 
-.post-time {
-  color: #999;
+/* 操作按钮容器 - 浮动到右侧 */
+.action-buttons {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  height: auto;
+  max-height: 40px; /* 限制最大高度 */
 }
+
+/* .post-time 样式现在由 text-3 类处理 */
 
 .post-browse {
   color: #666;
@@ -517,14 +534,18 @@ async function deleteRatingPost() {
 .like-button {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
-  padding: 4px 8px;
+  padding: 6px 12px;
   background: transparent;
   border: 1px solid #e0e0e0;
-  border-radius: 16px;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 14px;
+  min-width: 80px;
+  margin-left: auto;
+  margin-right: 5px;
 }
 
 .like-button:hover {
@@ -749,10 +770,23 @@ async function deleteRatingPost() {
     font-style: italic;
   }
 
+  .post-actions-container {
+    position: relative;
+    padding-bottom: 20px; /* 减少为浮动按钮留出的空间 */
+  }
+
   .post-info {
     flex-direction: column;
     gap: 8px;
     align-items: flex-start;
+  }
+
+  .action-buttons {
+    position: absolute;
+    top: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 4px;
   }
 }
 
@@ -880,10 +914,17 @@ async function deleteRatingPost() {
   }
 }
 
-/* 评论按钮样式 - 与普通帖子保持一致 */
+/* 浮动评论按钮样式 */
 .commentButton {
   display: flex;
+  justify-content: flex-end;
+  margin-top: 0;
+}
+
+/* 评论编辑器样式 */
+.comment-editor {
   margin-top: 10px;
+  clear: both;
 }
 
 .commentButton button {
@@ -897,6 +938,7 @@ async function deleteRatingPost() {
   font-size: 14px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  min-width: 80px;
 }
 
 .commentButton button:hover {

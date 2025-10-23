@@ -13,8 +13,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['ratingClick'])
 
-const currRating = ref(props.rating)
-
 // 事件名同步更新
 const hoverRating = ref(0)
 
@@ -69,8 +67,6 @@ function handleStarClick(value: number) {
           },
           star.isFilled ? 'filled' : 'empty',
         ]"
-        :width="editable ? '32' : '18'"
-        :height="editable ? '32' : '18'"
         viewBox="0 0 24 24"
         @click="handleStarClick(star.value)"
         @mouseover="editable && (hoverRating = star.value)"

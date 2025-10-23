@@ -39,9 +39,6 @@ async function submitPost() {
   const content = postContent.value
   const postPartition = partition.value
 
-  // 后端判断thetype 本来前端判断的，全改后端分区判断了
-  // const thetype = postPartition === '打分' ? 'rating' : 'post';
-
   // 去除标题的空格
   postTitle = postTitle.replace(/(^\s*)|(\s*$)/g, '')
 
@@ -125,7 +122,7 @@ onMounted(async () => {
 }
 
 .title {
-  margin-top: 100px;
+  margin-top: 0;
   top: 0;
 }
 
@@ -136,7 +133,7 @@ onMounted(async () => {
   justify-content: center;
   width: 100%;
   height: auto;
-  padding: 10px;
+  padding: 0;
   border-radius: 5px;
 }
 
@@ -147,7 +144,12 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   margin-bottom: auto;
-  margin-top: 0;
+  margin-top: 20px;
+}
+
+.post h3 {
+  margin-top: 20px;
+  margin-bottom: 0;
 }
 
 .post > * {
@@ -173,7 +175,7 @@ select {
 
 @media screen and (max-width: 768px) {
   .title {
-    margin-top: 10px;
+    margin-top: 0;
   }
 }
 </style>

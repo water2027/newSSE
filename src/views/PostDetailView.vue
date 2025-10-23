@@ -55,7 +55,6 @@ async function commentHandler() {
     return
   await getCommentList()
   let len = 0
-  // console.log(comments.value);
 
   for (const comment of comments.value) {
     if (comment.SubComments) {
@@ -197,31 +196,35 @@ onMounted(async () => {
       loading...
     </div>
     <div class="mt-5 h-a w-full">
-      <h2>评论</h2>
-      <div class="float-right mb-3 mr-5vw flex flex-row gap-2">
-        <div
-          class="sort-btn max-w-30 min-w-25 w-20vw flex cursor-pointer items-center justify-center rounded-1 bg-[#f5f5f5] px-1 py-3 font-500 transition-all duration-300 ease"
-          hover="bg-[#e8d5c4]"
-          active="bg-[#d0b5a0] scale-98"
-          @click="setSortType('time')"
-        >
+      <div class="mb-3 flex items-center justify-between">
+        <h2 class="m-2">
+          评论
+        </h2>
+        <div class="flex flex-row gap-2">
           <div
-            class="mr-1 h-8 w-8 bg-contain bg-no-repeat"
-            style="background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729845428749551312_icons8-sort-48.png);"
-          />
-          时间
-        </div>
-        <div
-          class="sort-btn max-w-30 min-w-25 w-20vw flex cursor-pointer items-center justify-center rounded-1 bg-[#f5f5f5] px-1 py-3 font-500 transition-all duration-300 ease"
-          hover="bg-[#e8d5c4]"
-          active="bg-[#d0b5a0] scale-98"
-          @click="setSortType('likes')"
-        >
+            class="sort-btn max-w-30 min-w-25 w-20vw flex cursor-pointer items-center justify-center rounded-1 bg-[#f5f5f5] px-1 py-3 font-500 transition-all duration-300 ease"
+            hover="bg-[#e8d5c4]"
+            active="bg-[#d0b5a0] scale-98"
+            @click="setSortType('time')"
+          >
+            <div
+              class="mr-1 h-8 w-8 bg-contain bg-no-repeat"
+              style="background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729845428749551312_icons8-sort-48.png);"
+            />
+            时间
+          </div>
           <div
-            class="mr-1 h-8 w-8 bg-contain bg-no-repeat"
-            style="background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729845524483606271_icons8-sort-49.png);"
-          />
-          热度
+            class="sort-btn max-w-30 min-w-25 w-20vw flex cursor-pointer items-center justify-center rounded-1 bg-[#f5f5f5] px-1 py-3 font-500 transition-all duration-300 ease"
+            hover="bg-[#e8d5c4]"
+            active="bg-[#d0b5a0] scale-98"
+            @click="setSortType('likes')"
+          >
+            <div
+              class="mr-1 h-8 w-8 bg-contain bg-no-repeat"
+              style="background-image: url(https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729845524483606271_icons8-sort-49.png);"
+            />
+            热度
+          </div>
         </div>
       </div>
       <!-- 这是评论区 -->

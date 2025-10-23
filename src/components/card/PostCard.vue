@@ -109,6 +109,9 @@ function useCustomEvent(type: 'delete' | 'save' | 'like') {
         <OldImages :photos="post.Photos" />
       </template>
     </RouterLink>
+    <div class="extension-slot">
+      <slot name="center-extension" />
+    </div>
     <BasicInfo
       :is-dense="isDense"
       :time="post.PostTime"
