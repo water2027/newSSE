@@ -67,7 +67,13 @@ const { headerHeight, handleTouchStart, handleTouchEnd } = (() => {
       headerHeight.value = '0'
     }
     else {
-      headerHeight.value = '3em'
+      // 如果当前在发帖页面，保持收起状态
+      if (route.path === '/post') {
+        headerHeight.value = '0'
+      }
+      else {
+        headerHeight.value = '3em'
+      }
     }
   }
 
@@ -77,6 +83,16 @@ const { headerHeight, handleTouchStart, handleTouchEnd } = (() => {
     handleTouchEnd,
   }
 })()
+
+// 监听路由变化，在/post路由时自动收起header
+watch(() => route.path, (newPath) => {
+  if (newPath === '/post') {
+    headerHeight.value = '0'
+  }
+  else {
+    headerHeight.value = '3em'
+  }
+}, { immediate: true })
 
 onMounted(() => {
   connect()

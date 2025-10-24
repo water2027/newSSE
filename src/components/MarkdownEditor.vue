@@ -224,18 +224,19 @@ onMounted(() => {
         class="button"
         @click="savePost"
       >
-        暂存为草稿
+        缓存草稿
       </div>
+
+      <label
+        for="fileInput"
+        class="button"
+      >载入图片</label>
       <div
         class="button"
         @click="$emit('send')"
       >
         发送
       </div>
-      <label
-        for="fileInput"
-        class="button"
-      >选择图片</label>
       <input
         id="fileInput"
         type="file"
@@ -252,10 +253,10 @@ onMounted(() => {
   width: 100%;
   margin-left: 0;
   margin-right: 0;
-  margin-top: 10px;
+  margin-top: 0;
 }
 .container {
-  margin-top: 20px;
+  margin-top: 0;
   display: flex;
   flex-direction: row;
   /* align-items: center; */

@@ -16,11 +16,11 @@ import UserAvatar from '../UserAvatar.vue'
 import UserButton from '../UserButton.vue'
 import BasicCard from './BasicCard.vue'
 
-const { comment, postId, commentable = true, isDence = false } = defineProps<{
+const { comment, postId, commentable = true, isDense = false } = defineProps<{
   comment: Comment
   postId: number
   commentable?: boolean// 是否可再评论
-  isDence?: boolean// 是否密集排列(隐藏用户信息)
+  isDense?: boolean// 是否密集排列(隐藏用户信息)
 }>()
 
 const CCommentCard = defineAsyncComponent(() => import('@/components/card/CCommentCard.vue'))
@@ -139,7 +139,7 @@ async function like() {
 <template>
   <BasicCard>
     <div ref="root">
-      <div v-if="!isDence" class="flex flex-row">
+      <div v-if="!isDense" class="flex flex-row">
         <UserAvatar
           :src="comment.AuthorAvatar"
           :user-id="comment.AuthorID"

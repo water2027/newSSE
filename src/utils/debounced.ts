@@ -27,7 +27,8 @@ export function debounceAsync<T extends (...args: any[]) => Promise<any>>(fn: T)
         try {
           const result = await fn(...args)
           resolve(result)
-        } catch (error) {
+        }
+        catch (error) {
           reject(error)
         }
       }, MIN_CLICK_GAP)

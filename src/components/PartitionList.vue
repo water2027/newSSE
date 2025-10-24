@@ -1,9 +1,6 @@
 <script lang="ts" setup>
 const partitions = [
-  {
-    name: '日常吐槽',
-    src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865147020011731_icons8-chat-message-48.png',
-  },
+
   {
     name: '优质贴',
     src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/resized/1749269586856504079_star.png',
@@ -11,6 +8,10 @@ const partitions = [
   {
     name: '课程交流',
     src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865462046077601_icons8-open-book-48.png',
+  },
+  {
+    name: '日常吐槽',
+    src: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1729865147020011731_icons8-chat-message-48.png',
   },
   {
     name: '打听求助',

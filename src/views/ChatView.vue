@@ -347,6 +347,8 @@ onUnmounted(() => {
   text-overflow: ellipsis;
   text-wrap: nowrap;
   margin: 0.1em 0;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 .contact-unread {
