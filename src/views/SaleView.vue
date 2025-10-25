@@ -289,26 +289,52 @@ function cancelPublish(): void {
 
 <style scoped>
 .product-publish-container {
-  max-width: 1000px; /* 增加了最大宽度 */
+  max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
 }
 
 .publish-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .publish-header h1 {
-  font-size: 24px;
-  color: #333;
+  font-size: 32px;
+  color: #2c3e50;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, #4c8baf, #81b3e9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .product-form {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 30px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  padding: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+.product-form::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #4c8baf, #81b3e9, #4c8baf);
+  border-radius: 16px 16px 0 0;
 }
 
 .form-row {
@@ -327,25 +353,31 @@ function cancelPublish(): void {
 
 .form-group label {
   display: block;
-  margin-bottom: 8px;
-  font-weight: bold;
-  color: #333;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 16px;
 }
 
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 16px;
+  border: 2px solid #e1e8ed;
+  border-radius: 8px;
   font-size: 16px;
   box-sizing: border-box;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.8);
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
   border-color: #4c8baf;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(76, 139, 175, 0.1);
+  transform: translateY(-1px);
 }
 
 .form-group input.error,
@@ -362,11 +394,18 @@ function cancelPublish(): void {
 .images-upload-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
-  border: 2px dashed #ddd;
-  border-radius: 4px;
-  padding: 15px;
-  min-height: 150px;
+  gap: 20px;
+  border: 2px dashed #4c8baf;
+  border-radius: 12px;
+  padding: 20px;
+  min-height: 180px;
+  background: rgba(76, 139, 175, 0.05);
+  transition: all 0.3s ease;
+}
+
+.images-upload-container:hover {
+  border-color: #81b3e9;
+  background: rgba(76, 139, 175, 0.1);
 }
 
 .image-upload-wrapper {
@@ -405,15 +444,18 @@ function cancelPublish(): void {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f5f5f5;
-  border-radius: 4px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  border: 2px dashed #4c8baf;
 }
 
 .upload-button-wrapper:hover {
-  background-color: #e0e0e0;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-color: #81b3e9;
+  transform: scale(1.05);
 }
 
 .upload-button {
@@ -434,24 +476,44 @@ function cancelPublish(): void {
 }
 
 .cancel-btn {
-  padding: 12px 24px;
-  background-color: #f5f5f5;
-  border: none;
-  border-radius: 4px;
+  padding: 16px 32px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   font-size: 16px;
+  font-weight: 600;
+  color: #6c757d;
+  transition: all 0.3s ease;
+}
+
+.cancel-btn:hover {
+  background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .publish-btn {
-  padding: 12px 24px;
-  background-color: #4caf50;
+  padding: 16px 32px;
+  background: linear-gradient(135deg, #4c8baf 0%, #81b3e9 100%);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(76, 139, 175, 0.3);
+}
+
+.publish-btn:hover {
+  background: linear-gradient(135deg, #3a6b8a 0%, #6a9bc7 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 139, 175, 0.4);
 }
 
 .publish-btn:disabled {
