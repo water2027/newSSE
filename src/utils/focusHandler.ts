@@ -9,16 +9,9 @@ export function setupFocusHandlers(
   // 辅助函数：判断是否为输入框
   function isInputElement(el: EventTarget | null): boolean {
     if (!el || !(el instanceof Element)) return false;
-    
-    // 仅允许 input type="text", "password", "email", "number"
-    if (el.tagName === 'INPUT') {
-      const type = (el as HTMLInputElement).type;
-      return type === 'text' || type === 'password' || type === 'email' || type === 'number';
-    }
 
     // 仅允许 textarea、contenteditable 元素
-    return ['TEXTAREA'].includes(el.tagName) || 
-           (el as HTMLElement).getAttribute('contenteditable') === 'true';
+    return ['TEXTAREA'].includes(el.tagName)
   }
 
   // 事件处理：仅输入框触发
