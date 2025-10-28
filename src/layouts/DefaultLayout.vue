@@ -39,6 +39,11 @@ const isPC = computed(() => {
   return windowWidth.value > 768
 })
 provide('isPC', isPC)
+
+// 新增：输入框焦点状态
+const isAnyInputFocused = ref(false)
+provide('isAnyInputFocused', isAnyInputFocused)
+
 function updateWidth() {
   windowWidth.value = window.innerWidth
 }
@@ -94,10 +99,31 @@ watch(() => route.path, (newPath) => {
   }
 }, { immediate: true })
 
+// 新增：全局输入框焦点监听
+function handleGlobalFocus(event: Event) {
+  if (event.target instanceof HTMLElement && 
+      (event.target.tagName === 'INPUT' || 
+       event.target.tagName === 'TEXTAREA' ||
+       event.target.getAttribute('contenteditable') === 'true')) {
+    isAnyInputFocused.value = true
+  }
+}
+
+function handleGlobalBlur(event: Event) {
+  if (event.target instanceof HTMLElement && 
+      (event.target.tagName === 'INPUT' || 
+       event.target.tagName === 'TEXTAREA' ||
+       event.target.getAttribute('contenteditable') === 'true')) {
+    isAnyInputFocused.value = false
+  }
+}
+
 onMounted(() => {
   connect()
   refreshNoticeNum()
   window.addEventListener('resize', updateWidth)
+  window.addEventListener('focusin', handleGlobalFocus)
+  window.addEventListener('focusout', handleGlobalBlur)
   if (!isPC.value) {
     window.addEventListener('touchstart', handleTouchStart)
     window.addEventListener('touchend', handleTouchEnd)
@@ -107,6 +133,8 @@ onMounted(() => {
 })
 onUnmounted(() => {
   window.removeEventListener('resize', updateWidth)
+  window.removeEventListener('focusin', handleGlobalFocus)
+  window.removeEventListener('focusout', handleGlobalBlur)
   if (!isPC.value) {
     window.removeEventListener('touchstart', handleTouchStart)
     window.removeEventListener('touchend', handleTouchEnd)
@@ -166,6 +194,7 @@ watch(() => newPostsNotification.updatedAt, (updatedAt: number) => {
     </header>
     <template v-if="!isPC">
       <BottomNavbar
+        v-show="!isAnyInputFocused"
         :notice-num="noticeNum.unreadTotalNum"
         :chat-num="chatNum"
       />

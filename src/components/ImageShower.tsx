@@ -92,12 +92,12 @@ const ImageShower = defineComponent({
 
     return () => (
       <div
-        class="fixed inset-0 top-5% z-9999 flex animate-fade-in items-center justify-center bg-black bg-opacity-80"
+        class="fixed inset-0 top-5% z-9999 flex items-center justify-center bg-black bg-opacity-80"
         onClick={handleBackdropClick}
       >
         <div class="relative max-h-90vh max-w-90vw flex items-center justify-center">
           <button
-            class="absolute right-0 z-10000 h-40px w-40px flex cursor-pointer items-center justify-center rounded-full border-none bg-white bg-opacity-90 text-gray-800 transition-all duration-200 -top-50px hover:scale-110 hover:bg-opacity-100"
+            class="absolute right-0 z-10000 h-40px w-40px flex cursor-pointer items-center justify-center rounded-full border-none bg-white bg-opacity-90 text-gray-800 transition-all duration-100 -top-50px hover:scale-110 hover:bg-opacity-100"
             onClick={props.close}
           >
             <svg class="h-8 w-8" viewBox="0 0 24 24" fill="none">
