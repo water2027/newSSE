@@ -250,7 +250,7 @@ onBeforeUnmount(() => {
     <template v-else-if="error">
       <div class="error-container">
         <div class="error-content">
-          <div class="error-icon">⚠️</div>
+          <div class="error-icon">⚠</div>
           <h3 class="error-title">加载失败</h3>
           <p class="error-message">{{ error }}</p>
           <button class="retry-button" @click="retryFetch">
@@ -333,28 +333,24 @@ onBeforeUnmount(() => {
               <div class="filter-section">
                 <div class="filter-header">
                   <h3>筛选条件</h3>
-                  <div class="filter-icon">🔍</div>
                 </div>
                 <div class="price-filter">
                   <div class="price-label">
-                    <label>💰 价格区间：</label>
+                    <label>价格区间：</label>
                   </div>
-                  <div class="price-options">
-                    <label 
+                  <select 
+                    v-model="selectedPriceRange"
+                    @change="handlePriceRangeChange(selectedPriceRange)"
+                    class="price-select"
+                  >
+                    <option 
                       v-for="range in PRICE_RANGES" 
                       :key="range.value" 
-                      class="price-option"
+                      :value="range.value"
                     >
-                      <input
-                        v-model="selectedPriceRange"
-                        type="radio"
-                        :value="range.value"
-                        name="priceRange"
-                        @change="handlePriceRangeChange(range.value)"
-                      >
-                      <span class="option-label">{{ range.label }}</span>
-                    </label>
-                  </div>
+                      {{ range.label }}
+                    </option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -458,29 +454,9 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #f8f9fa;
   position: relative;
   overflow-x: hidden;
-}
-
-.shop-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.shop-container > * {
-  position: relative;
-  z-index: 1;
 }
 
 /* 错误状态样式 */
@@ -494,11 +470,10 @@ onBeforeUnmount(() => {
 
 .error-content {
   text-align: center;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   padding: 40px;
-  border-radius: 16px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   max-width: 400px;
 }
 
@@ -522,7 +497,7 @@ onBeforeUnmount(() => {
 
 .retry-button {
   padding: 12px 24px;
-  background: linear-gradient(135deg, #4c8baf 0%, #81b3e9 100%);
+  background: #4c8baf;
   color: white;
   border: none;
   border-radius: 8px;
@@ -532,8 +507,8 @@ onBeforeUnmount(() => {
 }
 
 .retry-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 139, 175, 0.3);
+  background: #3a6b8a;
+  box-shadow: 0 2px 8px rgba(76, 139, 175, 0.2);
 }
 
 /* 骨架屏样式 */
@@ -595,9 +570,9 @@ onBeforeUnmount(() => {
   .top-section {
     display: flex;
     padding: 20px;
-    background-color: #f9f9f9;
+    background-color: #ffffff;
     border-radius: 8px 8px 0 0;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   }
 
   .carousel-container {
@@ -682,13 +657,10 @@ onBeforeUnmount(() => {
   position: relative;
   height: 300px;
   overflow: hidden;
-  border-radius: 20px;
-  box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .carousel-inner {
@@ -717,32 +689,20 @@ onBeforeUnmount(() => {
   background: linear-gradient(
     180deg, 
     transparent 0%, 
-    rgba(0, 0, 0, 0.3) 50%, 
-    rgba(0, 0, 0, 0.8) 100%
+    rgba(0, 0, 0, 0.4) 70%, 
+    rgba(0, 0, 0, 0.7) 100%
   );
   color: white;
   padding: 30px 20px 20px;
   text-align: center;
-  backdrop-filter: blur(5px);
 }
 
 .carousel-title {
   font-size: 28px;
   font-weight: 700;
   margin: 0 0 8px 0;
-  text-shadow: 
-    0 2px 4px rgba(0, 0, 0, 0.5),
-    0 0 20px rgba(255, 255, 255, 0.1);
-  background: linear-gradient(45deg, #fff, #f0f0f0);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: titleGlow 3s ease-in-out infinite alternate;
-}
-
-@keyframes titleGlow {
-  0% { filter: brightness(1); }
-  100% { filter: brightness(1.2); }
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  color: white;
 }
 
 .carousel-subtitle {
@@ -758,7 +718,7 @@ onBeforeUnmount(() => {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+  background: rgba(255, 255, 255, 0.9);
   color: #333;
   border: none;
   width: 50px;
@@ -770,19 +730,14 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 
-    0 4px 15px rgba(0, 0, 0, 0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .carousel-control:hover {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.9) 100%);
-  transform: translateY(-50%) scale(1.15);
-  box-shadow: 
-    0 8px 25px rgba(0, 0, 0, 0.15),
-    0 0 0 1px rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .carousel-control:active {
@@ -816,52 +771,30 @@ onBeforeUnmount(() => {
   background: rgba(255, 255, 255, 0.4);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
   border: 2px solid transparent;
-  backdrop-filter: blur(5px);
 }
 
 .indicator:hover {
   background: rgba(255, 255, 255, 0.7);
-  transform: scale(1.2);
+  transform: scale(1.1);
 }
 
 .indicator.active {
-  background: linear-gradient(45deg, #fff, #f0f0f0);
+  background: white;
   border: 2px solid rgba(255, 255, 255, 0.8);
-  transform: scale(1.3);
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+  transform: scale(1.2);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
 }
 
 /* 筛选框样式 */
 .filter-section {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.95) 100%);
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(20px);
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   position: relative;
-  overflow: hidden;
-}
-
-.filter-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
-  background-size: 200% 100%;
-  animation: shimmer 3s ease-in-out infinite;
-}
-
-@keyframes shimmer {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
 }
 
 .filter-header {
@@ -873,25 +806,9 @@ onBeforeUnmount(() => {
 
 .filter-section h3 {
   margin: 0;
-  font-size: 20px;
+  font-size: 18px;
   color: #2c3e50;
-  font-weight: 700;
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.filter-icon {
-  font-size: 24px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-  animation: bounce 2s ease-in-out infinite;
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-  40% { transform: translateY(-3px); }
-  60% { transform: translateY(-2px); }
+  font-weight: 600;
 }
 
 .price-filter {
@@ -906,70 +823,35 @@ onBeforeUnmount(() => {
   font-size: 14px;
 }
 
-.price-options {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.price-option {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  padding: 12px 16px;
-  border-radius: 12px;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 2px solid transparent;
-  background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(5px);
-  position: relative;
-  overflow: hidden;
-}
-
-.price-option::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
+.price-select {
   width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  transition: left 0.5s ease;
-}
-
-.price-option:hover::before {
-  left: 100%;
-}
-
-.price-option:hover {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-  border-color: rgba(102, 126, 234, 0.3);
-  transform: translateX(5px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
-}
-
-.price-option input[type="radio"] {
-  margin-right: 12px;
-  accent-color: #667eea;
-  transform: scale(1.2);
-}
-
-.option-label {
-  font-size: 15px;
+  padding: 12px 16px;
+  border: 2px solid rgba(102, 126, 234, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
   color: #555;
-  transition: all 0.3s ease;
+  font-size: 15px;
   font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
 }
 
-.price-option:hover .option-label {
-  color: #667eea;
-  font-weight: 600;
+.price-select:hover {
+  border-color: rgba(102, 126, 234, 0.4);
+  background-color: rgba(255, 255, 255, 1);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
 }
 
-.price-option input[type="radio"]:checked + .option-label {
-  color: #667eea;
-  font-weight: 700;
-  text-shadow: 0 1px 2px rgba(102, 126, 234, 0.2);
+.price-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 /* 商品展示区域 */
@@ -1001,9 +883,7 @@ onBeforeUnmount(() => {
   background: rgba(255, 255, 255, 0.9);
   border-radius: 12px;
   padding: 4px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .layout-btn {
@@ -1030,12 +910,10 @@ onBeforeUnmount(() => {
 .layout-btn.active {
   background: linear-gradient(135deg, #134e13 0%, #0d3d0d 100%);
   color: white;
-  box-shadow: 0 4px 12px rgba(19, 78, 19, 0.3);
 }
 
 .layout-btn.active:hover {
   transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(19, 78, 19, 0.4);
 }
 
 .product-list-title {
@@ -1043,10 +921,8 @@ onBeforeUnmount(() => {
   font-size: 28px;
   color: #000000;
   --color-text: #000000;
-  font-weight: 800;
-  text-shadow: 
-  1px 1px 0 rgba(255, 255, 255, 0.1), 
-  0 2px 4px rgba(0, 0, 0, 0.3);  
+  font-weight: 900;
+  font-family: 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
   position: relative;
 }
 
@@ -1057,19 +933,17 @@ onBeforeUnmount(() => {
   left: 0;
   width: 60px;
   height: 3px;
-  background: linear-gradient(90deg, #667eea, #764ba2);
+  background: #000000;
   border-radius: 2px;
 }
 
 .product-count {
-  color: #7f8c8d;
+  color: #000000;
   font-size: 14px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 249, 250, 0.9) 100%);
+  background: #ffffff;
   padding: 8px 16px;
   border-radius: 25px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   font-weight: 600;
 }
 
