@@ -27,23 +27,18 @@ const { userInfo } = useUserStore()
       <!-- 导航按钮部分 -->
       <div class="navigation-buttons">
         <RouterLink v-if="IsMain" to="/shop/myproducts" class="nav-button">
-          <span class="nav-icon">📦</span>
           <span class="nav-text">商品</span>
         </RouterLink>
         <RouterLink v-else to="/shop" class="nav-button">
-          <span class="nav-icon">🏠</span>
           <span class="nav-text">返回首页</span>
         </RouterLink>
         <RouterLink to="/chat" class="nav-button">
-          <span class="nav-icon">💬</span>
           <span class="nav-text">消息</span>
         </RouterLink>
         <RouterLink to="/shop/sale" class="nav-button">
-          <span class="nav-icon">💰</span>
           <span class="nav-text">出售</span>
         </RouterLink>
         <RouterLink to="/" class="nav-button home-button">
-          <span class="nav-icon">🏠</span>
           <span class="nav-text">主页</span>
         </RouterLink>
       </div>
@@ -143,6 +138,7 @@ const { userInfo } = useUserStore()
   -webkit-tap-highlight-color: transparent;
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: 0 15px;
   text-decoration: none;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -163,22 +159,10 @@ const { userInfo } = useUserStore()
   box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
 }
 
-.nav-icon {
-  font-size: 18px;
-  margin-right: 12px;
-  width: 20px;
-  text-align: center;
-  transition: transform 0.3s ease;
-}
-
 .nav-text {
   font-size: 14px;
   font-weight: 500;
-  flex: 1;
-}
-
-.nav-button:hover .nav-icon {
-  transform: scale(1.1);
+  text-align: center;
 }
 
 .home-button {
