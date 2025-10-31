@@ -99,31 +99,21 @@ watch(() => route.path, (newPath) => {
   }
 }, { immediate: true })
 
-// 新增：全局输入框焦点监听
-function handleGlobalFocus(event: Event) {
-  if (event.target instanceof HTMLElement && 
-      (event.target.tagName === 'INPUT' || 
-       event.target.tagName === 'TEXTAREA' ||
-       event.target.getAttribute('contenteditable') === 'true')) {
-    isAnyInputFocused.value = true
-  }
-}
-
-function handleGlobalBlur(event: Event) {
-  if (event.target instanceof HTMLElement && 
-      (event.target.tagName === 'INPUT' || 
-       event.target.tagName === 'TEXTAREA' ||
-       event.target.getAttribute('contenteditable') === 'true')) {
-    isAnyInputFocused.value = false
-  }
-}
-
 onMounted(() => {
   connect()
   refreshNoticeNum()
   window.addEventListener('resize', updateWidth)
-  window.addEventListener('focusin', handleGlobalFocus)
-  window.addEventListener('focusout', handleGlobalBlur)
+
+  // 导入模块并注册
+  import('@/utils/focusHandler').then(({ setupFocusHandlers }) => {
+    const _ = setupFocusHandlers(
+      (e) => { isAnyInputFocused.value = true; },
+      (e) => { isAnyInputFocused.value = false; }
+    );
+    // 可选：提供给子组件使用
+    // provide('focusCleanup', _);
+  });
+
   if (!isPC.value) {
     window.addEventListener('touchstart', handleTouchStart)
     window.addEventListener('touchend', handleTouchEnd)
@@ -131,10 +121,10 @@ onMounted(() => {
   // 启动新帖子轮询
   startPolling()
 })
+
 onUnmounted(() => {
   window.removeEventListener('resize', updateWidth)
-  window.removeEventListener('focusin', handleGlobalFocus)
-  window.removeEventListener('focusout', handleGlobalBlur)
+
   if (!isPC.value) {
     window.removeEventListener('touchstart', handleTouchStart)
     window.removeEventListener('touchend', handleTouchEnd)
@@ -154,7 +144,7 @@ watch(() => newPostsNotification.updatedAt, (updatedAt: number) => {
       message: `有 ${newPostsNotification.newPostIds.length} 条未查看的新帖子`,
       actionText: isCurrentlyOnHomePage ? '去查看' : '去首页查看',
       type: 'info',
-      position: isPC.value ? 'top' : 'bottom', // PC端在上方，移动端在下方
+      position: isPC.value ? 'top' : 'bottom',
       alwaysShow: true,
       onAction: () => {
         hideNotification()
@@ -169,16 +159,11 @@ watch(() => newPostsNotification.updatedAt, (updatedAt: number) => {
 </script>
 
 <template>
-  <div
-    class="root w-full"
-  >
+  <div class="root w-full">
     <header>
       <div class="site-top">
         <div class="top-left" />
-        <RouterLink
-          class="title"
-          to="/"
-        >
+        <RouterLink class="title" to="/">
           SSE MARKET
         </RouterLink>
         <div class="top-right">
@@ -201,9 +186,7 @@ watch(() => newPostsNotification.updatedAt, (updatedAt: number) => {
     </template>
     <main class="mt-2 w-full flex flex-row p-0">
       <div class="content">
-        <template
-          v-if="!isPC && isHomePage"
-        >
+        <template v-if="!isPC && isHomePage">
           <PartitionList />
         </template>
         <router-view v-slot="{ Component }">

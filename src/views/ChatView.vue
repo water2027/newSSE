@@ -94,7 +94,7 @@ function sendMessage() {
 }
 
 function toggleAnonymousMode() {
-  setAnonymousMode(!isAnonymousMode.value)
+  showMsg('匿名聊天功能未开放，敬请期待！')
 }
 
 function getTimeShow(idx: number) {
@@ -249,17 +249,16 @@ onUnmounted(() => {
           <div class="message-footer">
             <div class="message-controls">
               <button 
-                class="anonymous-toggle" 
-                :class="{ active: isAnonymousMode }"
+                class="anonymous-toggle disabled" 
                 @click="toggleAnonymousMode"
-                title="切换匿名模式"
+                title="匿名聊天功能未开放"
               >
-                🎭 {{ isAnonymousMode ? '匿名模式' : '普通模式' }}
+                🎭 匿名聊天（未开放）
               </button>
             </div>
             <textarea
               v-model="draft" 
-              :placeholder="isAnonymousMode ? '匿名输入信息...' : '输入信息...'" 
+              placeholder="输入信息..." 
               rows="4" 
               class="lite-scrollbar message-input"
               @keydown="handleDraftKeyDown"
@@ -535,6 +534,18 @@ onUnmounted(() => {
   &:hover {
     background: #f0f0f0;
     border-color: #999;
+  }
+
+  &.disabled {
+    background: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
+    opacity: 0.6;
+
+    &:hover {
+      background: #f5f5f5;
+      border-color: #ccc;
+    }
   }
 
   &.active {
