@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import mk from '@vscode/markdown-it-katex'
 import DOMPurify from 'dompurify'
 import MarkdownIt from 'markdown-it'
-import mk from 'markdown-it-katex'
 import Prism from 'prismjs'
 import { computed, nextTick, useTemplateRef } from 'vue'
 import 'prismjs/plugins/autoloader/prism-autoloader'
