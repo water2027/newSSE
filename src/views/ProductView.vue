@@ -348,7 +348,6 @@ onMounted(() => {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
@@ -361,10 +360,6 @@ onMounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
-    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
   pointer-events: none;
   z-index: 0;
 }
@@ -610,19 +605,6 @@ onMounted(() => {
   overflow: hidden;
 }
 
-.product-info::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
-  background-size: 200% 100%;
-  border-radius: 20px 20px 0 0;
-  animation: shimmer 3s ease-in-out infinite;
-}
-
 @keyframes shimmer {
   0%, 100% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -665,13 +647,13 @@ onMounted(() => {
   color: #333;
 }
 
-.chat-buttons {
+.action-buttons {
   display: flex;
   gap: 15px;
   margin-top: 20px;
 }
 
-.chat-buttons button {
+.action-buttons button {
   padding: 14px 24px;
   border: none;
   border-radius: 8px;
@@ -683,26 +665,6 @@ onMounted(() => {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.chat-buttons button:first-child {
-  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-  color: white;
-}
-
-.chat-buttons button:nth-child(2) {
-  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
-  color: white;
-}
-
-.chat-buttons button:last-child {
-  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-  color: white;
-}
-
-.chat-buttons button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 </style>
 
