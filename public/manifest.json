@@ -1,11 +1,11 @@
 {
-  "name": "SSE MARKET",
-  "short_name": "SSE",
+  "name": "SSE Market",
+  "short_name": "SSE Market",
   "scope": "/new/",
   "start_url": "/new/",
-  "display": "fullscreen",
+  "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "theme_color": "#0f172a",
   "icons": [
     {
       "src": "/new/android-chrome-192x192.png",
