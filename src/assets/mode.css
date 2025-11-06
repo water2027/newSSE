@@ -59,6 +59,14 @@ body {
   --color-error: #f44336;
   --color-info: #2196f3;
   --color-warning: #ff9800;
+
+  /* 商城相关变量 */
+  --shop-card-bg: #ffffff;
+  --shop-section-bg: #ffffff;
+  --shop-filter-bg: #ffffff;
+  --shop-text-secondary: #666;
+  --shop-text-muted: #7f8c8d;
+  --shop-skeleton-bg: #eee;
 }
 
 body.dark-mode {
@@ -114,4 +122,12 @@ body.dark-mode {
   --chat-bg-highlight: #282828;
   --chat-text: #ccc;
   --chat-text-tips: #383838;
+
+  /* 商城相关变量 - 夜间模式 */
+  --shop-card-bg: #2e2e2e;
+  --shop-section-bg: #2e2e2e;
+  --shop-filter-bg: #2e2e2e;
+  --shop-text-secondary: #aaa;
+  --shop-text-muted: #888;
+  --shop-skeleton-bg: #3a3a3a;
 }

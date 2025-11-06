@@ -470,11 +470,12 @@ onBeforeUnmount(() => {
 
 .error-content {
   text-align: center;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--shop-section-bg);
   padding: 40px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px var(--color-post-card-box-shadow);
   max-width: 400px;
+  color: var(--color-text);
 }
 
 .error-icon {
@@ -484,13 +485,13 @@ onBeforeUnmount(() => {
 
 .error-title {
   font-size: 24px;
-  color: #e74c3c;
+  color: var(--color-error);
   margin-bottom: 12px;
   font-weight: 600;
 }
 
 .error-message {
-  color: #666;
+  color: var(--shop-text-secondary);
   margin-bottom: 24px;
   line-height: 1.5;
 }
@@ -521,22 +522,22 @@ onBeforeUnmount(() => {
 .skeleton-top-section {
   display: flex;
   padding: 20px;
-  background-color: #f9f9f9;
+  background-color: var(--shop-section-bg);
   border-radius: 8px 8px 0 0;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px var(--color-post-card-box-shadow);
 }
 
 .skeleton-carousel {
   flex: 1;
   height: 300px;
-  background-color: #eee;
+  background-color: var(--shop-skeleton-bg);
   border-radius: 8px;
   margin-right: 20px;
 }
 
 .skeleton-filter {
   width: 250px;
-  background-color: #f5f5f5;
+  background-color: var(--shop-skeleton-bg);
   padding: 15px;
   border-radius: 6px;
 }
@@ -548,7 +549,7 @@ onBeforeUnmount(() => {
 
 .skeleton-title {
   height: 30px;
-  background-color: #eee;
+  background-color: var(--shop-skeleton-bg);
   border-radius: 4px;
   margin-bottom: 20px;
 }
@@ -561,7 +562,7 @@ onBeforeUnmount(() => {
 
 .skeleton-product-card {
   height: 300px;
-  background-color: #eee;
+  background-color: var(--shop-skeleton-bg);
   border-radius: 8px;
 }
 
@@ -570,9 +571,9 @@ onBeforeUnmount(() => {
   .top-section {
     display: flex;
     padding: 20px;
-    background-color: #ffffff;
+    background-color: var(--shop-section-bg);
     border-radius: 8px 8px 0 0;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 3px var(--color-post-card-box-shadow);
   }
 
   .carousel-container {
@@ -658,9 +659,9 @@ onBeforeUnmount(() => {
   height: 300px;
   overflow: hidden;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px var(--color-post-card-box-shadow);
+  background: var(--shop-card-bg);
+  border: 1px solid var(--color-border);
 }
 
 .carousel-inner {
@@ -718,8 +719,8 @@ onBeforeUnmount(() => {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.9);
-  color: #333;
+  background: var(--shop-card-bg);
+  color: var(--color-text);
   border: none;
   width: 50px;
   height: 50px;
@@ -731,13 +732,13 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px var(--color-post-card-box-shadow);
 }
 
 .carousel-control:hover {
-  background: rgba(255, 255, 255, 1);
+  background: var(--shop-card-bg);
   transform: translateY(-50%) scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px var(--color-post-card-hover-box-shadow);
 }
 
 .carousel-control:active {
@@ -789,11 +790,11 @@ onBeforeUnmount(() => {
 
 /* 筛选框样式 */
 .filter-section {
-  background: #ffffff;
+  background: var(--shop-filter-bg);
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px var(--color-post-card-box-shadow);
+  border: 1px solid var(--color-border);
   position: relative;
 }
 
@@ -807,7 +808,7 @@ onBeforeUnmount(() => {
 .filter-section h3 {
   margin: 0;
   font-size: 18px;
-  color: #2c3e50;
+  color: var(--color-text);
   font-weight: 600;
 }
 
@@ -819,17 +820,17 @@ onBeforeUnmount(() => {
 
 .price-label {
   font-weight: 600;
-  color: #555;
+  color: var(--color-text);
   font-size: 14px;
 }
 
 .price-select {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid rgba(102, 126, 234, 0.2);
+  border: 2px solid var(--color-border);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #555;
+  background: var(--shop-filter-bg);
+  color: var(--color-text);
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
@@ -843,15 +844,15 @@ onBeforeUnmount(() => {
 }
 
 .price-select:hover {
-  border-color: rgba(102, 126, 234, 0.4);
-  background-color: rgba(255, 255, 255, 1);
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+  border-color: var(--color-info);
+  background-color: var(--shop-filter-bg);
+  box-shadow: 0 2px 8px var(--color-hover);
 }
 
 .price-select:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--color-info);
+  box-shadow: 0 0 0 3px var(--color-hover);
 }
 
 /* 商品展示区域 */
@@ -880,10 +881,10 @@ onBeforeUnmount(() => {
 
 .layout-toggle {
   display: flex;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--shop-filter-bg);
   border-radius: 12px;
   padding: 4px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-border);
 }
 
 .layout-btn {
@@ -895,7 +896,7 @@ onBeforeUnmount(() => {
   border: none;
   border-radius: 8px;
   background: transparent;
-  color: #7f8c8d;
+  color: var(--shop-text-muted);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -919,8 +920,7 @@ onBeforeUnmount(() => {
 .product-list-title {
   margin: 0;
   font-size: 28px;
-  color: #000000;
-  --color-text: #000000;
+  color: var(--color-text);
   font-weight: 900;
   font-family: 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
   position: relative;
@@ -933,17 +933,17 @@ onBeforeUnmount(() => {
   left: 0;
   width: 60px;
   height: 3px;
-  background: #000000;
+  background: var(--color-text);
   border-radius: 2px;
 }
 
 .product-count {
-  color: #000000;
+  color: var(--color-text);
   font-size: 14px;
-  background: #ffffff;
+  background: var(--shop-card-bg);
   padding: 8px 16px;
   border-radius: 25px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-border);
   font-weight: 600;
 }
 
@@ -952,9 +952,9 @@ onBeforeUnmount(() => {
 .empty-filter-results {
   text-align: center;
   padding: 60px 20px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--shop-section-bg);
   border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px var(--color-post-card-box-shadow);
   margin: 20px 0;
 }
 
@@ -967,14 +967,14 @@ onBeforeUnmount(() => {
 .empty-product-list h3,
 .empty-filter-results h3 {
   font-size: 20px;
-  color: #2c3e50;
+  color: var(--color-text);
   margin-bottom: 12px;
   font-weight: 600;
 }
 
 .empty-product-list p,
 .empty-filter-results p {
-  color: #7f8c8d;
+  color: var(--shop-text-muted);
   margin-bottom: 24px;
   line-height: 1.5;
 }
