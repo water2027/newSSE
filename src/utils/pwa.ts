@@ -3,6 +3,12 @@
  * @returns {boolean} 是否为PWA环境
  */
 export function isPWA(): boolean {
+  // 检测URL参数中是否包含?pwa=true
+  const urlParams = new URLSearchParams(window.location.search)
+  if (urlParams.get('pwa') === 'true') {
+    return true
+  }
+
   // 检测是否在standalone模式下运行（PWA安装后）
   if (window.matchMedia('(display-mode: standalone)').matches) {
     return true
