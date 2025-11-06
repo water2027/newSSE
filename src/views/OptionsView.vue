@@ -16,10 +16,12 @@ import {
   levelExpHandler,
   levelNameHandler,
 } from '@/utils/level'
+import { usePWA } from '@/composables/usePWA'
 
 const router = useRouter()
 
 const { userInfo } = useUserStore()
+const { isPWAEnvironment, pwaExperienceEnabled } = usePWA()
 const allInfo = ref<AllInfo>({
   avatarURL: '',
   ban: '',
@@ -146,6 +148,11 @@ async function togglePush() {
     showMsg('失败了')
   }
 }
+
+function togglePWAExperience() {
+  pwaExperienceEnabled.value = !pwaExperienceEnabled.value
+  showMsg(`PWA体验已${pwaExperienceEnabled.value ? '启用' : '禁用'}`)
+}
 </script>
 
 <template>
@@ -226,6 +233,12 @@ async function togglePush() {
     <div class="toggle-container" style="display: flex; align-items: center; gap: 10px;">
       <span>禁用邮件推送</span>
       <div class="toggle-switch" :class="{ active: isPushDisabled }" @click="togglePush">
+        <span class="slider" />
+      </div>
+    </div>
+    <div v-if="isPWAEnvironment" class="toggle-container" style="display: flex; align-items: center; gap: 10px;">
+      <span>启用PWA新体验</span>
+      <div class="toggle-switch" :class="{ active: pwaExperienceEnabled }" @click="togglePWAExperience">
         <span class="slider" />
       </div>
     </div>
