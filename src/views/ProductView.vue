@@ -377,13 +377,14 @@ onMounted(() => {
   justify-content: center;
   min-height: 60vh;
   padding: 40px;
+  color: var(--color-text);
 }
 
 .loading-spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #4c8baf;
+  border: 4px solid var(--shop-skeleton-bg);
+  border-top: 4px solid var(--color-info);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 20px;
@@ -404,12 +405,13 @@ onMounted(() => {
 
 .error-content {
   text-align: center;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--shop-section-bg);
   padding: 40px;
   border-radius: 16px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 30px var(--color-post-card-box-shadow);
   backdrop-filter: blur(10px);
   max-width: 400px;
+  color: var(--color-text);
 }
 
 .error-icon {
@@ -419,13 +421,13 @@ onMounted(() => {
 
 .error-content h3 {
   font-size: 24px;
-  color: #e74c3c;
+  color: var(--color-error);
   margin-bottom: 12px;
   font-weight: 600;
 }
 
 .error-content p {
-  color: #666;
+  color: var(--shop-text-secondary);
   margin-bottom: 24px;
   line-height: 1.5;
 }
@@ -453,9 +455,9 @@ onMounted(() => {
   align-items: center;
   margin-bottom: 30px;
   padding: 20px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--shop-section-bg);
   border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px var(--color-post-card-box-shadow);
   backdrop-filter: blur(10px);
 }
 
@@ -467,33 +469,33 @@ onMounted(() => {
 .back-button,
 .delete-button {
   padding: 12px 20px;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  border: 2px solid transparent;
+  background: var(--shop-card-bg);
+  border: 2px solid var(--color-border);
   border-radius: 8px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  color: #333;
+  color: var(--color-text);
   font-size: 16px;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 10px;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px var(--color-post-card-box-shadow);
 }
 
 .back-button:hover {
-  color: #4c8baf;
-  border-color: #4c8baf;
+  color: var(--color-info);
+  border-color: var(--color-info);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 139, 175, 0.3);
+  box-shadow: 0 4px 12px var(--color-hover);
 }
 
 .delete-button:hover {
-  color: #e53935;
-  border-color: #e53935;
+  color: var(--color-error);
+  border-color: var(--color-error);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
+  box-shadow: 0 4px 12px var(--color-hover);
 }
 
 .back-button img,
@@ -510,11 +512,11 @@ onMounted(() => {
 }
 
 .carousel-container {
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 30px var(--color-post-card-box-shadow);
   border-radius: 16px;
   overflow: hidden;
-  background: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--shop-card-bg);
+  border: 1px solid var(--color-border);
 }
 
 .carousel {
@@ -593,13 +595,11 @@ onMounted(() => {
 
 /* 商品信息样式 */
 .product-info {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.95) 100%);
+  background: var(--shop-section-bg);
   padding: 40px;
   border-radius: 20px;
-  box-shadow: 
-    0 20px 60px rgba(0, 0, 0, 0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 20px 60px var(--color-post-card-box-shadow);
+  border: 1px solid var(--color-border);
   position: relative;
   backdrop-filter: blur(20px);
   overflow: hidden;
@@ -614,12 +614,12 @@ onMounted(() => {
   margin-top: 0;
   margin-bottom: 10px;
   font-size: 28px;
-  color: #333;
+  color: var(--color-text);
 }
 
 .product-seller {
   margin-bottom: 15px;
-  color: #666;
+  color: var(--shop-text-secondary);
 }
 
 .product-price-info {
@@ -631,7 +631,7 @@ onMounted(() => {
 .current-price {
   font-size: 24px;
   font-weight: bold;
-  color: #e53935;
+  color: var(--color-error);
   margin-right: 10px;
 }
 
@@ -644,7 +644,15 @@ onMounted(() => {
 .product-description {
   margin-bottom: 30px;
   line-height: 1.6;
-  color: #333;
+  color: var(--color-text);
+}
+
+.product-description h3 {
+  color: var(--color-text);
+}
+
+.product-description p {
+  color: var(--shop-text-muted);
 }
 
 .action-buttons {
@@ -664,7 +672,7 @@ onMounted(() => {
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px var(--color-post-card-box-shadow);
 }
 </style>
 

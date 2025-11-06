@@ -234,13 +234,13 @@ onMounted(() => {
 <style scoped>
 /* 商品卡片样式 */
 .product-card {
-  background: #ffffff;
+  background: var(--shop-card-bg);
   border-radius: 12px;
   overflow: hidden;
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--color-border);
   position: relative;
 }
 
@@ -255,7 +255,7 @@ onMounted(() => {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   border-radius: 12px 12px 0 0;
-  background: #f8f9fa;
+  background: var(--shop-skeleton-bg);
 }
 
 /* 图片加载状态 */
@@ -268,15 +268,15 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--shop-card-bg);
   z-index: 2;
 }
 
 .loading-spinner {
   width: 32px;
   height: 32px;
-  border: 3px solid #f3f3f3;
-  border-top: 3px solid #4c8baf;
+  border: 3px solid var(--shop-skeleton-bg);
+  border-top: 3px solid var(--color-info);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -297,8 +297,8 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.9);
-  color: #7f8c8d;
+  background: var(--shop-card-bg);
+  color: var(--shop-text-muted);
   z-index: 2;
 }
 
@@ -345,7 +345,7 @@ onMounted(() => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: #000000;
+  color: var(--color-text);
   font-weight: 700;
   line-height: 1.4;
   text-align: center;
@@ -353,7 +353,7 @@ onMounted(() => {
 
 .product-seller {
   font-size: 13px;
-  color: #7f8c8d;
+  color: var(--shop-text-muted);
   margin: 0;
   display: flex;
   align-items: center;
@@ -370,7 +370,7 @@ onMounted(() => {
 .current-price {
   font-size: 22px;
   font-weight: 800;
-  color: #e74c3c;
+  color: var(--color-error);
   margin: 0;
   position: relative;
 }
@@ -392,7 +392,7 @@ onMounted(() => {
 
 .product-description {
   font-size: 13px;
-  color: #666;
+  color: var(--shop-text-secondary);
   margin: 8px 0;
   flex-grow: 1;
   display: -webkit-box;
@@ -501,7 +501,7 @@ onMounted(() => {
   position: relative;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  background: #f8f9fa;
+  background: var(--shop-skeleton-bg);
 }
 
 .list-image-container img {
@@ -536,7 +536,7 @@ onMounted(() => {
 .list-main-info .product-name {
   font-size: 18px;
   margin: 0;
-  color: #000000;
+  color: var(--color-text);
   font-weight: 700;
   line-height: 1.4;
   white-space: nowrap;
@@ -547,7 +547,7 @@ onMounted(() => {
 
 .list-main-info .product-description {
   font-size: 14px;
-  color: #666;
+  color: var(--shop-text-secondary);
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -560,7 +560,7 @@ onMounted(() => {
 
 .list-main-info .product-seller {
   font-size: 13px;
-  color: #7f8c8d;
+  color: var(--shop-text-muted);
   margin: 0;
   display: flex;
   align-items: center;
@@ -583,7 +583,7 @@ onMounted(() => {
 .list-action-container .current-price {
   font-size: 20px;
   font-weight: 800;
-  color: #e74c3c;
+  color: var(--color-error);
   margin: 0;
 }
 
