@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { ProductDetail } from '@/api/shop/getProducts'
-import { computed, onMounted, ref, watch, nextTick } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 // 由于与本地声明冲突，改为重命名导入
 import { deleteProduct as apiDeleteProduct, saleProduct as apiSaleProduct } from '@/api/shop/controlProduct'
 import { getProductByID } from '@/api/shop/getProducts'
 import { showMsg } from '@/components/MessageBox'
+import { useChat } from '@/composables/useChat'
 import { useUserStore } from '@/store/userStore'
 import { getSellerName } from '@/utils/sellerNameMapper'
-import { useChat } from '@/composables/useChat'
 
 // 路由和状态管理
 const router = useRouter()
@@ -48,13 +48,15 @@ async function fetchProductDetail(ProductID: number): Promise<void> {
     error.value = null
     const response = await getProductByID(ProductID)
     product.value = response
-    
+
     // 获取卖家名称
     await fetchSellerName()
-  } catch (err) {
+  }
+  catch (err) {
     error.value = '获取商品详情失败，请稍后重试'
     console.error('Failed to fetch product detail:', err)
-  } finally {
+  }
+  finally {
     isLoading.value = false
   }
 }
@@ -64,7 +66,8 @@ async function fetchSellerName(): Promise<void> {
   try {
     const name = await getSellerName(product.value.SellerID)
     sellerName.value = name
-  } catch (error) {
+  }
+  catch (error) {
     console.error('获取卖家名称失败:', error)
     // 如果获取失败，使用原始数据或默认值
     sellerName.value = product.value.Seller || `用户${product.value.SellerID}`
@@ -92,17 +95,19 @@ function goToImage(index: number): void {
 
 // 私聊功能
 function chatWithSeller(isAnonymous: boolean): void {
-  if (!canInteract.value) return
-  
+  if (!canInteract.value)
+    return
+
   // 设置匿名模式
   setAnonymousMode(isAnonymous)
-  
+
   if (isAnonymous) {
     showMsg('正在跳转到匿名私聊页面')
-  } else {
+  }
+  else {
     showMsg('正在跳转到私聊页面')
   }
-  
+
   navigateChat()
 }
 
@@ -113,8 +118,9 @@ function goBack(): void {
 
 // 卖出商品
 async function saleProduct(): Promise<void> {
-  if (!canInteract.value) return
-  
+  if (!canInteract.value)
+    return
+
   if (confirm('确定要标记此商品为已售出吗？')) {
     try {
       isSelling.value = true
@@ -122,10 +128,12 @@ async function saleProduct(): Promise<void> {
       await apiSaleProduct(Number(product.value.ProductID))
       product.value.ISSold = true
       showMsg('商品已标记为售出')
-    } catch (err) {
+    }
+    catch (err) {
       showMsg('操作失败，请稍后重试')
       console.error('Sale product error:', err)
-    } finally {
+    }
+    finally {
       isSelling.value = false
     }
   }
@@ -133,18 +141,21 @@ async function saleProduct(): Promise<void> {
 
 // 删除商品
 async function deleteProduct(): Promise<void> {
-  if (!canInteract.value) return
-  
+  if (!canInteract.value)
+    return
+
   if (confirm('确定要删除此商品吗？此操作不可恢复！')) {
     try {
       isDeleting.value = true
       await apiDeleteProduct(Number(product.value.ProductID))
       showMsg('商品已删除')
       router.push('/shop')
-    } catch (err) {
+    }
+    catch (err) {
       showMsg('删除失败，请稍后重试')
       console.error('Delete product error:', err)
-    } finally {
+    }
+    finally {
       isDeleting.value = false
     }
   }
@@ -190,14 +201,16 @@ onMounted(() => {
   <div class="product-detail-container">
     <!-- 加载状态 -->
     <div v-if="isLoading" class="loading-container">
-      <div class="loading-spinner"></div>
+      <div class="loading-spinner" />
       <p>正在加载商品详情...</p>
     </div>
 
     <!-- 错误状态 -->
     <div v-else-if="error" class="error-container">
       <div class="error-content">
-        <div class="error-icon">⚠️</div>
+        <div class="error-icon">
+          ⚠️
+        </div>
         <h3>加载失败</h3>
         <p>{{ error }}</p>
         <button class="retry-button" @click="retryFetch">
@@ -216,18 +229,18 @@ onMounted(() => {
         </button>
 
         <div v-if="isCurrentUser" class="action-buttons">
-          <button 
+          <button
             v-if="!product.ISSold"
-            class="sale-button" 
+            class="sale-button"
             :disabled="isSelling"
             @click="saleProduct"
           >
             <span v-if="isSelling">处理中...</span>
             <span v-else>标记售出</span>
           </button>
-          
-          <button 
-            class="delete-button" 
+
+          <button
+            class="delete-button"
             :disabled="isDeleting"
             @click="deleteProduct"
           >
@@ -243,46 +256,46 @@ onMounted(() => {
           <div class="carousel">
             <div class="carousel-inner" :style="{ transform: `translateX(-${imageIndex * 100}%)` }">
               <div v-for="(image, index) in product.Photos" :key="`image-${index}`" class="carousel-item">
-                <img 
-                  :src="image" 
+                <img
+                  :src="image"
                   :alt="`商品图片 ${index + 1}`"
                   loading="lazy"
                   @error="handleImageError"
                 >
               </div>
             </div>
-            
+
             <!-- 控制按钮 -->
-            <button 
+            <button
               v-if="hasImages && product.Photos.length > 1"
-              class="carousel-control prev" 
-              @click="prevImage"
+              class="carousel-control prev"
               aria-label="上一张"
+              @click="prevImage"
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="15,18 9,12 15,6"></polyline>
+                <polyline points="15,18 9,12 15,6" />
               </svg>
             </button>
-            <button 
+            <button
               v-if="hasImages && product.Photos.length > 1"
-              class="carousel-control next" 
-              @click="nextImage"
+              class="carousel-control next"
               aria-label="下一张"
+              @click="nextImage"
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="9,18 15,12 9,6"></polyline>
+                <polyline points="9,18 15,12 9,6" />
               </svg>
             </button>
-            
+
             <!-- 指示器 -->
             <div v-if="hasImages && product.Photos.length > 1" class="carousel-indicators">
               <span
-                v-for="(image, index) in product.Photos" 
-                :key="`indicator-${index}`" 
+                v-for="(image, index) in product.Photos"
+                :key="`indicator-${index}`"
                 class="indicator"
-                :class="{ active: index === imageIndex }" 
-                @click="goToImage(index)"
+                :class="{ active: index === imageIndex }"
                 :aria-label="`跳转到第${index + 1}张图片`"
+                @click="goToImage(index)"
               />
             </div>
           </div>
@@ -299,7 +312,7 @@ onMounted(() => {
             已售出
           </div>
         </div>
-        
+
         <div class="product-meta">
           <p class="product-seller">
             <span class="seller-icon">👤</span>
@@ -309,7 +322,7 @@ onMounted(() => {
             <span class="current-price">¥{{ product.Price.toLocaleString() }}</span>
           </div>
         </div>
-        
+
         <div class="product-description">
           <h3>商品描述</h3>
           <p>{{ product.Description }}</p>
@@ -317,16 +330,16 @@ onMounted(() => {
 
         <!-- 操作按钮 -->
         <div class="action-buttons">
-          <button 
+          <button
             v-if="!isCurrentUser && canInteract"
-            class="chat-button primary" 
+            class="chat-button primary"
             @click="chatWithSeller(false)"
           >
             💬 私聊商家
           </button>
-          <button 
+          <button
             v-if="!isCurrentUser && canInteract"
-            class="chat-button secondary" 
+            class="chat-button secondary"
             @click="chatWithSeller(true)"
           >
             🎭 匿名私聊
@@ -391,8 +404,12 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .error-container {
@@ -606,8 +623,13 @@ onMounted(() => {
 }
 
 @keyframes shimmer {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 .product-title {
@@ -675,4 +697,3 @@ onMounted(() => {
   box-shadow: 0 4px 12px var(--color-post-card-box-shadow);
 }
 </style>
-

@@ -10,13 +10,13 @@ import { updateEmailPush, updateUserInfo, uploadAvatar } from '@/api/info/update
 import { updatePassword } from '@/api/LoginAndRegister/forgetPwd'
 import { sendCode } from '@/api/LoginAndRegister/utils'
 import { showMsg } from '@/components/MessageBox'
+import { usePWA } from '@/composables/usePWA'
 import { useUserStore } from '@/store/userStore'
 import {
   levelClassHandler,
   levelExpHandler,
   levelNameHandler,
 } from '@/utils/level'
-import { usePWA } from '@/composables/usePWA'
 
 const router = useRouter()
 

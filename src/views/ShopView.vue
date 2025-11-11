@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Product } from '@/api/shop/getProducts'
-import { computed, inject, onBeforeUnmount, onMounted, ref, watch, nextTick } from 'vue'
+import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getProducts } from '@/api/shop/getProducts'
 import ProductCard from '@/components/card/ProductCard.vue'
@@ -15,20 +15,20 @@ interface CarouselItem {
 
 // 常量定义
 const CAROUSEL_ITEMS: CarouselItem[] = [
-  { 
-    image: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1749233653768900413_微信图片_20250606162503.jpg', 
+  {
+    image: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1749233653768900413_微信图片_20250606162503.jpg',
     title: '精选商品',
-    subtitle: '品质保证，价格优惠'
+    subtitle: '品质保证，价格优惠',
   },
-  { 
-    image: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1749233654349407951_96618898_p0.jpg', 
+  {
+    image: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1749233654349407951_96618898_p0.jpg',
     title: '热门推荐',
-    subtitle: '人气爆款，限时特惠'
+    subtitle: '人气爆款，限时特惠',
   },
-  { 
-    image: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1749233654953918669_121867383_p0.jpg', 
+  {
+    image: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1749233654953918669_121867383_p0.jpg',
     title: '新品上市',
-    subtitle: '最新款式，抢先体验'
+    subtitle: '最新款式，抢先体验',
   },
 ]
 
@@ -40,7 +40,7 @@ const PRICE_RANGES = [
   { value: '0-50', label: '五十元以内' },
   { value: '0-100', label: '一百元以内' },
   { value: '0-500', label: '五百元以内' },
-  { value: '500-1000000', label: '五百元以上' }
+  { value: '500-1000000', label: '五百元以上' },
 ] as const
 
 // 路由和注入
@@ -69,12 +69,13 @@ const carouselItems = CAROUSEL_ITEMS
 const isMain = computed(() => /^\/shop\/?$/.test(route.fullPath))
 
 const filteredProducts = computed<Product[]>(() => {
-  if (!selectedPriceRange.value) return products.value
-  
+  if (!selectedPriceRange.value)
+    return products.value
+
   const [min, max] = selectedPriceRange.value.split('-')
   const minPrice = Number.parseInt(min, 10)
-  
-  return products.value.filter(product => {
+
+  return products.value.filter((product) => {
     if (max === '+') {
       return product.Price >= minPrice
     }
@@ -93,18 +94,20 @@ async function fetchProductsWithRetry(): Promise<void> {
     const endpoint = isMain.value ? 'home' : 'history'
     products.value = await getProducts(endpoint)
     retryCount.value = 0
-    
+
     // 预加载卖家名称
     if (products.value.length > 0) {
       const sellerIds = products.value.map(product => product.SellerID)
       await preloadSellerNames(sellerIds)
     }
-  } catch (err) {
+  }
+  catch (err) {
     retryCount.value++
     if (retryCount.value < maxRetries) {
       console.warn(`获取商品数据失败，正在重试 (${retryCount.value}/${maxRetries})`)
       setTimeout(() => fetchProductsWithRetry(), 1000 * retryCount.value)
-    } else {
+    }
+    else {
       error.value = '获取商品数据失败，请稍后重试'
       console.error('获取商品数据失败:', err)
     }
@@ -119,7 +122,8 @@ async function initData(): Promise<void> {
     if (!error.value) {
       setupAutoplay()
     }
-  } finally {
+  }
+  finally {
     isLoading.value = false
   }
 }
@@ -187,9 +191,11 @@ function handlePriceRangeChange(range: string): void {
 }
 
 // 布局切换
+/*
 function toggleLayoutMode(): void {
   layoutMode.value = layoutMode.value === 'grid' ? 'list' : 'grid'
 }
+*/
 
 // 设置布局模式
 function setLayoutMode(mode: 'grid' | 'list'): void {
@@ -213,7 +219,8 @@ watch(() => route.fullPath, () => {
 watch(() => document.visibilityState, (visibilityState) => {
   if (visibilityState === 'visible' && autoplay.value) {
     startAutoplay()
-  } else {
+  }
+  else {
     stopAutoplay()
   }
 })
@@ -250,9 +257,15 @@ onBeforeUnmount(() => {
     <template v-else-if="error">
       <div class="error-container">
         <div class="error-content">
-          <div class="error-icon">⚠</div>
-          <h3 class="error-title">加载失败</h3>
-          <p class="error-message">{{ error }}</p>
+          <div class="error-icon">
+            ⚠
+          </div>
+          <h3 class="error-title">
+            加载失败
+          </h3>
+          <p class="error-message">
+            {{ error }}
+          </p>
           <button class="retry-button" @click="retryFetch">
             重试
           </button>
@@ -268,7 +281,7 @@ onBeforeUnmount(() => {
           <div class="top-section flex-">
             <!-- 轮播窗 -->
             <div class="carousel-container">
-              <div 
+              <div
                 class="carousel"
                 @mouseenter="handleCarouselMouseEnter"
                 @mouseleave="handleCarouselMouseLeave"
@@ -279,50 +292,54 @@ onBeforeUnmount(() => {
                     :key="`carousel-${index}`"
                     class="carousel-item"
                   >
-                    <img 
-                      :src="item.image" 
+                    <img
+                      :src="item.image"
                       :alt="item.title"
                       loading="lazy"
                       @error="handleImageError"
                     >
                     <div class="carousel-overlay">
-                      <h2 class="carousel-title">{{ item.title }}</h2>
-                      <p class="carousel-subtitle">{{ item.subtitle || '精选商品推荐' }}</p>
+                      <h2 class="carousel-title">
+                        {{ item.title }}
+                      </h2>
+                      <p class="carousel-subtitle">
+                        {{ item.subtitle || '精选商品推荐' }}
+                      </p>
                     </div>
                   </div>
                 </div>
-                
+
                 <!-- 控制按钮 -->
-                <button 
+                <button
                   v-if="carouselItems.length > 1"
-                  class="carousel-control prev" 
-                  @click="prevSlide"
+                  class="carousel-control prev"
                   aria-label="上一张"
+                  @click="prevSlide"
                 >
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="15,18 9,12 15,6"></polyline>
+                    <polyline points="15,18 9,12 15,6" />
                   </svg>
                 </button>
-                <button 
+                <button
                   v-if="carouselItems.length > 1"
-                  class="carousel-control next" 
-                  @click="nextSlide"
+                  class="carousel-control next"
                   aria-label="下一张"
+                  @click="nextSlide"
                 >
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="9,18 15,12 9,6"></polyline>
+                    <polyline points="9,18 15,12 9,6" />
                   </svg>
                 </button>
-                
+
                 <!-- 指示器 -->
                 <div v-if="carouselItems.length > 1" class="carousel-indicators">
                   <span
                     v-for="(item, index) in carouselItems"
                     :key="`indicator-${index}`"
-                    class="indicator" 
+                    class="indicator"
                     :class="{ active: index === currentIndex }"
-                    @click="goToSlide(index)"
                     :aria-label="`跳转到第${index + 1}张`"
+                    @click="goToSlide(index)"
                   />
                 </div>
               </div>
@@ -338,14 +355,14 @@ onBeforeUnmount(() => {
                   <div class="price-label">
                     <label>价格区间：</label>
                   </div>
-                  <select 
+                  <select
                     v-model="selectedPriceRange"
-                    @change="handlePriceRangeChange(selectedPriceRange)"
                     class="price-select"
+                    @change="handlePriceRangeChange(selectedPriceRange)"
                   >
-                    <option 
-                      v-for="range in PRICE_RANGES" 
-                      :key="range.value" 
+                    <option
+                      v-for="range in PRICE_RANGES"
+                      :key="range.value"
                       :value="range.value"
                     >
                       {{ range.label }}
@@ -368,50 +385,50 @@ onBeforeUnmount(() => {
                   共 {{ filteredProducts.length }} 件商品
                 </div>
               </div>
-              
+
               <!-- 布局切换控制 -->
               <div class="layout-controls">
                 <div class="layout-toggle">
-                  <button 
+                  <button
                     class="layout-btn"
                     :class="{ active: layoutMode === 'grid' }"
-                    @click="setLayoutMode('grid')"
                     title="网格布局"
+                    @click="setLayoutMode('grid')"
                   >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="3" y="3" width="7" height="7"></rect>
-                      <rect x="14" y="3" width="7" height="7"></rect>
-                      <rect x="14" y="14" width="7" height="7"></rect>
-                      <rect x="3" y="14" width="7" height="7"></rect>
+                      <rect x="3" y="3" width="7" height="7" />
+                      <rect x="14" y="3" width="7" height="7" />
+                      <rect x="14" y="14" width="7" height="7" />
+                      <rect x="3" y="14" width="7" height="7" />
                     </svg>
                   </button>
-                  <button 
+                  <button
                     class="layout-btn"
                     :class="{ active: layoutMode === 'list' }"
-                    @click="setLayoutMode('list')"
                     title="列表布局"
+                    @click="setLayoutMode('list')"
                   >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <line x1="8" y1="6" x2="21" y2="6"></line>
-                      <line x1="8" y1="12" x2="21" y2="12"></line>
-                      <line x1="8" y1="18" x2="21" y2="18"></line>
-                      <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                      <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                      <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                      <line x1="8" y1="6" x2="21" y2="6" />
+                      <line x1="8" y1="12" x2="21" y2="12" />
+                      <line x1="8" y1="18" x2="21" y2="18" />
+                      <line x1="3" y1="6" x2="3.01" y2="6" />
+                      <line x1="3" y1="12" x2="3.01" y2="12" />
+                      <line x1="3" y1="18" x2="3.01" y2="18" />
                     </svg>
                   </button>
                 </div>
               </div>
             </div>
-            
+
             <!-- 商品列表 -->
             <div class="product-list-wrapper">
-              <div 
-                v-if="hasFilteredProducts" 
+              <div
+                v-if="hasFilteredProducts"
                 class="product-list"
                 :class="{
                   'grid-layout': layoutMode === 'grid',
-                  'list-layout': layoutMode === 'list'
+                  'list-layout': layoutMode === 'list',
                 }"
               >
                 <ProductCard
@@ -423,7 +440,9 @@ onBeforeUnmount(() => {
                 />
               </div>
               <div v-else-if="hasProducts" class="empty-filter-results">
-                <div class="empty-icon">🔍</div>
+                <div class="empty-icon">
+                  🔍
+                </div>
                 <h3>没有找到符合条件的商品</h3>
                 <p>请尝试调整筛选条件</p>
                 <button class="clear-filter-btn" @click="selectedPriceRange = ''">
@@ -431,7 +450,9 @@ onBeforeUnmount(() => {
                 </button>
               </div>
               <div v-else class="empty-product-list">
-                <div class="empty-icon">📦</div>
+                <div class="empty-icon">
+                  📦
+                </div>
                 <h3>暂无商品</h3>
                 <p>{{ isMain ? '热门商品即将上线，敬请期待！' : '您还没有发布任何商品' }}</p>
               </div>
@@ -687,12 +708,7 @@ onBeforeUnmount(() => {
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(
-    180deg, 
-    transparent 0%, 
-    rgba(0, 0, 0, 0.4) 70%, 
-    rgba(0, 0, 0, 0.7) 100%
-  );
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.4) 70%, rgba(0, 0, 0, 0.7) 100%);
   color: white;
   padding: 30px 20px 20px;
   text-align: center;
@@ -1050,15 +1066,15 @@ onBeforeUnmount(() => {
   .product-list.grid-layout {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .product-list.list-layout {
     grid-template-columns: 1fr;
   }
-  
+
   .layout-controls {
     display: none; /* 移动端隐藏布局切换按钮 */
   }
-  
+
   .product-list-header {
     flex-direction: column;
     align-items: flex-start;

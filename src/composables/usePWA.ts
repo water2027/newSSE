@@ -47,4 +47,3 @@ export function usePWA() {
     shouldApplyPWAStyle: computed(() => isPWAEnvironment.value && pwaExperienceEnabled.value),
   }
 }
-

@@ -124,12 +124,12 @@ onMounted(() => {
   // 导入模块并注册
   import('@/utils/focusHandler').then(({ setupFocusHandlers }) => {
     const _ = setupFocusHandlers(
-      (e) => { isAnyInputFocused.value = true; },
-      (e) => { isAnyInputFocused.value = false; }
-    );
+      () => { isAnyInputFocused.value = true },
+      () => { isAnyInputFocused.value = false },
+    )
     // 可选：提供给子组件使用
     // provide('focusCleanup', _);
-  });
+  })
 
   if (!isPC.value) {
     window.addEventListener('touchstart', handleTouchStart)
@@ -188,7 +188,7 @@ watch(() => newPostsNotification.updatedAt, (updatedAt: number) => {
         </div>
       </div>
       <template v-if="isPC">
-        <PwaPcHeader v-if="shouldApplyPWAStyle" :unread-chat-num="chatNum" :unread-notice-num="noticeNum.unreadTotalNum" v-model:menu-open="pwaMenuOpen" />
+        <PwaPcHeader v-if="shouldApplyPWAStyle" v-model:menu-open="pwaMenuOpen" :unread-chat-num="chatNum" :unread-notice-num="noticeNum.unreadTotalNum" />
         <PcHeader v-else :unread-chat-num="chatNum" :unread-notice-num="noticeNum.unreadTotalNum" />
       </template>
       <template v-else>
@@ -258,7 +258,9 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: margin-left 0.3s ease, width 0.3s ease;
+  transition:
+    margin-left 0.3s ease,
+    width 0.3s ease;
 }
 
 /* 大屏幕样式 >768px */
@@ -275,7 +277,9 @@ header {
 }
 
 .root.pwa-mode .content {
-  transition: margin-left 0.3s ease, width 0.3s ease;
+  transition:
+    margin-left 0.3s ease,
+    width 0.3s ease;
 }
 
 /* 移动端不受PWA模式影响 */
