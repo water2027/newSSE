@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Product } from '@/api/shop/getProducts'
-import { computed, ref, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { showImg } from '@/components/ImageShower'
-import { strHandler } from '@/utils/strHandler'
 import { getSellerName } from '@/utils/sellerNameMapper'
+import { strHandler } from '@/utils/strHandler'
 
 interface Props {
   product: Product
@@ -11,7 +11,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  layoutMode: 'grid'
+  layoutMode: 'grid',
 })
 
 const emit = defineEmits<{
@@ -26,12 +26,14 @@ const sellerName = ref<string>('')
 // 计算属性
 const hasImage = computed(() => props.product.Photos && props.product.Photos[0])
 const resizedImageUrl = computed(() => {
-  if (!hasImage.value) return ''
+  if (!hasImage.value)
+    return ''
   return props.product.Photos[0].replace('/uploads/', '/resized/')
 })
 
 const originalImageUrl = computed(() => {
-  if (!hasImage.value) return ''
+  if (!hasImage.value)
+    return ''
   return strHandler('postImg', props.product.Photos[0])
 })
 
@@ -44,7 +46,7 @@ function viewDetail(): void {
 
 function viewOriginalImage(event: MouseEvent): void {
   event.stopPropagation()
-  
+
   if (hasImage.value) {
     showImg(originalImageUrl.value)
   }
@@ -68,10 +70,11 @@ async function fetchSellerName(): Promise<void> {
       sellerName.value = props.product.Seller || '匿名用户'
       return
     }
-    
+
     const name = await getSellerName(props.product.SellerID)
     sellerName.value = name
-  } catch (error) {
+  }
+  catch (error) {
     console.error('获取卖家名称失败:', error)
     // 如果获取失败，使用原始数据或默认值
     sellerName.value = props.product.Seller || (props.product.SellerID ? `用户${props.product.SellerID}` : '匿名用户')
@@ -85,12 +88,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div 
-    class="product-card" 
-    :class="{ 
+  <div
+    class="product-card"
+    :class="{
       'sold-out': isSoldOut,
       'grid-mode': layoutMode === 'grid',
-      'list-mode': layoutMode === 'list'
+      'list-mode': layoutMode === 'list',
     }"
   >
     <!-- 网格模式布局 -->
@@ -98,9 +101,9 @@ onMounted(() => {
       <div class="product-image" @click="viewOriginalImage">
         <!-- 图片加载状态 -->
         <div v-if="imageLoading" class="image-loading">
-          <div class="loading-spinner"></div>
+          <div class="loading-spinner" />
         </div>
-        
+
         <!-- 商品图片 -->
         <img
           v-if="hasImage && !imageError"
@@ -111,7 +114,7 @@ onMounted(() => {
           @load="handleImageLoad"
           @error="handleImageError"
         >
-        
+
         <!-- 默认图片 -->
         <img
           v-else
@@ -120,19 +123,19 @@ onMounted(() => {
           @load="handleImageLoad"
           @error="handleImageError"
         >
-        
+
         <!-- 售出标记 -->
         <div v-if="isSoldOut" class="sold-out-mark">
           <span class="sold-out-text">已售出</span>
         </div>
-        
+
         <!-- 图片错误状态 -->
         <div v-if="imageError" class="image-error">
           <span class="error-icon">📷</span>
           <span class="error-text">图片加载失败</span>
         </div>
       </div>
-      
+
       <div class="product-info">
         <h3 class="product-name" :title="product.Name">
           {{ product.Name }}
@@ -147,9 +150,9 @@ onMounted(() => {
           {{ product.Description }}
         </p>
       </div>
-      
-      <button 
-        class="add-to-cart" 
+
+      <button
+        class="add-to-cart"
         :class="{ 'sold-out-btn': isSoldOut }"
         :disabled="isSoldOut"
         @click="viewDetail"
@@ -164,9 +167,9 @@ onMounted(() => {
         <div class="list-image-container" @click="viewOriginalImage">
           <!-- 图片加载状态 -->
           <div v-if="imageLoading" class="image-loading">
-            <div class="loading-spinner"></div>
+            <div class="loading-spinner" />
           </div>
-          
+
           <!-- 商品图片 -->
           <img
             v-if="hasImage && !imageError"
@@ -177,7 +180,7 @@ onMounted(() => {
             @load="handleImageLoad"
             @error="handleImageError"
           >
-          
+
           <!-- 默认图片 -->
           <img
             v-else
@@ -186,19 +189,19 @@ onMounted(() => {
             @load="handleImageLoad"
             @error="handleImageError"
           >
-          
+
           <!-- 售出标记 -->
           <div v-if="isSoldOut" class="sold-out-mark">
             <span class="sold-out-text">已售出</span>
           </div>
-          
+
           <!-- 图片错误状态 -->
           <div v-if="imageError" class="image-error">
             <span class="error-icon">📷</span>
             <span class="error-text">图片加载失败</span>
           </div>
         </div>
-        
+
         <div class="list-info-container">
           <div class="list-main-info">
             <h3 class="product-name" :title="product.Name">
@@ -211,13 +214,13 @@ onMounted(() => {
               {{ sellerName || product.Seller || (product.SellerID ? `用户${product.SellerID}` : '匿名用户') }}
             </p>
           </div>
-          
+
           <div class="list-action-container">
             <div class="product-price">
               <span class="current-price">¥{{ product.Price.toLocaleString() }}</span>
             </div>
-            <button 
-              class="add-to-cart" 
+            <button
+              class="add-to-cart"
               :class="{ 'sold-out-btn': isSoldOut }"
               :disabled="isSoldOut"
               @click="viewDetail"
@@ -282,8 +285,12 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* 图片错误状态 */
@@ -647,4 +654,3 @@ onMounted(() => {
   transform: none !important;
 }
 </style>
-

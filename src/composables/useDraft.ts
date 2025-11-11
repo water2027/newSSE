@@ -55,7 +55,8 @@ export function useDraft() {
   const getDraftBy = async (key: string | number) => {
     if (typeof key === 'number') {
       return drafts.find(d => d.id === key)
-    } else {
+    }
+    else {
       return drafts.find(d => d.title === key)
     }
   }

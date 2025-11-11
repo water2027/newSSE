@@ -1,21 +1,20 @@
 <!-- eslint-disable vue/html-self-closing -->
 <script setup lang="ts">
 import type { Tag } from '@/api/info/getTeacher'
-import { onMounted, onUnmounted, ref, useTemplateRef } from 'vue'
 
+import { onMounted, onUnmounted, ref, useTemplateRef } from 'vue'
 import { useRouter } from 'vue-router'
 import { sendPost } from '@/api/editPostAndComment/editPost'
-import { getTeachers } from '@/api/info/getTeacher'
 
+import { getTeachers } from '@/api/info/getTeacher'
 import MarkdownEditor from '@/components/MarkdownEditor.vue'
 import { showMsg } from '@/components/MessageBox'
-import { useUserStore } from '@/store/userStore'
 import { useDraft } from '@/composables/useDraft'
-import type { Draft } from '@/composables/useDraft'
+import { useUserStore } from '@/store/userStore'
 
 const router = useRouter()
 const { userInfo } = useUserStore()
-const { current, drafts, addDraft, selectDraft, deleteDraft, updateDraft } = useDraft()
+const { current, drafts, addDraft, selectDraft, deleteDraft, updateDraft, syncDrafts } = useDraft()
 const partitions = ref([
   '主页',
   '日常吐槽',
@@ -35,7 +34,7 @@ const teachers = ref<Tag[]>([])
 // 好抽象的命名，完全想不到老师居然是作为tagList传过去的
 const teacher = ref('')
 
-const currentDraftId = ref<number | null>(null)
+// const currentDraftId = ref<number | null>(null)
 let autoSaveTimer: number | null = null
 
 async function loadDraft(id: number) {
@@ -76,9 +75,9 @@ function autoSaveDraft() {
 
   if (draftTitle || draftContent) {
     return updateDraft({ id: current.id, title: draftTitle, content: draftContent })
-    .then(() => {
-      return true
-    })
+      .then(() => {
+        return true
+      })
   }
   return Promise.resolve(false)
 }
@@ -119,15 +118,29 @@ onMounted(async () => {
   const data = await getTeachers()
   teachers.value = data
 
-  // 启动自动保存，每30秒保存一次
+  await syncDrafts()
+
+  // 加载最新草稿
+  if (drafts.length > 0) {
+    const latestDraft = drafts[drafts.length - 1] // 默认加载最后一个
+    if (latestDraft.id !== undefined) {
+      selectDraft(latestDraft.id)
+      if (title.value) {
+        title.value.value = latestDraft.title
+      }
+      postContent.value = latestDraft.content
+    }
+  }
+
+  // 启动自动保存，每20s保存一次
   autoSaveTimer = setInterval(() => {
     autoSaveDraft()
-    .then((saved) => {
-      if (saved) {
-        showMsg('草稿已自动保存')
-      }
-    })
-  }, 30000)
+      .then((saved) => {
+        if (saved) {
+          showMsg('草稿已自动保存')
+        }
+      })
+  }, 20000)
 })
 
 onUnmounted(() => {
@@ -181,11 +194,20 @@ onUnmounted(() => {
       </div>
     </div>
     <div class="sidebar">
+      <div class="tip">
+        手动保存一次，随后每20s自动保存草稿
+      </div>
       <div class="sidebar-header">
         <h3>草稿</h3>
-        <button @click="discardDraft" class="save-btn">不用草稿</button>
-        <button @click="autoSaveDraft" class="save-btn">更新</button>
-        <button @click="saveDraft" class="save-btn">保存</button>
+        <button class="save-btn" @click="discardDraft">
+          不用草稿
+        </button>
+        <button class="save-btn" @click="autoSaveDraft">
+          更新
+        </button>
+        <button class="save-btn" @click="saveDraft">
+          保存
+        </button>
       </div>
       <div v-if="drafts.length === 0" class="no-drafts">
         暂无草稿
@@ -198,10 +220,16 @@ onUnmounted(() => {
           :class="{ active: draft.id === current.id }"
         >
           <div class="draft-header">
-            <h4 @click="loadDraft(draft.id!)">{{ draft.title || '无标题' }}</h4>
-            <button @click="removeDraft(draft.id!)" class="delete-btn">删除</button>
+            <h4 @click="loadDraft(draft.id!)">
+              {{ draft.title || '无标题' }}
+            </h4>
+            <button class="delete-btn" @click="removeDraft(draft.id!)">
+              删除
+            </button>
           </div>
-          <p @click="loadDraft(draft.id!)">{{ draft.content.slice(0, 10) }}...</p>
+          <p @click="loadDraft(draft.id!)">
+            {{ draft.content.slice(0, 10) }}...
+          </p>
         </div>
       </div>
     </div>
@@ -230,12 +258,16 @@ onUnmounted(() => {
 }
 
 .sidebar {
-  width: 300px;
+  width: 340px;
   padding: 20px;
   border-left: 1px solid var(--color-border);
   height: 100vh;
   overflow-y: auto;
   background-color: var(--color-background);
+
+  .tip {
+    margin-bottom: 4px;
+  }
 }
 
 .sidebar-header {
@@ -248,7 +280,7 @@ onUnmounted(() => {
 .save-btn {
   padding: 5px 10px;
   background-color: var(--color-primary);
-  color: white;
+  color: var(--color-text);
   border: none;
   border-radius: 3px;
   cursor: pointer;

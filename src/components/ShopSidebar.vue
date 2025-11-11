@@ -203,16 +203,16 @@ const { userInfo } = useUserStore()
   .sidebar {
     width: 220px;
   }
-  
+
   .avatar-container {
     width: 90px;
     height: 90px;
   }
-  
+
   .user-id {
     font-size: 18px;
   }
-  
+
   .nav-text {
     font-size: 15px;
   }
@@ -223,21 +223,21 @@ const { userInfo } = useUserStore()
     width: 180px;
     border-radius: 0 15px 15px 0;
   }
-  
+
   .avatar-container {
     width: 70px;
     height: 70px;
   }
-  
+
   .user-id {
     font-size: 14px;
   }
-  
+
   .nav-button {
     height: 45px;
     padding: 0 12px;
   }
-  
+
   .nav-text {
     font-size: 13px;
   }

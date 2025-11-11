@@ -26,8 +26,9 @@ export function debounceAsync<T extends (...args: any[]) => Promise<any>>(fn: T)
         fn(...args)
           .then(resolve)
           .catch(reject)
-      } else {
-        reject(new Error("操作太频繁，请稍后再试"))
+      }
+      else {
+        reject(new Error('操作太频繁，请稍后再试'))
       }
     })
   }

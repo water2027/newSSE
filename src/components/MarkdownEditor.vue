@@ -1,7 +1,6 @@
 <!-- eslint-disable vue/html-self-closing -->
 <script setup lang="ts">
-import { nextTick, onMounted, ref, useTemplateRef } from 'vue'
-import { useRoute } from 'vue-router'
+import { nextTick, ref, useTemplateRef } from 'vue'
 
 import { uploadPhoto } from '@/api/editPostAndComment/utils'
 
@@ -10,7 +9,7 @@ import MarkdownContainer from './MarkdownContainer.vue'
 
 defineEmits(['send'])
 
-const route = useRoute()
+// const route = useRoute()
 
 const isPreview = ref(false)
 const textarea = useTemplateRef<HTMLTextAreaElement>('textarea')
@@ -200,13 +199,6 @@ function editContent(type: EditType) {
     </div>
     <div class="buttons">
       <div
-        v-if="route.path === '/post'"
-        class="button"
-        @click="savePost"
-      >
-        暂存为草稿
-      </div>
-      <div
         class="button"
         @click="$emit('send')"
       >
@@ -296,7 +288,6 @@ function editContent(type: EditType) {
   border-radius: 5px;
   .button {
     width: 20vw;
-    height: 50px;
     max-width: 100px;
     margin-right: 20px;
     margin-top: 20px;
@@ -335,7 +326,7 @@ function editContent(type: EditType) {
   .buttons .button {
     padding: 4px;
     height: 4vh;
-    margin: 0 10px 80px 0;
+    margin: 0 8px;
   }
 }
 

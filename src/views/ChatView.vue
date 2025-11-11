@@ -22,7 +22,8 @@ export interface Message extends MessageCreation {
 
 const route = useRoute()
 const { userInfo } = useUserStore()
-const { on, off, contacts, chatHistory, sendChatMessage, selectContact: selectChatContact, addContact, current, isAnonymousMode, setAnonymousMode } = useChat()
+// const { on, off, contacts, chatHistory, sendChatMessage, selectContact: selectChatContact, addContact, current, isAnonymousMode, setAnonymousMode } = useChat()
+const { on, off, contacts, chatHistory, sendChatMessage, selectContact: selectChatContact, addContact, current } = useChat()
 
 const draft = ref('')
 type Contact = RelevantUser & Partial<{ ban: string, phone: string, punishnum: number, intro: string, unRead: number, emailpush: boolean }>
@@ -248,18 +249,18 @@ onUnmounted(() => {
           </div>
           <div class="message-footer">
             <div class="message-controls">
-              <button 
-                class="anonymous-toggle disabled" 
-                @click="toggleAnonymousMode"
+              <button
+                class="anonymous-toggle disabled"
                 title="匿名聊天功能未开放"
+                @click="toggleAnonymousMode"
               >
                 🎭 匿名聊天（未开放）
               </button>
             </div>
             <textarea
-              v-model="draft" 
-              placeholder="输入信息..." 
-              rows="4" 
+              v-model="draft"
+              placeholder="输入信息..."
+              rows="4"
               class="lite-scrollbar message-input"
               @keydown="handleDraftKeyDown"
             />
