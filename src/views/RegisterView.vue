@@ -4,6 +4,7 @@ import type { CustomFormData } from '@/composables/FormExam'
 import { computed, ref, useTemplateRef } from 'vue'
 import { useRouter } from 'vue-router'
 
+import { getInfo } from '@/api/info/getInfo'
 import { userRegister } from '@/api/LoginAndRegister/register'
 
 import { sendCode } from '@/api/LoginAndRegister/utils'
@@ -11,8 +12,10 @@ import FormContainer from '@/components/FormContainer.vue'
 
 import { showMsg } from '@/components/MessageBox.jsx'
 import { useFormExam } from '@/composables/FormExam'
+import { useUserStore } from '@/store/userStore'
 
 const router = useRouter()
+const { setToken, setRefreshToken, setUserInfo } = useUserStore()
 const rememberMe = useTemplateRef('rememberMe')
 
 // const passwordReg = /^\S*(?=\S{6})(?=\S*\d)(?=\S*[A-Z])(?=\S*[a-z])(?=\S*[!@#$%^&*? ])\S+$/
@@ -103,12 +106,34 @@ async function registerAction() {
       return
     }
 
-    showMsg('注册成功')
-    router.push('/auth/login')
-    if (rememberMe.value?.checked) {
-      localStorage.setItem('email', email)
-      localStorage.setItem('password', password)
+    const token = resp.data?.token
+    const refreshToken = resp.data?.refresh_token
+    if (!token || !refreshToken) {
+      showMsg('注册成功，但登录信息异常，请手动登录')
+      router.push('/auth/login')
+      return
     }
+
+    if (rememberMe.value?.checked) {
+      localStorage.setItem('rememberMe', 'true')
+    }
+    else {
+      localStorage.removeItem('rememberMe')
+    }
+
+    setToken(token)
+    setRefreshToken(refreshToken)
+
+    try {
+      const info = await getInfo()
+      setUserInfo(info)
+    }
+    catch (e) {
+      console.error('获取用户信息失败', e)
+    }
+
+    showMsg('注册成功，已自动登录')
+    router.push('/')
   }
   catch (error) {
     console.error('Register failed:', error)

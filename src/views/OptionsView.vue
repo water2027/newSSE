@@ -20,7 +20,7 @@ import {
 
 const router = useRouter()
 
-const { userInfo } = useUserStore()
+const { userInfo, setToken, setRefreshToken } = useUserStore()
 const { isPWAEnvironment, pwaExperienceEnabled } = usePWA()
 const allInfo = ref<AllInfo>({
   avatarURL: '',
@@ -125,6 +125,8 @@ function logout() {
     localStorage.removeItem('email')
     localStorage.removeItem('password')
     localStorage.removeItem('rememberMe')
+    setToken('')
+    setRefreshToken('')
     router.push('/')
     window.location.reload()
   }
