@@ -37,25 +37,27 @@ const { noticeNum, refreshNoticeNum } = useNoticeStore()
 const { startPolling, stopPolling, newPostsNotification, hideNotification } = useNewPostsStore()
 
 const { connect, disconnect, chatNum } = useChat()
-const { shouldApplyPWAStyle } = usePWA()
-
-// PWA菜单状态管理
-const pwaMenuOpen = ref(true)
-
-// 计算是否应该折叠菜单
-const isMenuCollapsed = computed(() => {
-  if (!shouldApplyPWAStyle.value) {
-    return false
-  }
-  // 菜单关闭时返回true（折叠状态）
-  return !pwaMenuOpen.value
-})
+const { desktopExperienceEnabled } = usePWA()
 
 const windowWidth = ref(window.innerWidth)
 const isPC = computed(() => {
   return windowWidth.value > 768
 })
 provide('isPC', isPC)
+
+const isDesktopExperience = computed(() => isPC.value && desktopExperienceEnabled.value)
+
+// PWA/电脑端菜单状态管理
+const pwaMenuOpen = ref(true)
+
+// 计算是否应该折叠菜单
+const isMenuCollapsed = computed(() => {
+  if (!isDesktopExperience.value) {
+    return false
+  }
+  // 菜单关闭时返回true（折叠状态）
+  return !pwaMenuOpen.value
+})
 
 // 新增：输入框焦点状态
 const isAnyInputFocused = ref(false)
@@ -176,7 +178,7 @@ watch(() => newPostsNotification.updatedAt, (updatedAt: number) => {
 </script>
 
 <template>
-  <div class="root w-full" :class="{ 'pwa-mode': shouldApplyPWAStyle }">
+  <div class="root w-full" :class="{ 'pwa-mode': isDesktopExperience }">
     <header>
       <div class="site-top">
         <div class="top-left" />
@@ -188,7 +190,7 @@ watch(() => newPostsNotification.updatedAt, (updatedAt: number) => {
         </div>
       </div>
       <template v-if="isPC">
-        <PwaPcHeader v-if="shouldApplyPWAStyle" v-model:menu-open="pwaMenuOpen" :unread-chat-num="chatNum" :unread-notice-num="noticeNum.unreadTotalNum" />
+        <PwaPcHeader v-if="isDesktopExperience" v-model:menu-open="pwaMenuOpen" :unread-chat-num="chatNum" :unread-notice-num="noticeNum.unreadTotalNum" />
         <PcHeader v-else :unread-chat-num="chatNum" :unread-notice-num="noticeNum.unreadTotalNum" />
       </template>
       <template v-else>

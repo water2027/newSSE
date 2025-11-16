@@ -1,7 +1,8 @@
 <!-- eslint-disable vue/html-self-closing -->
 <script setup lang="ts">
 import type { AllInfo } from '@/api/info/getInfo'
-import { onMounted, ref, useTemplateRef } from 'vue'
+import type { Ref } from 'vue'
+import { inject, onMounted, ref, useTemplateRef } from 'vue'
 
 import { useRouter } from 'vue-router'
 import { getAllInfo } from '@/api/info/getInfo'
@@ -20,8 +21,11 @@ import {
 
 const router = useRouter()
 
+// 来自 DefaultLayout 提供的是否为宽屏（>768px）
+const isPC = inject('isPC', ref(false)) as Ref<boolean>
+
 const { userInfo, setToken, setRefreshToken } = useUserStore()
-const { isPWAEnvironment, pwaExperienceEnabled } = usePWA()
+const { pwaExperienceEnabled } = usePWA()
 const allInfo = ref<AllInfo>({
   avatarURL: '',
   ban: '',
@@ -156,7 +160,7 @@ async function togglePush() {
 
 function togglePWAExperience() {
   pwaExperienceEnabled.value = !pwaExperienceEnabled.value
-  showMsg(`PWA体验已${pwaExperienceEnabled.value ? '启用' : '禁用'}`)
+  showMsg(`电脑端样式新体验已${pwaExperienceEnabled.value ? '启用' : '关闭'}`)
 }
 </script>
 
@@ -236,13 +240,13 @@ function togglePWAExperience() {
       </div>
     </div>
     <div class="toggle-container" style="display: flex; align-items: center; gap: 10px;">
-      <span>禁用邮件推送</span>
+      <span>启用邮件推送</span>
       <div class="toggle-switch" :class="{ active: isPushDisabled }" @click="togglePush">
         <span class="slider" />
       </div>
     </div>
-    <div v-if="isPWAEnvironment" class="toggle-container" style="display: flex; align-items: center; gap: 10px;">
-      <span>启用PWA新体验</span>
+    <div v-if="isPC" class="toggle-container" style="display: flex; align-items: center; gap: 10px;">
+      <span>启用电脑端样式新体验</span>
       <div class="toggle-switch" :class="{ active: pwaExperienceEnabled }" @click="togglePWAExperience">
         <span class="slider" />
       </div>
