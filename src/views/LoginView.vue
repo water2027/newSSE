@@ -31,7 +31,7 @@ const form = ref<CustomFormData[]>([
 ])
 
 const { correct } = useFormExam(form)
-const rememberMe = ref(false)
+const rememberMe = ref(true)
 
 async function loginHandler() {
   const email = form.value[0].value
