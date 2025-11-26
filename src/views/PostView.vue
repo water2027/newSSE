@@ -254,7 +254,8 @@ onUnmounted(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  margin: 0 auto;
+  padding: 20px 8px 4px 8px;
 }
 
 .sidebar {
@@ -335,7 +336,7 @@ select {
 }
 
 .title input {
-  width: 25%;
+  width: 80%;
   height: 30px;
   border-radius: 5px;
   padding: 5px;
