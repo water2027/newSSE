@@ -80,7 +80,6 @@ async function deleteFunc() {
 const handlerDebounced = debounceAsync(handler)
 async function handler(type: 'delete' | 'comment') {
   let event
-  
   switch (type) {
     case 'delete':{
       const result = await deleteFunc()
