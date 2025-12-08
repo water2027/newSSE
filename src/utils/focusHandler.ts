@@ -4,11 +4,12 @@
  */
 export function setupFocusHandlers(
   onGlobalFocus: (event: FocusEvent) => void,
-  onGlobalBlur: (event: FocusEvent) => void
+  onGlobalBlur: (event: FocusEvent) => void,
 ) {
   // 辅助函数：判断是否为输入框
   function isInputElement(el: EventTarget | null): boolean {
-    if (!el || !(el instanceof Element)) return false;
+    if (!el || !(el instanceof Element))
+      return false
 
     // 仅允许 textarea、contenteditable 元素
     return ['TEXTAREA'].includes(el.tagName)
@@ -17,23 +18,23 @@ export function setupFocusHandlers(
   // 事件处理：仅输入框触发
   const handleFocusIn = (e: FocusEvent) => {
     if (isInputElement(e.target)) {
-      onGlobalFocus(e);
+      onGlobalFocus(e)
     }
-  };
+  }
 
   const handleFocusOut = (e: FocusEvent) => {
     if (isInputElement(e.target)) {
-      onGlobalBlur(e);
+      onGlobalBlur(e)
     }
-  };
+  }
 
   // 绑定全局事件
-  window.addEventListener('focusin', handleFocusIn);
-  window.addEventListener('focusout', handleFocusOut);
+  window.addEventListener('focusin', handleFocusIn)
+  window.addEventListener('focusout', handleFocusOut)
 
   // 返回清理函数，便于后续移除监听
   return () => {
-    window.removeEventListener('focusin', handleFocusIn);
-    window.removeEventListener('focusout', handleFocusOut);
-  };
+    window.removeEventListener('focusin', handleFocusIn)
+    window.removeEventListener('focusout', handleFocusOut)
+  }
 }

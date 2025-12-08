@@ -1,7 +1,6 @@
 <!-- eslint-disable vue/html-self-closing -->
 <script setup lang="ts">
-import { nextTick, onMounted, ref, useTemplateRef } from 'vue'
-import { useRoute } from 'vue-router'
+import { nextTick, ref, useTemplateRef } from 'vue'
 
 import { uploadPhoto } from '@/api/editPostAndComment/utils'
 
@@ -10,7 +9,7 @@ import MarkdownContainer from './MarkdownContainer.vue'
 
 defineEmits(['send'])
 
-const route = useRoute()
+// const route = useRoute()
 
 const isPreview = ref(false)
 const textarea = useTemplateRef<HTMLTextAreaElement>('textarea')
@@ -144,31 +143,11 @@ function editContent(type: EditType) {
     )
   })
 }
-
-/**
- * @description 保存草稿
- */
-function savePost() {
-  localStorage.setItem('draft', modelValue.value)
-  showMsg('已暂存为草稿')
-}
-
-onMounted(() => {
-  if (route.path === '/post') {
-    const draft = localStorage.getItem('draft')
-    if (draft) {
-      modelValue.value = draft
-      showMsg('读取草稿成功，已删除')
-      localStorage.removeItem('draft')
-    }
-  }
-})
 </script>
 
 <template>
   <div
     id="mdRoot"
-    class="root"
   >
     <div class="editorButton">
       <button @click="editContent('标题')">
@@ -220,23 +199,15 @@ onMounted(() => {
     </div>
     <div class="buttons">
       <div
-        v-if="route.path === '/post'"
-        class="button"
-        @click="savePost"
-      >
-        缓存草稿
-      </div>
-
-      <label
-        for="fileInput"
-        class="button"
-      >载入图片</label>
-      <div
         class="button"
         @click="$emit('send')"
       >
         发送
       </div>
+      <label
+        for="fileInput"
+        class="button"
+      >选择图片</label>
       <input
         id="fileInput"
         type="file"
@@ -317,7 +288,6 @@ onMounted(() => {
   border-radius: 5px;
   .button {
     width: 20vw;
-    height: 50px;
     max-width: 100px;
     margin-right: 20px;
     margin-top: 20px;
@@ -356,7 +326,7 @@ onMounted(() => {
   .buttons .button {
     padding: 4px;
     height: 4vh;
-    margin: 0 10px 80px 0;
+    margin: 0 8px;
   }
 }
 

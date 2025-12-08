@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import mk from '@vscode/markdown-it-katex'
 import DOMPurify from 'dompurify'
 import MarkdownIt from 'markdown-it'
-import mk from 'markdown-it-katex'
 import Prism from 'prismjs'
 import { computed, nextTick, useTemplateRef } from 'vue'
 import 'prismjs/plugins/autoloader/prism-autoloader'
@@ -53,12 +53,29 @@ md.renderer.rules.image = (tokens, idx) => {
 }
 
 /**
+ * @description 预处理 markdown 内容，使用 encodeURI 编码图片链接中的 URL
+ */
+function preprocessMarkdown(content: string): string {
+  // 先用正则匹配一下
+  return content.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, urlPart) => {
+    const titleIndex = urlPart.lastIndexOf(' "')
+    if (titleIndex > 0) {
+      return `![${alt}](${encodeURI(urlPart.slice(0, titleIndex))} "${urlPart.slice(titleIndex + 2, -1)}")`
+    }
+    return `![${alt}](${encodeURI(urlPart)})`
+  })
+}
+
+/**
  * @description 安全的html，会自动去掉script和iframe之类的标签
  */
 const safeHTML = computed(() => {
   if (!markdownContent) {
     return ''
   }
+
+  // 预处理 markdown 内容，编码图片链接中的空格
+  const processedContent = preprocessMarkdown(markdownContent)
 
   // 配置 DOMPurify 以允许 KaTeX 相关标签和属性
   DOMPurify.addHook('uponSanitizeElement', (node, data) => {
@@ -67,7 +84,7 @@ const safeHTML = computed(() => {
     }
   })
 
-  const rendered = md.render(markdownContent)
+  const rendered = md.render(processedContent)
   const finalHTML = DOMPurify.sanitize(rendered, {
     ADD_TAGS: [
       'math',

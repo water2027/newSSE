@@ -1,7 +1,8 @@
 <!-- eslint-disable vue/html-self-closing -->
 <script setup lang="ts">
 import type { AllInfo } from '@/api/info/getInfo'
-import { onMounted, ref, useTemplateRef } from 'vue'
+import type { Ref } from 'vue'
+import { inject, onMounted, ref, useTemplateRef } from 'vue'
 
 import { useRouter } from 'vue-router'
 import { getAllInfo } from '@/api/info/getInfo'
@@ -10,6 +11,7 @@ import { updateEmailPush, updateUserInfo, uploadAvatar } from '@/api/info/update
 import { updatePassword } from '@/api/LoginAndRegister/forgetPwd'
 import { sendCode } from '@/api/LoginAndRegister/utils'
 import { showMsg } from '@/components/MessageBox'
+import { usePWA } from '@/composables/usePWA'
 import { useUserStore } from '@/store/userStore'
 import {
   levelClassHandler,
@@ -19,7 +21,11 @@ import {
 
 const router = useRouter()
 
-const { userInfo } = useUserStore()
+// 来自 DefaultLayout 提供的是否为宽屏（>768px）
+const isPC = inject('isPC', ref(false)) as Ref<boolean>
+
+const { userInfo, setToken, setRefreshToken } = useUserStore()
+const { pwaExperienceEnabled } = usePWA()
 const allInfo = ref<AllInfo>({
   avatarURL: '',
   ban: '',
@@ -40,7 +46,10 @@ async function codeHandler() {
   try {
     if (!allInfo.value)
       return
-    await sendCode(allInfo.value.email, 1)
+    const data = await sendCode(allInfo.value.email, 1)
+    if (!data)
+      return
+
     showMsg('验证码发过去啦')
   }
   catch (e) {
@@ -123,6 +132,8 @@ function logout() {
     localStorage.removeItem('email')
     localStorage.removeItem('password')
     localStorage.removeItem('rememberMe')
+    setToken('')
+    setRefreshToken('')
     router.push('/')
     window.location.reload()
   }
@@ -145,6 +156,11 @@ async function togglePush() {
     console.error(e)
     showMsg('失败了')
   }
+}
+
+function togglePWAExperience() {
+  pwaExperienceEnabled.value = !pwaExperienceEnabled.value
+  showMsg(`电脑端样式新体验已${pwaExperienceEnabled.value ? '启用' : '关闭'}`)
 }
 </script>
 
@@ -224,8 +240,14 @@ async function togglePush() {
       </div>
     </div>
     <div class="toggle-container" style="display: flex; align-items: center; gap: 10px;">
-      <span>禁用邮件推送</span>
+      <span>启用邮件推送</span>
       <div class="toggle-switch" :class="{ active: isPushDisabled }" @click="togglePush">
+        <span class="slider" />
+      </div>
+    </div>
+    <div v-if="isPC" class="toggle-container" style="display: flex; align-items: center; gap: 10px;">
+      <span>启用电脑端样式新体验</span>
+      <div class="toggle-switch" :class="{ active: pwaExperienceEnabled }" @click="togglePWAExperience">
         <span class="slider" />
       </div>
     </div>

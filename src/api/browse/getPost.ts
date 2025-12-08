@@ -71,7 +71,18 @@ async function getPosts(object: getPostsObject): Promise<Post[] | Rating[]> {
       },
       true,
     )
-    return await res!.json()
+    if (!res) {
+      console.error('getPosts: 请求失败，未获得响应')
+      return []
+    }
+
+    try {
+      return await res.json()
+    }
+    catch (e) {
+      console.error('getPosts: 解析响应失败', e)
+      return []
+    }
   }
   catch (e) {
     console.error(e)
@@ -113,8 +124,19 @@ async function getPostsNum(object: getPostsNumObject): Promise<number> {
       },
       true,
     )
-    const data = await res!.json()
-    return data.Postcount
+    if (!res) {
+      console.error('getPostsNum: 请求失败，未获得响应')
+      return -1
+    }
+
+    try {
+      const data = await res.json()
+      return typeof data.Postcount === 'number' ? data.Postcount : -1
+    }
+    catch (e) {
+      console.error('getPostsNum: 解析响应失败', e)
+      return -1
+    }
   }
   catch (e) {
     console.error(e)

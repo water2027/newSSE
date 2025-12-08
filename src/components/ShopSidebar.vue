@@ -27,23 +27,18 @@ const { userInfo } = useUserStore()
       <!-- 导航按钮部分 -->
       <div class="navigation-buttons">
         <RouterLink v-if="IsMain" to="/shop/myproducts" class="nav-button">
-          <span class="nav-icon">📦</span>
           <span class="nav-text">商品</span>
         </RouterLink>
         <RouterLink v-else to="/shop" class="nav-button">
-          <span class="nav-icon">🏠</span>
           <span class="nav-text">返回首页</span>
         </RouterLink>
         <RouterLink to="/chat" class="nav-button">
-          <span class="nav-icon">💬</span>
           <span class="nav-text">消息</span>
         </RouterLink>
         <RouterLink to="/shop/sale" class="nav-button">
-          <span class="nav-icon">💰</span>
           <span class="nav-text">出售</span>
         </RouterLink>
         <RouterLink to="/" class="nav-button home-button">
-          <span class="nav-icon">🏠</span>
           <span class="nav-text">主页</span>
         </RouterLink>
       </div>
@@ -59,7 +54,7 @@ const { userInfo } = useUserStore()
   background-position: center;
   background-repeat: no-repeat;
   padding: 20px 0;
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 4px 0 20px var(--color-post-card-box-shadow);
   border-radius: 0 20px 20px 0;
   position: relative;
   min-height: 100vh;
@@ -98,13 +93,13 @@ const { userInfo } = useUserStore()
   overflow: hidden;
   margin-bottom: 15px;
   border: 3px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 15px var(--color-post-card-box-shadow);
   transition: all 0.3s ease;
 }
 
 .avatar-container:hover {
   transform: scale(1.05);
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 6px 25px var(--color-post-card-hover-box-shadow);
   border-color: rgba(255, 255, 255, 0.5);
 }
 
@@ -135,74 +130,63 @@ const { userInfo } = useUserStore()
   height: 50px;
   border: none;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #2c3e50;
+  background: var(--shop-card-bg);
+  color: var(--color-text);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: 0 15px;
   text-decoration: none;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px var(--color-post-card-box-shadow);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
 }
 
 .nav-button:hover {
-  background: rgba(255, 255, 255, 1);
+  background: var(--shop-card-bg);
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 15px var(--color-post-card-hover-box-shadow);
 }
 
 .nav-button.router-link-active {
-  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  background: linear-gradient(135deg, var(--color-info) 0%, #2980b9 100%);
   color: white;
-  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
-}
-
-.nav-icon {
-  font-size: 18px;
-  margin-right: 12px;
-  width: 20px;
-  text-align: center;
-  transition: transform 0.3s ease;
+  box-shadow: 0 4px 15px var(--color-hover);
 }
 
 .nav-text {
   font-size: 14px;
   font-weight: 500;
-  flex: 1;
-}
-
-.nav-button:hover .nav-icon {
-  transform: scale(1.1);
+  text-align: center;
 }
 
 .home-button {
-  background: white !important;
-  color: #2c3e50 !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+  background: var(--shop-card-bg) !important;
+  color: var(--color-text) !important;
+  box-shadow: 0 2px 10px var(--color-post-card-box-shadow) !important;
 }
 
 .home-button:hover {
-  background: #f8f9fa !important;
+  background: var(--shop-section-bg) !important;
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 4px 15px var(--color-post-card-hover-box-shadow) !important;
 }
 
 .home-button.router-link-active {
-  background: white !important;
-  color: #2c3e50 !important;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+  background: var(--shop-card-bg) !important;
+  color: var(--color-text) !important;
+  box-shadow: 0 4px 15px var(--color-post-card-hover-box-shadow) !important;
 }
 
 .notification-badge {
   position: absolute;
   right: 15px;
-  background-color: #dc3545;
+  background-color: var(--color-error);
   color: white;
   font-size: 12px;
   padding: 2px 8px;
@@ -219,16 +203,16 @@ const { userInfo } = useUserStore()
   .sidebar {
     width: 220px;
   }
-  
+
   .avatar-container {
     width: 90px;
     height: 90px;
   }
-  
+
   .user-id {
     font-size: 18px;
   }
-  
+
   .nav-text {
     font-size: 15px;
   }
@@ -239,21 +223,21 @@ const { userInfo } = useUserStore()
     width: 180px;
     border-radius: 0 15px 15px 0;
   }
-  
+
   .avatar-container {
     width: 70px;
     height: 70px;
   }
-  
+
   .user-id {
     font-size: 14px;
   }
-  
+
   .nav-button {
     height: 45px;
     padding: 0 12px;
   }
-  
+
   .nav-text {
     font-size: 13px;
   }

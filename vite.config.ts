@@ -36,7 +36,7 @@ export default defineConfig({
             return 'vue'
           }
 
-          if (id.includes('markdown-it') || id.includes('dompurify') || id.includes('katex')) {
+          if (id.includes('markdown-it') || id.includes('dompurify') || id.includes('katex') || id.includes('@vscode/markdown-it-katex')) {
             return 'markdown'
           }
 

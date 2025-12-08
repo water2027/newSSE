@@ -203,6 +203,10 @@ function search() {
     .router-link-active {
       background: #444;
       color: #fff !important;
+
+      .icon {
+        filter: invert(1);
+      }
     }
 
     a:link,

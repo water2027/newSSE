@@ -11,7 +11,7 @@ import { useFormExam } from '@/composables/FormExam'
 
 import { useUserStore } from '@/store/userStore'
 
-const { setToken, setUserInfo } = useUserStore()
+const { setToken, setRefreshToken, setUserInfo } = useUserStore()
 
 const form = ref<CustomFormData[]>([
   {
@@ -31,25 +31,28 @@ const form = ref<CustomFormData[]>([
 ])
 
 const { correct } = useFormExam(form)
-const rememberMe = ref(false)
+const rememberMe = ref(true)
 
 async function loginHandler() {
   const email = form.value[0].value
   const password = form.value[1].value
   try {
     if (email && password) {
-      const token = await userLogin(email, password)
-      if (!token) {
+      const result = await userLogin(email, password)
+      if (!result) {
         showMsg('登录失败')
+        return
       }
-      setToken(token)
-      const info = await getInfo()
-      setUserInfo(info)
       if (rememberMe.value) {
-        localStorage.setItem('email', email)
-        localStorage.setItem('password', password)
         localStorage.setItem('rememberMe', 'true')
       }
+      else {
+        localStorage.removeItem('rememberMe')
+      }
+      setToken(result.token)
+      setRefreshToken(result.refresh_token)
+      const info = await getInfo()
+      setUserInfo(info)
     }
   }
   catch (error) {

@@ -157,7 +157,7 @@ const router = createRouter({
   ],
 })
 
-const { isLogin } = useUserStore()
+const { isLogin, refreshToken } = useUserStore()
 
 router.beforeEach((to, from, next) => {
   if (to.path.startsWith('/auth')) {
@@ -166,6 +166,12 @@ router.beforeEach((to, from, next) => {
     return
   }
   if (!isLogin.value) {
+    if (refreshToken.value) {
+      next()
+      setTitle(to.name as string)
+      return
+    }
+
     let redirect = `redirect=${to.path}`
     const query = to.query
     for (const key in query) {

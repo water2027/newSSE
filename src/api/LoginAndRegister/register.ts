@@ -8,7 +8,7 @@ async function userRegister(
   password1: string,
   password2: string,
   valiCode: string,
-) {
+): Promise<any> {
   try {
     const res = await requestFunc(
       `/auth/register`,

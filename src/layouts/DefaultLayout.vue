@@ -13,6 +13,7 @@ import { useRoute, useRouter } from 'vue-router'
 
 import ModeButton from '@/components/ModeButton.vue'
 import { useChat } from '@/composables/useChat'
+import { usePWA } from '@/composables/usePWA'
 import { useNewPostsStore } from '@/store/newPostsStore'
 import { useNoticeStore } from '@/store/noticeStore'
 import { showSnackbar } from '@/utils/snackbar'
@@ -22,6 +23,9 @@ const BottomNavbar = defineAsyncComponent(
 )
 const PcHeader = defineAsyncComponent(
   () => import('@/components/PcHeader.vue'),
+)
+const PwaPcHeader = defineAsyncComponent(
+  () => import('@/components/PwaPcHeader.vue'),
 )
 
 const PartitionList = defineAsyncComponent(() => import('@/components/PartitionList.vue'))
@@ -33,12 +37,27 @@ const { noticeNum, refreshNoticeNum } = useNoticeStore()
 const { startPolling, stopPolling, newPostsNotification, hideNotification } = useNewPostsStore()
 
 const { connect, disconnect, chatNum } = useChat()
+const { desktopExperienceEnabled } = usePWA()
 
 const windowWidth = ref(window.innerWidth)
 const isPC = computed(() => {
   return windowWidth.value > 768
 })
 provide('isPC', isPC)
+
+const isDesktopExperience = computed(() => isPC.value && desktopExperienceEnabled.value)
+
+// PWA/电脑端菜单状态管理
+const pwaMenuOpen = ref(true)
+
+// 计算是否应该折叠菜单
+const isMenuCollapsed = computed(() => {
+  if (!isDesktopExperience.value) {
+    return false
+  }
+  // 菜单关闭时返回true（折叠状态）
+  return !pwaMenuOpen.value
+})
 
 // 新增：输入框焦点状态
 const isAnyInputFocused = ref(false)
@@ -107,12 +126,12 @@ onMounted(() => {
   // 导入模块并注册
   import('@/utils/focusHandler').then(({ setupFocusHandlers }) => {
     const _ = setupFocusHandlers(
-      (e) => { isAnyInputFocused.value = true; },
-      (e) => { isAnyInputFocused.value = false; }
-    );
+      () => { isAnyInputFocused.value = true },
+      () => { isAnyInputFocused.value = false },
+    )
     // 可选：提供给子组件使用
     // provide('focusCleanup', _);
-  });
+  })
 
   if (!isPC.value) {
     window.addEventListener('touchstart', handleTouchStart)
@@ -159,7 +178,7 @@ watch(() => newPostsNotification.updatedAt, (updatedAt: number) => {
 </script>
 
 <template>
-  <div class="root w-full">
+  <div class="root w-full" :class="{ 'pwa-mode': isDesktopExperience }">
     <header>
       <div class="site-top">
         <div class="top-left" />
@@ -171,7 +190,8 @@ watch(() => newPostsNotification.updatedAt, (updatedAt: number) => {
         </div>
       </div>
       <template v-if="isPC">
-        <PcHeader :unread-chat-num="chatNum" :unread-notice-num="noticeNum.unreadTotalNum" />
+        <PwaPcHeader v-if="isDesktopExperience" v-model:menu-open="pwaMenuOpen" :unread-chat-num="chatNum" :unread-notice-num="noticeNum.unreadTotalNum" />
+        <PcHeader v-else :unread-chat-num="chatNum" :unread-notice-num="noticeNum.unreadTotalNum" />
       </template>
       <template v-else>
         <MobileHeader :style="{ height: headerHeight }" />
@@ -185,7 +205,7 @@ watch(() => newPostsNotification.updatedAt, (updatedAt: number) => {
       />
     </template>
     <main class="mt-2 w-full flex flex-row p-0">
-      <div class="content">
+      <div class="content" :class="{ 'menu-collapsed': isMenuCollapsed }" :data-menu-collapsed="isMenuCollapsed">
         <template v-if="!isPC && isHomePage">
           <PartitionList />
         </template>
@@ -240,6 +260,9 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition:
+    margin-left 0.3s ease,
+    width 0.3s ease;
 }
 
 /* 大屏幕样式 >768px */
@@ -248,5 +271,43 @@ header {
     padding-left: 5%;
     padding-right: 5%;
   }
+}
+
+/* PWA模式样式 */
+.root.pwa-mode {
+  position: relative;
+}
+
+.root.pwa-mode .content {
+  transition:
+    margin-left 0.3s ease,
+    width 0.3s ease;
+}
+
+/* 移动端不受PWA模式影响 */
+@media screen and (max-width: 767px) {
+  .root.pwa-mode .content:not(.menu-collapsed),
+  .root.pwa-mode .content.menu-collapsed {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+/* PC端PWA模式样式 */
+@media screen and (min-width: 768px) {
+  .root.pwa-mode .content:not(.menu-collapsed) {
+    margin-left: 280px;
+    width: calc(100% - 280px);
+  }
+
+  .root.pwa-mode .content.menu-collapsed {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+.root.pwa-mode .site-top {
+  position: relative;
+  z-index: 2001;
 }
 </style>
