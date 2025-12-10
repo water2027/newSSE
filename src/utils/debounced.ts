@@ -1,5 +1,5 @@
 import { showMsg } from "@/components/MessageBox";
-const MIN_CLICK_GAP = 1000
+const MIN_CLICK_GAP = 6000
 
 // 防抖函数（第一次点击有效）
 export function debounce<T extends (...args: any[]) => void>(
