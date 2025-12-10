@@ -1,5 +1,5 @@
-import { getInfoById } from '@/api/info/getInfo'
 import type { AllInfo } from '@/api/info/getInfo'
+import { getInfoById } from '@/api/info/getInfo'
 
 // 卖家名称缓存
 const sellerNameCache = new Map<number, string>()
@@ -18,16 +18,17 @@ export async function getSellerName(sellerId: number): Promise<string> {
   try {
     // 从API获取用户信息
     const userInfo: AllInfo = await getInfoById(sellerId)
-    
+
     if (userInfo && userInfo.name) {
       // 缓存结果
       sellerNameCache.set(sellerId, userInfo.name)
       return userInfo.name
     }
-    
+
     // 如果获取失败，返回默认值
     return `用户${sellerId}`
-  } catch (error) {
+  }
+  catch (error) {
     console.error('获取卖家名称失败:', error)
     // 返回默认值
     return `用户${sellerId}`
@@ -41,13 +42,13 @@ export async function getSellerName(sellerId: number): Promise<string> {
  */
 export async function getSellerNames(sellerIds: number[]): Promise<Map<number, string>> {
   const result = new Map<number, string>()
-  
+
   // 并行获取所有卖家名称
   const promises = sellerIds.map(async (sellerId) => {
     const name = await getSellerName(sellerId)
     result.set(sellerId, name)
   })
-  
+
   await Promise.all(promises)
   return result
 }
@@ -65,10 +66,8 @@ export function clearSellerNameCache(): void {
  */
 export async function preloadSellerNames(sellerIds: number[]): Promise<void> {
   const uncachedIds = sellerIds.filter(id => !sellerNameCache.has(id))
-  
+
   if (uncachedIds.length > 0) {
     await getSellerNames(uncachedIds)
   }
 }
-
-

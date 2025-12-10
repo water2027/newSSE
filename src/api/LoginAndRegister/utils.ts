@@ -37,11 +37,21 @@ async function sendCode(email: string, mode: 0 | 1) {
       },
       false,
     )
-    if (!res!.ok) {
+    if (!res) {
       showMsg('发送验证码失败, 请重新获取')
       return null
     }
-    const data = await res!.json()
+    if (!res.ok) {
+      const errorData = await res.json()
+      if (errorData && typeof errorData.msg === 'string') {
+        showMsg(errorData.msg)
+      }
+      else {
+        showMsg('发送验证码失败，请检查环境问题')
+      }
+      return null
+    }
+    const data = await res.json()
     return data
   }
   catch (e) {

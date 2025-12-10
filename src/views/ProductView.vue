@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { ProductDetail } from '@/api/shop/getProducts'
-import { computed, onMounted, ref, watch, nextTick } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 // 由于与本地声明冲突，改为重命名导入
 import { deleteProduct as apiDeleteProduct, saleProduct as apiSaleProduct } from '@/api/shop/controlProduct'
 import { getProductByID } from '@/api/shop/getProducts'
 import { showMsg } from '@/components/MessageBox'
+import { useChat } from '@/composables/useChat'
 import { useUserStore } from '@/store/userStore'
 import { getSellerName } from '@/utils/sellerNameMapper'
-import { useChat } from '@/composables/useChat'
 
 // 路由和状态管理
 const router = useRouter()
@@ -48,13 +48,15 @@ async function fetchProductDetail(ProductID: number): Promise<void> {
     error.value = null
     const response = await getProductByID(ProductID)
     product.value = response
-    
+
     // 获取卖家名称
     await fetchSellerName()
-  } catch (err) {
+  }
+  catch (err) {
     error.value = '获取商品详情失败，请稍后重试'
     console.error('Failed to fetch product detail:', err)
-  } finally {
+  }
+  finally {
     isLoading.value = false
   }
 }
@@ -64,7 +66,8 @@ async function fetchSellerName(): Promise<void> {
   try {
     const name = await getSellerName(product.value.SellerID)
     sellerName.value = name
-  } catch (error) {
+  }
+  catch (error) {
     console.error('获取卖家名称失败:', error)
     // 如果获取失败，使用原始数据或默认值
     sellerName.value = product.value.Seller || `用户${product.value.SellerID}`
@@ -92,17 +95,19 @@ function goToImage(index: number): void {
 
 // 私聊功能
 function chatWithSeller(isAnonymous: boolean): void {
-  if (!canInteract.value) return
-  
+  if (!canInteract.value)
+    return
+
   // 设置匿名模式
   setAnonymousMode(isAnonymous)
-  
+
   if (isAnonymous) {
     showMsg('正在跳转到匿名私聊页面')
-  } else {
+  }
+  else {
     showMsg('正在跳转到私聊页面')
   }
-  
+
   navigateChat()
 }
 
@@ -113,8 +118,9 @@ function goBack(): void {
 
 // 卖出商品
 async function saleProduct(): Promise<void> {
-  if (!canInteract.value) return
-  
+  if (!canInteract.value)
+    return
+
   if (confirm('确定要标记此商品为已售出吗？')) {
     try {
       isSelling.value = true
@@ -122,10 +128,12 @@ async function saleProduct(): Promise<void> {
       await apiSaleProduct(Number(product.value.ProductID))
       product.value.ISSold = true
       showMsg('商品已标记为售出')
-    } catch (err) {
+    }
+    catch (err) {
       showMsg('操作失败，请稍后重试')
       console.error('Sale product error:', err)
-    } finally {
+    }
+    finally {
       isSelling.value = false
     }
   }
@@ -133,18 +141,21 @@ async function saleProduct(): Promise<void> {
 
 // 删除商品
 async function deleteProduct(): Promise<void> {
-  if (!canInteract.value) return
-  
+  if (!canInteract.value)
+    return
+
   if (confirm('确定要删除此商品吗？此操作不可恢复！')) {
     try {
       isDeleting.value = true
       await apiDeleteProduct(Number(product.value.ProductID))
       showMsg('商品已删除')
       router.push('/shop')
-    } catch (err) {
+    }
+    catch (err) {
       showMsg('删除失败，请稍后重试')
       console.error('Delete product error:', err)
-    } finally {
+    }
+    finally {
       isDeleting.value = false
     }
   }
@@ -190,14 +201,16 @@ onMounted(() => {
   <div class="product-detail-container">
     <!-- 加载状态 -->
     <div v-if="isLoading" class="loading-container">
-      <div class="loading-spinner"></div>
+      <div class="loading-spinner" />
       <p>正在加载商品详情...</p>
     </div>
 
     <!-- 错误状态 -->
     <div v-else-if="error" class="error-container">
       <div class="error-content">
-        <div class="error-icon">⚠️</div>
+        <div class="error-icon">
+          ⚠️
+        </div>
         <h3>加载失败</h3>
         <p>{{ error }}</p>
         <button class="retry-button" @click="retryFetch">
@@ -216,18 +229,18 @@ onMounted(() => {
         </button>
 
         <div v-if="isCurrentUser" class="action-buttons">
-          <button 
+          <button
             v-if="!product.ISSold"
-            class="sale-button" 
+            class="sale-button"
             :disabled="isSelling"
             @click="saleProduct"
           >
             <span v-if="isSelling">处理中...</span>
             <span v-else>标记售出</span>
           </button>
-          
-          <button 
-            class="delete-button" 
+
+          <button
+            class="delete-button"
             :disabled="isDeleting"
             @click="deleteProduct"
           >
@@ -243,46 +256,46 @@ onMounted(() => {
           <div class="carousel">
             <div class="carousel-inner" :style="{ transform: `translateX(-${imageIndex * 100}%)` }">
               <div v-for="(image, index) in product.Photos" :key="`image-${index}`" class="carousel-item">
-                <img 
-                  :src="image" 
+                <img
+                  :src="image"
                   :alt="`商品图片 ${index + 1}`"
                   loading="lazy"
                   @error="handleImageError"
                 >
               </div>
             </div>
-            
+
             <!-- 控制按钮 -->
-            <button 
+            <button
               v-if="hasImages && product.Photos.length > 1"
-              class="carousel-control prev" 
-              @click="prevImage"
+              class="carousel-control prev"
               aria-label="上一张"
+              @click="prevImage"
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="15,18 9,12 15,6"></polyline>
+                <polyline points="15,18 9,12 15,6" />
               </svg>
             </button>
-            <button 
+            <button
               v-if="hasImages && product.Photos.length > 1"
-              class="carousel-control next" 
-              @click="nextImage"
+              class="carousel-control next"
               aria-label="下一张"
+              @click="nextImage"
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="9,18 15,12 9,6"></polyline>
+                <polyline points="9,18 15,12 9,6" />
               </svg>
             </button>
-            
+
             <!-- 指示器 -->
             <div v-if="hasImages && product.Photos.length > 1" class="carousel-indicators">
               <span
-                v-for="(image, index) in product.Photos" 
-                :key="`indicator-${index}`" 
+                v-for="(image, index) in product.Photos"
+                :key="`indicator-${index}`"
                 class="indicator"
-                :class="{ active: index === imageIndex }" 
-                @click="goToImage(index)"
+                :class="{ active: index === imageIndex }"
                 :aria-label="`跳转到第${index + 1}张图片`"
+                @click="goToImage(index)"
               />
             </div>
           </div>
@@ -299,7 +312,7 @@ onMounted(() => {
             已售出
           </div>
         </div>
-        
+
         <div class="product-meta">
           <p class="product-seller">
             <span class="seller-icon">👤</span>
@@ -309,7 +322,7 @@ onMounted(() => {
             <span class="current-price">¥{{ product.Price.toLocaleString() }}</span>
           </div>
         </div>
-        
+
         <div class="product-description">
           <h3>商品描述</h3>
           <p>{{ product.Description }}</p>
@@ -317,16 +330,16 @@ onMounted(() => {
 
         <!-- 操作按钮 -->
         <div class="action-buttons">
-          <button 
+          <button
             v-if="!isCurrentUser && canInteract"
-            class="chat-button primary" 
+            class="chat-button primary"
             @click="chatWithSeller(false)"
           >
             💬 私聊商家
           </button>
-          <button 
+          <button
             v-if="!isCurrentUser && canInteract"
-            class="chat-button secondary" 
+            class="chat-button secondary"
             @click="chatWithSeller(true)"
           >
             🎭 匿名私聊
@@ -348,7 +361,6 @@ onMounted(() => {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
@@ -361,10 +373,6 @@ onMounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
-    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
   pointer-events: none;
   z-index: 0;
 }
@@ -382,21 +390,26 @@ onMounted(() => {
   justify-content: center;
   min-height: 60vh;
   padding: 40px;
+  color: var(--color-text);
 }
 
 .loading-spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #4c8baf;
+  border: 4px solid var(--shop-skeleton-bg);
+  border-top: 4px solid var(--color-info);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 20px;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .error-container {
@@ -409,12 +422,13 @@ onMounted(() => {
 
 .error-content {
   text-align: center;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--shop-section-bg);
   padding: 40px;
   border-radius: 16px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 30px var(--color-post-card-box-shadow);
   backdrop-filter: blur(10px);
   max-width: 400px;
+  color: var(--color-text);
 }
 
 .error-icon {
@@ -424,13 +438,13 @@ onMounted(() => {
 
 .error-content h3 {
   font-size: 24px;
-  color: #e74c3c;
+  color: var(--color-error);
   margin-bottom: 12px;
   font-weight: 600;
 }
 
 .error-content p {
-  color: #666;
+  color: var(--shop-text-secondary);
   margin-bottom: 24px;
   line-height: 1.5;
 }
@@ -458,9 +472,9 @@ onMounted(() => {
   align-items: center;
   margin-bottom: 30px;
   padding: 20px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--shop-section-bg);
   border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px var(--color-post-card-box-shadow);
   backdrop-filter: blur(10px);
 }
 
@@ -472,33 +486,33 @@ onMounted(() => {
 .back-button,
 .delete-button {
   padding: 12px 20px;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  border: 2px solid transparent;
+  background: var(--shop-card-bg);
+  border: 2px solid var(--color-border);
   border-radius: 8px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  color: #333;
+  color: var(--color-text);
   font-size: 16px;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 10px;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px var(--color-post-card-box-shadow);
 }
 
 .back-button:hover {
-  color: #4c8baf;
-  border-color: #4c8baf;
+  color: var(--color-info);
+  border-color: var(--color-info);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 139, 175, 0.3);
+  box-shadow: 0 4px 12px var(--color-hover);
 }
 
 .delete-button:hover {
-  color: #e53935;
-  border-color: #e53935;
+  color: var(--color-error);
+  border-color: var(--color-error);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
+  box-shadow: 0 4px 12px var(--color-hover);
 }
 
 .back-button img,
@@ -515,11 +529,11 @@ onMounted(() => {
 }
 
 .carousel-container {
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 30px var(--color-post-card-box-shadow);
   border-radius: 16px;
   overflow: hidden;
-  background: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--shop-card-bg);
+  border: 1px solid var(--color-border);
 }
 
 .carousel {
@@ -598,46 +612,36 @@ onMounted(() => {
 
 /* 商品信息样式 */
 .product-info {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.95) 100%);
+  background: var(--shop-section-bg);
   padding: 40px;
   border-radius: 20px;
-  box-shadow: 
-    0 20px 60px rgba(0, 0, 0, 0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 20px 60px var(--color-post-card-box-shadow);
+  border: 1px solid var(--color-border);
   position: relative;
   backdrop-filter: blur(20px);
   overflow: hidden;
 }
 
-.product-info::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
-  background-size: 200% 100%;
-  border-radius: 20px 20px 0 0;
-  animation: shimmer 3s ease-in-out infinite;
-}
-
 @keyframes shimmer {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 .product-title {
   margin-top: 0;
   margin-bottom: 10px;
   font-size: 28px;
-  color: #333;
+  color: var(--color-text);
 }
 
 .product-seller {
   margin-bottom: 15px;
-  color: #666;
+  color: var(--shop-text-secondary);
 }
 
 .product-price-info {
@@ -649,7 +653,7 @@ onMounted(() => {
 .current-price {
   font-size: 24px;
   font-weight: bold;
-  color: #e53935;
+  color: var(--color-error);
   margin-right: 10px;
 }
 
@@ -662,16 +666,24 @@ onMounted(() => {
 .product-description {
   margin-bottom: 30px;
   line-height: 1.6;
-  color: #333;
+  color: var(--color-text);
 }
 
-.chat-buttons {
+.product-description h3 {
+  color: var(--color-text);
+}
+
+.product-description p {
+  color: var(--shop-text-muted);
+}
+
+.action-buttons {
   display: flex;
   gap: 15px;
   margin-top: 20px;
 }
 
-.chat-buttons button {
+.action-buttons button {
   padding: 14px 24px;
   border: none;
   border-radius: 8px;
@@ -682,27 +694,6 @@ onMounted(() => {
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.chat-buttons button:first-child {
-  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-  color: white;
-}
-
-.chat-buttons button:nth-child(2) {
-  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
-  color: white;
-}
-
-.chat-buttons button:last-child {
-  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-  color: white;
-}
-
-.chat-buttons button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px var(--color-post-card-box-shadow);
 }
 </style>
-

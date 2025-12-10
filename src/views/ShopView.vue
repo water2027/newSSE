@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Product } from '@/api/shop/getProducts'
-import { computed, inject, onBeforeUnmount, onMounted, ref, watch, nextTick } from 'vue'
+import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getProducts } from '@/api/shop/getProducts'
 import ProductCard from '@/components/card/ProductCard.vue'
@@ -15,20 +15,20 @@ interface CarouselItem {
 
 // 常量定义
 const CAROUSEL_ITEMS: CarouselItem[] = [
-  { 
-    image: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1749233653768900413_微信图片_20250606162503.jpg', 
+  {
+    image: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1749233653768900413_微信图片_20250606162503.jpg',
     title: '精选商品',
-    subtitle: '品质保证，价格优惠'
+    subtitle: '品质保证，价格优惠',
   },
-  { 
-    image: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1749233654349407951_96618898_p0.jpg', 
+  {
+    image: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1749233654349407951_96618898_p0.jpg',
     title: '热门推荐',
-    subtitle: '人气爆款，限时特惠'
+    subtitle: '人气爆款，限时特惠',
   },
-  { 
-    image: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1749233654953918669_121867383_p0.jpg', 
+  {
+    image: 'https://sse-market-source-1320172928.cos.ap-guangzhou.myqcloud.com/src/images/uploads/1749233654953918669_121867383_p0.jpg',
     title: '新品上市',
-    subtitle: '最新款式，抢先体验'
+    subtitle: '最新款式，抢先体验',
   },
 ]
 
@@ -40,7 +40,7 @@ const PRICE_RANGES = [
   { value: '0-50', label: '五十元以内' },
   { value: '0-100', label: '一百元以内' },
   { value: '0-500', label: '五百元以内' },
-  { value: '500-1000000', label: '五百元以上' }
+  { value: '500-1000000', label: '五百元以上' },
 ] as const
 
 // 路由和注入
@@ -69,12 +69,13 @@ const carouselItems = CAROUSEL_ITEMS
 const isMain = computed(() => /^\/shop\/?$/.test(route.fullPath))
 
 const filteredProducts = computed<Product[]>(() => {
-  if (!selectedPriceRange.value) return products.value
-  
+  if (!selectedPriceRange.value)
+    return products.value
+
   const [min, max] = selectedPriceRange.value.split('-')
   const minPrice = Number.parseInt(min, 10)
-  
-  return products.value.filter(product => {
+
+  return products.value.filter((product) => {
     if (max === '+') {
       return product.Price >= minPrice
     }
@@ -93,18 +94,20 @@ async function fetchProductsWithRetry(): Promise<void> {
     const endpoint = isMain.value ? 'home' : 'history'
     products.value = await getProducts(endpoint)
     retryCount.value = 0
-    
+
     // 预加载卖家名称
     if (products.value.length > 0) {
       const sellerIds = products.value.map(product => product.SellerID)
       await preloadSellerNames(sellerIds)
     }
-  } catch (err) {
+  }
+  catch (err) {
     retryCount.value++
     if (retryCount.value < maxRetries) {
       console.warn(`获取商品数据失败，正在重试 (${retryCount.value}/${maxRetries})`)
       setTimeout(() => fetchProductsWithRetry(), 1000 * retryCount.value)
-    } else {
+    }
+    else {
       error.value = '获取商品数据失败，请稍后重试'
       console.error('获取商品数据失败:', err)
     }
@@ -119,7 +122,8 @@ async function initData(): Promise<void> {
     if (!error.value) {
       setupAutoplay()
     }
-  } finally {
+  }
+  finally {
     isLoading.value = false
   }
 }
@@ -187,9 +191,11 @@ function handlePriceRangeChange(range: string): void {
 }
 
 // 布局切换
+/*
 function toggleLayoutMode(): void {
   layoutMode.value = layoutMode.value === 'grid' ? 'list' : 'grid'
 }
+*/
 
 // 设置布局模式
 function setLayoutMode(mode: 'grid' | 'list'): void {
@@ -213,7 +219,8 @@ watch(() => route.fullPath, () => {
 watch(() => document.visibilityState, (visibilityState) => {
   if (visibilityState === 'visible' && autoplay.value) {
     startAutoplay()
-  } else {
+  }
+  else {
     stopAutoplay()
   }
 })
@@ -250,9 +257,15 @@ onBeforeUnmount(() => {
     <template v-else-if="error">
       <div class="error-container">
         <div class="error-content">
-          <div class="error-icon">⚠️</div>
-          <h3 class="error-title">加载失败</h3>
-          <p class="error-message">{{ error }}</p>
+          <div class="error-icon">
+            ⚠
+          </div>
+          <h3 class="error-title">
+            加载失败
+          </h3>
+          <p class="error-message">
+            {{ error }}
+          </p>
           <button class="retry-button" @click="retryFetch">
             重试
           </button>
@@ -268,7 +281,7 @@ onBeforeUnmount(() => {
           <div class="top-section flex-">
             <!-- 轮播窗 -->
             <div class="carousel-container">
-              <div 
+              <div
                 class="carousel"
                 @mouseenter="handleCarouselMouseEnter"
                 @mouseleave="handleCarouselMouseLeave"
@@ -279,50 +292,54 @@ onBeforeUnmount(() => {
                     :key="`carousel-${index}`"
                     class="carousel-item"
                   >
-                    <img 
-                      :src="item.image" 
+                    <img
+                      :src="item.image"
                       :alt="item.title"
                       loading="lazy"
                       @error="handleImageError"
                     >
                     <div class="carousel-overlay">
-                      <h2 class="carousel-title">{{ item.title }}</h2>
-                      <p class="carousel-subtitle">{{ item.subtitle || '精选商品推荐' }}</p>
+                      <h2 class="carousel-title">
+                        {{ item.title }}
+                      </h2>
+                      <p class="carousel-subtitle">
+                        {{ item.subtitle || '精选商品推荐' }}
+                      </p>
                     </div>
                   </div>
                 </div>
-                
+
                 <!-- 控制按钮 -->
-                <button 
+                <button
                   v-if="carouselItems.length > 1"
-                  class="carousel-control prev" 
-                  @click="prevSlide"
+                  class="carousel-control prev"
                   aria-label="上一张"
+                  @click="prevSlide"
                 >
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="15,18 9,12 15,6"></polyline>
+                    <polyline points="15,18 9,12 15,6" />
                   </svg>
                 </button>
-                <button 
+                <button
                   v-if="carouselItems.length > 1"
-                  class="carousel-control next" 
-                  @click="nextSlide"
+                  class="carousel-control next"
                   aria-label="下一张"
+                  @click="nextSlide"
                 >
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="9,18 15,12 9,6"></polyline>
+                    <polyline points="9,18 15,12 9,6" />
                   </svg>
                 </button>
-                
+
                 <!-- 指示器 -->
                 <div v-if="carouselItems.length > 1" class="carousel-indicators">
                   <span
                     v-for="(item, index) in carouselItems"
                     :key="`indicator-${index}`"
-                    class="indicator" 
+                    class="indicator"
                     :class="{ active: index === currentIndex }"
-                    @click="goToSlide(index)"
                     :aria-label="`跳转到第${index + 1}张`"
+                    @click="goToSlide(index)"
                   />
                 </div>
               </div>
@@ -333,28 +350,24 @@ onBeforeUnmount(() => {
               <div class="filter-section">
                 <div class="filter-header">
                   <h3>筛选条件</h3>
-                  <div class="filter-icon">🔍</div>
                 </div>
                 <div class="price-filter">
                   <div class="price-label">
-                    <label>💰 价格区间：</label>
+                    <label>价格区间：</label>
                   </div>
-                  <div class="price-options">
-                    <label 
-                      v-for="range in PRICE_RANGES" 
-                      :key="range.value" 
-                      class="price-option"
+                  <select
+                    v-model="selectedPriceRange"
+                    class="price-select"
+                    @change="handlePriceRangeChange(selectedPriceRange)"
+                  >
+                    <option
+                      v-for="range in PRICE_RANGES"
+                      :key="range.value"
+                      :value="range.value"
                     >
-                      <input
-                        v-model="selectedPriceRange"
-                        type="radio"
-                        :value="range.value"
-                        name="priceRange"
-                        @change="handlePriceRangeChange(range.value)"
-                      >
-                      <span class="option-label">{{ range.label }}</span>
-                    </label>
-                  </div>
+                      {{ range.label }}
+                    </option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -372,50 +385,50 @@ onBeforeUnmount(() => {
                   共 {{ filteredProducts.length }} 件商品
                 </div>
               </div>
-              
+
               <!-- 布局切换控制 -->
               <div class="layout-controls">
                 <div class="layout-toggle">
-                  <button 
+                  <button
                     class="layout-btn"
                     :class="{ active: layoutMode === 'grid' }"
-                    @click="setLayoutMode('grid')"
                     title="网格布局"
+                    @click="setLayoutMode('grid')"
                   >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="3" y="3" width="7" height="7"></rect>
-                      <rect x="14" y="3" width="7" height="7"></rect>
-                      <rect x="14" y="14" width="7" height="7"></rect>
-                      <rect x="3" y="14" width="7" height="7"></rect>
+                      <rect x="3" y="3" width="7" height="7" />
+                      <rect x="14" y="3" width="7" height="7" />
+                      <rect x="14" y="14" width="7" height="7" />
+                      <rect x="3" y="14" width="7" height="7" />
                     </svg>
                   </button>
-                  <button 
+                  <button
                     class="layout-btn"
                     :class="{ active: layoutMode === 'list' }"
-                    @click="setLayoutMode('list')"
                     title="列表布局"
+                    @click="setLayoutMode('list')"
                   >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <line x1="8" y1="6" x2="21" y2="6"></line>
-                      <line x1="8" y1="12" x2="21" y2="12"></line>
-                      <line x1="8" y1="18" x2="21" y2="18"></line>
-                      <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                      <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                      <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                      <line x1="8" y1="6" x2="21" y2="6" />
+                      <line x1="8" y1="12" x2="21" y2="12" />
+                      <line x1="8" y1="18" x2="21" y2="18" />
+                      <line x1="3" y1="6" x2="3.01" y2="6" />
+                      <line x1="3" y1="12" x2="3.01" y2="12" />
+                      <line x1="3" y1="18" x2="3.01" y2="18" />
                     </svg>
                   </button>
                 </div>
               </div>
             </div>
-            
+
             <!-- 商品列表 -->
             <div class="product-list-wrapper">
-              <div 
-                v-if="hasFilteredProducts" 
+              <div
+                v-if="hasFilteredProducts"
                 class="product-list"
                 :class="{
                   'grid-layout': layoutMode === 'grid',
-                  'list-layout': layoutMode === 'list'
+                  'list-layout': layoutMode === 'list',
                 }"
               >
                 <ProductCard
@@ -427,7 +440,9 @@ onBeforeUnmount(() => {
                 />
               </div>
               <div v-else-if="hasProducts" class="empty-filter-results">
-                <div class="empty-icon">🔍</div>
+                <div class="empty-icon">
+                  🔍
+                </div>
                 <h3>没有找到符合条件的商品</h3>
                 <p>请尝试调整筛选条件</p>
                 <button class="clear-filter-btn" @click="selectedPriceRange = ''">
@@ -435,7 +450,9 @@ onBeforeUnmount(() => {
                 </button>
               </div>
               <div v-else class="empty-product-list">
-                <div class="empty-icon">📦</div>
+                <div class="empty-icon">
+                  📦
+                </div>
                 <h3>暂无商品</h3>
                 <p>{{ isMain ? '热门商品即将上线，敬请期待！' : '您还没有发布任何商品' }}</p>
               </div>
@@ -458,29 +475,9 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #f8f9fa;
   position: relative;
   overflow-x: hidden;
-}
-
-.shop-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.shop-container > * {
-  position: relative;
-  z-index: 1;
 }
 
 /* 错误状态样式 */
@@ -494,12 +491,12 @@ onBeforeUnmount(() => {
 
 .error-content {
   text-align: center;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--shop-section-bg);
   padding: 40px;
-  border-radius: 16px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--color-post-card-box-shadow);
   max-width: 400px;
+  color: var(--color-text);
 }
 
 .error-icon {
@@ -509,20 +506,20 @@ onBeforeUnmount(() => {
 
 .error-title {
   font-size: 24px;
-  color: #e74c3c;
+  color: var(--color-error);
   margin-bottom: 12px;
   font-weight: 600;
 }
 
 .error-message {
-  color: #666;
+  color: var(--shop-text-secondary);
   margin-bottom: 24px;
   line-height: 1.5;
 }
 
 .retry-button {
   padding: 12px 24px;
-  background: linear-gradient(135deg, #4c8baf 0%, #81b3e9 100%);
+  background: #4c8baf;
   color: white;
   border: none;
   border-radius: 8px;
@@ -532,8 +529,8 @@ onBeforeUnmount(() => {
 }
 
 .retry-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 139, 175, 0.3);
+  background: #3a6b8a;
+  box-shadow: 0 2px 8px rgba(76, 139, 175, 0.2);
 }
 
 /* 骨架屏样式 */
@@ -546,22 +543,22 @@ onBeforeUnmount(() => {
 .skeleton-top-section {
   display: flex;
   padding: 20px;
-  background-color: #f9f9f9;
+  background-color: var(--shop-section-bg);
   border-radius: 8px 8px 0 0;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px var(--color-post-card-box-shadow);
 }
 
 .skeleton-carousel {
   flex: 1;
   height: 300px;
-  background-color: #eee;
+  background-color: var(--shop-skeleton-bg);
   border-radius: 8px;
   margin-right: 20px;
 }
 
 .skeleton-filter {
   width: 250px;
-  background-color: #f5f5f5;
+  background-color: var(--shop-skeleton-bg);
   padding: 15px;
   border-radius: 6px;
 }
@@ -573,7 +570,7 @@ onBeforeUnmount(() => {
 
 .skeleton-title {
   height: 30px;
-  background-color: #eee;
+  background-color: var(--shop-skeleton-bg);
   border-radius: 4px;
   margin-bottom: 20px;
 }
@@ -586,7 +583,7 @@ onBeforeUnmount(() => {
 
 .skeleton-product-card {
   height: 300px;
-  background-color: #eee;
+  background-color: var(--shop-skeleton-bg);
   border-radius: 8px;
 }
 
@@ -595,9 +592,9 @@ onBeforeUnmount(() => {
   .top-section {
     display: flex;
     padding: 20px;
-    background-color: #f9f9f9;
+    background-color: var(--shop-section-bg);
     border-radius: 8px 8px 0 0;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px var(--color-post-card-box-shadow);
   }
 
   .carousel-container {
@@ -682,13 +679,10 @@ onBeforeUnmount(() => {
   position: relative;
   height: 300px;
   overflow: hidden;
-  border-radius: 20px;
-  box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--color-post-card-box-shadow);
+  background: var(--shop-card-bg);
+  border: 1px solid var(--color-border);
 }
 
 .carousel-inner {
@@ -714,35 +708,18 @@ onBeforeUnmount(() => {
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(
-    180deg, 
-    transparent 0%, 
-    rgba(0, 0, 0, 0.3) 50%, 
-    rgba(0, 0, 0, 0.8) 100%
-  );
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.4) 70%, rgba(0, 0, 0, 0.7) 100%);
   color: white;
   padding: 30px 20px 20px;
   text-align: center;
-  backdrop-filter: blur(5px);
 }
 
 .carousel-title {
   font-size: 28px;
   font-weight: 700;
   margin: 0 0 8px 0;
-  text-shadow: 
-    0 2px 4px rgba(0, 0, 0, 0.5),
-    0 0 20px rgba(255, 255, 255, 0.1);
-  background: linear-gradient(45deg, #fff, #f0f0f0);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: titleGlow 3s ease-in-out infinite alternate;
-}
-
-@keyframes titleGlow {
-  0% { filter: brightness(1); }
-  100% { filter: brightness(1.2); }
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  color: white;
 }
 
 .carousel-subtitle {
@@ -758,8 +735,8 @@ onBeforeUnmount(() => {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
-  color: #333;
+  background: var(--shop-card-bg);
+  color: var(--color-text);
   border: none;
   width: 50px;
   height: 50px;
@@ -770,19 +747,14 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 
-    0 4px 15px rgba(0, 0, 0, 0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px var(--color-post-card-box-shadow);
 }
 
 .carousel-control:hover {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.9) 100%);
-  transform: translateY(-50%) scale(1.15);
-  box-shadow: 
-    0 8px 25px rgba(0, 0, 0, 0.15),
-    0 0 0 1px rgba(255, 255, 255, 0.3);
+  background: var(--shop-card-bg);
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 4px 12px var(--color-post-card-hover-box-shadow);
 }
 
 .carousel-control:active {
@@ -816,52 +788,30 @@ onBeforeUnmount(() => {
   background: rgba(255, 255, 255, 0.4);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
   border: 2px solid transparent;
-  backdrop-filter: blur(5px);
 }
 
 .indicator:hover {
   background: rgba(255, 255, 255, 0.7);
-  transform: scale(1.2);
+  transform: scale(1.1);
 }
 
 .indicator.active {
-  background: linear-gradient(45deg, #fff, #f0f0f0);
+  background: white;
   border: 2px solid rgba(255, 255, 255, 0.8);
-  transform: scale(1.3);
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+  transform: scale(1.2);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
 }
 
 /* 筛选框样式 */
 .filter-section {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.95) 100%);
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(20px);
+  background: var(--shop-filter-bg);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px var(--color-post-card-box-shadow);
+  border: 1px solid var(--color-border);
   position: relative;
-  overflow: hidden;
-}
-
-.filter-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
-  background-size: 200% 100%;
-  animation: shimmer 3s ease-in-out infinite;
-}
-
-@keyframes shimmer {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
 }
 
 .filter-header {
@@ -873,25 +823,9 @@ onBeforeUnmount(() => {
 
 .filter-section h3 {
   margin: 0;
-  font-size: 20px;
-  color: #2c3e50;
-  font-weight: 700;
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.filter-icon {
-  font-size: 24px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-  animation: bounce 2s ease-in-out infinite;
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-  40% { transform: translateY(-3px); }
-  60% { transform: translateY(-2px); }
+  font-size: 18px;
+  color: var(--color-text);
+  font-weight: 600;
 }
 
 .price-filter {
@@ -902,74 +836,39 @@ onBeforeUnmount(() => {
 
 .price-label {
   font-weight: 600;
-  color: #555;
+  color: var(--color-text);
   font-size: 14px;
 }
 
-.price-options {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.price-option {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  padding: 12px 16px;
-  border-radius: 12px;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 2px solid transparent;
-  background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(5px);
-  position: relative;
-  overflow: hidden;
-}
-
-.price-option::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
+.price-select {
   width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  transition: left 0.5s ease;
-}
-
-.price-option:hover::before {
-  left: 100%;
-}
-
-.price-option:hover {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-  border-color: rgba(102, 126, 234, 0.3);
-  transform: translateX(5px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
-}
-
-.price-option input[type="radio"] {
-  margin-right: 12px;
-  accent-color: #667eea;
-  transform: scale(1.2);
-}
-
-.option-label {
+  padding: 12px 16px;
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--shop-filter-bg);
+  color: var(--color-text);
   font-size: 15px;
-  color: #555;
-  transition: all 0.3s ease;
   font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
 }
 
-.price-option:hover .option-label {
-  color: #667eea;
-  font-weight: 600;
+.price-select:hover {
+  border-color: var(--color-info);
+  background-color: var(--shop-filter-bg);
+  box-shadow: 0 2px 8px var(--color-hover);
 }
 
-.price-option input[type="radio"]:checked + .option-label {
-  color: #667eea;
-  font-weight: 700;
-  text-shadow: 0 1px 2px rgba(102, 126, 234, 0.2);
+.price-select:focus {
+  outline: none;
+  border-color: var(--color-info);
+  box-shadow: 0 0 0 3px var(--color-hover);
 }
 
 /* 商品展示区域 */
@@ -998,12 +897,10 @@ onBeforeUnmount(() => {
 
 .layout-toggle {
   display: flex;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--shop-filter-bg);
   border-radius: 12px;
   padding: 4px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--color-border);
 }
 
 .layout-btn {
@@ -1015,7 +912,7 @@ onBeforeUnmount(() => {
   border: none;
   border-radius: 8px;
   background: transparent;
-  color: #7f8c8d;
+  color: var(--shop-text-muted);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -1030,23 +927,18 @@ onBeforeUnmount(() => {
 .layout-btn.active {
   background: linear-gradient(135deg, #134e13 0%, #0d3d0d 100%);
   color: white;
-  box-shadow: 0 4px 12px rgba(19, 78, 19, 0.3);
 }
 
 .layout-btn.active:hover {
   transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(19, 78, 19, 0.4);
 }
 
 .product-list-title {
   margin: 0;
   font-size: 28px;
-  color: #000000;
-  --color-text: #000000;
-  font-weight: 800;
-  text-shadow: 
-  1px 1px 0 rgba(255, 255, 255, 0.1), 
-  0 2px 4px rgba(0, 0, 0, 0.3);  
+  color: var(--color-text);
+  font-weight: 900;
+  font-family: 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
   position: relative;
 }
 
@@ -1057,19 +949,17 @@ onBeforeUnmount(() => {
   left: 0;
   width: 60px;
   height: 3px;
-  background: linear-gradient(90deg, #667eea, #764ba2);
+  background: var(--color-text);
   border-radius: 2px;
 }
 
 .product-count {
-  color: #7f8c8d;
+  color: var(--color-text);
   font-size: 14px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 249, 250, 0.9) 100%);
+  background: var(--shop-card-bg);
   padding: 8px 16px;
   border-radius: 25px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-border);
   font-weight: 600;
 }
 
@@ -1078,9 +968,9 @@ onBeforeUnmount(() => {
 .empty-filter-results {
   text-align: center;
   padding: 60px 20px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--shop-section-bg);
   border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px var(--color-post-card-box-shadow);
   margin: 20px 0;
 }
 
@@ -1093,14 +983,14 @@ onBeforeUnmount(() => {
 .empty-product-list h3,
 .empty-filter-results h3 {
   font-size: 20px;
-  color: #2c3e50;
+  color: var(--color-text);
   margin-bottom: 12px;
   font-weight: 600;
 }
 
 .empty-product-list p,
 .empty-filter-results p {
-  color: #7f8c8d;
+  color: var(--shop-text-muted);
   margin-bottom: 24px;
   line-height: 1.5;
 }
@@ -1176,15 +1066,15 @@ onBeforeUnmount(() => {
   .product-list.grid-layout {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .product-list.list-layout {
     grid-template-columns: 1fr;
   }
-  
+
   .layout-controls {
     display: none; /* 移动端隐藏布局切换按钮 */
   }
-  
+
   .product-list-header {
     flex-direction: column;
     align-items: flex-start;
