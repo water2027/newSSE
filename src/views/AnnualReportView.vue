@@ -17,6 +17,43 @@ const bgmUrl = 'https://music.163.com/song/media/outer/url?id=2723954830.mp3'
 const audioRef = ref<HTMLAudioElement | null>(null)
 const isPlaying = ref(false)
 const autoPlayAttempted = ref(false)
+const musicEnergy = ref(1) // 1 是基础值
+let beatTimer: number | null = null
+
+// 模拟律动引擎
+function startBeatAnimation() {
+  if (beatTimer)
+    cancelAnimationFrame(beatTimer)
+
+  const animate = (timestamp: number) => {
+    // 两段缓慢正弦叠加 + 轻微心跳感
+    const slowBreath = Math.sin(timestamp / 900) * 0.12
+    const softWave = Math.sin(timestamp / 2600) * 0.08
+    const gentlePulse = Math.max(0, Math.sin(timestamp / 600)) * 0.06
+    const targetEnergy = 1 + slowBreath + softWave + gentlePulse
+
+    // 平滑插值，避免闪烁
+    musicEnergy.value += (targetEnergy - musicEnergy.value) * 0.08
+
+    if (isPlaying.value) {
+      beatTimer = requestAnimationFrame(animate)
+    }
+    else {
+      musicEnergy.value = 1 // 停止时重置
+    }
+  }
+
+  beatTimer = requestAnimationFrame(animate)
+}
+
+function stopBeatAnimation() {
+  if (beatTimer) {
+    cancelAnimationFrame(beatTimer)
+    beatTimer = null
+  }
+  // 平滑恢复到默认状态
+  musicEnergy.value = 1
+}
 
 // 检测是否是微信浏览器
 function isWechat(): boolean {
@@ -29,11 +66,13 @@ function toggleMusic() {
   if (isPlaying.value) {
     audioRef.value.pause()
     isPlaying.value = false
+    stopBeatAnimation()
   }
   else {
     // 用户主动点击按钮，属于用户手势，通常允许播放
     audioRef.value.play().then(() => {
       isPlaying.value = true
+      startBeatAnimation()
     }).catch((e) => {
       console.log('Toggle play failed:', e)
     })
@@ -54,6 +93,7 @@ function tryPlayMusic(mute = false) {
     .then(() => {
       // 播放成功
       isPlaying.value = true
+      startBeatAnimation()
       // 如果是静音播放成功的，不再需要自动播放逻辑了，但需要恢复音量
       if (mute) {
         // 静音播放成功后，等待下一次交互恢复音量
@@ -72,6 +112,7 @@ function tryPlayMusic(mute = false) {
       // 播放失败
       console.log(`Play failed (muted=${mute}):`, e)
       isPlaying.value = false
+      stopBeatAnimation()
       if (mute) {
         // 如果静音播放也失败，确保静音状态复位，以免下次播放无声
         audio.muted = false
@@ -235,12 +276,14 @@ function goHome() {
   if (audioRef.value) {
     audioRef.value.pause()
     isPlaying.value = false
+    stopBeatAnimation()
   }
   router.push('/')
 }
 
 onUnmounted(() => {
   // 组件卸载时停止音乐
+  stopBeatAnimation()
   if (audioRef.value) {
     audioRef.value.pause()
     audioRef.value = null
@@ -307,7 +350,11 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="report-container">
+  <div class="report-container" :style="{ '--music-energy': musicEnergy }">
+    <!-- 动态光影层 -->
+    <div class="ambient-light warm" />
+    <div class="ambient-light cool" />
+
     <!-- 背景音乐 -->
     <audio ref="audioRef" :src="bgmUrl" loop preload="auto" />
 
@@ -704,13 +751,43 @@ onMounted(async () => {
   width: 100vw;
   height: 100vh;
   background-color: #030712; /* Very dark blue/black */
+  /* 调整为更温馨的深紫色基调，并让光晕范围跟随音乐微动 */
   background-image:
-    radial-gradient(circle at 50% 50%, #1e3a8a 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, #be123c 0%, transparent 20%);
+    radial-gradient(circle at 50% 50%, #312e81 0%, transparent calc(55% * var(--music-energy))),
+    radial-gradient(circle at 80% 20%, #be123c 0%, transparent calc(25% * var(--music-energy)));
+  transition: background-image 0.2s ease;
   color: #e2e8f0;
   overflow: hidden;
   font-family: 'Rajdhani', sans-serif;
   z-index: 9999;
+  --music-energy: 1;
+}
+
+/* Ambient Light */
+.ambient-light {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+}
+
+.ambient-light.warm {
+  background: radial-gradient(circle at 30% 40%, rgba(251, 191, 36, 0.15) 0%, transparent 60%);
+  transform: scale(var(--music-energy));
+  filter: blur(40px);
+  mix-blend-mode: screen;
+}
+
+.ambient-light.cool {
+  background: radial-gradient(circle at 70% 60%, rgba(244, 114, 182, 0.1) 0%, transparent 50%);
+  transform: scale(calc(var(--music-energy) * 0.9));
+  filter: blur(50px);
+  mix-blend-mode: screen;
 }
 
 /* Background Grid */
@@ -997,7 +1074,7 @@ h3,
   padding: 5px;
   border: 2px dashed #f43f5e;
   border-radius: 50%;
-  animation: rotate 10s linear infinite;
+  animation: rotate 12.5s linear infinite;
 }
 
 .avatar {
