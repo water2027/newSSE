@@ -152,7 +152,7 @@ const router = createRouter({
     },
     {
       path: '/annual2025',
-      name: 'AnnualReport',
+      name: 'AnnualReport2025',
       component: () => import('@/views/AnnualReportView.vue'),
     },
     {
@@ -170,6 +170,20 @@ router.beforeEach((to, from, next) => {
     setTitle(to.name as string)
     return
   }
+
+  // 2025年度报告时间检测
+  if (to.path === '/annual2025') {
+    const now = new Date().getTime()
+    const start = new Date('2026-01-20T00:00:00').getTime()
+    const end = new Date('2026-02-27T23:59:59').getTime()
+
+    if (now < start || now > end) {
+      alert('不在活动时间内')
+      next('/')
+      return
+    }
+  }
+
   if (!isLogin.value) {
     if (refreshToken.value) {
       next()

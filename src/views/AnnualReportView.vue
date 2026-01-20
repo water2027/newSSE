@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { AnnualReportData } from '@/api/info/getAnnualReport'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { getAnnualReport } from '@/api/info/getAnnualReport'
 import { levelNameHandler } from '@/utils/level'
@@ -11,6 +11,35 @@ const loading = ref(true)
 const reportData = ref<AnnualReportData | null>(null)
 const currentSlide = ref(0)
 const transitionName = ref('slide-up')
+
+// 背景音乐相关
+const bgmUrl = 'https://music.163.com/song/media/outer/url?id=2723954830.mp3'
+const audioRef = ref<HTMLAudioElement | null>(null)
+const isPlaying = ref(false)
+const isFirstInteraction = ref(true)
+
+function toggleMusic() {
+  if (!audioRef.value)
+    return
+  if (isPlaying.value) {
+    audioRef.value.pause()
+    isPlaying.value = false
+  }
+  else {
+    audioRef.value.play()
+    isPlaying.value = true
+  }
+}
+
+function playMusic() {
+  if (audioRef.value && !isPlaying.value) {
+    audioRef.value.play().then(() => {
+      isPlaying.value = true
+    }).catch((e) => {
+      console.log('Auto play failed:', e)
+    })
+  }
+}
 
 // Default avatar fallback
 const defaultAvatar = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
@@ -24,7 +53,88 @@ const daysJoined = computed(() => {
   return Math.floor(ms / (1000 * 60 * 60 * 24))
 })
 
+// 动态提示语 - 根据数据生成温馨文案
+const durationMessage = computed(() => {
+  const days = daysJoined.value
+  if (days >= 365)
+    return '一整年的陪伴，感谢有你'
+  if (days >= 180)
+    return '半年时光，见证彼此成长'
+  if (days >= 90)
+    return '三个月的相遇，故事刚刚开始'
+  if (days >= 30)
+    return '初来乍到，未来可期'
+  return '欢迎新朋友，期待你的精彩'
+})
+
+const postingMessage = computed(() => {
+  const posts = reportData.value?.thisYearPostCnt || 0
+  if (posts >= 100)
+    return '高产似那啥！你是集市的创作达人'
+  if (posts >= 50)
+    return '稳定输出，你的坚持让人敬佩'
+  if (posts >= 20)
+    return '积少成多，每一篇都是独特的印记'
+  if (posts >= 5)
+    return '质量优先，你的每次分享都很用心'
+  if (posts >= 1)
+    return '勇敢迈出第一步，期待更多精彩'
+  return '新的一年，期待你的首次发声'
+})
+
+const momentMessage = computed(() => {
+  const maxLikes = reportData.value?.maxLikeNum || 0
+  const maxViews = reportData.value?.maxBrowseNum || 0
+  if (maxLikes >= 100 || maxViews >= 1000)
+    return '这一刻，你成为了焦点'
+  if (maxLikes >= 50 || maxViews >= 500)
+    return '你的内容引发了不少共鸣'
+  if (maxLikes >= 10 || maxViews >= 100)
+    return '有人因你的分享而驻足'
+  return '每一次表达都值得被看见'
+})
+
+const resonanceMessage = computed(() => {
+  const comments = (reportData.value?.pCommentCnt || 0) + (reportData.value?.ccommentCnt || 0)
+  const beCommented = reportData.value?.beCommentedCount || 0
+  if (comments >= 100 || beCommented >= 50)
+    return '你是社区的活跃因子，让讨论更有温度'
+  if (comments >= 30 || beCommented >= 20)
+    return '你的参与让对话更加丰富多彩'
+  if (comments >= 10 || beCommented >= 5)
+    return '每一次互动都是一次小小的相遇'
+  return '期待你在新的一年里更多参与讨论'
+})
+
+const connectionMessage = computed(() => {
+  const chatCount = reportData.value?.chatCount || 0
+  const hasTopUser = reportData.value?.maxSayUser?.UserID
+  if (chatCount >= 500 && hasTopUser)
+    return '你们的对话跨越时光，这份默契真珍贵'
+  if (chatCount >= 100 && hasTopUser)
+    return '有些人，聊着聊着就成了朋友'
+  if (chatCount >= 10)
+    return '每条消息都是一座小桥，连接着彼此'
+  return '新的一年，期待你认识更多有趣的人'
+})
+
+const summaryMessage = computed(() => {
+  const score = reportData.value?.score || 0
+  if (score >= 1000)
+    return '你是集市的资深玩家，感谢一路同行'
+  if (score >= 500)
+    return '稳步成长中，未来会更精彩'
+  if (score >= 100)
+    return '继续加油，下一个等级在向你招手'
+  return '旅程才刚开始，2026 我们一起出发'
+})
+
 function handleInteraction() {
+  // 第一次点击时播放音乐
+  if (isFirstInteraction.value) {
+    playMusic()
+    isFirstInteraction.value = false
+  }
   // Simple click to next
   nextSlide()
 }
@@ -48,8 +158,21 @@ function restart() {
 }
 
 function goHome() {
+  // 离开页面时停止音乐
+  if (audioRef.value) {
+    audioRef.value.pause()
+    isPlaying.value = false
+  }
   router.push('/')
 }
+
+onUnmounted(() => {
+  // 组件卸载时停止音乐
+  if (audioRef.value) {
+    audioRef.value.pause()
+    audioRef.value = null
+  }
+})
 
 let touchStartY = 0
 let touchEndY = 0
@@ -74,18 +197,17 @@ function handleSwipe() {
   }
 }
 
+// 计算要显示的其他好友（排除 maxSayUser）
+const otherFriends = computed(() => {
+  if (!reportData.value?.relevantRespUsers)
+    return []
+  const maxUserId = reportData.value?.maxSayUser?.UserID
+  return reportData.value.relevantRespUsers
+    .filter(u => u.UserID !== maxUserId)
+    .slice(0, 4)
+})
+
 onMounted(async () => {
-  // Date Check
-  const now = new Date().getTime()
-  const start = new Date('2026-01-20T00:00:00').getTime()
-  const end = new Date('2026-02-27T23:59:59').getTime()
-
-  if (now < start || now > end) {
-    alert('不在活动时间内')
-    router.replace('/')
-    return
-  }
-
   try {
     const res = await getAnnualReport()
     if (res && res.code === 200) {
@@ -107,189 +229,328 @@ onMounted(async () => {
 
 <template>
   <div class="report-container">
+    <!-- 背景音乐 -->
+    <audio ref="audioRef" :src="bgmUrl" loop preload="auto" />
+
+    <!-- 音乐控制按钮 -->
+    <div class="music-control" @click.stop="toggleMusic">
+      <svg v-if="isPlaying" class="music-icon playing" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9 18V6M15 18V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" opacity="0.5" />
+      </svg>
+      <svg v-else class="music-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 8L16 12L10 16V8Z" fill="currentColor" />
+        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" opacity="0.5" />
+        <line x1="4" y1="4" x2="20" y2="20" stroke="currentColor" stroke-width="1.5" opacity="0.7" />
+      </svg>
+    </div>
+
+    <div class="background-grid" />
+    <div class="scan-line" />
+
     <div v-if="loading" class="loading-screen">
-      <div class="spinner" />
-      <p>正在生成您的2025年度报告...</p>
+      <div class="tech-spinner">
+        <div class="spinner-inner" />
+      </div>
+      <p class="loading-text">
+        SYSTEM INITIALIZING...
+      </p>
     </div>
 
     <div v-else class="slide-container" @click="handleInteraction" @touchstart="handleTouchStart" @touchend="handleTouchEnd">
       <transition :name="transitionName">
         <!-- Slide 1: Cover -->
-        <div v-if="currentSlide === 0" key="0" class="slide slide-1">
+        <div v-if="currentSlide === 0" key="0" class="slide slide-cover">
           <div class="content">
-            <div class="logo">
-              SSE Market
+            <div class="top-decoration">
+              <span class="deco-line" />
+              <span class="deco-text">ANNUAL REPORT</span>
+              <span class="deco-line" />
             </div>
-            <h1>2025</h1>
-            <h2>年度报告</h2>
-            <p class="greeting">
-              Hi, {{ reportData?.name }}
-            </p>
-            <div class="avatar-container">
-              <img :src="reportData?.avatarUrl || defaultAvatar" alt="Avatar" class="avatar">
+            <div class="main-title-box">
+              <h1 class="glitch-text" data-text="2025">
+                2025
+              </h1>
+              <h2>集市年度报告</h2>
             </div>
-            <p class="hint">
-              点击或滑动开启
-            </p>
-            <div class="arrow-down">
-              ↓
+
+            <div class="user-profile">
+              <div class="avatar-ring">
+                <img :src="reportData?.avatarUrl || defaultAvatar" alt="Avatar" class="avatar">
+              </div>
+              <p class="greeting">
+                {{ reportData?.name }}
+              </p>
+              <p v-if="reportData?.intro" class="intro-text">
+                "{{ reportData?.intro }}"
+              </p>
+            </div>
+
+            <div class="bottom-hint">
+              <p class="hint-text">
+                TAP TO ACCESS
+              </p>
+              <div class="arrow-down" />
             </div>
           </div>
         </div>
 
         <!-- Slide 2: Duration -->
-        <div v-else-if="currentSlide === 1" key="1" class="slide slide-2">
+        <div v-else-if="currentSlide === 1" key="1" class="slide slide-duration">
           <div class="content">
-            <h3>缘起</h3>
-            <p>我们相识已经</p>
-            <div class="highlight-number">
-              {{ daysJoined }} <span class="unit">天</span>
+            <h3 class="section-title">
+              START
+            </h3>
+            <p class="desc-text">
+              已接入 SSE MARKET 网络
+            </p>
+            <div class="highlight-box">
+              <div class="highlight-number">
+                {{ daysJoined }}
+              </div>
+              <span class="unit">DAYS</span>
             </div>
+            <p class="warm-message">
+              {{ durationMessage }}
+            </p>
             <p class="sub-text">
-              在 SSE Market 的每一天<br>都值得纪念
+              你在集市的每次参与<br>都留下了独特的痕迹
             </p>
           </div>
         </div>
 
         <!-- Slide 3: Posting Activity -->
-        <div v-else-if="currentSlide === 2" key="2" class="slide slide-3">
+        <div v-else-if="currentSlide === 2" key="2" class="slide slide-posting">
           <div class="content">
-            <h3>创作</h3>
-            <p>2025年，你发布了</p>
-            <div class="highlight-number">
-              {{ reportData?.thisYearPostCnt }} <span class="unit">篇</span>
-            </div>
-            <p>帖子</p>
-            <div class="stat-row">
-              <div class="stat-item">
-                <span class="label">累计获赞</span>
-                <span class="value">{{ reportData?.totalPostLikeNum }}</span>
+            <h3 class="section-title">
+              OUTPUT
+            </h3>
+            <p class="desc-text">
+              你的输出力
+            </p>
+            <div class="main-stat">
+              <span class="label">本年度发布</span>
+              <div class="highlight-number red-glow">
+                {{ reportData?.thisYearPostCnt }}
               </div>
-              <div class="stat-item">
-                <span class="label">今年获赞</span>
-                <span class="value">{{ reportData?.thisYearLikeNum }}</span>
+              <span class="unit">POSTS</span>
+            </div>
+
+            <div class="tech-card">
+              <div class="stat-row">
+                <div class="stat-item">
+                  <span class="label">累计发布</span>
+                  <span class="value">{{ reportData?.totalPostCnt }}</span>
+                </div>
+                <div class="stat-divider" />
+                <div class="stat-item">
+                  <span class="label">累计获赞</span>
+                  <span class="value">{{ reportData?.totalPostLikeNum }}</span>
+                </div>
               </div>
             </div>
+
+            <p class="warm-message mt-3">
+              {{ postingMessage }}
+            </p>
+            <p class="sub-text mt-2">
+              今年收获了 {{ reportData?.thisYearLikeNum }} 次认可
+            </p>
           </div>
         </div>
 
         <!-- Slide 4: Top Post -->
-        <div v-else-if="currentSlide === 3" key="3" class="slide slide-4">
+        <div v-else-if="currentSlide === 3" key="3" class="slide slide-highlight">
           <div class="content">
-            <h3>高光时刻</h3>
-            <p>你的某个瞬间特别闪耀</p>
-            <div class="card">
-              <div class="card-row">
-                <span>最高点赞</span>
-                <span class="card-val">{{ reportData?.maxLikeNum }}</span>
+            <h3 class="section-title">
+              MOMENT
+            </h3>
+            <p class="desc-text">
+              你的时刻
+            </p>
+
+            <div class="hud-container">
+              <div class="hud-item">
+                <div class="hud-label">
+                  MAX LIKES
+                </div>
+                <div class="hud-value color-1">
+                  {{ reportData?.maxLikeNum }}
+                </div>
+                <div class="hud-bar" />
               </div>
-              <div class="card-row">
-                <span>最高浏览</span>
-                <span class="card-val">{{ reportData?.maxBrowseNum }}</span>
+              <div class="hud-item">
+                <div class="hud-label">
+                  MAX VIEWS
+                </div>
+                <div class="hud-value color-2">
+                  {{ reportData?.maxBrowseNum }}
+                </div>
+                <div class="hud-bar" />
               </div>
-              <div class="card-row">
-                <span>最高评论</span>
-                <span class="card-val">{{ reportData?.maxCommentNum }}</span>
+              <div class="hud-item">
+                <div class="hud-label">
+                  MAX COMMENTS
+                </div>
+                <div class="hud-value color-3">
+                  {{ reportData?.maxCommentNum }}
+                </div>
+                <div class="hud-bar" />
               </div>
             </div>
+
+            <p class="warm-message">
+              {{ momentMessage }}
+            </p>
             <p class="sub-text">
-              你的分享，引人注目
+              你的声音，正在回响
             </p>
           </div>
         </div>
 
         <!-- Slide 5: Interaction -->
-        <div v-else-if="currentSlide === 4" key="4" class="slide slide-5">
+        <div v-else-if="currentSlide === 4" key="4" class="slide slide-interaction">
           <div class="content">
-            <h3>互动</h3>
-            <p>你依然热衷于交流</p>
-            <div class="grid-stats">
-              <div class="grid-item">
+            <h3 class="section-title">
+              RESONANCE
+            </h3>
+            <p class="desc-text">
+              你的回响
+            </p>
+
+            <div class="grid-stats-tech">
+              <div class="grid-box">
                 <div class="num">
                   {{ reportData?.pCommentCnt }}
                 </div>
                 <div class="lbl">
-                  评论数
+                  评论
                 </div>
               </div>
-              <div class="grid-item">
+              <div class="grid-box">
                 <div class="num">
                   {{ reportData?.ccommentCnt }}
                 </div>
                 <div class="lbl">
-                  回复数
+                  回复
                 </div>
               </div>
-              <div class="grid-item">
+              <div class="grid-box">
                 <div class="num">
                   {{ reportData?.savedCount }}
                 </div>
                 <div class="lbl">
-                  收藏数
+                  收藏
                 </div>
               </div>
             </div>
-            <p class="sub-text mt-4">
-              同时也收获了 {{ reportData?.beSavedCount }} 次收藏
+
+            <div class="tech-list">
+              <div class="list-item">
+                <span>被收藏</span>
+                <span class="list-val">{{ reportData?.beSavedCount }}</span>
+              </div>
+              <div class="list-item">
+                <span>被热议</span>
+                <span class="list-val">{{ reportData?.beCommentedCount }}</span>
+              </div>
+              <div class="list-item">
+                <span>被回应</span>
+                <span class="list-val">{{ reportData?.repliedCount }}</span>
+              </div>
+            </div>
+
+            <p class="warm-message mt-3">
+              {{ resonanceMessage }}
             </p>
           </div>
         </div>
 
         <!-- Slide 6: Chat -->
-        <div v-else-if="currentSlide === 5" key="5" class="slide slide-6">
+        <div v-else-if="currentSlide === 5" key="5" class="slide slide-chat">
           <div class="content">
-            <h3>连接</h3>
-            <p>这一年，你一共发出了</p>
-            <div class="highlight-number">
-              {{ reportData?.chatCount }} <span class="unit">条</span>
-            </div>
-            <p>私信消息</p>
+            <h3 class="section-title">
+              CONNECTION
+            </h3>
+            <p class="desc-text">
+              你的连接
+            </p>
 
-            <div v-if="reportData?.maxSayUser?.UserID" class="friend-card">
-              <p>你与之畅聊最多的人是</p>
-              <div class="friend-info">
-                <img :src="reportData?.maxSayUser?.AvatarURL || defaultAvatar" class="friend-avatar">
-                <span class="friend-name">{{ reportData?.maxSayUser?.Name }}</span>
+            <div class="msg-stat">
+              <span class="highlight-number small">
+                {{ reportData?.chatCount }}
+              </span>
+              <span class="unit">MESSAGES SENT</span>
+            </div>
+
+            <div v-if="reportData?.maxSayUser?.UserID" class="partner-card">
+              <div class="card-header">
+                TOP_CONNECTION
               </div>
-              <p class="friend-stat">
-                {{ reportData?.maxSayUserCnt }} 条消息往来
+              <div class="partner-info">
+                <img :src="reportData?.maxSayUser?.AvatarURL || defaultAvatar" class="partner-avatar">
+                <div class="partner-details">
+                  <span class="partner-name">{{ reportData?.maxSayUser?.Name }}</span>
+                  <span class="partner-msg">交互频次: {{ reportData?.maxSayUserCnt }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 显示更多好友（如果有） -->
+            <div v-if="otherFriends.length > 0" class="more-friends">
+              <p class="mini-title">
+                ALSO CONNECTED WITH
               </p>
+              <div class="friends-row">
+                <img
+                  v-for="user in otherFriends"
+                  :key="user.UserID"
+                  :src="user.AvatarURL || defaultAvatar"
+                  class="mini-avatar"
+                >
+              </div>
             </div>
-            <div v-else class="friend-card">
-              <p>似乎你更喜欢在公开广场交流</p>
-            </div>
+
+            <p class="warm-message mt-3">
+              {{ connectionMessage }}
+            </p>
           </div>
         </div>
 
         <!-- Slide 7: Summary -->
-        <div v-else-if="currentSlide === 6" key="6" class="slide slide-7">
+        <div v-else-if="currentSlide === 6" key="6" class="slide slide-summary">
           <div class="content">
-            <h3>总结</h3>
-            <div class="score-circle">
-              <div class="score-label">
-                当前等级
-              </div>
-              <div class="score-val level-text">
-                {{ levelNameHandler(reportData?.score || 0) }}
-              </div>
-              <div class="score-exp">
-                经验值: {{ reportData?.score }}
+            <h3 class="section-title">
+              SUMMARY
+            </h3>
+
+            <div class="level-display">
+              <div class="level-ring">
+                <div class="level-content">
+                  <span class="level-label">CURRENT LEVEL</span>
+                  <span class="level-name">{{ levelNameHandler(reportData?.score || 0) }}</span>
+                  <span class="level-exp">EXP: {{ reportData?.score }}</span>
+                </div>
               </div>
             </div>
 
-            <p class="end-quote">
-              感谢你的一路相伴
-            </p>
-            <p class="end-quote">
-              2026，我们继续同行
+            <p class="warm-message final-message">
+              {{ summaryMessage }}
             </p>
 
-            <button class="replay-btn" @click.stop="restart">
-              再看一遍
-            </button>
-            <button class="home-btn" @click.stop="goHome">
-              返回首页
-            </button>
+            <div class="summary-text">
+              <p>SSE MARKET SYSTEM LOG: 2025 COMPLETE</p>
+              <p>INITIATING 2026 SEQUENCE...</p>
+            </div>
+
+            <div class="action-buttons">
+              <button class="tech-btn outline" @click.stop="restart">
+                PLAY AGAIN
+              </button>
+              <button class="tech-btn solid" @click.stop="goHome">
+                BACK TO HOME
+              </button>
+            </div>
           </div>
         </div>
       </transition>
@@ -298,7 +559,7 @@ onMounted(async () => {
         <div
           v-for="i in 7"
           :key="i"
-          class="indicator-dot"
+          class="indicator-rect"
           :class="{ active: currentSlide === i - 1 }"
         />
       </div>
@@ -307,54 +568,117 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap');
 
+/* Music Control Button */
+.music-control {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 1000;
+  background: rgba(2, 6, 23, 0.6);
+  border: 1px solid rgba(14, 165, 233, 0.4);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.music-control:hover {
+  background: rgba(14, 165, 233, 0.2);
+  border-color: #0ea5e9;
+  box-shadow: 0 0 15px rgba(14, 165, 233, 0.4);
+}
+
+.music-icon {
+  width: 24px;
+  height: 24px;
+  color: #0ea5e9;
+  transition: all 0.3s ease;
+}
+
+.music-icon.playing {
+  animation: pulse-music 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-music {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* Global Variables & Reset */
 .report-container {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: #2a0a0a;
-  color: #fff;
+  background-color: #030712; /* Very dark blue/black */
+  background-image:
+    radial-gradient(circle at 50% 50%, #1e3a8a 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, #be123c 0%, transparent 20%);
+  color: #e2e8f0;
   overflow: hidden;
-  font-family: 'SimSun', 'FangSong', 'Noto Serif SC', 'Times New Roman', serif;
+  font-family: 'Rajdhani', sans-serif;
   z-index: 9999;
 }
 
-.loading-screen {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+/* Background Grid */
+.background-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   height: 100%;
-  color: #fbbf24;
-  background: #2a0a0a;
+  background-image:
+    linear-gradient(rgba(14, 165, 233, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14, 165, 233, 0.1) 1px, transparent 1px);
+  background-size: 30px 30px;
+  z-index: 0;
+  pointer-events: none;
 }
 
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid rgba(251, 191, 36, 0.2);
-  border-top: 4px solid #fbbf24;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 20px;
+/* CRT Scan Line Effect */
+.scan-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: rgba(14, 165, 233, 0.3);
+  opacity: 0.4;
+  animation: scan 3s linear infinite;
+  z-index: 999;
+  pointer-events: none;
+  box-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
 }
 
-@keyframes spin {
+@keyframes scan {
   0% {
-    transform: rotate(0deg);
+    top: -5%;
   }
   100% {
-    transform: rotate(360deg);
+    top: 105%;
   }
 }
 
+/* Common Layout */
 .slide-container {
   width: 100%;
   height: 100%;
   position: relative;
+  z-index: 10;
 }
 
 .slide {
@@ -370,185 +694,247 @@ onMounted(async () => {
   text-align: center;
   padding: 2rem;
   box-sizing: border-box;
-  background-size: cover;
-  background-position: center;
-}
-
-/* Slide Specific Styles - Chinese New Year Theme */
-
-/* Slide 1: Cover - Red Lanterns Pattern */
-.slide-1 {
-  background-color: #7f1d1d;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill-opacity='0.1'%3E%3Cpath fill='%23fbbf24' d='M50 0 C20 0 10 30 10 50 C10 70 20 100 50 100 C80 100 90 70 90 50 C90 30 80 0 50 0 Z M50 90 C30 90 20 70 20 50 C20 30 30 10 50 10 C70 10 80 30 80 50 C80 70 70 90 50 90 Z' /%3E%3C/svg%3E");
-  background-size: 150px 150px;
-}
-
-/* Slide 2: Duration - Cloud Pattern */
-.slide-2 {
-  background-color: #991b1b;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 30' width='100' height='60' fill='none'%3E%3Cpath stroke='%23fca5a5' stroke-width='1' stroke-opacity='0.2' d='M10 25 Q 5 25 5 20 Q 5 10 15 10 Q 20 0 30 5 Q 35 0 45 10 Q 50 15 45 25 Z' /%3E%3C/svg%3E");
-}
-
-/* Slide 3: Posting - Fan Pattern */
-.slide-3 {
-  background-color: #b91c1c;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 60' width='200' height='120'%3E%3Cpath fill='none' stroke='%23fbbf24' stroke-width='1' stroke-opacity='0.1' d='M50 60 L10 10 M50 60 L30 5 M50 60 L50 2 M50 60 L70 5 M50 60 L90 10 M10 10 Q50 -10 90 10' /%3E%3C/svg%3E");
-}
-
-/* Slide 4: High - Firework Burst */
-.slide-4 {
-  background-color: #450a0a;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='100' height='100'%3E%3Cg stroke='%23fbbf24' stroke-width='1' stroke-opacity='0.2'%3E%3Cline x1='50' y1='50' x2='50' y2='20' /%3E%3Cline x1='50' y1='50' x2='80' y2='50' /%3E%3Cline x1='50' y1='50' x2='50' y2='80' /%3E%3Cline x1='50' y1='50' x2='20' y2='50' /%3E%3Cline x1='50' y1='50' x2='70' y2='30' /%3E%3Cline x1='50' y1='50' x2='70' y2='70' /%3E%3Cline x1='50' y1='50' x2='30' y2='70' /%3E%3Cline x1='50' y1='50' x2='30' y2='30' /%3E%3C/g%3E%3C/svg%3E");
-}
-
-/* Slide 5: Interaction - Knot Pattern */
-.slide-5 {
-  background-color: #881337;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' width='80' height='80'%3E%3Crect x='10' y='10' width='20' height='20' transform='rotate(45 20 20)' fill='none' stroke='%23fca5a5' stroke-width='1' stroke-opacity='0.2' /%3E%3Crect x='15' y='15' width='10' height='10' transform='rotate(45 20 20)' fill='%23fca5a5' fill-opacity='0.1' /%3E%3C/svg%3E");
-}
-
-/* Slide 6: Chat - Coin Pattern */
-.slide-6 {
-  background-color: #7f1d1d;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' width='60' height='60'%3E%3Ccircle cx='20' cy='20' r='15' fill='none' stroke='%23fbbf24' stroke-width='1' stroke-opacity='0.15' /%3E%3Crect x='14' y='14' width='12' height='12' fill='none' stroke='%23fbbf24' stroke-width='1' stroke-opacity='0.15' /%3E%3C/svg%3E");
-}
-
-/* Slide 7: Summary - Gold Dust on Dark Red */
-.slide-7 {
-  background-color: #2a0a0a;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' width='200' height='200'%3E%3Ccircle cx='100' cy='50' r='1' fill='%23fbbf24' fill-opacity='0.5' /%3E%3Ccircle cx='50' cy='150' r='2' fill='%23fbbf24' fill-opacity='0.3' /%3E%3Ccircle cx='150' cy='120' r='1.5' fill='%23fbbf24' fill-opacity='0.4' /%3E%3Ccircle cx='20' cy='20' r='1' fill='%23fbbf24' fill-opacity='0.6' /%3E%3C/svg%3E");
 }
 
 .content {
-  z-index: 2;
   width: 100%;
-  max-width: 500px;
-}
-
-.logo {
-  font-size: 1.2rem;
-  opacity: 0.8;
-  letter-spacing: 4px;
-  margin-bottom: 2rem;
-  font-weight: 500;
-  color: #fbbf24;
-}
-
-h1 {
-  font-size: 5rem;
-  margin: 0;
-  /* Gold Gradient */
-  background: linear-gradient(to bottom, #fbbf24, #d97706);
-  -webkit-background-clip: text;
-  color: transparent;
-  font-weight: 900;
-  letter-spacing: -2px;
-  line-height: 1;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-}
-
-h2 {
-  font-size: 2.2rem;
-  margin: 0.5rem 0 3rem 0;
-  font-weight: 400;
-  opacity: 0.9;
-  letter-spacing: 4px;
-  color: #fef3c7;
-}
-
-h3 {
-  font-size: 2rem;
-  color: #fbbf24; /* Amber/Gold */
-  margin-bottom: 1.5rem;
+  max-width: 450px;
   position: relative;
-  display: inline-block;
-  padding-bottom: 0.8rem;
-  font-weight: 700;
-  border-bottom: none;
-}
-/* Chinese Scroll Style Underline */
-h3::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 4px;
-  background: #fbbf24;
-  border-radius: 2px;
-  box-shadow: 0 0 5px rgba(251, 191, 36, 0.5);
 }
 
-.greeting {
-  font-size: 1.8rem;
-  margin-bottom: 2.5rem;
-  font-weight: 400;
-  color: #fff;
-}
-
-.avatar {
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  border: 4px solid #fbbf24;
-  padding: 2px;
-  box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
-  object-fit: cover;
-}
-
-.hint {
-  margin-top: 4rem;
-  opacity: 0.7;
-  font-size: 1rem;
-  letter-spacing: 2px;
-  animation: pulse 2s infinite;
-  color: #fcd34d;
-}
-
-.arrow-down {
-  margin-top: 0.8rem;
-  opacity: 0.7;
-  font-size: 1.4rem;
-  color: #fcd34d;
-  animation: bounce 2s infinite;
-}
-
+/* Text Styles */
+h1,
+h2,
+h3,
+.section-title,
 .highlight-number {
-  font-size: 5rem;
-  font-weight: 800;
-  /* White to Gold */
-  background: linear-gradient(to bottom right, #ffffff, #fbbf24);
-  -webkit-background-clip: text;
-  color: transparent;
-  margin: 1.5rem 0;
-  line-height: 1;
-  font-family: 'Times New Roman', serif; /* Numbers look good in serif */
+  font-family: 'Orbitron', sans-serif;
+  text-transform: uppercase;
 }
 
-.unit {
-  font-size: 1.4rem;
-  font-weight: 400;
-  color: #fcd34d;
-  margin-left: 5px;
-  vertical-align: baseline;
-  font-family: 'FangSong', serif;
+.section-title {
+  font-size: 2.5rem;
+  color: #f43f5e; /* Rose 500 */
+  text-shadow: 0 0 10px rgba(244, 63, 94, 0.6);
+  margin-bottom: 0.5rem;
+  letter-spacing: 2px;
+}
+
+.desc-text {
+  font-size: 1.1rem;
+  color: #0ea5e9; /* Sky 500 */
+  margin-bottom: 2rem;
+  letter-spacing: 1px;
 }
 
 .sub-text {
-  font-size: 1.2rem;
+  font-size: 1rem;
+  color: #94a3b8;
+  margin-top: 2rem;
+  line-height: 1.6;
+}
+
+/* Warm Message - 温馨提示语 */
+.warm-message {
+  font-size: 1.1rem;
+  color: #fbbf24;
+  margin-top: 1.5rem;
   line-height: 1.8;
-  opacity: 0.9;
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.warm-message.final-message {
+  font-size: 1.3rem;
+  color: #f472b6;
+  text-shadow: 0 0 15px rgba(244, 114, 182, 0.4);
+  margin-bottom: 1.5rem;
+}
+
+.mt-2 {
+  margin-top: 0.75rem !important;
+}
+
+.mt-3 {
+  margin-top: 1.25rem !important;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.highlight-number {
+  font-size: 4.5rem;
+  font-weight: 700;
+  color: #0ea5e9;
+  text-shadow: 0 0 15px rgba(14, 165, 233, 0.6);
+  line-height: 1;
+}
+
+.highlight-number.red-glow {
+  color: #f43f5e;
+  text-shadow: 0 0 15px rgba(244, 63, 94, 0.6);
+}
+
+.unit {
+  font-size: 1rem;
+  color: #64748b;
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+
+/* Slide 1: Cover */
+.top-decoration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 2rem;
+  opacity: 0.7;
+}
+
+.deco-line {
+  height: 1px;
+  width: 40px;
+  background: #0ea5e9;
+}
+
+.deco-text {
+  font-size: 0.8rem;
+  letter-spacing: 4px;
+  color: #0ea5e9;
+}
+
+.main-title-box h1 {
+  font-size: 6rem;
+  margin: 0;
+  line-height: 1;
+  color: #ffffff;
+  text-shadow: 4px 4px 0px #f43f5e;
+}
+
+.main-title-box h2 {
+  font-size: 1.8rem;
   font-weight: 400;
-  margin-top: 1rem;
-  color: #fef3c7;
+  color: #0ea5e9;
+  letter-spacing: 6px;
+  margin-top: 0.5rem;
+  margin-bottom: 3rem;
+}
+
+.user-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.avatar-ring {
+  padding: 5px;
+  border: 2px dashed #f43f5e;
+  border-radius: 50%;
+  animation: rotate 10s linear infinite;
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid #0ea5e9;
+  object-fit: cover;
+  display: block; /* Fix for rotation animation alignment */
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.greeting {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.intro-text {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  font-style: italic;
+  max-width: 80%;
+  margin: 0 auto;
+}
+
+.bottom-hint {
+  margin-top: 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.8;
+  animation: blink 2s infinite;
+}
+
+.hint-text {
+  font-size: 0.8rem;
+  letter-spacing: 3px;
+  color: #f43f5e;
+}
+
+.arrow-down {
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 10px solid #f43f5e;
+}
+
+/* Slide 3 & 4 Components */
+.tech-card {
+  background: rgba(30, 58, 138, 0.2);
+  border: 1px solid rgba(14, 165, 233, 0.3);
+  padding: 1.5rem;
+  border-radius: 4px;
+  margin-top: 2rem;
+  position: relative;
+}
+
+.tech-card::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid #0ea5e9;
+  border-left: 2px solid #0ea5e9;
+}
+
+.tech-card::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 10px;
+  height: 10px;
+  border-bottom: 2px solid #0ea5e9;
+  border-right: 2px solid #0ea5e9;
 }
 
 .stat-row {
   display: flex;
-  justify-content: space-evenly;
-  margin-top: 3rem;
-  width: 100%;
+  justify-content: space-around;
+  align-items: center;
 }
 
 .stat-item {
@@ -557,271 +943,416 @@ h3::after {
   align-items: center;
 }
 
-.label {
-  font-size: 1rem;
-  opacity: 0.7;
-  margin-bottom: 0.5rem;
-  letter-spacing: 1px;
-  color: #fcd34d;
+.stat-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(14, 165, 233, 0.3);
 }
 
-.value {
-  font-size: 2.2rem;
+.stat-item .label {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  margin-bottom: 5px;
+}
+
+.stat-item .value {
+  font-size: 1.8rem;
   font-weight: 700;
-  color: #ffffff;
-  font-family: 'Times New Roman', serif;
+  color: #fff;
+  font-family: 'Orbitron', sans-serif;
 }
 
-/* Red Packet / Traditional Card Style */
-.card {
-  background: rgba(127, 29, 29, 0.6);
-  border: 1px solid rgba(251, 191, 36, 0.3);
-  border-radius: 12px;
-  padding: 2rem;
-  backdrop-filter: blur(5px);
-  margin: 2.5rem 0;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+.hud-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  margin-top: 2rem;
+}
+
+.hud-item {
+  background: linear-gradient(90deg, rgba(30, 58, 138, 0.3) 0%, transparent 100%);
+  padding: 1rem;
+  border-left: 4px solid #0ea5e9;
   position: relative;
 }
-/* Corner Ornaments */
-.card::before {
-  content: '';
-  position: absolute;
-  top: 5px; left: 5px;
-  width: 15px; height: 15px;
-  border-top: 2px solid #fbbf24;
-  border-left: 2px solid #fbbf24;
-}
-.card::after {
-  content: '';
-  position: absolute;
-  bottom: 5px; right: 5px;
-  width: 15px; height: 15px;
-  border-bottom: 2px solid #fbbf24;
-  border-right: 2px solid #fbbf24;
+
+.hud-label {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  letter-spacing: 2px;
+  text-align: left;
+  margin-bottom: 0.5rem;
 }
 
-.card-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 1.2rem;
-  font-size: 1.2rem;
-  border-bottom: 1px dashed rgba(251, 191, 36, 0.2);
-  padding-bottom: 0.8rem;
-  align-items: center;
-}
-
-.card-row:last-child {
-  margin-bottom: 0;
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.card-val {
+.hud-value {
+  font-size: 2.2rem;
   font-weight: 700;
-  color: #fbbf24; 
-  font-size: 1.4rem;
-  font-family: 'Times New Roman', serif;
+  text-align: right;
+  font-family: 'Orbitron', sans-serif;
 }
 
-.grid-stats {
+.color-1 {
+  color: #f43f5e;
+  text-shadow: 0 0 10px rgba(244, 63, 94, 0.4);
+}
+.color-2 {
+  color: #0ea5e9;
+  text-shadow: 0 0 10px rgba(14, 165, 233, 0.4);
+}
+.color-3 {
+  color: #eab308;
+  text-shadow: 0 0 10px rgba(234, 179, 8, 0.4);
+}
+
+/* Slide 5 Interaction */
+.grid-stats-tech {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 1.2rem;
-  margin-top: 2.5rem;
-}
-
-.grid-item {
-  background: rgba(127, 29, 29, 0.6);
-  border: 1px solid rgba(251, 191, 36, 0.2);
-  padding: 1.5rem 0.5rem;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.num {
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 0.5rem;
-  font-family: 'Times New Roman', serif;
-}
-
-.lbl {
-  font-size: 0.9rem;
-  opacity: 0.8;
-  letter-spacing: 1px;
-  color: #fcd34d;
-}
-
-.friend-card {
-  background: rgba(127, 29, 29, 0.5);
-  border: 1px solid rgba(251, 191, 36, 0.25);
-  padding: 2.5rem 2rem;
-  border-radius: 16px;
-  margin-top: 2.5rem;
-  backdrop-filter: blur(5px);
-}
-
-.friend-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   gap: 1rem;
-  margin: 2rem 0;
+  width: 100%;
+  margin-bottom: 2rem;
 }
 
-.friend-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  border: 2px solid #fbbf24;
-  padding: 3px;
-}
-
-.friend-name {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #fef3c7;
-}
-
-.friend-stat {
-  color: #fbbf24;
-  font-weight: 600;
-  font-size: 1.1rem;
-}
-
-.score-circle {
-  width: 220px;
-  height: 220px;
-  border-radius: 50%;
-  position: relative;
+.grid-box {
+  background: rgba(2, 6, 23, 0.6);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  padding: 1rem 0.5rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  margin: 0 auto 3rem auto;
-  z-index: 1;
-  background: rgba(42, 10, 10, 0.8);
-  border: 4px solid #fbbf24;
-  box-shadow: 0 0 30px rgba(251, 191, 36, 0.2);
+  position: relative;
+  overflow: hidden;
 }
 
-.score-label {
-  font-size: 1.2rem;
-  opacity: 0.8;
-  letter-spacing: 2px;
-  margin-bottom: 0.5rem;
-  color: #fcd34d;
-}
-
-.level-text {
-  font-size: 2.6rem;
-  font-weight: bold;
-  background: linear-gradient(to right, #fbbf24, #fef3c7, #fbbf24);
-  -webkit-background-clip: text;
-  color: transparent;
-  margin: 0.5rem 0;
-}
-
-.score-exp {
-  font-size: 1.1rem;
-  opacity: 0.7;
-  color: #fcd34d;
-  font-family: 'Times New Roman', serif;
-}
-
-.end-quote {
-  font-size: 1.4rem;
-  margin: 0.6rem 0;
-  font-weight: 400;
-  opacity: 0.9;
-  letter-spacing: 1px;
-  color: #fef3c7;
-}
-
-.replay-btn,
-.home-btn {
-  margin: 15px 10px;
-  padding: 12px 35px;
-  font-size: 1.1rem;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  letter-spacing: 1px;
-  font-family: 'FangSong', serif;
-}
-
-.replay-btn {
-  background: transparent;
-  color: #fbbf24;
-  border: 1px solid #fbbf24;
-}
-
-.home-btn {
-  background: #b91c1c; /* Red */
-  color: #fff;
-  border: 1px solid #b91c1c;
-  box-shadow: 0 4px 15px rgba(185, 28, 28, 0.4);
-}
-
-.replay-btn:active,
-.home-btn:active {
-  transform: scale(0.95);
-}
-
-.indicators {
-  position: absolute;
-  right: 25px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  z-index: 10;
-}
-
-.indicator-dot {
-  width: 8px;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  transition: all 0.4s ease;
-  border: 1px solid transparent;
-}
-
-.indicator-dot.active {
-  background: #fbbf24;
-  transform: scale(1.4);
-  border-color: #fbbf24;
-  box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
-}
-
-.bg-svg {
+.grid-box::after {
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-  z-index: 1;
-  opacity: 0.15;
-  pointer-events: none;
-  /* background-repeat is set in individual classes */
+  height: 2px;
+  background: #f43f5e;
+  box-shadow: 0 0 8px #f43f5e;
 }
-.bg-svg-end {
+
+.grid-box .num {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.grid-box .lbl {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-top: 5px;
+}
+
+.tech-list {
+  width: 100%;
+  border-top: 1px dashed rgba(14, 165, 233, 0.3);
+  padding-top: 1rem;
+}
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid rgba(14, 165, 233, 0.1);
+  font-size: 1.1rem;
+  color: #cbd5e1;
+}
+
+.list-val {
+  font-family: 'Orbitron', sans-serif;
+  color: #0ea5e9;
+  font-weight: 700;
+}
+
+/* Slide 6 Chat */
+.partner-card {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid #0ea5e9;
+  margin-top: 2rem;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.card-header {
+  background: #0ea5e9;
+  color: #000;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  text-align: left;
+  letter-spacing: 2px;
+}
+
+.partner-info {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  gap: 1.5rem;
+}
+
+.partner-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 2px solid #f43f5e;
+}
+
+.partner-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.partner-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.partner-msg {
+  font-size: 0.9rem;
+  color: #94a3b8;
+}
+
+.more-friends {
+  margin-top: 2rem;
+  width: 100%;
+}
+
+.mini-title {
+  font-size: 0.7rem;
+  color: #64748b;
+  margin-bottom: 10px;
+  letter-spacing: 2px;
+  text-align: left;
+}
+
+.friends-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.mini-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(14, 165, 233, 0.5);
+  filter: grayscale(0.5);
+  transition: all 0.3s;
+}
+
+.mini-avatar:hover {
+  filter: grayscale(0);
+  transform: scale(1.1);
+}
+
+/* Slide 7 Summary */
+.level-ring {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 4px solid #1e293b;
+  border-top-color: #f43f5e;
+  border-right-color: #f43f5e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem auto;
+  position: relative;
+  box-shadow: 0 0 30px rgba(244, 63, 94, 0.1);
+  animation: pulse-ring 3s infinite;
+}
+
+.level-ring::before {
+  content: '';
   position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 300px;
-  height: 300px;
-  z-index: 1;
-  opacity: 0.1;
-  pointer-events: none;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 1px dashed #0ea5e9;
+  animation: rotate-rev 20s linear infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 20px rgba(244, 63, 94, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 50px rgba(244, 63, 94, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(244, 63, 94, 0.1);
+  }
+}
+
+@keyframes rotate-rev {
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+.level-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.level-label {
+  font-size: 0.8rem;
+  color: #64748b;
+  letter-spacing: 1px;
+}
+
+.level-name {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #fff;
+  font-family: 'Orbitron', sans-serif;
+  text-shadow: 0 0 10px #fff;
+  margin: 5px 0;
+}
+
+.level-exp {
+  font-size: 0.9rem;
+  color: #0ea5e9;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.summary-text {
+  font-family: 'Orbitron', monospace;
+  color: #0ea5e9;
+  font-size: 0.9rem;
+  margin-bottom: 3rem;
+  line-height: 1.5;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.tech-btn {
+  padding: 12px 30px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  letter-spacing: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.tech-btn.outline {
+  background: transparent;
+  border: 1px solid #0ea5e9;
+  color: #0ea5e9;
+}
+
+.tech-btn.outline:hover {
+  background: rgba(14, 165, 233, 0.1);
+  box-shadow: 0 0 15px rgba(14, 165, 233, 0.4);
+}
+
+.tech-btn.solid {
+  background: #f43f5e;
+  border: 1px solid #f43f5e;
+  color: #fff;
+}
+
+.tech-btn.solid:hover {
+  background: #be123c;
+  box-shadow: 0 0 20px rgba(244, 63, 94, 0.5);
+}
+
+/* Indicators */
+.indicators {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.indicator-rect {
+  width: 4px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.indicator-rect.active {
+  background: #f43f5e;
+  height: 35px;
+  box-shadow: 0 0 10px #f43f5e;
+}
+
+/* Loading */
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  z-index: 20;
+}
+
+.tech-spinner {
+  width: 50px;
+  height: 50px;
+  border: 2px solid rgba(14, 165, 233, 0.3);
+  border-top-color: #0ea5e9;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+.spinner-inner {
+  width: 30px;
+  height: 30px;
+  border: 2px solid rgba(244, 63, 94, 0.3);
+  border-bottom-color: #f43f5e;
+  border-radius: 50%;
+  margin: 8px auto;
+  animation: spin 0.5s reverse linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.loading-text {
+  font-family: 'Orbitron', monospace;
+  color: #0ea5e9;
+  letter-spacing: 2px;
 }
 
 /* Transitions */
@@ -829,43 +1360,26 @@ h3::after {
 .slide-up-leave-active,
 .slide-down-enter-active,
 .slide-down-leave-active {
-  transition: all 0.7s ease-in-out;
+  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .slide-up-enter-from {
   transform: translateY(100%);
-  opacity: 0.5;
+  opacity: 0;
+  filter: blur(10px);
 }
 .slide-up-leave-to {
-  transform: translateY(-50%);
+  transform: translateY(-20%);
   opacity: 0;
+  filter: blur(5px);
 }
 .slide-down-enter-from {
   transform: translateY(-100%);
-  opacity: 0.5;
+  opacity: 0;
+  filter: blur(10px);
 }
 .slide-down-leave-to {
-  transform: translateY(50%);
+  transform: translateY(20%);
   opacity: 0;
-}
-
-@keyframes pulse {
-  0% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.5;
-  }
-}
-@keyframes bounce {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(8px);
-  }
+  filter: blur(5px);
 }
 </style>
