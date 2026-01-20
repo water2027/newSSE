@@ -17,6 +17,12 @@ const bgmUrl = 'https://music.163.com/song/media/outer/url?id=2723954830.mp3'
 const audioRef = ref<HTMLAudioElement | null>(null)
 const isPlaying = ref(false)
 const isFirstInteraction = ref(true)
+const autoPlayAttempted = ref(false)
+
+// 检测是否是微信浏览器
+function isWechat(): boolean {
+  return /MicroMessenger/i.test(navigator.userAgent)
+}
 
 function toggleMusic() {
   if (!audioRef.value)
@@ -26,8 +32,9 @@ function toggleMusic() {
     isPlaying.value = false
   }
   else {
-    audioRef.value.play()
-    isPlaying.value = true
+    audioRef.value.play().then(() => {
+      isPlaying.value = true
+    }).catch(() => {})
   }
 }
 
@@ -36,9 +43,92 @@ function playMusic() {
     audioRef.value.play().then(() => {
       isPlaying.value = true
     }).catch((e) => {
-      console.log('Auto play failed:', e)
+      console.log('Play music failed:', e)
     })
   }
+}
+
+// 尝试自动播放音乐（处理不同浏览器）
+function tryAutoPlay() {
+  if (autoPlayAttempted.value || !audioRef.value)
+    return
+  autoPlayAttempted.value = true
+
+  const audio = audioRef.value
+
+  // 方法1: 直接尝试播放
+  const playPromise = audio.play()
+
+  if (playPromise !== undefined) {
+    playPromise
+      .then(() => {
+        isPlaying.value = true
+        isFirstInteraction.value = false
+      })
+      .catch(() => {
+        // 自动播放被阻止，等待用户交互
+        console.log('Auto play blocked, waiting for user interaction')
+
+        // 方法2: 尝试静音播放后恢复音量
+        audio.muted = true
+        audio.play()
+          .then(() => {
+            // 静音播放成功，添加交互监听来恢复音量
+            const unmute = () => {
+              audio.muted = false
+              isPlaying.value = true
+              isFirstInteraction.value = false
+              document.removeEventListener('click', unmute)
+              document.removeEventListener('touchstart', unmute)
+            }
+            document.addEventListener('click', unmute, { once: true })
+            document.addEventListener('touchstart', unmute, { once: true })
+          })
+          .catch(() => {
+            // 静音播放也失败，完全依赖用户交互
+            console.log('Muted auto play also blocked')
+          })
+      })
+  }
+}
+
+// 微信浏览器专用自动播放
+function setupWechatAutoPlay() {
+  if (!isWechat())
+    return
+
+  // 微信 JS-SDK ready 事件
+  if (typeof (window as any).WeixinJSBridge !== 'undefined') {
+    (window as any).WeixinJSBridge.invoke('getNetworkType', {}, () => {
+      tryAutoPlay()
+    })
+  }
+  else {
+    document.addEventListener('WeixinJSBridgeReady', () => {
+      (window as any).WeixinJSBridge.invoke('getNetworkType', {}, () => {
+        tryAutoPlay()
+      })
+    }, false)
+  }
+}
+
+// 设置用户交互监听（作为备用方案）
+function setupInteractionListener() {
+  const handleFirstInteraction = () => {
+    if (!isPlaying.value && audioRef.value) {
+      playMusic()
+    }
+    document.removeEventListener('click', handleFirstInteraction)
+    document.removeEventListener('touchstart', handleFirstInteraction)
+    document.removeEventListener('keydown', handleFirstInteraction)
+  }
+
+  // 延迟添加监听，避免立即触发
+  setTimeout(() => {
+    document.addEventListener('click', handleFirstInteraction, { once: true })
+    document.addEventListener('touchstart', handleFirstInteraction, { once: true })
+    document.addEventListener('keydown', handleFirstInteraction, { once: true })
+  }, 100)
 }
 
 // Default avatar fallback
@@ -130,11 +220,11 @@ const summaryMessage = computed(() => {
 })
 
 function handleInteraction() {
-  // 第一次点击时播放音乐
-  if (isFirstInteraction.value) {
+  // 第一次点击时尝试播放音乐（如果自动播放失败的话）
+  if (isFirstInteraction.value && !isPlaying.value) {
     playMusic()
-    isFirstInteraction.value = false
   }
+  isFirstInteraction.value = false
   // Simple click to next
   nextSlide()
 }
@@ -224,6 +314,21 @@ onMounted(async () => {
   finally {
     loading.value = false
   }
+
+  // 尝试自动播放背景音乐
+  // 等待 audio 元素准备好
+  setTimeout(() => {
+    if (isWechat()) {
+      // 微信浏览器使用专用方法
+      setupWechatAutoPlay()
+    }
+    else {
+      // 其他浏览器直接尝试自动播放
+      tryAutoPlay()
+    }
+    // 设置用户交互备用监听
+    setupInteractionListener()
+  }, 500)
 })
 </script>
 
