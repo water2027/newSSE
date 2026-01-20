@@ -324,7 +324,7 @@ function editContent(type: EditType) {
     gap: 10px;
   }
   .buttons .button {
-    padding: 4px;
+    padding: 6px;
     height: 4vh;
     margin: 0 8px;
   }
