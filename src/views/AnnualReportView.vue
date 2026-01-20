@@ -16,7 +16,6 @@ const transitionName = ref('slide-up')
 const bgmUrl = 'https://music.163.com/song/media/outer/url?id=2723954830.mp3'
 const audioRef = ref<HTMLAudioElement | null>(null)
 const isPlaying = ref(false)
-const isFirstInteraction = ref(true)
 const autoPlayAttempted = ref(false)
 
 // 检测是否是微信浏览器
@@ -32,103 +31,88 @@ function toggleMusic() {
     isPlaying.value = false
   }
   else {
-    audioRef.value.play().then(() => {
-      isPlaying.value = true
-    }).catch(() => {})
-  }
-}
-
-function playMusic() {
-  if (audioRef.value && !isPlaying.value) {
+    // 用户主动点击按钮，属于用户手势，通常允许播放
     audioRef.value.play().then(() => {
       isPlaying.value = true
     }).catch((e) => {
-      console.log('Play music failed:', e)
+      console.log('Toggle play failed:', e)
     })
   }
 }
 
-// 尝试自动播放音乐（处理不同浏览器）
-function tryAutoPlay() {
-  if (autoPlayAttempted.value || !audioRef.value)
+// 尝试播放音乐（核心方法）
+function tryPlayMusic(mute = false) {
+  if (!audioRef.value)
+    return Promise.resolve()
+
+  const audio = audioRef.value
+  if (mute) {
+    audio.muted = true
+  }
+
+  return audio.play()
+    .then(() => {
+      // 播放成功
+      isPlaying.value = true
+      // 如果是静音播放成功的，不再需要自动播放逻辑了，但需要恢复音量
+      if (mute) {
+        // 静音播放成功后，等待下一次交互恢复音量
+        const unmute = () => {
+          if (audio) {
+            audio.muted = false
+          }
+          document.removeEventListener('click', unmute)
+          document.removeEventListener('touchstart', unmute)
+        }
+        document.addEventListener('click', unmute, { once: true })
+        document.addEventListener('touchstart', unmute, { once: true })
+      }
+    })
+    .catch((e) => {
+      // 播放失败
+      console.log(`Play failed (muted=${mute}):`, e)
+      isPlaying.value = false
+      if (mute) {
+        // 如果静音播放也失败，确保静音状态复位，以免下次播放无声
+        audio.muted = false
+      }
+      throw e
+    })
+}
+
+// 自动播放逻辑
+function initAutoPlay() {
+  if (autoPlayAttempted.value)
     return
   autoPlayAttempted.value = true
 
-  const audio = audioRef.value
-
-  // 方法1: 直接尝试播放
-  const playPromise = audio.play()
-
-  if (playPromise !== undefined) {
-    playPromise
-      .then(() => {
-        isPlaying.value = true
-        isFirstInteraction.value = false
-      })
-      .catch(() => {
-        // 自动播放被阻止，等待用户交互
-        console.log('Auto play blocked, waiting for user interaction')
-
-        // 方法2: 尝试静音播放后恢复音量
-        audio.muted = true
-        audio.play()
-          .then(() => {
-            // 静音播放成功，添加交互监听来恢复音量
-            const unmute = () => {
-              audio.muted = false
-              isPlaying.value = true
-              isFirstInteraction.value = false
-              document.removeEventListener('click', unmute)
-              document.removeEventListener('touchstart', unmute)
-            }
-            document.addEventListener('click', unmute, { once: true })
-            document.addEventListener('touchstart', unmute, { once: true })
-          })
-          .catch(() => {
-            // 静音播放也失败，完全依赖用户交互
-            console.log('Muted auto play also blocked')
-          })
-      })
-  }
-}
-
-// 微信浏览器专用自动播放
-function setupWechatAutoPlay() {
-  if (!isWechat())
-    return
-
-  // 微信 JS-SDK ready 事件
-  if (typeof (window as any).WeixinJSBridge !== 'undefined') {
-    (window as any).WeixinJSBridge.invoke('getNetworkType', {}, () => {
-      tryAutoPlay()
-    })
-  }
-  else {
-    document.addEventListener('WeixinJSBridgeReady', () => {
+  // 1. 微信环境特殊处理
+  if (isWechat()) {
+    if (typeof (window as any).WeixinJSBridge !== 'undefined') {
       (window as any).WeixinJSBridge.invoke('getNetworkType', {}, () => {
-        tryAutoPlay()
+        tryPlayMusic(false).catch(() => tryPlayMusic(true))
       })
-    }, false)
-  }
-}
-
-// 设置用户交互监听（作为备用方案）
-function setupInteractionListener() {
-  const handleFirstInteraction = () => {
-    if (!isPlaying.value && audioRef.value) {
-      playMusic()
     }
-    document.removeEventListener('click', handleFirstInteraction)
-    document.removeEventListener('touchstart', handleFirstInteraction)
-    document.removeEventListener('keydown', handleFirstInteraction)
+    else {
+      document.addEventListener('WeixinJSBridgeReady', () => {
+        (window as any).WeixinJSBridge.invoke('getNetworkType', {}, () => {
+          tryPlayMusic(false).catch(() => tryPlayMusic(true))
+        })
+      }, { once: true })
+    }
+    return
   }
 
-  // 延迟添加监听，避免立即触发
-  setTimeout(() => {
-    document.addEventListener('click', handleFirstInteraction, { once: true })
-    document.addEventListener('touchstart', handleFirstInteraction, { once: true })
-    document.addEventListener('keydown', handleFirstInteraction, { once: true })
-  }, 100)
+  // 2. 普通浏览器尝试直接播放
+  tryPlayMusic(false)
+    .catch(() => {
+      // 3. 失败则尝试静音播放
+      console.log('Direct auto play failed, trying muted...')
+      return tryPlayMusic(true)
+    })
+    .catch(() => {
+      console.log('All auto play attempts failed, waiting for user interaction')
+    })
 }
 
 // Default avatar fallback
@@ -143,7 +127,7 @@ const daysJoined = computed(() => {
   return Math.floor(ms / (1000 * 60 * 60 * 24))
 })
 
-// 动态提示语 - 根据数据生成温馨文案
+// 动态提示语
 const durationMessage = computed(() => {
   const days = daysJoined.value
   if (days >= 365)
@@ -220,11 +204,10 @@ const summaryMessage = computed(() => {
 })
 
 function handleInteraction() {
-  // 第一次点击时尝试播放音乐（如果自动播放失败的话）
-  if (isFirstInteraction.value && !isPlaying.value) {
-    playMusic()
+  // 交互时尝试播放（如果尚未播放）
+  if (!isPlaying.value) {
+    tryPlayMusic(false)
   }
-  isFirstInteraction.value = false
   // Simple click to next
   nextSlide()
 }
@@ -318,16 +301,7 @@ onMounted(async () => {
   // 尝试自动播放背景音乐
   // 等待 audio 元素准备好
   setTimeout(() => {
-    if (isWechat()) {
-      // 微信浏览器使用专用方法
-      setupWechatAutoPlay()
-    }
-    else {
-      // 其他浏览器直接尝试自动播放
-      tryAutoPlay()
-    }
-    // 设置用户交互备用监听
-    setupInteractionListener()
+    initAutoPlay()
   }, 500)
 })
 </script>
@@ -823,6 +797,7 @@ h3,
   text-shadow: 0 0 10px rgba(244, 63, 94, 0.6);
   margin-bottom: 0.5rem;
   letter-spacing: 2px;
+  animation: gentleFloat 1s cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 
 .desc-text {
@@ -830,6 +805,7 @@ h3,
   color: #0ea5e9; /* Sky 500 */
   margin-bottom: 2rem;
   letter-spacing: 1px;
+  animation: softFadeIn 0.9s cubic-bezier(0.23, 1, 0.32, 1) 0.3s both;
 }
 
 .sub-text {
@@ -837,6 +813,7 @@ h3,
   color: #94a3b8;
   margin-top: 2rem;
   line-height: 1.6;
+  animation: softRise 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.9s both;
 }
 
 /* Warm Message - 温馨提示语 */
@@ -848,7 +825,7 @@ h3,
   text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
   font-weight: 500;
   letter-spacing: 0.5px;
-  animation: fadeInUp 0.8s ease-out;
+  animation: warmBreath 1.2s cubic-bezier(0.23, 1, 0.32, 1) 0.7s both;
 }
 
 .warm-message.final-message {
@@ -856,6 +833,7 @@ h3,
   color: #f472b6;
   text-shadow: 0 0 15px rgba(244, 114, 182, 0.4);
   margin-bottom: 1.5rem;
+  animation: warmBreath 1.2s cubic-bezier(0.23, 1, 0.32, 1) 0.5s both;
 }
 
 .mt-2 {
@@ -866,12 +844,83 @@ h3,
   margin-top: 1.25rem !important;
 }
 
-@keyframes fadeInUp {
-  from {
+/* 温馨风格动画 - 柔和、流畅、有节奏感 */
+
+/* 标题：轻柔浮入 */
+@keyframes gentleFloat {
+  0% {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(-20px);
+    filter: blur(8px);
   }
-  to {
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* 描述文字：柔和淡入 */
+@keyframes softFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 辅助文字：轻柔上升 */
+@keyframes softRise {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 温馨提示：呼吸感淡入 */
+@keyframes warmBreath {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 数字：柔和放大浮入 */
+@keyframes numberFloat {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(15px);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* 卡片：轻柔浮入 */
+@keyframes cardGentleIn {
+  0% {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  100% {
     opacity: 1;
     transform: translateY(0);
   }
@@ -882,6 +931,7 @@ h3,
   font-weight: 700;
   color: #0ea5e9;
   text-shadow: 0 0 15px rgba(14, 165, 233, 0.6);
+  animation: numberFloat 1s cubic-bezier(0.23, 1, 0.32, 1) 0.4s both;
   line-height: 1;
 }
 
@@ -1012,6 +1062,7 @@ h3,
   border-radius: 4px;
   margin-top: 2rem;
   position: relative;
+  animation: cardGentleIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.6s both;
 }
 
 .tech-card::before {
@@ -1075,6 +1126,30 @@ h3,
   margin-top: 2rem;
 }
 
+.hud-container .hud-item:nth-child(1) {
+  animation: hudSlideIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.4s both;
+}
+
+.hud-container .hud-item:nth-child(2) {
+  animation: hudSlideIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.55s both;
+}
+
+.hud-container .hud-item:nth-child(3) {
+  animation: hudSlideIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.7s both;
+}
+
+/* HUD 项目：柔和渐入 */
+@keyframes hudSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-15px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .hud-item {
   background: linear-gradient(90deg, rgba(30, 58, 138, 0.3) 0%, transparent 100%);
   padding: 1rem;
@@ -1119,6 +1194,30 @@ h3,
   margin-bottom: 2rem;
 }
 
+.grid-stats-tech .grid-box:nth-child(1) {
+  animation: boxFadeIn 0.7s cubic-bezier(0.23, 1, 0.32, 1) 0.4s both;
+}
+
+.grid-stats-tech .grid-box:nth-child(2) {
+  animation: boxFadeIn 0.7s cubic-bezier(0.23, 1, 0.32, 1) 0.55s both;
+}
+
+.grid-stats-tech .grid-box:nth-child(3) {
+  animation: boxFadeIn 0.7s cubic-bezier(0.23, 1, 0.32, 1) 0.7s both;
+}
+
+/* 网格盒子：柔和浮入 */
+@keyframes boxFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(15px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .grid-box {
   background: rgba(2, 6, 23, 0.6);
   border: 1px solid rgba(244, 63, 94, 0.3);
@@ -1160,6 +1259,30 @@ h3,
   padding-top: 1rem;
 }
 
+.tech-list .list-item:nth-child(1) {
+  animation: listFadeIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) 0.6s both;
+}
+
+.tech-list .list-item:nth-child(2) {
+  animation: listFadeIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) 0.75s both;
+}
+
+.tech-list .list-item:nth-child(3) {
+  animation: listFadeIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) 0.9s both;
+}
+
+/* 列表项：柔和淡入 */
+@keyframes listFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .list-item {
   display: flex;
   justify-content: space-between;
@@ -1183,6 +1306,19 @@ h3,
   margin-top: 2rem;
   border-radius: 8px;
   overflow: hidden;
+  animation: cardFadeUp 0.9s cubic-bezier(0.23, 1, 0.32, 1) 0.5s both;
+}
+
+/* 好友卡片：柔和上浮 */
+@keyframes cardFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .card-header {
@@ -1275,7 +1411,21 @@ h3,
   margin: 2rem auto;
   position: relative;
   box-shadow: 0 0 30px rgba(244, 63, 94, 0.1);
-  animation: pulse-ring 3s infinite;
+  animation:
+    ringGentleEnter 1s cubic-bezier(0.23, 1, 0.32, 1) 0.3s both,
+    pulse-ring 3s infinite 1.3s;
+}
+
+/* 等级圆环：柔和缩放进入 */
+@keyframes ringGentleEnter {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .level-ring::before {
@@ -1338,11 +1488,37 @@ h3,
   font-size: 0.9rem;
   margin-bottom: 3rem;
   line-height: 1.5;
+  animation: textSoftFade 0.9s cubic-bezier(0.23, 1, 0.32, 1) 0.8s both;
+}
+
+/* 总结文字：柔和淡入 */
+@keyframes textSoftFade {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .action-buttons {
   display: flex;
   gap: 1.5rem;
+  animation: buttonsFadeIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) 1.1s both;
+}
+
+/* 按钮：柔和淡入 */
+@keyframes buttonsFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .tech-btn {
