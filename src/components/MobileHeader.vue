@@ -9,6 +9,11 @@ function search() {
   const el = sinfo.value as HTMLInputElement
   if (!el || !el.value)
     return
+  if (el.value === '年度报告') {
+    router.push('/annual2025')
+    el.value = ''
+    return
+  }
   const currentRoute = router.currentRoute.value
   if (currentRoute.path === '/partition/课程交流'
     // 如果先搜索一次然后返回，再次搜索时path会被URI编码，参见PartitionListView的sendPartition函数

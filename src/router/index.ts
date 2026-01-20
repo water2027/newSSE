@@ -151,6 +151,11 @@ const router = createRouter({
       component: () => import('@/views/ConnectView.vue'),
     },
     {
+      path: '/annual2025',
+      name: 'AnnualReport',
+      component: () => import('@/views/AnnualReportView.vue'),
+    },
+    {
       path: '/:catchAll(.*)',
       redirect: '/',
     },
