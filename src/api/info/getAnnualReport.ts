@@ -1,19 +1,19 @@
 import { requestFunc } from '../req'
 
 export interface ChatUser {
-  UserID: number
-  Name: string
-  AvatarURL: string
-  Identity: string
-  Score: number
+  userID: number
+  name: string
+  avatarURL: string
+  identity: string
+  score: number
 }
 
 export interface User {
-  UserID: number
-  Name: string
-  AvatarURL: string
-  Intro: string
-  Score: number
+  userID: number
+  name: string
+  avatarURL: string
+  intro: string
+  score: number
 }
 
 export interface AnnualReportData {
