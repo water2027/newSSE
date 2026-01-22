@@ -610,7 +610,7 @@ onMounted(async () => {
           <div class="content">
             <div class="top-decoration">
               <span class="deco-line" />
-              <span class="deco-text">ANNUAL REPORT</span>
+              <span class="deco-text">SSE MARKET</span>
               <span class="deco-line" />
             </div>
             <div class="main-title-box">
@@ -634,7 +634,7 @@ onMounted(async () => {
 
             <div class="bottom-hint">
               <p class="hint-text">
-                TAP TO ACCESS
+                轻触界面/向下滚动以继续
               </p>
               <div class="arrow-down" />
             </div>
@@ -645,7 +645,7 @@ onMounted(async () => {
         <div v-else-if="currentSlide === 1" key="1" class="slide slide-duration">
           <div class="content">
             <h3 class="section-title">
-              START
+              缘起
             </h3>
             <p class="desc-text">
               已接入 SSE MARKET 网络
@@ -654,7 +654,7 @@ onMounted(async () => {
               <div class="highlight-number">
                 {{ daysJoined }}
               </div>
-              <span class="unit">DAYS</span>
+              <span class="unit">日夜</span>
             </div>
             <p class="warm-message">
               {{ durationMessage }}
@@ -669,17 +669,17 @@ onMounted(async () => {
         <div v-else-if="currentSlide === 2" key="2" class="slide slide-posting">
           <div class="content">
             <h3 class="section-title">
-              OUTPUT
+              你的输出
             </h3>
             <p class="desc-text">
-              你的输出力
+              YOUR OUTPUT
             </p>
             <div class="main-stat">
               <span class="label">本年度发布</span>
               <div class="highlight-number red-glow">
                 {{ reportData?.thisYearPostCnt }}
               </div>
-              <span class="unit">POSTS</span>
+              <span class="unit">帖子</span>
             </div>
 
             <div class="tech-card">
@@ -700,7 +700,7 @@ onMounted(async () => {
               {{ postingMessage }}
             </p>
             <p class="sub-text mt-2">
-              今年收获了 {{ reportData?.thisYearLikeNum }} 次认可
+              今年收获了 {{ reportData?.thisYearLikeNum }} 次点赞
             </p>
           </div>
         </div>
@@ -709,18 +709,18 @@ onMounted(async () => {
         <div v-else-if="currentSlide === 3" key="3" class="slide slide-highlight">
           <div class="content">
             <h3 class="section-title">
-              MOMENT
+              你的时刻
             </h3>
             <p class="desc-text">
-              你的时刻
+              YOUR MOMENT
             </p>
 
             <div class="hud-container">
               <div class="hud-item">
                 <div class="hud-label">
-                  MAX LIKES
-                  <br>
                   最多点赞
+                  <br>
+                  MAX LIKES
                 </div>
                 <div class="hud-value color-1">
                   {{ reportData?.maxLikeNum }}
@@ -729,9 +729,9 @@ onMounted(async () => {
               </div>
               <div class="hud-item">
                 <div class="hud-label">
-                  MAX VIEWS
-                  <br>
                   最多观看
+                  <br>
+                  MAX VIEWS
                 </div>
                 <div class="hud-value color-2">
                   {{ reportData?.maxBrowseNum }}
@@ -740,9 +740,9 @@ onMounted(async () => {
               </div>
               <div class="hud-item">
                 <div class="hud-label">
-                  MAX COMMENTS
-                  <br>
                   最多评论
+                  <br>
+                  MAX COMMENTS
                 </div>
                 <div class="hud-value color-3">
                   {{ reportData?.maxCommentNum }}
@@ -764,10 +764,10 @@ onMounted(async () => {
         <div v-else-if="currentSlide === 4" key="4" class="slide slide-interaction">
           <div class="content">
             <h3 class="section-title">
-              RESONANCE
+              你的回响
             </h3>
             <p class="desc-text">
-              你的回响
+              YOUR RESONANCE
             </p>
 
             <div class="grid-stats-tech">
@@ -822,17 +822,18 @@ onMounted(async () => {
         <div v-else-if="currentSlide === 5" key="5" class="slide slide-chat">
           <div class="content">
             <h3 class="section-title">
-              CHAT
+              你的私信
             </h3>
             <p class="desc-text">
-              你的私信
+              YOUR CHAT
             </p>
 
             <div class="msg-stat">
+              <span class="unit">发送了</span>
               <span class="highlight-number small">
                 {{ reportData?.chatCount }}
               </span>
-              <span class="unit">MESSAGES SENT</span>
+              <span class="unit">条消息</span>
             </div>
 
             <div v-if="reportData?.maxSayUser?.userID" class="partner-card">
@@ -851,7 +852,7 @@ onMounted(async () => {
             <!-- 显示更多好友（如果有） -->
             <div v-if="otherFriends.length > 0" class="more-friends">
               <p class="mini-title">
-                ALSO CHATTED WITH
+                你也私信了——
               </p>
               <div class="friends-row">
                 <img
@@ -873,15 +874,15 @@ onMounted(async () => {
         <div v-else-if="currentSlide === 6" key="6" class="slide slide-summary">
           <div class="content">
             <h3 class="section-title">
-              SUMMARY
+              未终
             </h3>
 
             <div class="level-display">
               <div class="level-ring">
                 <div class="level-content">
-                  <span class="level-label">CURRENT LEVEL</span>
+                  <span class="level-label">当前等级</span>
                   <span class="level-name">{{ levelNameHandler(reportData?.score || 0) }}</span>
-                  <span class="level-exp">EXP: {{ reportData?.score }}</span>
+                  <span class="level-exp">经验值: {{ reportData?.score }}</span>
                 </div>
               </div>
             </div>
@@ -891,19 +892,19 @@ onMounted(async () => {
             </p>
 
             <div class="summary-text">
-              <p>SSE MARKET SYSTEM LOG: 2025 COMPLETE</p>
+              <p>新的一年，软工集市与你同在</p>
               <p>INITIATING 2026 SEQUENCE...</p>
             </div>
 
             <div class="action-buttons">
               <button class="tech-btn outline" @click.stop="restart">
-                REPLAY
+                再看一次
               </button>
               <button class="tech-btn outline export-btn" @click.stop="exportReport">
-                EXPORT
+                导出图片
               </button>
               <button class="tech-btn solid" @click.stop="goHome">
-                EXIT
+                返回首页
               </button>
             </div>
           </div>
