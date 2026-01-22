@@ -223,7 +223,7 @@ const resonanceMessage = computed(() => {
 
 const connectionMessage = computed(() => {
   const chatCount = reportData.value?.chatCount || 0
-  const hasTopUser = reportData.value?.maxSayUser?.UserID
+  const hasTopUser = reportData.value?.maxSayUser?.userID
   if (chatCount >= 500 && hasTopUser)
     return '你们的对话跨越时光，这份默契真珍贵'
   if (chatCount >= 100 && hasTopUser)
@@ -843,7 +843,7 @@ onMounted(async () => {
                 <img :src="reportData?.maxSayUser?.avatarURL || defaultAvatar" class="partner-avatar">
                 <div class="partner-details">
                   <span class="partner-name">{{ reportData?.maxSayUser?.name }}</span>
-                  <span class="partner-msg">发送了 {{ reportData?.maxSayUserCnt }} 条消息</span>
+                  <span class="partner-msg">{{ reportData?.maxSayUserCnt }} 条消息</span>
                 </div>
               </div>
             </div>
