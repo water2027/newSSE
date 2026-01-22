@@ -281,6 +281,226 @@ function goHome() {
   router.push('/')
 }
 
+// 导出报告长图
+async function exportReport() {
+  try {
+    // 1. 确保字体已加载
+    await document.fonts.ready
+
+    // 创建 Canvas
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    if (!ctx) {
+      throw new Error('无法创建 Canvas 上下文')
+    }
+
+    const width = 750 // 增加宽度以提高清晰度
+    const slideHeight = 1000 // 增加每页高度
+    const totalHeight = slideHeight * 7
+    canvas.width = width
+    canvas.height = totalHeight
+
+    // 绘制背景
+    ctx.fillStyle = '#030712'
+    ctx.fillRect(0, 0, width, totalHeight)
+
+    // 绘制背景网格 (模拟 CSS background-grid)
+    ctx.strokeStyle = 'rgba(14, 165, 233, 0.1)'
+    ctx.lineWidth = 1
+    const gridSize = 40
+    for (let x = 0; x <= width; x += gridSize) {
+      ctx.beginPath()
+      ctx.moveTo(x, 0)
+      ctx.lineTo(x, totalHeight)
+      ctx.stroke()
+    }
+    for (let y = 0; y <= totalHeight; y += gridSize) {
+      ctx.beginPath()
+      ctx.moveTo(0, y)
+      ctx.lineTo(width, y)
+      ctx.stroke()
+    }
+
+    // 绘制全局渐变背景 (模拟 CSS radial-gradient)
+    const gradient1 = ctx.createRadialGradient(width * 0.5, totalHeight * 0.5, 0, width * 0.5, totalHeight * 0.5, width * 0.8)
+    gradient1.addColorStop(0, 'rgba(49, 46, 129, 0.4)')
+    gradient1.addColorStop(1, 'transparent')
+    ctx.fillStyle = gradient1
+    ctx.fillRect(0, 0, width, totalHeight)
+
+    const gradient2 = ctx.createRadialGradient(width * 0.8, totalHeight * 0.2, 0, width * 0.8, totalHeight * 0.2, width * 0.5)
+    gradient2.addColorStop(0, 'rgba(190, 18, 60, 0.2)')
+    gradient2.addColorStop(1, 'transparent')
+    ctx.fillStyle = gradient2
+    ctx.fillRect(0, 0, width, totalHeight)
+
+    // 辅助函数：绘制发光文字
+    const drawGlowText = (text: string, x: number, y: number, font: string, color: string, glowColor: string, blur: number = 10) => {
+      ctx.save()
+      ctx.font = font
+      ctx.fillStyle = color
+      ctx.shadowColor = glowColor
+      ctx.shadowBlur = blur
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillText(text, x, y)
+      ctx.restore()
+    }
+
+    // 辅助函数：绘制装饰线
+    const drawDecoLine = (y: number) => {
+      ctx.save()
+      ctx.strokeStyle = 'rgba(14, 165, 233, 0.3)'
+      ctx.lineWidth = 2
+      ctx.beginPath()
+      ctx.moveTo(width * 0.2, y)
+      ctx.lineTo(width * 0.8, y)
+      ctx.stroke()
+      // 中间加个点
+      ctx.fillStyle = '#0ea5e9'
+      ctx.beginPath()
+      ctx.arc(width / 2, y, 4, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.restore()
+    }
+
+    let currentY = 150
+
+    // --- 封面页 ---
+    drawGlowText('2025', width / 2, currentY, 'bold 6rem Orbitron', '#ffffff', '#f43f5e', 20)
+    currentY += 80
+    drawGlowText('集市年度报告', width / 2, currentY, '2.5rem Rajdhani', '#0ea5e9', '#0ea5e9', 10)
+    currentY += 150
+
+    // 头像绘制
+    if (reportData.value?.avatarUrl) {
+      try {
+        const loadImg = (src: string) => new Promise<HTMLImageElement>((resolve, reject) => {
+          const img = new Image()
+          img.crossOrigin = 'anonymous'
+          img.onload = () => resolve(img)
+          img.onerror = reject
+          img.src = src
+        })
+        const avatarImg = await loadImg(reportData.value.avatarUrl)
+        ctx.save()
+        ctx.beginPath()
+        ctx.arc(width / 2, currentY, 80, 0, Math.PI * 2)
+        ctx.strokeStyle = '#0ea5e9'
+        ctx.lineWidth = 4
+        ctx.stroke()
+        ctx.clip()
+        ctx.drawImage(avatarImg, width / 2 - 80, currentY - 80, 160, 160)
+        ctx.restore()
+        currentY += 160
+      }
+      catch {
+        // 头像加载失败
+      }
+    }
+    currentY += 60
+    drawGlowText(reportData.value?.name || 'User', width / 2, currentY, 'bold 2rem Rajdhani', '#ffffff', '#ffffff', 5)
+    currentY += 200
+
+    drawDecoLine(currentY)
+    currentY += 100
+
+    // --- 数据页 ---
+    const slides = [
+      { title: 'START', desc: '已接入 SSE MARKET 网络', value: `${daysJoined.value}`, unit: 'DAYS' },
+      { title: 'OUTPUT', desc: '你的输出力', value: `${reportData.value?.thisYearPostCnt || 0}`, unit: 'POSTS' },
+      {
+        title: 'MOMENT',
+        desc: '你的时刻',
+        stats: [
+          { l: 'MAX LIKES', v: reportData.value?.maxLikeNum || 0 },
+          { l: 'MAX VIEWS', v: reportData.value?.maxBrowseNum || 0 },
+          { l: 'MAX COMMENTS', v: reportData.value?.maxCommentNum || 0 },
+        ],
+      },
+      {
+        title: 'RESONANCE',
+        desc: '你的回响',
+        stats: [
+          { l: 'COMMENTS', v: (reportData.value?.pCommentCnt || 0) + (reportData.value?.ccommentCnt || 0) },
+          { l: 'SAVED', v: reportData.value?.savedCount || 0 },
+          { l: 'REPLIED', v: reportData.value?.repliedCount || 0 },
+        ],
+      },
+      { title: 'CONNECTION', desc: '你的连接', value: `${reportData.value?.chatCount || 0}`, unit: 'MESSAGES' },
+      { title: 'SUMMARY', desc: levelNameHandler(reportData.value?.score || 0), value: `${reportData.value?.score || 0}`, unit: 'EXP', isFinal: true },
+    ]
+
+    for (const slide of slides) {
+      // 标题
+      drawGlowText(slide.title, width / 2, currentY, 'bold 3rem Orbitron', '#f43f5e', '#f43f5e', 15)
+      currentY += 60
+      drawGlowText(slide.desc, width / 2, currentY, '1.5rem Rajdhani', '#0ea5e9', '#0ea5e9', 5)
+      currentY += 100
+
+      // 主要数值
+      if (slide.value) {
+        drawGlowText(slide.value, width / 2, currentY, 'bold 6rem Orbitron', '#ffffff', '#0ea5e9', 20)
+        currentY += 70
+        drawGlowText(slide.unit, width / 2, currentY, '1.2rem Rajdhani', '#64748b', 'transparent', 0)
+        currentY += 120
+      }
+
+      // 统计列表
+      if (slide.stats) {
+        let statY = currentY
+        for (const stat of slide.stats) {
+          // 背景框
+          ctx.fillStyle = 'rgba(30, 58, 138, 0.2)'
+          ctx.fillRect(width * 0.15, statY - 40, width * 0.7, 80)
+          ctx.strokeStyle = '#0ea5e9'
+          ctx.lineWidth = 1
+          ctx.strokeRect(width * 0.15, statY - 40, width * 0.7, 80)
+
+          // 标签和数值
+          ctx.fillStyle = '#94a3b8'
+          ctx.font = '1.2rem Rajdhani'
+          ctx.textAlign = 'left'
+          ctx.fillText(stat.l, width * 0.2, statY)
+
+          ctx.fillStyle = '#ffffff'
+          ctx.font = 'bold 2rem Orbitron'
+          ctx.textAlign = 'right'
+          ctx.fillText(`${stat.v}`, width * 0.8, statY)
+
+          statY += 100
+        }
+        currentY = statY + 50
+      }
+
+      if (!slide.isFinal) {
+        drawDecoLine(currentY)
+        currentY += 120
+      }
+    }
+
+    // 底部 Logo
+    currentY += 50
+    drawGlowText('SSE MARKET ANNUAL REPORT', width / 2, currentY, '1rem Orbitron', '#64748b', 'transparent', 0)
+
+    // 导出图片
+    canvas.toBlob((blob) => {
+      if (blob) {
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `SSEMARKET_年度报告_${new Date().getFullYear()}.png`
+        a.click()
+        URL.revokeObjectURL(url)
+      }
+    }, 'image/png', 1.0)
+  }
+  catch (error) {
+    console.error('导出失败:', error)
+    alert('导出失败，请稍后重试')
+  }
+}
+
 onUnmounted(() => {
   // 组件卸载时停止音乐
   stopBeatAnimation()
@@ -499,6 +719,8 @@ onMounted(async () => {
               <div class="hud-item">
                 <div class="hud-label">
                   MAX LIKES
+                  <br>
+                  最多点赞
                 </div>
                 <div class="hud-value color-1">
                   {{ reportData?.maxLikeNum }}
@@ -508,6 +730,8 @@ onMounted(async () => {
               <div class="hud-item">
                 <div class="hud-label">
                   MAX VIEWS
+                  <br>
+                  最多观看
                 </div>
                 <div class="hud-value color-2">
                   {{ reportData?.maxBrowseNum }}
@@ -517,6 +741,8 @@ onMounted(async () => {
               <div class="hud-item">
                 <div class="hud-label">
                   MAX COMMENTS
+                  <br>
+                  最多评论
                 </div>
                 <div class="hud-value color-3">
                   {{ reportData?.maxCommentNum }}
@@ -596,10 +822,10 @@ onMounted(async () => {
         <div v-else-if="currentSlide === 5" key="5" class="slide slide-chat">
           <div class="content">
             <h3 class="section-title">
-              CONNECTION
+              CHAT
             </h3>
             <p class="desc-text">
-              你的连接
+              你的私信
             </p>
 
             <div class="msg-stat">
@@ -625,7 +851,7 @@ onMounted(async () => {
             <!-- 显示更多好友（如果有） -->
             <div v-if="otherFriends.length > 0" class="more-friends">
               <p class="mini-title">
-                ALSO CONNECTED WITH
+                ALSO CHATTED WITH
               </p>
               <div class="friends-row">
                 <img
@@ -671,10 +897,13 @@ onMounted(async () => {
 
             <div class="action-buttons">
               <button class="tech-btn outline" @click.stop="restart">
-                PLAY AGAIN
+                REPLAY
+              </button>
+              <button class="tech-btn outline export-btn" @click.stop="exportReport">
+                EXPORT
               </button>
               <button class="tech-btn solid" @click.stop="goHome">
-                BACK TO HOME
+                EXIT
               </button>
             </div>
           </div>
@@ -1102,7 +1331,6 @@ h3,
 .intro-text {
   font-size: 0.9rem;
   color: #94a3b8;
-  font-style: italic;
   max-width: 80%;
   margin: 0 auto;
 }
@@ -1582,8 +1810,19 @@ h3,
 
 .action-buttons {
   display: flex;
-  gap: 1.5rem;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
   animation: buttonsFadeIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) 1.1s both;
+}
+
+/* 桌面端横向排列 */
+@media (min-width: 480px) {
+  .action-buttons {
+    flex-direction: row;
+    gap: 1.5rem;
+    justify-content: center;
+  }
 }
 
 /* 按钮：柔和淡入 */
@@ -1608,6 +1847,16 @@ h3,
   letter-spacing: 2px;
   position: relative;
   overflow: hidden;
+  width: 100%;
+  flex: 1;
+}
+
+/* 桌面端按钮宽度自适应 */
+@media (min-width: 480px) {
+  .tech-btn {
+    width: auto;
+    flex: 0 1 auto;
+  }
 }
 
 .tech-btn.outline {
