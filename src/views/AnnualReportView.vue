@@ -157,7 +157,7 @@ function initAutoPlay() {
 }
 
 // Default avatar fallback
-const defaultAvatar = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
+const defaultAvatar = 'https://ssemarket.cn/new/default-avatar.svg'
 
 const daysJoined = computed(() => {
   if (!reportData.value)
@@ -427,7 +427,7 @@ async function exportReport() {
           { l: 'REPLIED', v: reportData.value?.repliedCount || 0 },
         ],
       },
-      { title: 'CONNECTION', desc: '你的连接', value: `${reportData.value?.chatCount || 0}`, unit: 'MESSAGES' },
+      { title: 'CHAT', desc: '你的私信', value: `${reportData.value?.chatCount || 0}`, unit: 'MESSAGES' },
       { title: 'SUMMARY', desc: levelNameHandler(reportData.value?.score || 0), value: `${reportData.value?.score || 0}`, unit: 'EXP', isFinal: true },
     ]
 
@@ -535,11 +535,11 @@ function handleSwipe() {
 
 // 计算要显示的其他好友（排除 maxSayUser）
 const otherFriends = computed(() => {
-  if (!reportData.value?.relevantRespUsers)
+  if (!reportData.value?.relevantRespUsers || reportData.value.relevantRespUsers.length === 0)
     return []
-  const maxUserId = reportData.value?.maxSayUser?.UserID
+  const maxUserId = reportData.value?.maxSayUser?.userID
   return reportData.value.relevantRespUsers
-    .filter(u => u.UserID !== maxUserId)
+    .filter(u => u.userID !== maxUserId)
     .slice(0, 4)
 })
 
@@ -835,15 +835,15 @@ onMounted(async () => {
               <span class="unit">MESSAGES SENT</span>
             </div>
 
-            <div v-if="reportData?.maxSayUser?.UserID" class="partner-card">
+            <div v-if="reportData?.maxSayUser?.userID" class="partner-card">
               <div class="card-header">
-                TOP_CONNECTION
+                年度私信
               </div>
               <div class="partner-info">
-                <img :src="reportData?.maxSayUser?.AvatarURL || defaultAvatar" class="partner-avatar">
+                <img :src="reportData?.maxSayUser?.avatarURL || defaultAvatar" class="partner-avatar">
                 <div class="partner-details">
-                  <span class="partner-name">{{ reportData?.maxSayUser?.Name }}</span>
-                  <span class="partner-msg">交互频次: {{ reportData?.maxSayUserCnt }}</span>
+                  <span class="partner-name">{{ reportData?.maxSayUser?.name }}</span>
+                  <span class="partner-msg">发送了 {{ reportData?.maxSayUserCnt }} 条消息</span>
                 </div>
               </div>
             </div>
@@ -856,8 +856,8 @@ onMounted(async () => {
               <div class="friends-row">
                 <img
                   v-for="user in otherFriends"
-                  :key="user.UserID"
-                  :src="user.AvatarURL || defaultAvatar"
+                  :key="user.userID"
+                  :src="user.avatarURL || defaultAvatar"
                   class="mini-avatar"
                 >
               </div>
@@ -1647,7 +1647,6 @@ h3,
   width: 70px;
   height: 70px;
   border-radius: 50%;
-  border: 2px solid #f43f5e;
 }
 
 .partner-details {
